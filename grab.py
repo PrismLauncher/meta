@@ -63,3 +63,5 @@ Popen(["git add version_manifest.json versions/* assets/*"], shell=True, stdout=
 
 Popen(["git commit -a -m \"Update " + strftime("%Y-%m-%d", gmtime()) + "\""], shell=True, stdout=PIPE).communicate()
 Popen(["git push"], shell=True, stdout=PIPE).communicate()
+
+print("It is done.")
