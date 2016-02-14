@@ -62,4 +62,4 @@ grab_versions(main_json)
 Popen(["git add version_manifest.json versions/* assets/*"], shell=True, stdout=PIPE).communicate()
 
 Popen(["git commit -a -m \"Update " + strftime("%Y-%m-%d", gmtime()) + "\""], shell=True, stdout=PIPE).communicate()
-Popen(["git push --force"], shell=True, stdout=PIPE).communicate()
+Popen(["git push"], shell=True, stdout=PIPE).communicate()
