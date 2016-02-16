@@ -321,8 +321,8 @@
             "size": 118271
         },
         "minecraft/sounds.json": {
-            "hash": "d154dfa7a66bda3c07ac3e40cb967aa7ae0b84a0",
-            "size": 76912
+            "hash": "54511a168f5960dd36ff46ef7a9fd1d4b1edee4a",
+            "size": 80547
         },
         "minecraft/sounds/ambient/cave/cave1.ogg": {
             "hash": "2a36ba7e9f4ffc0d22433933bb8ce98de9912432",
@@ -413,32 +413,24 @@
             "size": 12877
         },
         "minecraft/sounds/block/chest/close.ogg": {
-            "hash": "badd46bb77f8707eb0866cc09571b6fd5ed97d6d",
-            "size": 7631
+            "hash": "2d128b53eb70ea5001eced057846496f5355adda",
+            "size": 7012
         },
         "minecraft/sounds/block/chest/close2.ogg": {
-            "hash": "60b56d84d49d635669a6cb3bdf8b4a4029be0bda",
-            "size": 7681
+            "hash": "f11510b6accf5b627cfb79cd268ab9b0b1518d83",
+            "size": 7380
         },
         "minecraft/sounds/block/chest/close3.ogg": {
-            "hash": "3179cd2e388ea8565bb414405e084595773cb727",
-            "size": 7851
+            "hash": "f2c1fee4e599ffc5a1768670a692da5adcbc325a",
+            "size": 6701
         },
         "minecraft/sounds/block/chest/open.ogg": {
-            "hash": "24cb6d0525b417792589a387e8c5d6ee1fe32b5e",
-            "size": 8814
+            "hash": "4fa841d19c4ebed4f6b0397bf253255f44aad8f2",
+            "size": 8813
         },
         "minecraft/sounds/block/chest/open2.ogg": {
-            "hash": "25f59742f0158b2ff0dacebe974eb0fb8ed65fc3",
-            "size": 7764
-        },
-        "minecraft/sounds/block/chest/open3.ogg": {
-            "hash": "c1c26f8b1370e86ac88faf704f45e7758de38ca3",
-            "size": 8700
-        },
-        "minecraft/sounds/block/chest/open4.ogg": {
-            "hash": "d4fdb442ca4c8434124be98fc89746c1c6116b5a",
-            "size": 8708
+            "hash": "06cc3feb2d1534bc445a313cd3fc9e5450d86353",
+            "size": 8717
         },
         "minecraft/sounds/block/chorus_flower/death1.ogg": {
             "hash": "fad694e6c37b2b2369046ce88cddcad4b86a1c55",
@@ -1116,26 +1108,6 @@
             "hash": "8301a44446b04249e6896bc230f6d8c9d8e56273",
             "size": 8857
         },
-        "minecraft/sounds/entity/shield/block1.ogg": {
-            "hash": "d9a379040a1b2f288664f303e99147dabb1afdf6",
-            "size": 5951
-        },
-        "minecraft/sounds/entity/shield/block2.ogg": {
-            "hash": "fe54cc09b73e7910090edfbb93854746f816e0fa",
-            "size": 5396
-        },
-        "minecraft/sounds/entity/shield/block3.ogg": {
-            "hash": "e0b2b3e082199d91b1e1ee93c714d5aad124e28a",
-            "size": 5915
-        },
-        "minecraft/sounds/entity/shield/block4.ogg": {
-            "hash": "a33fba87abfde6b5bb2acc4f116c2cbe7c8c3eb6",
-            "size": 5656
-        },
-        "minecraft/sounds/entity/shield/block5.ogg": {
-            "hash": "0161e1249adc4244fe3a83675d2b9533209948f7",
-            "size": 5763
-        },
         "minecraft/sounds/entity/shulker/ambient1.ogg": {
             "hash": "dd67ac8cf15d54eff38ef9a790be4692bcba2900",
             "size": 7078
@@ -1715,6 +1687,26 @@
         "minecraft/sounds/item/hoe/till4.ogg": {
             "hash": "cb95637a9d5e9b0cb36a2516f0dfac30fed9d720",
             "size": 6544
+        },
+        "minecraft/sounds/item/shield/block1.ogg": {
+            "hash": "d9a379040a1b2f288664f303e99147dabb1afdf6",
+            "size": 5951
+        },
+        "minecraft/sounds/item/shield/block2.ogg": {
+            "hash": "fe54cc09b73e7910090edfbb93854746f816e0fa",
+            "size": 5396
+        },
+        "minecraft/sounds/item/shield/block3.ogg": {
+            "hash": "e0b2b3e082199d91b1e1ee93c714d5aad124e28a",
+            "size": 5915
+        },
+        "minecraft/sounds/item/shield/block4.ogg": {
+            "hash": "a33fba87abfde6b5bb2acc4f116c2cbe7c8c3eb6",
+            "size": 5656
+        },
+        "minecraft/sounds/item/shield/block5.ogg": {
+            "hash": "0161e1249adc4244fe3a83675d2b9533209948f7",
+            "size": 5763
         },
         "minecraft/sounds/item/shovel/flatten1.ogg": {
             "hash": "659b0fb0ef28429e3b779d833d6eedd8305cbbbc",
@@ -4079,14 +4071,6 @@
         "realms/lang/zh_TW.lang": {
             "hash": "1f3a90b891029d4a743f7f87e479db0b43740845",
             "size": 7505
-        },
-        "skins/3f/3f688e0e699b3d9fe448b5bb50a3a288f9c589762b3dae8308842122dcb81": {
-            "hash": "0d0162b71b5e5e60b920a342496a5d85616eae44",
-            "size": 1285
-        },
-        "skins/82/825fae885d16856bf81cff496c9f166d256156c659acf5c6b6c9e58972cfd3": {
-            "hash": "95347d04053961c016c50dcdc2eb636bfd19f555",
-            "size": 4118
         }
     }
 }
