@@ -1,9 +1,23 @@
 {
     "latest": {
         "release": "1.8.9",
-        "snapshot": "16w07b"
+        "snapshot": "1.9-pre2"
     },
     "versions": [
+        {
+            "id": "1.9-pre2",
+            "releaseTime": "2016-02-18T17:41:00+00:00",
+            "time": "2016-02-18T17:41:54+00:00",
+            "type": "snapshot",
+            "url": "https://launchermeta.mojang.com/mc/game/6768033e216468247bd031a0a2d9876d79818f8f/1.9-pre2.json"
+        },
+        {
+            "id": "1.9-pre1",
+            "releaseTime": "2016-02-17T15:23:19+00:00",
+            "time": "2016-02-17T15:24:11+00:00",
+            "type": "snapshot",
+            "url": "https://launchermeta.mojang.com/mc/game/6768033e216468247bd031a0a2d9876d79818f8f/1.9-pre1.json"
+        },
         {
             "id": "16w07b",
             "releaseTime": "2016-02-16T15:22:39+00:00",
