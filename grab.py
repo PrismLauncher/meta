@@ -11,6 +11,10 @@ from subprocess import Popen, PIPE
 
 from cachecontrol.caches import FileCache
 
+abspath = os.path.abspath(__file__)
+dname = os.path.dirname(abspath)
+os.chdir(dname)
+
 forever_cache = FileCache('http_cache', forever=True)
 sess = CacheControl(requests.Session(), forever_cache)
 
