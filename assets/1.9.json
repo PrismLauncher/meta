@@ -373,8 +373,8 @@
             "size": 131773
         },
         "minecraft/sounds.json": {
-            "hash": "ef3e6e0cadbcb9b02083d1c1946d0a702484790e",
-            "size": 82427
+            "hash": "97accfa8d1505c3c2de436883c58efff7266fdc5",
+            "size": 82561
         },
         "minecraft/sounds/ambient/cave/cave1.ogg": {
             "hash": "29d4dccf3353334c7aa2a49cb6fed3780a51a1ba",
@@ -1723,6 +1723,10 @@
         "minecraft/sounds/item/bucket/fill_lava3.ogg": {
             "hash": "99125d80da85a6055d5757fe9194bee680ac9a63",
             "size": 9278
+        },
+        "minecraft/sounds/item/elytra/elytra_loop.ogg": {
+            "hash": "90d599a1760137a7c4d7a52c77f5c65c02f137d4",
+            "size": 132727
         },
         "minecraft/sounds/item/hoe/till1.ogg": {
             "hash": "0e6696ec35c5f4982cad6a6731edcffb11728aa9",
