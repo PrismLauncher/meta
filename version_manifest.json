@@ -1,9 +1,16 @@
 {
     "latest": {
         "release": "1.9.2",
-        "snapshot": "1.9.2"
+        "snapshot": "1.RV-Pre1"
     },
     "versions": [
+        {
+            "id": "1.RV-Pre1",
+            "releaseTime": "2016-03-31T16:18:53+00:00",
+            "time": "2016-03-31T16:20:24+00:00",
+            "type": "snapshot",
+            "url": "https://launchermeta.mojang.com/mc/game/6768033e216468247bd031a0a2d9876d79818f8f/1.RV-Pre1.json"
+        },
         {
             "id": "1.9.2",
             "releaseTime": "2016-03-30T15:23:55+00:00",
