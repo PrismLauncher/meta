@@ -9,17 +9,17 @@
     "assets": "1.9",
     "downloads": {
         "client": {
-            "sha1": "19106fd5e222dca0f2dde9f66db8384c9a7db957",
-            "size": 8699297,
-            "url": "https://launcher.mojang.com/mc/game/1.9.2/client/19106fd5e222dca0f2dde9f66db8384c9a7db957/client.jar"
+            "sha1": "ac59f57ecf383113e3dd92dd90d2fd7b391252ef",
+            "size": 8699265,
+            "url": "https://launcher.mojang.com/mc/game/16w14a/client/ac59f57ecf383113e3dd92dd90d2fd7b391252ef/client.jar"
         },
         "server": {
-            "sha1": "2b95cc7b136017e064c46d04a5825fe4cfa1be30",
-            "size": 8848002,
-            "url": "https://launcher.mojang.com/mc/game/1.9.2/server/2b95cc7b136017e064c46d04a5825fe4cfa1be30/server.jar"
+            "sha1": "5616b2213b727241821a137b4ef290c7bbace20a",
+            "size": 8847953,
+            "url": "https://launcher.mojang.com/mc/game/16w14a/server/5616b2213b727241821a137b4ef290c7bbace20a/server.jar"
         }
     },
-    "id": "1.9.2",
+    "id": "16w14a",
     "libraries": [
         {
             "downloads": {
@@ -523,7 +523,7 @@
     "mainClass": "net.minecraft.client.main.Main",
     "minecraftArguments": "--username ${auth_player_name} --version ${version_name} --gameDir ${game_directory} --assetsDir ${assets_root} --assetIndex ${assets_index_name} --uuid ${auth_uuid} --accessToken ${auth_access_token} --userType ${user_type} --versionType ${version_type}",
     "minimumLauncherVersion": 18,
-    "releaseTime": "2016-03-30T15:23:55+00:00",
-    "time": "2016-04-07T12:41:08+00:00",
-    "type": "release"
+    "releaseTime": "2016-04-07T12:47:51+00:00",
+    "time": "2016-04-07T12:48:44+00:00",
+    "type": "snapshot"
 }
