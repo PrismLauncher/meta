@@ -217,6 +217,7 @@
     "mainClass": "net.minecraft.client.main.Main",
     "minecraftArguments": "--username ${auth_player_name} --version ${version_name} --gameDir ${game_directory} --assetsDir ${game_assets} --uuid ${auth_uuid} --accessToken ${auth_access_token}",
     "minimumLauncherVersion": 9,
+    "name": "Minecraft",
     "releaseTime": "2013-10-25T13:00:00+00:00",
     "time": "2016-02-02T15:37:47+00:00",
     "type": "release"

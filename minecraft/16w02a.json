@@ -294,6 +294,7 @@
     "mainClass": "net.minecraft.client.main.Main",
     "minecraftArguments": "--username ${auth_player_name} --version ${version_name} --gameDir ${game_directory} --assetsDir ${assets_root} --assetIndex ${assets_index_name} --uuid ${auth_uuid} --accessToken ${auth_access_token} --userType ${user_type}",
     "minimumLauncherVersion": 14,
+    "name": "Minecraft",
     "releaseTime": "2016-01-13T15:15:16+00:00",
     "time": "2016-04-07T12:41:08+00:00",
     "type": "snapshot"

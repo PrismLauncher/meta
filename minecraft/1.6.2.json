@@ -162,6 +162,7 @@
     "mainClass": "net.minecraft.client.main.Main",
     "minecraftArguments": "--username ${auth_player_name} --session ${auth_session} --version ${version_name} --gameDir ${game_directory} --assetsDir ${game_assets}",
     "minimumLauncherVersion": 4,
+    "name": "Minecraft",
     "processArguments": "username_session_version",
     "releaseTime": "2013-07-05T13:09:02+00:00",
     "time": "2016-02-02T15:37:47+00:00",

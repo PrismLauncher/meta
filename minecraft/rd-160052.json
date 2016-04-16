@@ -53,6 +53,7 @@
     "mainClass": "com.mojang.rubydung.RubyDung",
     "minecraftArguments": "${auth_player_name} ${auth_session}",
     "minimumLauncherVersion": 7,
+    "name": "Minecraft",
     "releaseTime": "2009-05-15T22:52:00+00:00",
     "time": "2016-02-02T15:37:47+00:00",
     "type": "old_alpha"

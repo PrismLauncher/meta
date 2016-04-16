@@ -115,6 +115,7 @@ for filename in os.listdir('versions'):
                     
                 addLWJGLVersion(lwjglVersions, keyBucket)
         json_data["libraries"] = libs_minecraft
+        json_data["name"] = "Minecraft"
         filenameOut = "minecraft/%s.json" % json_data["id"]
         with open(filenameOut, 'w') as outfile:
             json.dump(json_data, outfile, sort_keys=True, indent=4)

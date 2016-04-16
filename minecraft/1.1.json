@@ -53,6 +53,7 @@
     "mainClass": "net.minecraft.launchwrapper.Launch",
     "minecraftArguments": "${auth_player_name} ${auth_session} --gameDir ${game_directory} --assetsDir ${game_assets}",
     "minimumLauncherVersion": 4,
+    "name": "Minecraft",
     "releaseTime": "2012-01-11T22:00:00+00:00",
     "time": "2016-02-02T15:37:47+00:00",
     "type": "release"
