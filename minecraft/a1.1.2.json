@@ -1,0 +1,59 @@
+{
+    "assetIndex": {
+        "id": "legacy",
+        "sha1": "c0fd82e8ce9fbc93119e40d96d5a4e62cfa3f729",
+        "size": 134284,
+        "totalSize": 111220701,
+        "url": "https://launchermeta.mojang.com/mc-staging/assets/legacy/c0fd82e8ce9fbc93119e40d96d5a4e62cfa3f729/legacy.json"
+    },
+    "assets": "legacy",
+    "downloads": {
+        "client": {
+            "sha1": "f9b4b66f9c18bf4800d80f1c8865a837f92c6105",
+            "size": 897054,
+            "url": "https://launcher.mojang.com/mc/game/a1.1.2/client/f9b4b66f9c18bf4800d80f1c8865a837f92c6105/client.jar"
+        }
+    },
+    "id": "a1.1.2",
+    "libraries": [
+        {
+            "downloads": {
+                "artifact": {
+                    "path": "net/minecraft/launchwrapper/1.5/launchwrapper-1.5.jar",
+                    "sha1": "5150b9c2951f0fde987ce9c33496e26add1de224",
+                    "size": 27787,
+                    "url": "https://libraries.minecraft.net/net/minecraft/launchwrapper/1.5/launchwrapper-1.5.jar"
+                }
+            },
+            "name": "net.minecraft:launchwrapper:1.5"
+        },
+        {
+            "downloads": {
+                "artifact": {
+                    "path": "net/sf/jopt-simple/jopt-simple/4.5/jopt-simple-4.5.jar",
+                    "sha1": "6065cc95c661255349c1d0756657be17c29a4fd3",
+                    "size": 61311,
+                    "url": "https://libraries.minecraft.net/net/sf/jopt-simple/jopt-simple/4.5/jopt-simple-4.5.jar"
+                }
+            },
+            "name": "net.sf.jopt-simple:jopt-simple:4.5"
+        },
+        {
+            "downloads": {
+                "artifact": {
+                    "path": "org/ow2/asm/asm-all/4.1/asm-all-4.1.jar",
+                    "sha1": "054986e962b88d8660ae4566475658469595ef58",
+                    "size": 214592,
+                    "url": "https://libraries.minecraft.net/org/ow2/asm/asm-all/4.1/asm-all-4.1.jar"
+                }
+            },
+            "name": "org.ow2.asm:asm-all:4.1"
+        }
+    ],
+    "mainClass": "net.minecraft.launchwrapper.Launch",
+    "minecraftArguments": "${auth_player_name} ${auth_session} --gameDir ${game_directory} --assetsDir ${game_assets}",
+    "minimumLauncherVersion": 7,
+    "releaseTime": "2010-09-19T22:00:00+00:00",
+    "time": "2016-02-02T15:37:47+00:00",
+    "type": "old_alpha"
+}

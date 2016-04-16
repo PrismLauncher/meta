@@ -1,0 +1,122 @@
+{
+    "fileId": "org.lwjgl",
+    "libraries": [
+        {
+            "downloads": {
+                "artifact": {
+                    "path": "net/java/jinput/jinput/2.0.5/jinput-2.0.5.jar",
+                    "sha1": "39c7796b469a600f72380316f6b1f11db6c2c7c4",
+                    "size": 208338,
+                    "url": "https://libraries.minecraft.net/net/java/jinput/jinput/2.0.5/jinput-2.0.5.jar"
+                }
+            },
+            "name": "net.java.jinput:jinput:2.0.5"
+        },
+        {
+            "downloads": {
+                "artifact": {
+                    "path": "net/java/jutils/jutils/1.0.0/jutils-1.0.0.jar",
+                    "sha1": "e12fe1fda814bd348c1579329c86943d2cd3c6a6",
+                    "size": 7508,
+                    "url": "https://libraries.minecraft.net/net/java/jutils/jutils/1.0.0/jutils-1.0.0.jar"
+                }
+            },
+            "name": "net.java.jutils:jutils:1.0.0"
+        },
+        {
+            "downloads": {
+                "artifact": {
+                    "path": "org/lwjgl/lwjgl/lwjgl/2.9.1/lwjgl-2.9.1.jar",
+                    "sha1": "f58c5aabcef0e41718a564be9f8e412fff8db847",
+                    "size": 1014790,
+                    "url": "https://libraries.minecraft.net/org/lwjgl/lwjgl/lwjgl/2.9.1/lwjgl-2.9.1.jar"
+                }
+            },
+            "name": "org.lwjgl.lwjgl:lwjgl:2.9.1"
+        },
+        {
+            "downloads": {
+                "artifact": {
+                    "path": "org/lwjgl/lwjgl/lwjgl_util/2.9.1/lwjgl_util-2.9.1.jar",
+                    "sha1": "290d7ba8a1bd9566f5ddf16ad06f09af5ec9b20e",
+                    "size": 173909,
+                    "url": "https://libraries.minecraft.net/org/lwjgl/lwjgl/lwjgl_util/2.9.1/lwjgl_util-2.9.1.jar"
+                }
+            },
+            "name": "org.lwjgl.lwjgl:lwjgl_util:2.9.1"
+        },
+        {
+            "downloads": {
+                "classifiers": {
+                    "natives-linux": {
+                        "path": "org/lwjgl/lwjgl/lwjgl-platform/2.9.1/lwjgl-platform-2.9.1-natives-linux.jar",
+                        "sha1": "aa9aae879af8eb378e22cfc64db56ec2ca9a44d1",
+                        "size": 571424,
+                        "url": "https://libraries.minecraft.net/org/lwjgl/lwjgl/lwjgl-platform/2.9.1/lwjgl-platform-2.9.1-natives-linux.jar"
+                    },
+                    "natives-osx": {
+                        "path": "org/lwjgl/lwjgl/lwjgl-platform/2.9.1/lwjgl-platform-2.9.1-natives-osx.jar",
+                        "sha1": "2d12c83fdfbc04ecabf02c7bc8cc54d034f0daac",
+                        "size": 527196,
+                        "url": "https://libraries.minecraft.net/org/lwjgl/lwjgl/lwjgl-platform/2.9.1/lwjgl-platform-2.9.1-natives-osx.jar"
+                    },
+                    "natives-windows": {
+                        "path": "org/lwjgl/lwjgl/lwjgl-platform/2.9.1/lwjgl-platform-2.9.1-natives-windows.jar",
+                        "sha1": "4c517eca808522457dd95ee8fc1fbcdbb602efbe",
+                        "size": 611334,
+                        "url": "https://libraries.minecraft.net/org/lwjgl/lwjgl/lwjgl-platform/2.9.1/lwjgl-platform-2.9.1-natives-windows.jar"
+                    }
+                }
+            },
+            "extract": {
+                "exclude": [
+                    "META-INF/"
+                ]
+            },
+            "name": "org.lwjgl.lwjgl:lwjgl-platform:2.9.1",
+            "natives": {
+                "linux": "natives-linux",
+                "osx": "natives-osx",
+                "windows": "natives-windows"
+            }
+        },
+        {
+            "downloads": {
+                "classifiers": {
+                    "natives-linux": {
+                        "path": "net/java/jinput/jinput-platform/2.0.5/jinput-platform-2.0.5-natives-linux.jar",
+                        "sha1": "7ff832a6eb9ab6a767f1ade2b548092d0fa64795",
+                        "size": 10362,
+                        "url": "https://libraries.minecraft.net/net/java/jinput/jinput-platform/2.0.5/jinput-platform-2.0.5-natives-linux.jar"
+                    },
+                    "natives-osx": {
+                        "path": "net/java/jinput/jinput-platform/2.0.5/jinput-platform-2.0.5-natives-osx.jar",
+                        "sha1": "53f9c919f34d2ca9de8c51fc4e1e8282029a9232",
+                        "size": 12186,
+                        "url": "https://libraries.minecraft.net/net/java/jinput/jinput-platform/2.0.5/jinput-platform-2.0.5-natives-osx.jar"
+                    },
+                    "natives-windows": {
+                        "path": "net/java/jinput/jinput-platform/2.0.5/jinput-platform-2.0.5-natives-windows.jar",
+                        "sha1": "385ee093e01f587f30ee1c8a2ee7d408fd732e16",
+                        "size": 155179,
+                        "url": "https://libraries.minecraft.net/net/java/jinput/jinput-platform/2.0.5/jinput-platform-2.0.5-natives-windows.jar"
+                    }
+                }
+            },
+            "extract": {
+                "exclude": [
+                    "META-INF/"
+                ]
+            },
+            "name": "net.java.jinput:jinput-platform:2.0.5",
+            "natives": {
+                "linux": "natives-linux",
+                "osx": "natives-osx",
+                "windows": "natives-windows"
+            }
+        }
+    ],
+    "name": "LWJGL",
+    "rules": null,
+    "version": "2.9.1"
+}

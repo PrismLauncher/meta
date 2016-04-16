@@ -65,7 +65,14 @@ grab_versions(main_json)
 
 Popen(["git add version_manifest.json versions/* assets/*"], shell=True, stdout=PIPE).communicate()
 
+print("Generating new split versions.")
+
+Popen(["rm lwjgl/*.json"], shell=True, stdout=PIPE).communicate()
+Popen(["rm minecraft/*.json"], shell=True, stdout=PIPE).communicate()
+
+Popen(["./separateVersions.py"], shell=True, stdout=PIPE).communicate()
+
+Popen(["git add lwjgl/* minecraft/*"], shell=True, stdout=PIPE).communicate()
+
 Popen(["git commit -a -m \"Update " + strftime("%Y-%m-%d", gmtime()) + "\""], shell=True, stdout=PIPE).communicate()
 Popen(["git push"], shell=True, stdout=PIPE).communicate()
-
-print("It is done.")
