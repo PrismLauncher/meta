@@ -28,7 +28,7 @@
         {
             "id": "1.9.2",
             "releaseTime": "2016-03-30T15:23:55+00:00",
-            "time": "2016-04-07T12:41:08+00:00",
+            "time": "2016-04-18T15:04:37+00:00",
             "type": "release",
             "url": "https://launchermeta.mojang.com/mc/game/6768033e216468247bd031a0a2d9876d79818f8f/1.9.2.json"
         },
@@ -150,13 +150,6 @@
             "time": "2016-04-07T12:41:08+00:00",
             "type": "snapshot",
             "url": "https://launchermeta.mojang.com/mc/game/bd6aa5d9e34d102124a2e7b4334ba331d588ab99/15w43c.json"
-        },
-        {
-            "id": "15w42a",
-            "releaseTime": "2015-10-14T13:25:14+00:00",
-            "time": "2016-02-02T15:37:47+00:00",
-            "type": "snapshot",
-            "url": "https://launchermeta.mojang.com/mc/game/9d02b6a3fb05981d6f01c8cdd639f024f50db260/15w42a.json"
         },
         {
             "id": "1.8.8",

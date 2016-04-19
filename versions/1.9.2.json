@@ -233,13 +233,13 @@
         {
             "downloads": {
                 "artifact": {
-                    "path": "com/mojang/realms/1.8.15/realms-1.8.15.jar",
-                    "sha1": "4018d062bebc79f1c9a452a5c5dc581ac10b06b7",
-                    "size": 1132755,
-                    "url": "https://libraries.minecraft.net/com/mojang/realms/1.8.15/realms-1.8.15.jar"
+                    "path": "com/mojang/realms/1.8.17/realms-1.8.17.jar",
+                    "sha1": "ace951ba5c16d2a1f102ff1badf63d72a1b01318",
+                    "size": 1575795,
+                    "url": "https://libraries.minecraft.net/com/mojang/realms/1.8.17/realms-1.8.17.jar"
                 }
             },
-            "name": "com.mojang:realms:1.8.15"
+            "name": "com.mojang:realms:1.8.17"
         },
         {
             "downloads": {
@@ -524,6 +524,6 @@
     "minecraftArguments": "--username ${auth_player_name} --version ${version_name} --gameDir ${game_directory} --assetsDir ${assets_root} --assetIndex ${assets_index_name} --uuid ${auth_uuid} --accessToken ${auth_access_token} --userType ${user_type} --versionType ${version_type}",
     "minimumLauncherVersion": 18,
     "releaseTime": "2016-03-30T15:23:55+00:00",
-    "time": "2016-04-07T12:41:08+00:00",
+    "time": "2016-04-18T15:04:37+00:00",
     "type": "release"
 }
