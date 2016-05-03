@@ -1,25 +1,25 @@
 {
     "assetIndex": {
-        "id": "1.9-aprilfools",
-        "sha1": "71de4244fa31cefae13c8aff94d97db875fe361c",
-        "size": 138127,
-        "totalSize": 120255348,
-        "url": "https://launchermeta.mojang.com/mc-staging/assets/1.9-aprilfools/71de4244fa31cefae13c8aff94d97db875fe361c/1.9-aprilfools.json"
+        "id": "1.9",
+        "sha1": "8549e8aca91ee8b8d1620e9e8252d477f16a56d5",
+        "size": 137552,
+        "totalSize": 120896362,
+        "url": "https://launchermeta.mojang.com/mc-staging/assets/1.9/8549e8aca91ee8b8d1620e9e8252d477f16a56d5/1.9.json"
     },
-    "assets": "1.9-aprilfools",
+    "assets": "1.9",
     "downloads": {
         "client": {
-            "sha1": "3843fae71dd283e68897ead618255fa1ddcf4c8d",
-            "size": 8746426,
-            "url": "https://launcher.mojang.com/mc/game/1.RV-Pre1/client/3843fae71dd283e68897ead618255fa1ddcf4c8d/client.jar"
+            "sha1": "364766592529c4a74397ea33ef1f10eb01cad872",
+            "size": 8736129,
+            "url": "https://launcher.mojang.com/mc/game/1.9.3-pre3/client/364766592529c4a74397ea33ef1f10eb01cad872/client.jar"
         },
         "server": {
-            "sha1": "f51d9489706f603be6be9716407f1dab5f7f2733",
-            "size": 8851148,
-            "url": "https://launcher.mojang.com/mc/game/1.RV-Pre1/server/f51d9489706f603be6be9716407f1dab5f7f2733/server.jar"
+            "sha1": "ef902371fa5cbb50288b4801f9e58432c627d8e7",
+            "size": 9406229,
+            "url": "https://launcher.mojang.com/mc/game/1.9.3-pre3/server/ef902371fa5cbb50288b4801f9e58432c627d8e7/server.jar"
         }
     },
-    "id": "1.RV-Pre1",
+    "id": "1.9.3-pre3",
     "libraries": [
         {
             "downloads": {
@@ -266,6 +266,17 @@
         {
             "downloads": {
                 "artifact": {
+                    "path": "it/unimi/dsi/fastutil/7.0.12_mojang/fastutil-7.0.12_mojang.jar",
+                    "sha1": "ba787e741efdc425fc5d2ea654b57c15fba27efa",
+                    "size": 522306,
+                    "url": "https://libraries.minecraft.net/it/unimi/dsi/fastutil/7.0.12_mojang/fastutil-7.0.12_mojang.jar"
+                }
+            },
+            "name": "it.unimi.dsi:fastutil:7.0.12_mojang"
+        },
+        {
+            "downloads": {
+                "artifact": {
                     "path": "org/apache/logging/log4j/log4j-api/2.0-beta9/log4j-api-2.0-beta9.jar",
                     "sha1": "1dd66e68cccd907880229f9e2de1314bd13ff785",
                     "size": 108161,
@@ -290,7 +301,7 @@
     "minecraftArguments": "--username ${auth_player_name} --version ${version_name} --gameDir ${game_directory} --assetsDir ${assets_root} --assetIndex ${assets_index_name} --uuid ${auth_uuid} --accessToken ${auth_access_token} --userType ${user_type} --versionType ${version_type}",
     "minimumLauncherVersion": 18,
     "name": "Minecraft",
-    "releaseTime": "2016-03-31T16:18:53+00:00",
-    "time": "2016-03-31T16:20:24+00:00",
+    "releaseTime": "2016-05-03T09:28:11+00:00",
+    "time": "2016-05-03T09:29:33+00:00",
     "type": "snapshot"
 }
