@@ -29,6 +29,17 @@
         {
             "downloads": {
                 "artifact": {
+                    "path": "com/mojang/netty/1.6/netty-1.6.jar",
+                    "sha1": "4b75825a06139752bd800d9e29c5fd55b8b1b1e4",
+                    "size": 7877,
+                    "url": "https://libraries.minecraft.net/com/mojang/netty/1.6/netty-1.6.jar"
+                }
+            },
+            "name": "com.mojang:netty:1.6"
+        },
+        {
+            "downloads": {
+                "artifact": {
                     "path": "java3d/vecmath/1.5.2/vecmath-1.5.2.jar",
                     "sha1": "79846ba34cbd89e2422d74d53752f993dcc2ccaf",
                     "size": 318956,
@@ -377,6 +388,6 @@
     "minimumLauncherVersion": 14,
     "name": "Minecraft",
     "releaseTime": "2014-09-02T08:24:35+00:00",
-    "time": "2016-02-02T15:37:47+00:00",
+    "time": "2016-05-10T14:45:26+00:00",
     "type": "release"
 }

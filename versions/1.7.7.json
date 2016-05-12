@@ -29,6 +29,17 @@
         {
             "downloads": {
                 "artifact": {
+                    "path": "com/mojang/netty/1.6/netty-1.6.jar",
+                    "sha1": "4b75825a06139752bd800d9e29c5fd55b8b1b1e4",
+                    "size": 7877,
+                    "url": "https://libraries.minecraft.net/com/mojang/netty/1.6/netty-1.6.jar"
+                }
+            },
+            "name": "com.mojang:netty:1.6"
+        },
+        {
+            "downloads": {
+                "artifact": {
                     "path": "java3d/vecmath/1.3.1/vecmath-1.3.1.jar",
                     "sha1": "a0ae4f51da409fa0c20fa0ca59e6bbc9413ae71d",
                     "size": 289881,
@@ -435,6 +446,6 @@
     "minecraftArguments": "--username ${auth_player_name} --version ${version_name} --gameDir ${game_directory} --assetsDir ${assets_root} --assetIndex ${assets_index_name} --uuid ${auth_uuid} --accessToken ${auth_access_token} --userProperties ${user_properties} --userType ${user_type}",
     "minimumLauncherVersion": 13,
     "releaseTime": "2014-04-09T07:52:16+00:00",
-    "time": "2016-02-02T15:37:47+00:00",
+    "time": "2016-05-10T14:45:26+00:00",
     "type": "release"
 }

@@ -29,6 +29,17 @@
         {
             "downloads": {
                 "artifact": {
+                    "path": "com/mojang/netty/1.6/netty-1.6.jar",
+                    "sha1": "4b75825a06139752bd800d9e29c5fd55b8b1b1e4",
+                    "size": 7877,
+                    "url": "https://libraries.minecraft.net/com/mojang/netty/1.6/netty-1.6.jar"
+                }
+            },
+            "name": "com.mojang:netty:1.6"
+        },
+        {
+            "downloads": {
+                "artifact": {
                     "path": "oshi-project/oshi-core/1.1/oshi-core-1.1.jar",
                     "sha1": "9ddf7b048a8d701be231c0f4f95fd986198fd2d8",
                     "size": 30973,
@@ -388,6 +399,6 @@
     "minimumLauncherVersion": 14,
     "name": "Minecraft",
     "releaseTime": "2015-02-19T15:47:29+00:00",
-    "time": "2016-02-02T15:37:47+00:00",
+    "time": "2016-05-10T14:45:26+00:00",
     "type": "release"
 }

@@ -9,23 +9,29 @@
     "assets": "1.9",
     "downloads": {
         "client": {
-            "sha1": "1cc965816c3c01b3b2226e15e884b74f3b04dd10",
-            "size": 9186764,
-            "url": "https://launcher.mojang.com/mc/game/15w45a/client/1cc965816c3c01b3b2226e15e884b74f3b04dd10/client.jar"
+            "sha1": "b6985b0d3a0520dfb6f17eeb1e8ba58ce9577061",
+            "size": 8736082,
+            "url": "https://launcher.mojang.com/mc/game/1.9.3/client/b6985b0d3a0520dfb6f17eeb1e8ba58ce9577061/client.jar"
         },
         "server": {
-            "sha1": "6bae28a2f80749ba7fc379e44acc46ac5fe44920",
-            "size": 8816714,
-            "url": "https://launcher.mojang.com/mc/game/15w45a/server/6bae28a2f80749ba7fc379e44acc46ac5fe44920/server.jar"
-        },
-        "windows_server": {
-            "sha1": "e18d49e82958f7b537fbe6184e93c7ea0ae21a3f",
-            "size": 9210954,
-            "url": "https://launcher.mojang.com/mc/game/15w45a/windows_server/e18d49e82958f7b537fbe6184e93c7ea0ae21a3f/windows_server.exe"
+            "sha1": "8e897b6b6d784f745332644f4d104f7a6e737ccf",
+            "size": 9399056,
+            "url": "https://launcher.mojang.com/mc/game/1.9.3/server/8e897b6b6d784f745332644f4d104f7a6e737ccf/server.jar"
         }
     },
-    "id": "15w45a",
+    "id": "1.9.3",
     "libraries": [
+        {
+            "downloads": {
+                "artifact": {
+                    "path": "com/mojang/netty/1.6/netty-1.6.jar",
+                    "sha1": "4b75825a06139752bd800d9e29c5fd55b8b1b1e4",
+                    "size": 7877,
+                    "url": "https://libraries.minecraft.net/com/mojang/netty/1.6/netty-1.6.jar"
+                }
+            },
+            "name": "com.mojang:netty:1.6"
+        },
         {
             "downloads": {
                 "artifact": {
@@ -216,13 +222,13 @@
         {
             "downloads": {
                 "artifact": {
-                    "path": "com/mojang/realms/1.7.24/realms-1.7.24.jar",
-                    "sha1": "ae6fa0d2088bb90d0496db16f3d46c2df148e370",
-                    "size": 321573,
-                    "url": "https://libraries.minecraft.net/com/mojang/realms/1.7.24/realms-1.7.24.jar"
+                    "path": "com/mojang/realms/1.8.19/realms-1.8.19.jar",
+                    "sha1": "f7469a9307b962d1097e44713eb1baa087c06e43",
+                    "size": 1575795,
+                    "url": "https://libraries.minecraft.net/com/mojang/realms/1.8.19/realms-1.8.19.jar"
                 }
             },
-            "name": "com.mojang:realms:1.7.24"
+            "name": "com.mojang:realms:1.8.19"
         },
         {
             "downloads": {
@@ -271,6 +277,17 @@
         {
             "downloads": {
                 "artifact": {
+                    "path": "it/unimi/dsi/fastutil/7.0.12_mojang/fastutil-7.0.12_mojang.jar",
+                    "sha1": "ba787e741efdc425fc5d2ea654b57c15fba27efa",
+                    "size": 522306,
+                    "url": "https://libraries.minecraft.net/it/unimi/dsi/fastutil/7.0.12_mojang/fastutil-7.0.12_mojang.jar"
+                }
+            },
+            "name": "it.unimi.dsi:fastutil:7.0.12_mojang"
+        },
+        {
+            "downloads": {
+                "artifact": {
                     "path": "org/apache/logging/log4j/log4j-api/2.0-beta9/log4j-api-2.0-beta9.jar",
                     "sha1": "1dd66e68cccd907880229f9e2de1314bd13ff785",
                     "size": 108161,
@@ -292,10 +309,10 @@
         }
     ],
     "mainClass": "net.minecraft.client.main.Main",
-    "minecraftArguments": "--username ${auth_player_name} --version ${version_name} --gameDir ${game_directory} --assetsDir ${assets_root} --assetIndex ${assets_index_name} --uuid ${auth_uuid} --accessToken ${auth_access_token} --userType ${user_type}",
-    "minimumLauncherVersion": 14,
+    "minecraftArguments": "--username ${auth_player_name} --version ${version_name} --gameDir ${game_directory} --assetsDir ${assets_root} --assetIndex ${assets_index_name} --uuid ${auth_uuid} --accessToken ${auth_access_token} --userType ${user_type} --versionType ${version_type}",
+    "minimumLauncherVersion": 18,
     "name": "Minecraft",
-    "releaseTime": "2015-11-05T13:04:07+00:00",
-    "time": "2016-04-25T16:37:54+00:00",
-    "type": "snapshot"
+    "releaseTime": "2016-05-10T08:33:35+00:00",
+    "time": "2016-05-10T14:45:26+00:00",
+    "type": "release"
 }
