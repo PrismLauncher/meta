@@ -1,9 +1,16 @@
 {
     "latest": {
         "release": "1.9.4",
-        "snapshot": "16w21b"
+        "snapshot": "1.10-pre1"
     },
     "versions": [
+        {
+            "id": "1.10-pre1",
+            "releaseTime": "2016-06-02T14:45:16+00:00",
+            "time": "2016-06-02T15:05:38+00:00",
+            "type": "snapshot",
+            "url": "https://launchermeta.mojang.com/mc/game/11795dfbb4715f345a5a99cd8e7278161bd4c306/1.10-pre1.json"
+        },
         {
             "id": "16w21b",
             "releaseTime": "2016-05-26T12:47:22+00:00",

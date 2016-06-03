@@ -232,7 +232,7 @@
                 "id": "client-1.7.xml",
                 "sha1": "49e2e41bc339698bd8199e0da9398c926e68c95d",
                 "size": 467,
-                "url": "https://launchermeta.mojang.com/mc-staging/log_configs/client-1.7.xml/49e2e41bc339698bd8199e0da9398c926e68c95d/client-1.7.xml"
+                "url": "https://launchermeta.mojang.com/mc/log_configs/client-1.7.xml/49e2e41bc339698bd8199e0da9398c926e68c95d/client-1.7.xml"
             },
             "type": "log4j2-xml"
         }

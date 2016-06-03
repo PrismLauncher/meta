@@ -9,17 +9,17 @@
     "assets": "1.9",
     "downloads": {
         "client": {
-            "sha1": "73de5728b610cf31bcc9c497447856374893249d",
-            "size": 8841325,
-            "url": "https://launcher.mojang.com/mc/game/16w20a/client/73de5728b610cf31bcc9c497447856374893249d/client.jar"
+            "sha1": "33c87d0abcd90cfc694ef651e96e81689e14cffb",
+            "size": 8861822,
+            "url": "https://launcher.mojang.com/mc/game/1.10-pre1/client/33c87d0abcd90cfc694ef651e96e81689e14cffb/client.jar"
         },
         "server": {
-            "sha1": "2cbcbd735cb48c8cc2bebb7b43c8afa69a923269",
-            "size": 9447434,
-            "url": "https://launcher.mojang.com/mc/game/16w20a/server/2cbcbd735cb48c8cc2bebb7b43c8afa69a923269/server.jar"
+            "sha1": "c9c34ba406f694e56c1729b465c25e0f63ce9743",
+            "size": 9463661,
+            "url": "https://launcher.mojang.com/mc/game/1.10-pre1/server/c9c34ba406f694e56c1729b465c25e0f63ce9743/server.jar"
         }
     },
-    "id": "16w20a",
+    "id": "1.10-pre1",
     "libraries": [
         {
             "downloads": {
@@ -542,22 +542,10 @@
             }
         }
     ],
-    "logging": {
-        "client": {
-            "argument": "-Dlog4j.configurationFile=${path}",
-            "file": {
-                "id": "client-1.7.xml",
-                "sha1": "49e2e41bc339698bd8199e0da9398c926e68c95d",
-                "size": 467,
-                "url": "https://launchermeta.mojang.com/mc/log_configs/client-1.7.xml/49e2e41bc339698bd8199e0da9398c926e68c95d/client-1.7.xml"
-            },
-            "type": "log4j2-xml"
-        }
-    },
     "mainClass": "net.minecraft.client.main.Main",
     "minecraftArguments": "--username ${auth_player_name} --version ${version_name} --gameDir ${game_directory} --assetsDir ${assets_root} --assetIndex ${assets_index_name} --uuid ${auth_uuid} --accessToken ${auth_access_token} --userType ${user_type} --versionType ${version_type}",
     "minimumLauncherVersion": 18,
-    "releaseTime": "2016-05-18T12:45:14+00:00",
-    "time": "2016-06-01T11:45:48+00:00",
+    "releaseTime": "2016-06-02T14:45:16+00:00",
+    "time": "2016-06-02T15:05:38+00:00",
     "type": "snapshot"
 }
