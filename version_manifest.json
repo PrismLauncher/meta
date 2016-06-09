@@ -1,13 +1,27 @@
 {
     "latest": {
-        "release": "1.9.4",
-        "snapshot": "1.10-pre1"
+        "release": "1.10",
+        "snapshot": "1.10"
     },
     "versions": [
         {
+            "id": "1.10",
+            "releaseTime": "2016-06-08T13:06:18+00:00",
+            "time": "2016-06-08T13:48:15+00:00",
+            "type": "release",
+            "url": "https://launchermeta.mojang.com/mc/game/281697b6f88d757066b5f0427b40ffabc50e79b9/1.10.json"
+        },
+        {
+            "id": "1.10-pre2",
+            "releaseTime": "2016-06-07T14:56:34+00:00",
+            "time": "2016-06-08T13:48:15+00:00",
+            "type": "snapshot",
+            "url": "https://launchermeta.mojang.com/mc/game/53b005912a758e30d94eaff7676a84005ae1ea1b/1.10-pre2.json"
+        },
+        {
             "id": "1.10-pre1",
             "releaseTime": "2016-06-02T14:45:16+00:00",
-            "time": "2016-06-02T15:05:38+00:00",
+            "time": "2016-06-08T13:48:15+00:00",
             "type": "snapshot",
             "url": "https://launchermeta.mojang.com/mc/game/11795dfbb4715f345a5a99cd8e7278161bd4c306/1.10-pre1.json"
         },
@@ -38,13 +52,6 @@
             "time": "2016-06-01T11:45:48+00:00",
             "type": "release",
             "url": "https://launchermeta.mojang.com/mc/game/566def4133157888f4b2d1832951d78ebd328840/1.9.3.json"
-        },
-        {
-            "id": "1.9.3-pre3",
-            "releaseTime": "2016-05-03T09:28:11+00:00",
-            "time": "2016-06-01T11:45:48+00:00",
-            "type": "snapshot",
-            "url": "https://launchermeta.mojang.com/mc/game/cb3bbbc48354bd53d0ef0943fe43351dc02801b6/1.9.3-pre3.json"
         },
         {
             "id": "16w15b",
@@ -136,13 +143,6 @@
             "time": "2016-06-01T11:45:48+00:00",
             "type": "snapshot",
             "url": "https://launchermeta.mojang.com/mc/game/4314012592850e31fa6b5c873d5fc8099286f838/15w50a.json"
-        },
-        {
-            "id": "15w49b",
-            "releaseTime": "2015-12-03T15:23:22+00:00",
-            "time": "2016-06-01T11:45:48+00:00",
-            "type": "snapshot",
-            "url": "https://launchermeta.mojang.com/mc/game/a265fcbb464fb68b485e98378752d8a7fe8a81ec/15w49b.json"
         },
         {
             "id": "1.8.9",

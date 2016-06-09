@@ -1,30 +1,25 @@
 {
     "assetIndex": {
-        "id": "1.9",
-        "sha1": "8549e8aca91ee8b8d1620e9e8252d477f16a56d5",
-        "size": 137552,
-        "totalSize": 120896362,
-        "url": "https://launchermeta.mojang.com/mc/assets/1.9/8549e8aca91ee8b8d1620e9e8252d477f16a56d5/1.9.json"
+        "id": "1.10",
+        "sha1": "8345361bc65bd37954eaf267b3b1817f081ac0ee",
+        "size": 144915,
+        "totalSize": 121569946,
+        "url": "https://launchermeta.mojang.com/mc/assets/1.10/8345361bc65bd37954eaf267b3b1817f081ac0ee/1.10.json"
     },
-    "assets": "1.9",
+    "assets": "1.10",
     "downloads": {
         "client": {
-            "sha1": "52b24b872a1280023f2d9dc44a70ad9a052a11f1",
-            "size": 8653646,
-            "url": "https://launcher.mojang.com/mc/game/15w49b/client/52b24b872a1280023f2d9dc44a70ad9a052a11f1/client.jar"
+            "sha1": "c08e980eb1d79405c9213717df4cd11e509b0761",
+            "size": 8857151,
+            "url": "https://launcher.mojang.com/mc/game/1.10-pre2/client/c08e980eb1d79405c9213717df4cd11e509b0761/client.jar"
         },
         "server": {
-            "sha1": "e376081a73fe429c23db41a99a68a4b04c53ba8e",
-            "size": 8827037,
-            "url": "https://launcher.mojang.com/mc/game/15w49b/server/e376081a73fe429c23db41a99a68a4b04c53ba8e/server.jar"
-        },
-        "windows_server": {
-            "sha1": "8d72d717ad9ae39afa3d19d62e0b5f5809a53010",
-            "size": 9221277,
-            "url": "https://launcher.mojang.com/mc/game/15w49b/windows_server/8d72d717ad9ae39afa3d19d62e0b5f5809a53010/windows_server.exe"
+            "sha1": "aa4ec0004eb20a70ef7426816cae992d73718038",
+            "size": 9459518,
+            "url": "https://launcher.mojang.com/mc/game/1.10-pre2/server/aa4ec0004eb20a70ef7426816cae992d73718038/server.jar"
         }
     },
-    "id": "15w49b",
+    "id": "1.10-pre2",
     "libraries": [
         {
             "downloads": {
@@ -249,13 +244,13 @@
         {
             "downloads": {
                 "artifact": {
-                    "path": "com/mojang/realms/1.7.24/realms-1.7.24.jar",
-                    "sha1": "ae6fa0d2088bb90d0496db16f3d46c2df148e370",
-                    "size": 321573,
-                    "url": "https://libraries.minecraft.net/com/mojang/realms/1.7.24/realms-1.7.24.jar"
+                    "path": "com/mojang/realms/1.8.19/realms-1.8.19.jar",
+                    "sha1": "f7469a9307b962d1097e44713eb1baa087c06e43",
+                    "size": 1575795,
+                    "url": "https://libraries.minecraft.net/com/mojang/realms/1.8.19/realms-1.8.19.jar"
                 }
             },
-            "name": "com.mojang:realms:1.7.24"
+            "name": "com.mojang:realms:1.8.19"
         },
         {
             "downloads": {
@@ -300,6 +295,17 @@
                 }
             },
             "name": "org.apache.httpcomponents:httpcore:4.3.2"
+        },
+        {
+            "downloads": {
+                "artifact": {
+                    "path": "it/unimi/dsi/fastutil/7.0.12_mojang/fastutil-7.0.12_mojang.jar",
+                    "sha1": "ba787e741efdc425fc5d2ea654b57c15fba27efa",
+                    "size": 522306,
+                    "url": "https://libraries.minecraft.net/it/unimi/dsi/fastutil/7.0.12_mojang/fastutil-7.0.12_mojang.jar"
+                }
+            },
+            "name": "it.unimi.dsi:fastutil:7.0.12_mojang"
         },
         {
             "downloads": {
@@ -549,9 +555,9 @@
         }
     },
     "mainClass": "net.minecraft.client.main.Main",
-    "minecraftArguments": "--username ${auth_player_name} --version ${version_name} --gameDir ${game_directory} --assetsDir ${assets_root} --assetIndex ${assets_index_name} --uuid ${auth_uuid} --accessToken ${auth_access_token} --userType ${user_type}",
-    "minimumLauncherVersion": 14,
-    "releaseTime": "2015-12-03T15:23:22+00:00",
-    "time": "2016-06-01T11:45:48+00:00",
+    "minecraftArguments": "--username ${auth_player_name} --version ${version_name} --gameDir ${game_directory} --assetsDir ${assets_root} --assetIndex ${assets_index_name} --uuid ${auth_uuid} --accessToken ${auth_access_token} --userType ${user_type} --versionType ${version_type}",
+    "minimumLauncherVersion": 18,
+    "releaseTime": "2016-06-07T14:56:34+00:00",
+    "time": "2016-06-08T13:48:15+00:00",
     "type": "snapshot"
 }
