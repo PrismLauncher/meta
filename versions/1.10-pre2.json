@@ -1,10 +1,10 @@
 {
     "assetIndex": {
         "id": "1.10",
-        "sha1": "8345361bc65bd37954eaf267b3b1817f081ac0ee",
-        "size": 144915,
-        "totalSize": 121569946,
-        "url": "https://launchermeta.mojang.com/mc/assets/1.10/8345361bc65bd37954eaf267b3b1817f081ac0ee/1.10.json"
+        "sha1": "d3bfc4ffba1ea334c725dd91eaf4ecd402d641f7",
+        "size": 145627,
+        "totalSize": 121931230,
+        "url": "https://launchermeta.mojang.com/mc/assets/1.10/d3bfc4ffba1ea334c725dd91eaf4ecd402d641f7/1.10.json"
     },
     "assets": "1.10",
     "downloads": {
@@ -558,6 +558,6 @@
     "minecraftArguments": "--username ${auth_player_name} --version ${version_name} --gameDir ${game_directory} --assetsDir ${assets_root} --assetIndex ${assets_index_name} --uuid ${auth_uuid} --accessToken ${auth_access_token} --userType ${user_type} --versionType ${version_type}",
     "minimumLauncherVersion": 18,
     "releaseTime": "2016-06-07T14:56:34+00:00",
-    "time": "2016-06-08T13:48:15+00:00",
+    "time": "2016-06-15T13:36:22+00:00",
     "type": "snapshot"
 }
