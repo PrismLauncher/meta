@@ -1,25 +1,25 @@
 {
     "assetIndex": {
-        "id": "1.9",
-        "sha1": "8549e8aca91ee8b8d1620e9e8252d477f16a56d5",
-        "size": 137552,
-        "totalSize": 120896362,
-        "url": "https://launchermeta.mojang.com/mc/assets/1.9/8549e8aca91ee8b8d1620e9e8252d477f16a56d5/1.9.json"
+        "id": "1.11",
+        "sha1": "9698a5fca3b77abd360fd1d1a742a76e32ceee5b",
+        "size": 145879,
+        "totalSize": 122492175,
+        "url": "https://launchermeta.mojang.com/mc/assets/1.11/9698a5fca3b77abd360fd1d1a742a76e32ceee5b/1.11.json"
     },
-    "assets": "1.9",
+    "assets": "1.11",
     "downloads": {
         "client": {
-            "sha1": "544342f959159d63da205b23947ee9c10b73045c",
-            "size": 8693204,
-            "url": "https://launcher.mojang.com/mc/game/16w06a/client/544342f959159d63da205b23947ee9c10b73045c/client.jar"
+            "sha1": "71afbf19a5e9d37cceb449743323acbb17895dae",
+            "size": 8887744,
+            "url": "https://launcher.mojang.com/mc/game/16w32b/client/71afbf19a5e9d37cceb449743323acbb17895dae/client.jar"
         },
         "server": {
-            "sha1": "c4da6936d6374fd7116900135a2ae664de63d3bf",
-            "size": 8843770,
-            "url": "https://launcher.mojang.com/mc/game/16w06a/server/c4da6936d6374fd7116900135a2ae664de63d3bf/server.jar"
+            "sha1": "b912ff1468e93003f36cda32db5d70133b517f97",
+            "size": 9481725,
+            "url": "https://launcher.mojang.com/mc/game/16w32b/server/b912ff1468e93003f36cda32db5d70133b517f97/server.jar"
         }
     },
-    "id": "16w06a",
+    "id": "16w32b",
     "libraries": [
         {
             "downloads": {
@@ -244,13 +244,13 @@
         {
             "downloads": {
                 "artifact": {
-                    "path": "com/mojang/realms/1.7.57/realms-1.7.57.jar",
-                    "sha1": "2612d98b2daf072c30fed22bee2c2680ede5104e",
-                    "size": 1192425,
-                    "url": "https://libraries.minecraft.net/com/mojang/realms/1.7.57/realms-1.7.57.jar"
+                    "path": "com/mojang/realms/1.9.3/realms-1.9.3.jar",
+                    "sha1": "b291425bf7ef763452eaa894575018706339f72b",
+                    "size": 1575798,
+                    "url": "https://libraries.minecraft.net/com/mojang/realms/1.9.3/realms-1.9.3.jar"
                 }
             },
-            "name": "com.mojang:realms:1.7.57"
+            "name": "com.mojang:realms:1.9.3"
         },
         {
             "downloads": {
@@ -295,6 +295,17 @@
                 }
             },
             "name": "org.apache.httpcomponents:httpcore:4.3.2"
+        },
+        {
+            "downloads": {
+                "artifact": {
+                    "path": "it/unimi/dsi/fastutil/7.0.12_mojang/fastutil-7.0.12_mojang.jar",
+                    "sha1": "ba787e741efdc425fc5d2ea654b57c15fba27efa",
+                    "size": 522306,
+                    "url": "https://libraries.minecraft.net/it/unimi/dsi/fastutil/7.0.12_mojang/fastutil-7.0.12_mojang.jar"
+                }
+            },
+            "name": "it.unimi.dsi:fastutil:7.0.12_mojang"
         },
         {
             "downloads": {
@@ -546,7 +557,7 @@
     "mainClass": "net.minecraft.client.main.Main",
     "minecraftArguments": "--username ${auth_player_name} --version ${version_name} --gameDir ${game_directory} --assetsDir ${assets_root} --assetIndex ${assets_index_name} --uuid ${auth_uuid} --accessToken ${auth_access_token} --userType ${user_type} --versionType ${version_type}",
     "minimumLauncherVersion": 18,
-    "releaseTime": "2016-02-10T15:06:41+00:00",
-    "time": "2016-06-01T11:45:48+00:00",
+    "releaseTime": "2016-08-11T14:34:29+00:00",
+    "time": "2016-08-11T14:37:12+00:00",
     "type": "snapshot"
 }
