@@ -222,13 +222,13 @@
         {
             "downloads": {
                 "artifact": {
-                    "path": "com/mojang/realms/1.9.4/realms-1.9.4.jar",
-                    "sha1": "e79108f18f47a75dc97d86be3c49693da3effbcb",
-                    "size": 1575705,
-                    "url": "https://libraries.minecraft.net/com/mojang/realms/1.9.4/realms-1.9.4.jar"
+                    "path": "com/mojang/realms/1.9.5/realms-1.9.5.jar",
+                    "sha1": "efd57120f97df871cc725cf832f628d9d3f17eec",
+                    "size": 1575703,
+                    "url": "https://libraries.minecraft.net/com/mojang/realms/1.9.5/realms-1.9.5.jar"
                 }
             },
-            "name": "com.mojang:realms:1.9.4"
+            "name": "com.mojang:realms:1.9.5"
         },
         {
             "downloads": {
@@ -325,6 +325,6 @@
     "minimumLauncherVersion": 18,
     "name": "Minecraft",
     "releaseTime": "2016-06-23T09:17:32+00:00",
-    "time": "2016-08-15T13:45:28+00:00",
+    "time": "2016-08-16T12:54:57+00:00",
     "type": "release"
 }
