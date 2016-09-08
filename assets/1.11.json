@@ -397,8 +397,8 @@
             "size": 134843
         },
         "minecraft/sounds.json": {
-            "hash": "6b6ac2141ed94d43c35daacab091b67dcd93ec1b",
-            "size": 86357
+            "hash": "9af21e64c8ef87e914811f54610903ede241e3c8",
+            "size": 86464
         },
         "minecraft/sounds/ambient/cave/cave1.ogg": {
             "hash": "29d4dccf3353334c7aa2a49cb6fed3780a51a1ba",
@@ -1703,6 +1703,14 @@
         "minecraft/sounds/item/armor/equip_leather6.ogg": {
             "hash": "74c2c4cd3ccc69adae111b684d8620ce59c305ba",
             "size": 6786
+        },
+        "minecraft/sounds/item/bottle/empty1.ogg": {
+            "hash": "938a3212f524fd5c046d8737f63333cdeba88a6c",
+            "size": 8804
+        },
+        "minecraft/sounds/item/bottle/empty2.ogg": {
+            "hash": "c20374d6775a0791a514ad065aa51540074866ef",
+            "size": 11136
         },
         "minecraft/sounds/item/bottle/fill1.ogg": {
             "hash": "4dbe4df94e8c2433b4e046b0493b47db1272b995",

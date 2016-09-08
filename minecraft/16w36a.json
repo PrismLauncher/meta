@@ -9,17 +9,17 @@
     "assets": "1.11",
     "downloads": {
         "client": {
-            "sha1": "96bf2617491528e0a4d636fa08afe3c8c14282c7",
-            "size": 8892558,
-            "url": "https://launcher.mojang.com/mc/game/16w35a/client/96bf2617491528e0a4d636fa08afe3c8c14282c7/client.jar"
+            "sha1": "f333065b34c818493736a90d5f559ee702957bd3",
+            "size": 8894291,
+            "url": "https://launcher.mojang.com/mc/game/16w36a/client/f333065b34c818493736a90d5f559ee702957bd3/client.jar"
         },
         "server": {
-            "sha1": "16ad43cb3b87b0279028af26201af7651b87c9e0",
-            "size": 9485596,
-            "url": "https://launcher.mojang.com/mc/game/16w35a/server/16ad43cb3b87b0279028af26201af7651b87c9e0/server.jar"
+            "sha1": "921580b22ce7d48f9d541364a3b04eebb680222e",
+            "size": 9488664,
+            "url": "https://launcher.mojang.com/mc/game/16w36a/server/921580b22ce7d48f9d541364a3b04eebb680222e/server.jar"
         }
     },
-    "id": "16w35a",
+    "id": "16w36a",
     "libraries": [
         {
             "downloads": {
@@ -324,7 +324,7 @@
     "minecraftArguments": "--username ${auth_player_name} --version ${version_name} --gameDir ${game_directory} --assetsDir ${assets_root} --assetIndex ${assets_index_name} --uuid ${auth_uuid} --accessToken ${auth_access_token} --userType ${user_type} --versionType ${version_type}",
     "minimumLauncherVersion": 18,
     "name": "Minecraft",
-    "releaseTime": "2016-09-01T13:13:38+00:00",
-    "time": "2016-09-08T14:52:01+00:00",
+    "releaseTime": "2016-09-08T14:55:10+00:00",
+    "time": "2016-09-08T14:57:03+00:00",
     "type": "snapshot"
 }
