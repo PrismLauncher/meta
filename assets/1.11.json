@@ -401,8 +401,8 @@
             "size": 134834
         },
         "minecraft/sounds.json": {
-            "hash": "7681035753acec3211729e26d94aaba8d213aeb4",
-            "size": 90058
+            "hash": "af11e40fc80a9b60c5dbd3d7d3582c8e24150982",
+            "size": 91042
         },
         "minecraft/sounds/ambient/cave/cave1.ogg": {
             "hash": "29d4dccf3353334c7aa2a49cb6fed3780a51a1ba",
@@ -683,6 +683,14 @@
         "minecraft/sounds/block/iron_trapdoor/open4.ogg": {
             "hash": "e73b083393fa29357e85f8b535751e14853cf7b5",
             "size": 5516
+        },
+        "minecraft/sounds/block/shulker_box/close.ogg": {
+            "hash": "d673dd1dae8c1dc80b53917cf454a52386256132",
+            "size": 8936
+        },
+        "minecraft/sounds/block/shulker_box/open.ogg": {
+            "hash": "0fadce9827b247d2da715d8e5a8213db83fbe44f",
+            "size": 9352
         },
         "minecraft/sounds/block/waterlily/place1.ogg": {
             "hash": "a8d5525b3304a47c138579e46c5dc525bba193dd",
@@ -1367,14 +1375,6 @@
         "minecraft/sounds/entity/shulker/shoot4.ogg": {
             "hash": "3cffe887c0882fa146d5671898a4d6c23ec72920",
             "size": 15748
-        },
-        "minecraft/sounds/entity/shulker_box/close.ogg": {
-            "hash": "d673dd1dae8c1dc80b53917cf454a52386256132",
-            "size": 8936
-        },
-        "minecraft/sounds/entity/shulker_box/open.ogg": {
-            "hash": "0fadce9827b247d2da715d8e5a8213db83fbe44f",
-            "size": 9352
         },
         "minecraft/sounds/entity/shulker_bullet/hit1.ogg": {
             "hash": "e72ee78cbc57a43a37ba6db660d9e1eeb0d75f88",

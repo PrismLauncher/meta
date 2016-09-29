@@ -1,48 +1,48 @@
 {
     "latest": {
         "release": "1.10.2",
-        "snapshot": "16w39a"
+        "snapshot": "16w39b"
     },
     "versions": [
         {
-            "id": "16w39a",
-            "releaseTime": "2016-09-28T13:32:06+00:00",
-            "time": "2016-09-28T13:33:50+00:00",
+            "id": "16w39b",
+            "releaseTime": "2016-09-29T14:39:39+00:00",
+            "time": "2016-09-29T14:41:21+00:00",
             "type": "snapshot",
-            "url": "https://launchermeta.mojang.com/mc/game/e6cb5980edc188e930bc5d03c0023f4af93ffd40/16w39a.json"
+            "url": "https://launchermeta.mojang.com/mc/game/2d29235c0b2337373f32afe30b56d22a39de6e35/16w39b.json"
         },
         {
             "id": "16w38a",
             "releaseTime": "2016-09-20T12:40:49+00:00",
-            "time": "2016-09-28T13:26:45+00:00",
+            "time": "2016-09-29T14:31:26+00:00",
             "type": "snapshot",
             "url": "https://launchermeta.mojang.com/mc/game/1b29f6bbf02e8dd16ba5519f7042a36b7734b732/16w38a.json"
         },
         {
             "id": "16w36a",
             "releaseTime": "2016-09-08T14:55:10+00:00",
-            "time": "2016-09-28T13:26:45+00:00",
+            "time": "2016-09-29T14:31:26+00:00",
             "type": "snapshot",
             "url": "https://launchermeta.mojang.com/mc/game/061e119d3089f58ac216221860038da489d8cb0a/16w36a.json"
         },
         {
             "id": "16w35a",
             "releaseTime": "2016-09-01T13:13:38+00:00",
-            "time": "2016-09-28T13:26:45+00:00",
+            "time": "2016-09-29T14:31:26+00:00",
             "type": "snapshot",
             "url": "https://launchermeta.mojang.com/mc/game/cbdc0f050cbad8e1382b816de576af3c9af818e4/16w35a.json"
         },
         {
             "id": "16w33a",
             "releaseTime": "2016-08-17T12:48:57+00:00",
-            "time": "2016-09-28T13:26:45+00:00",
+            "time": "2016-09-29T14:31:26+00:00",
             "type": "snapshot",
             "url": "https://launchermeta.mojang.com/mc/game/2dc7ef6e029db09e7ff8ed8b2eb086c52a163fe5/16w33a.json"
         },
         {
             "id": "16w32b",
             "releaseTime": "2016-08-11T14:34:29+00:00",
-            "time": "2016-09-28T13:26:45+00:00",
+            "time": "2016-09-29T14:31:26+00:00",
             "type": "snapshot",
             "url": "https://launchermeta.mojang.com/mc/game/d76d4048851e5d74aed8ecf37826c74fb08f0a84/16w32b.json"
         },

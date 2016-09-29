@@ -1,25 +1,25 @@
 {
     "assetIndex": {
         "id": "1.11",
-        "sha1": "0b5a22acee2c6dedaf45f39e072f59f4a32d5100",
-        "size": 157390,
-        "totalSize": 123825873,
-        "url": "https://launchermeta.mojang.com/mc/assets/1.11/0b5a22acee2c6dedaf45f39e072f59f4a32d5100/1.11.json"
+        "sha1": "b2d7e6c6848d45f22180fb39b422ddfc6adcd362",
+        "size": 157388,
+        "totalSize": 123826857,
+        "url": "https://launchermeta.mojang.com/mc/assets/1.11/b2d7e6c6848d45f22180fb39b422ddfc6adcd362/1.11.json"
     },
     "assets": "1.11",
     "downloads": {
         "client": {
-            "sha1": "ebfc3681ad92d9d200232f913645411728f45dc6",
-            "size": 9252453,
-            "url": "https://launcher.mojang.com/mc/game/16w39a/client/ebfc3681ad92d9d200232f913645411728f45dc6/client.jar"
+            "sha1": "f04ca007b45c3fed9ba03c5ada8926320a4ddbd5",
+            "size": 9275077,
+            "url": "https://launcher.mojang.com/mc/game/16w39b/client/f04ca007b45c3fed9ba03c5ada8926320a4ddbd5/client.jar"
         },
         "server": {
-            "sha1": "f5e840e9f37ae7f50c9c979669279bcc68c91fa7",
-            "size": 9688181,
-            "url": "https://launcher.mojang.com/mc/game/16w39a/server/f5e840e9f37ae7f50c9c979669279bcc68c91fa7/server.jar"
+            "sha1": "07eb3f85fc848ec8e209377aee1f7f574566e130",
+            "size": 9695019,
+            "url": "https://launcher.mojang.com/mc/game/16w39b/server/07eb3f85fc848ec8e209377aee1f7f574566e130/server.jar"
         }
     },
-    "id": "16w39a",
+    "id": "16w39b",
     "libraries": [
         {
             "downloads": {
@@ -557,7 +557,7 @@
     "mainClass": "net.minecraft.client.main.Main",
     "minecraftArguments": "--username ${auth_player_name} --version ${version_name} --gameDir ${game_directory} --assetsDir ${assets_root} --assetIndex ${assets_index_name} --uuid ${auth_uuid} --accessToken ${auth_access_token} --userType ${user_type} --versionType ${version_type}",
     "minimumLauncherVersion": 18,
-    "releaseTime": "2016-09-28T13:32:06+00:00",
-    "time": "2016-09-28T13:33:50+00:00",
+    "releaseTime": "2016-09-29T14:39:39+00:00",
+    "time": "2016-09-29T14:41:21+00:00",
     "type": "snapshot"
 }
