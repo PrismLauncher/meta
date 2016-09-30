@@ -1,10 +1,10 @@
 {
     "assetIndex": {
         "id": "1.11",
-        "sha1": "b2d7e6c6848d45f22180fb39b422ddfc6adcd362",
+        "sha1": "7a930c7d9dd825a6f973c90e114b029df167cdfd",
         "size": 157388,
-        "totalSize": 123826857,
-        "url": "https://launchermeta.mojang.com/mc/assets/1.11/b2d7e6c6848d45f22180fb39b422ddfc6adcd362/1.11.json"
+        "totalSize": 123826718,
+        "url": "https://launchermeta.mojang.com/mc/assets/1.11/7a930c7d9dd825a6f973c90e114b029df167cdfd/1.11.json"
     },
     "assets": "1.11",
     "downloads": {
@@ -325,6 +325,6 @@
     "minimumLauncherVersion": 18,
     "name": "Minecraft",
     "releaseTime": "2016-08-17T12:48:57+00:00",
-    "time": "2016-09-29T14:31:26+00:00",
+    "time": "2016-09-30T14:06:38+00:00",
     "type": "snapshot"
 }
