@@ -9,17 +9,17 @@
     "assets": "1.11",
     "downloads": {
         "client": {
-            "sha1": "71afbf19a5e9d37cceb449743323acbb17895dae",
-            "size": 8887744,
-            "url": "https://launcher.mojang.com/mc/game/16w32b/client/71afbf19a5e9d37cceb449743323acbb17895dae/client.jar"
+            "sha1": "6e5f07830bbd10ab10b6cccdaaef17c6b589a6d7",
+            "size": 9252677,
+            "url": "https://launcher.mojang.com/mc/game/16w40a/client/6e5f07830bbd10ab10b6cccdaaef17c6b589a6d7/client.jar"
         },
         "server": {
-            "sha1": "b912ff1468e93003f36cda32db5d70133b517f97",
-            "size": 9481725,
-            "url": "https://launcher.mojang.com/mc/game/16w32b/server/b912ff1468e93003f36cda32db5d70133b517f97/server.jar"
+            "sha1": "64a1a5ba3f347c5e03477b42ac13d10ee193b51c",
+            "size": 9697554,
+            "url": "https://launcher.mojang.com/mc/game/16w40a/server/64a1a5ba3f347c5e03477b42ac13d10ee193b51c/server.jar"
         }
     },
-    "id": "16w32b",
+    "id": "16w40a",
     "libraries": [
         {
             "downloads": {
@@ -233,13 +233,13 @@
         {
             "downloads": {
                 "artifact": {
-                    "path": "com/mojang/authlib/1.5.22/authlib-1.5.22.jar",
-                    "sha1": "afaa8f6df976fcb5520e76ef1d5798c9e6b5c0b2",
-                    "size": 64539,
-                    "url": "https://libraries.minecraft.net/com/mojang/authlib/1.5.22/authlib-1.5.22.jar"
+                    "path": "com/mojang/authlib/1.5.24/authlib-1.5.24.jar",
+                    "sha1": "0889ff5477b844800cff734babbf42c1bbda4b10",
+                    "size": 64353,
+                    "url": "https://libraries.minecraft.net/com/mojang/authlib/1.5.24/authlib-1.5.24.jar"
                 }
             },
-            "name": "com.mojang:authlib:1.5.22"
+            "name": "com.mojang:authlib:1.5.24"
         },
         {
             "downloads": {
@@ -557,7 +557,7 @@
     "mainClass": "net.minecraft.client.main.Main",
     "minecraftArguments": "--username ${auth_player_name} --version ${version_name} --gameDir ${game_directory} --assetsDir ${assets_root} --assetIndex ${assets_index_name} --uuid ${auth_uuid} --accessToken ${auth_access_token} --userType ${user_type} --versionType ${version_type}",
     "minimumLauncherVersion": 18,
-    "releaseTime": "2016-08-11T14:34:29+00:00",
-    "time": "2016-10-06T13:51:46+00:00",
+    "releaseTime": "2016-10-06T13:57:59+00:00",
+    "time": "2016-10-06T13:59:41+00:00",
     "type": "snapshot"
 }
