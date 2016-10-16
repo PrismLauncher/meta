@@ -244,13 +244,13 @@
         {
             "downloads": {
                 "artifact": {
-                    "path": "com/mojang/realms/1.9.6/realms-1.9.6.jar",
-                    "sha1": "b2f11d8ba18ef055db6ca7ffd45a91719eb55a41",
-                    "size": 1575583,
-                    "url": "https://libraries.minecraft.net/com/mojang/realms/1.9.6/realms-1.9.6.jar"
+                    "path": "com/mojang/realms/1.9.7/realms-1.9.7.jar",
+                    "sha1": "1feef1f10e34883a219c1f0e83b6ded9863edd91",
+                    "size": 1576916,
+                    "url": "https://libraries.minecraft.net/com/mojang/realms/1.9.7/realms-1.9.7.jar"
                 }
             },
-            "name": "com.mojang:realms:1.9.6"
+            "name": "com.mojang:realms:1.9.7"
         },
         {
             "downloads": {
@@ -558,6 +558,6 @@
     "minecraftArguments": "--username ${auth_player_name} --version ${version_name} --gameDir ${game_directory} --assetsDir ${assets_root} --assetIndex ${assets_index_name} --uuid ${auth_uuid} --accessToken ${auth_access_token} --userType ${user_type} --versionType ${version_type}",
     "minimumLauncherVersion": 18,
     "releaseTime": "2016-06-23T09:17:32+00:00",
-    "time": "2016-09-18T17:33:11+00:00",
+    "time": "2016-10-16T17:55:51+00:00",
     "type": "release"
 }
