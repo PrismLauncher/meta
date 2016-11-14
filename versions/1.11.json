@@ -9,17 +9,17 @@
     "assets": "1.11",
     "downloads": {
         "client": {
-            "sha1": "417fe811581f045d4f5de0381b08cd7dc3744c41",
-            "size": 9250850,
-            "url": "https://launcher.mojang.com/mc/game/16w39c/client/417fe811581f045d4f5de0381b08cd7dc3744c41/client.jar"
+            "sha1": "780e46b3a96091a7f42c028c615af45974629072",
+            "size": 9183701,
+            "url": "https://launcher.mojang.com/mc/game/1.11/client/780e46b3a96091a7f42c028c615af45974629072/client.jar"
         },
         "server": {
-            "sha1": "df13c6cbf5fc735896b22f56b1f8940dd11a3b5f",
-            "size": 9695321,
-            "url": "https://launcher.mojang.com/mc/game/16w39c/server/df13c6cbf5fc735896b22f56b1f8940dd11a3b5f/server.jar"
+            "sha1": "48820c84cb1ed502cb5b2fe23b8153d5e4fa61c0",
+            "size": 9713666,
+            "url": "https://launcher.mojang.com/mc/game/1.11/server/48820c84cb1ed502cb5b2fe23b8153d5e4fa61c0/server.jar"
         }
     },
-    "id": "16w39c",
+    "id": "1.11",
     "libraries": [
         {
             "downloads": {
@@ -244,13 +244,13 @@
         {
             "downloads": {
                 "artifact": {
-                    "path": "com/mojang/realms/1.9.3/realms-1.9.3.jar",
-                    "sha1": "b291425bf7ef763452eaa894575018706339f72b",
-                    "size": 1575798,
-                    "url": "https://libraries.minecraft.net/com/mojang/realms/1.9.3/realms-1.9.3.jar"
+                    "path": "com/mojang/realms/1.10.1/realms-1.10.1.jar",
+                    "sha1": "d6369254de32e6e23866c7d99d1d081c2dba11fa",
+                    "size": 1463224,
+                    "url": "https://libraries.minecraft.net/com/mojang/realms/1.10.1/realms-1.10.1.jar"
                 }
             },
-            "name": "com.mojang:realms:1.9.3"
+            "name": "com.mojang:realms:1.10.1"
         },
         {
             "downloads": {
@@ -557,7 +557,7 @@
     "mainClass": "net.minecraft.client.main.Main",
     "minecraftArguments": "--username ${auth_player_name} --version ${version_name} --gameDir ${game_directory} --assetsDir ${assets_root} --assetIndex ${assets_index_name} --uuid ${auth_uuid} --accessToken ${auth_access_token} --userType ${user_type} --versionType ${version_type}",
     "minimumLauncherVersion": 18,
-    "releaseTime": "2016-09-30T14:11:48+00:00",
+    "releaseTime": "2016-11-14T14:34:40+00:00",
     "time": "2016-11-14T14:52:54+00:00",
-    "type": "snapshot"
+    "type": "release"
 }
