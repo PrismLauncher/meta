@@ -1,9 +1,16 @@
 {
     "latest": {
-        "release": "1.11",
-        "snapshot": "16w50a"
+        "release": "1.11.1",
+        "snapshot": "1.11.1"
     },
     "versions": [
+        {
+            "id": "1.11.1",
+            "releaseTime": "2016-12-20T14:05:34+00:00",
+            "time": "2016-12-20T14:06:26+00:00",
+            "type": "release",
+            "url": "https://launchermeta.mojang.com/mc/game/4fce28e8455640c8e1061f40c2be4bec4631a5ff/1.11.1.json"
+        },
         {
             "id": "16w50a",
             "releaseTime": "2016-12-15T14:38:52+00:00",
