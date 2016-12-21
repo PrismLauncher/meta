@@ -222,13 +222,13 @@
         {
             "downloads": {
                 "artifact": {
-                    "path": "com/mojang/realms/1.10.6/realms-1.10.6.jar",
-                    "sha1": "567307605da490a7fd279a4420434b5c75b6464d",
-                    "size": 3025160,
-                    "url": "https://libraries.minecraft.net/com/mojang/realms/1.10.6/realms-1.10.6.jar"
+                    "path": "com/mojang/realms/1.10.7/realms-1.10.7.jar",
+                    "sha1": "9b79ac61b18f24d619b6117aaa4610a77d2425af",
+                    "size": 3025163,
+                    "url": "https://libraries.minecraft.net/com/mojang/realms/1.10.7/realms-1.10.7.jar"
                 }
             },
-            "name": "com.mojang:realms:1.10.6"
+            "name": "com.mojang:realms:1.10.7"
         },
         {
             "downloads": {
@@ -325,6 +325,6 @@
     "minimumLauncherVersion": 18,
     "name": "Minecraft",
     "releaseTime": "2016-12-20T14:05:34+00:00",
-    "time": "2016-12-20T14:06:26+00:00",
+    "time": "2016-12-20T15:31:09+00:00",
     "type": "release"
 }

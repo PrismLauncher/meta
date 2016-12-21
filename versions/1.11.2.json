@@ -9,17 +9,17 @@
     "assets": "1.11",
     "downloads": {
         "client": {
-            "sha1": "0935745a11806d6b4cf00221938e7560c23f9291",
-            "size": 9198018,
-            "url": "https://launcher.mojang.com/mc/game/1.11.1/client/0935745a11806d6b4cf00221938e7560c23f9291/client.jar"
+            "sha1": "db5aa600f0b0bf508aaf579509b345c4e34087be",
+            "size": 9198097,
+            "url": "https://launcher.mojang.com/mc/game/1.11.2/client/db5aa600f0b0bf508aaf579509b345c4e34087be/client.jar"
         },
         "server": {
-            "sha1": "1f97bd101e508d7b52b3d6a7879223b000b5eba0",
-            "size": 9720769,
-            "url": "https://launcher.mojang.com/mc/game/1.11.1/server/1f97bd101e508d7b52b3d6a7879223b000b5eba0/server.jar"
+            "sha1": "f00c294a1576e03fddcac777c3cf4c7d404c4ba4",
+            "size": 9720835,
+            "url": "https://launcher.mojang.com/mc/game/1.11.2/server/f00c294a1576e03fddcac777c3cf4c7d404c4ba4/server.jar"
         }
     },
-    "id": "1.11.1",
+    "id": "1.11.2",
     "libraries": [
         {
             "downloads": {
@@ -244,13 +244,13 @@
         {
             "downloads": {
                 "artifact": {
-                    "path": "com/mojang/realms/1.10.7/realms-1.10.7.jar",
-                    "sha1": "9b79ac61b18f24d619b6117aaa4610a77d2425af",
-                    "size": 3025163,
-                    "url": "https://libraries.minecraft.net/com/mojang/realms/1.10.7/realms-1.10.7.jar"
+                    "path": "com/mojang/realms/1.10.8/realms-1.10.8.jar",
+                    "sha1": "67560bbd6a83d48ae8b956f1feac09010bde879c",
+                    "size": 3025164,
+                    "url": "https://libraries.minecraft.net/com/mojang/realms/1.10.8/realms-1.10.8.jar"
                 }
             },
-            "name": "com.mojang:realms:1.10.7"
+            "name": "com.mojang:realms:1.10.8"
         },
         {
             "downloads": {
@@ -557,7 +557,7 @@
     "mainClass": "net.minecraft.client.main.Main",
     "minecraftArguments": "--username ${auth_player_name} --version ${version_name} --gameDir ${game_directory} --assetsDir ${assets_root} --assetIndex ${assets_index_name} --uuid ${auth_uuid} --accessToken ${auth_access_token} --userType ${user_type} --versionType ${version_type}",
     "minimumLauncherVersion": 18,
-    "releaseTime": "2016-12-20T14:05:34+00:00",
-    "time": "2016-12-20T15:31:09+00:00",
+    "releaseTime": "2016-12-21T09:29:12+00:00",
+    "time": "2016-12-21T09:42:21+00:00",
     "type": "release"
 }

@@ -1,13 +1,20 @@
 {
     "latest": {
-        "release": "1.11.1",
-        "snapshot": "1.11.1"
+        "release": "1.11.2",
+        "snapshot": "1.11.2"
     },
     "versions": [
         {
+            "id": "1.11.2",
+            "releaseTime": "2016-12-21T09:29:12+00:00",
+            "time": "2016-12-21T09:42:21+00:00",
+            "type": "release",
+            "url": "https://launchermeta.mojang.com/mc/game/12f260fc1976f6dd688a211f1a906f956344abdd/1.11.2.json"
+        },
+        {
             "id": "1.11.1",
             "releaseTime": "2016-12-20T14:05:34+00:00",
-            "time": "2016-12-20T14:06:26+00:00",
+            "time": "2016-12-20T15:31:09+00:00",
             "type": "release",
             "url": "https://launchermeta.mojang.com/mc/game/4fce28e8455640c8e1061f40c2be4bec4631a5ff/1.11.1.json"
         },
