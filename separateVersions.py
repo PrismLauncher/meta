@@ -55,6 +55,8 @@ class LwjglBucket:
         out["version"] = self.version
         out["fileId"] = "org.lwjgl"
         out["name"] = "LWJGL"
+        out["type"] = "release"
+        out["releaseTime"] = "LWJGL"
         with open(filename, 'w') as outfile:
             json.dump(out, outfile, sort_keys=True, indent=4)
 
@@ -81,8 +83,8 @@ def addLWJGLVersion(versions, bucket):
     versions[bucket.version] = bucket
 
 lwjglVersions = {}
-for filename in os.listdir('versions'):
-    with open("versions/" + filename) as json_file:
+for filename in os.listdir('mojang/versions'):
+    with open("mojang/versions/" + filename) as json_file:
         json_data = json.load(json_file)
         libs = json_data["libraries"]
         libs_minecraft = []
@@ -116,11 +118,11 @@ for filename in os.listdir('versions'):
                 addLWJGLVersion(lwjglVersions, keyBucket)
         json_data["libraries"] = libs_minecraft
         json_data["name"] = "Minecraft"
-        filenameOut = "minecraft/%s.json" % json_data["id"]
+        filenameOut = "multimc/net.minecraft/%s.json" % json_data["id"]
         with open(filenameOut, 'w') as outfile:
             json.dump(json_data, outfile, sort_keys=True, indent=4)
 
 for version in lwjglVersions:
     versionObj = lwjglVersions[version]
-    filename = "lwjgl/%s.json" % version
+    filename = "multimc/org.lwjgl/%s.json" % version
     versionObj.write(filename)
