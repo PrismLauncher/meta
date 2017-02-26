@@ -74,5 +74,5 @@ Popen(["./separateVersions.py"], shell=True, stdout=PIPE).communicate()
 
 Popen(["git add multimc/org.lwjgl/* multimc/net.minecraft/*"], shell=True, stdout=PIPE).communicate()
 
-#Popen(["git commit -a -m \"Update " + strftime("%Y-%m-%d", gmtime()) + "\""], shell=True, stdout=PIPE).communicate()
-#Popen(["git push"], shell=True, stdout=PIPE).communicate()
+Popen(["git commit -a -m \"Update " + strftime("%Y-%m-%d", gmtime()) + "\""], shell=True, stdout=PIPE).communicate()
+Popen(["git push"], shell=True, stdout=PIPE).communicate()

@@ -117,7 +117,7 @@
         }
     ],
     "name": "LWJGL",
-    "releaseTime": "LWJGL",
+    "releaseTime": "2016-12-21T09:29:12+00:00",
     "rules": [
         {
             "action": "allow",

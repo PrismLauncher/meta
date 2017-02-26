@@ -3,6 +3,9 @@
 import os
 import json
 import copy
+import datetime
+import iso8601
+
 from operator import itemgetter
 
 from pprint import pprint
@@ -37,6 +40,7 @@ class LwjglBucket:
         self.libraries = []
         self.version = None
         self.rules = []
+        self.releaseTime = None
 
     def printout(self):
         if self.hashkey:
@@ -56,7 +60,7 @@ class LwjglBucket:
         out["fileId"] = "org.lwjgl"
         out["name"] = "LWJGL"
         out["type"] = "release"
-        out["releaseTime"] = "LWJGL"
+        out["releaseTime"] = self.releaseTime.isoformat()
         with open(filename, 'w') as outfile:
             json.dump(out, outfile, sort_keys=True, indent=4)
 
@@ -101,6 +105,13 @@ for filename in os.listdir('mojang/versions'):
                 if specifier.group == "org.lwjgl.lwjgl" and specifier.artifact == "lwjgl":
                     bucket.version = specifier.version
                 bucket.libraries.append(lib)
+                # set the LWJGL release time to the oldest Minecraft release it appeared in
+                if bucket.releaseTime == None:
+                    bucket.releaseTime = iso8601.parse_date(json_data["releaseTime"])
+                else:
+                    newDate = iso8601.parse_date(json_data["releaseTime"])
+                    if newDate < bucket.releaseTime:
+                        bucket.releaseTime = newDate
             else:
                 libs_minecraft.append(lib)
         if len(buckets) == 1:
