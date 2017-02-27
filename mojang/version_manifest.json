@@ -14,7 +14,7 @@
         {
             "id": "1.11.2",
             "releaseTime": "2016-12-21T09:29:12+00:00",
-            "time": "2017-02-07T13:18:39+00:00",
+            "time": "2017-02-27T10:13:05+00:00",
             "type": "release",
             "url": "https://launchermeta.mojang.com/mc/game/12f260fc1976f6dd688a211f1a906f956344abdd/1.11.2.json"
         },
@@ -101,20 +101,6 @@
             "time": "2017-02-07T13:18:39+00:00",
             "type": "snapshot",
             "url": "https://launchermeta.mojang.com/mc/game/cbdc0f050cbad8e1382b816de576af3c9af818e4/16w35a.json"
-        },
-        {
-            "id": "16w33a",
-            "releaseTime": "2016-08-17T12:48:57+00:00",
-            "time": "2017-02-07T13:18:39+00:00",
-            "type": "snapshot",
-            "url": "https://launchermeta.mojang.com/mc/game/2dc7ef6e029db09e7ff8ed8b2eb086c52a163fe5/16w33a.json"
-        },
-        {
-            "id": "16w32b",
-            "releaseTime": "2016-08-11T14:34:29+00:00",
-            "time": "2017-02-07T13:18:39+00:00",
-            "type": "snapshot",
-            "url": "https://launchermeta.mojang.com/mc/game/d76d4048851e5d74aed8ecf37826c74fb08f0a84/16w32b.json"
         },
         {
             "id": "1.10.2",
