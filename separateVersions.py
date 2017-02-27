@@ -10,59 +10,7 @@ from operator import itemgetter
 
 from pprint import pprint
 
-class GradleSpecifier:
-    'A gradle specifier - a maven coordinate'
-
-    def __init__(self, name):
-        components = name.split(':')
-        self.group = components[0]
-        self.artifact = components[1]
-        self.version = components[2]
-        if len(components) == 4:
-            self.classifier = components[3]
-        else:
-            self.classifier = None
-   
-    def toString(self):
-        if self.classifier:
-            return "%s:%s:%s:%s" % (self.group, self.artifact, self.version, self.classifier)
-        else:
-            return "%s:%s:%s" % (self.group, self.artifact, self.version)
-
-def isLwjgl(specifier):
-    return specifier.group in ("org.lwjgl.lwjgl", "net.java.jinput", "net.java.jutils")
-
-class LwjglBucket:
-    'A bucket for collecting LWJGL information'
-
-    def __init__(self, hashkey):
-        self.hashkey = hashkey
-        self.libraries = []
-        self.version = None
-        self.rules = []
-        self.releaseTime = None
-
-    def printout(self):
-        if self.hashkey:
-            print ("HashKey: %d" % self.hashkey)
-        if self.version:
-            print ("Version: " + self.version)
-        print ("Libraries:")
-        pprint(self.libraries)
-        print ("Rules:")
-        pprint(self.rules)
-
-    def write(self, filename):
-        out = {}
-        out["libraries"] = self.libraries
-        out["rules"] = self.rules
-        out["version"] = self.version
-        out["fileId"] = "org.lwjgl"
-        out["name"] = "LWJGL"
-        out["type"] = "release"
-        out["releaseTime"] = self.releaseTime.isoformat()
-        with open(filename, 'w') as outfile:
-            json.dump(out, outfile, sort_keys=True, indent=4)
+from metautil import GradleSpecifier, VersionPatch
 
 def addOrGetBucket(buckets, rules):
     ruleHash = None
@@ -73,7 +21,8 @@ def addOrGetBucket(buckets, rules):
     if ruleHash in buckets:
         bucket = buckets[ruleHash]
     else:
-        bucket = LwjglBucket(ruleHash)
+        bucket = VersionPatch("org.lwjgl", "LWJGL")
+        bucket.releaseType = "release"
         buckets[ruleHash] = bucket
         bucket.rules = rules
     return bucket
@@ -96,7 +45,7 @@ for filename in os.listdir('mojang/versions'):
         for lib in libs:
             specifier = GradleSpecifier(lib["name"])
             ruleHash = None
-            if isLwjgl(specifier):
+            if specifier.isLwjgl():
                 rules = None
                 if "rules" in lib:
                     rules = lib["rules"]
@@ -125,7 +74,6 @@ for filename in os.listdir('mojang/versions'):
                     keyBucket.libraries = sorted(keyBucket.libraries + buckets[None].libraries, key=itemgetter('name'))
                 else:
                     keyBucket.libraries = sorted(keyBucket.libraries, key=itemgetter('name'))
-                    
                 addLWJGLVersion(lwjglVersions, keyBucket)
         json_data["libraries"] = libs_minecraft
         json_data["name"] = "Minecraft"

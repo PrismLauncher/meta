@@ -22,34 +22,34 @@ parser = argparse.ArgumentParser(description='Download Mojang version files.')
 args = parser.parse_args()
 
 def get_version_file(path, url):
-  with open(path, 'w', encoding='utf-8') as f:
-    r = sess.get(url)
-    r.raise_for_status()
-    version_json = r.json()
-    assetId = version_json["assetIndex"]["id"]
-    assetUrl = version_json["assetIndex"]["url"]
-    json.dump(version_json, f, sort_keys=True, indent=4)
-    return assetId, assetUrl
+    with open(path, 'w', encoding='utf-8') as f:
+        r = sess.get(url)
+        r.raise_for_status()
+        version_json = r.json()
+        assetId = version_json["assetIndex"]["id"]
+        assetUrl = version_json["assetIndex"]["url"]
+        json.dump(version_json, f, sort_keys=True, indent=4)
+        return assetId, assetUrl
 
 def get_file(path, url):
-  with open(path, 'w', encoding='utf-8') as f:
-    r = sess.get(url)
-    r.raise_for_status()
-    version_json = r.json()
-    json.dump(version_json, f, sort_keys=True, indent=4)
+    with open(path, 'w', encoding='utf-8') as f:
+        r = sess.get(url)
+        r.raise_for_status()
+        version_json = r.json()
+        json.dump(version_json, f, sort_keys=True, indent=4)
 
 def grab_versions(main_json):
-  assets = {}
-  for version in main_json['versions']:
-    url = version["url"]
-    version_id = version["id"]
-    print("version", version_id, url)
-    assetId, assetUrl = get_version_file( "mojang/versions/" + version_id + '.json', url)
-    assets[assetId] = assetUrl
+    assets = {}
+    for version in main_json['versions']:
+        url = version["url"]
+        version_id = version["id"]
+        print("version", version_id, url)
+        assetId, assetUrl = get_version_file( "mojang/versions/" + version_id + '.json', url)
+        assets[assetId] = assetUrl
 
-  for assetId, assetUrl in iter(assets.items()):
-    print("assets", assetId, assetUrl)
-    get_file( "mojang/assets/" + assetId + '.json', assetUrl)
+    for assetId, assetUrl in iter(assets.items()):
+        print("assets", assetId, assetUrl)
+        get_file( "mojang/assets/" + assetId + '.json', assetUrl)
 
 Popen(["rm mojang/*.json"], shell=True, stdout=PIPE).communicate()
 Popen(["rm mojang/versions/*.json"], shell=True, stdout=PIPE).communicate()
@@ -59,7 +59,7 @@ r.raise_for_status()
 main_json = r.json()
 
 with open("mojang/version_manifest.json", 'w', encoding='utf-8') as f:
-  json.dump(main_json, f, sort_keys=True, indent=4)
+    json.dump(main_json, f, sort_keys=True, indent=4)
 
 grab_versions(main_json)
 
