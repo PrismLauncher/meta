@@ -1,6 +1,8 @@
 import json
 from pprint import pprint
 
+# TODO: use https://github.com/dimagi/jsonobject
+
 class GradleSpecifier:
     'A gradle specifier - a maven coordinate'
 
