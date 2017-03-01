@@ -17,6 +17,6 @@ git add mojang/version_manifest.json mojang/versions/* mojang/assets/* || fail
 git add multimc/org.lwjgl/* multimc/net.minecraft/* || fail
 
 git commit -a -m "Update ${currentDate}" || fail
-#git push || fail
+git push || fail
 
 exit 0
