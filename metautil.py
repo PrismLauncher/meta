@@ -31,6 +31,16 @@ class MojangIndex(JsonObject):
     latest = DictProperty(StringProperty)
     versions = ListProperty(MojangIndexEntry)
 
+class MojangIndexWrap:
+    def __init__(self, json):
+        self.index = MojangIndex.wrap(json)
+        self.latest = self.index.latest
+        versionsDict = {}
+        for version in self.index.versions:
+            versionsDict[version.id] = version
+        self.versions = versionsDict
+
+
 class GradleSpecifier:
     'A gradle specifier - a maven coordinate'
 
