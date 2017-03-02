@@ -6,8 +6,7 @@ BASEDIR=`pwd`
 
 set -x
 
-export UPSTREAM_DIR=mojang
-export MMC_DIR=multimc
+source config.sh
 
 function fail {
     git reset --hard HEAD
