@@ -1,1 +1,5 @@
 http_cache
+multimc
+mojang
+__pycache__
+*.kdev4
