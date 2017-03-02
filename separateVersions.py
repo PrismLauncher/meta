@@ -33,6 +33,8 @@ def addLWJGLVersion(versions, bucket):
             if not bucket.rules:
                 versions[bucket.version].rules = None
         return
+        if bucket.releaseTime < versions[bucket.version].releaseTime:
+            versions[bucket.version].releaseTime = bucket.releaseTime
     versions[bucket.version] = bucket
 
 lwjglVersions = {}
