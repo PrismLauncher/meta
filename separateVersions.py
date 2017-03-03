@@ -10,7 +10,7 @@ from operator import itemgetter
 
 from pprint import pprint
 
-from metautil import GradleSpecifier, VersionPatch
+from metautil import *
 
 def addOrGetBucket(buckets, rules):
     ruleHash = None
@@ -36,6 +36,15 @@ def addLWJGLVersion(versions, bucket):
         if bucket.releaseTime < versions[bucket.version].releaseTime:
             versions[bucket.version].releaseTime = bucket.releaseTime
     versions[bucket.version] = bucket
+
+# get the local version list
+staticVersionlist = None
+try:
+    with open("static/minecraft.json", 'r', encoding='utf-8') as legacyIndexFile:
+        staticVersionlist = LegacyOverrideIndexWrap(json.load(legacyIndexFile))
+except:
+    staticVersionlist = LegacyOverrideIndexWrap({})
+legacyIDs = set(staticVersionlist.versions.keys())
 
 lwjglVersions = {}
 for filename in os.listdir('mojang/versions'):

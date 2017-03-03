@@ -3,19 +3,22 @@ from pprint import pprint
 from jsonobject import *
 
 '''
+Mojang index files look like this:
 {
     "latest": {
         "release": "1.11.2",
         "snapshot": "17w06a"
     },
     "versions": [
+        ...
         {
             "id": "17w06a",
             "releaseTime": "2017-02-08T13:16:29+00:00",
             "time": "2017-02-08T13:17:20+00:00",
             "type": "snapshot",
             "url": "https://launchermeta.mojang.com/mc/game/7db0c61afa278d016cf1dae2fba0146edfbf2f8e/17w06a.json"
-        }
+        },
+        ...
     ]
 }
 '''
@@ -39,6 +42,47 @@ class MojangIndexWrap:
         for version in self.index.versions:
             versionsDict[version.id] = version
         self.versions = versionsDict
+
+
+'''
+The MultiMC static override file for legacy looks like this:
+{
+    "versions": [
+        ...
+        {
+            "id": "c0.0.13a",
+            "checksum": "3617fbf5fbfd2b837ebf5ceb63584908",
+            "releaseTime": "2009-05-31T00:00:00+02:00",
+            "type": "old_alpha",
+            "mainClass": "com.mojang.minecraft.Minecraft",
+            "appletClass": "com.mojang.minecraft.MinecraftApplet",
+            "+traits": ["legacyLaunch", "no-texturepacks"]
+        },
+        ...
+    ]
+}
+'''
+
+class LegacyOverrideEntry(JsonObject):
+    id = StringProperty()
+    checksum = StringProperty()
+    releaseTime = ISOTimestampProperty()
+    type = StringProperty()
+    mainClass = StringProperty()
+    appletClass = StringProperty()
+    addTraits = ListProperty(StringProperty, name="+traits")
+
+class LegacyOverrideIndex(JsonObject):
+    versions = ListProperty(LegacyOverrideEntry)
+
+class LegacyOverrideIndexWrap:
+    def __init__(self, json):
+        self.index = MojangIndex.wrap(json)
+        versionsDict = {}
+        for version in self.index.versions:
+            versionsDict[version.id] = version
+        self.versions = versionsDict
+
 
 
 class GradleSpecifier:
