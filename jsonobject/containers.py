@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 from .base_properties import DefaultProperty
 from .utils import check_type, SimpleDict
-
+import copy
 
 class JsonArray(list):
     def __init__(self, _obj=None, wrapper=None, type_config=None):
@@ -21,6 +21,10 @@ class JsonArray(list):
     def validate(self, required=True):
         for obj in self:
             self._wrapper.validate(obj, required=required)
+
+    def to_json(self):
+        self.validate()
+        return copy.deepcopy(self._obj)
 
     def append(self, wrapped):
         wrapped, unwrapped = self._wrapper.unwrap(wrapped)

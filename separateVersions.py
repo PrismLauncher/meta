@@ -15,27 +15,24 @@ from metautil import *
 def addOrGetBucket(buckets, rules):
     ruleHash = None
     if rules:
-        ruleHash = hash(json.dumps(rules))
+        ruleHash = hash(json.dumps(rules.to_json()))
 
     bucket = None
     if ruleHash in buckets:
         bucket = buckets[ruleHash]
     else:
-        bucket = VersionPatch("org.lwjgl", "LWJGL")
-        bucket.releaseType = "release"
+        bucket = MojangVersionFile()
+        bucket.name = "LWJGL"
+        bucket.type = "release"
         buckets[ruleHash] = bucket
-        bucket.rules = rules
     return bucket
 
 def addLWJGLVersion(versions, bucket):
     if bucket.version in versions:
-        if versions[bucket.version].rules:
-            if not bucket.rules:
-                versions[bucket.version].rules = None
-        return
         if bucket.releaseTime < versions[bucket.version].releaseTime:
             versions[bucket.version].releaseTime = bucket.releaseTime
-    versions[bucket.version] = bucket
+    else:
+        versions[bucket.version] = bucket
 
 # get the local version list
 staticVersionlist = None
@@ -49,29 +46,28 @@ legacyIDs = set(staticVersionlist.versions.keys())
 lwjglVersions = {}
 for filename in os.listdir('mojang/versions'):
     with open("mojang/versions/" + filename) as json_file:
-        json_data = json.load(json_file)
-        libs = json_data["libraries"]
+        versionFile = MojangVersionFile(json.load(json_file))
         libs_minecraft = []
         buckets = {}
-        for lib in libs:
-            specifier = GradleSpecifier(lib["name"])
+        for lib in versionFile.libraries:
+            libCopy = copy.deepcopy(lib)
+            specifier = libCopy.name
             ruleHash = None
             if specifier.isLwjgl():
                 rules = None
-                if "rules" in lib:
-                    rules = lib["rules"]
-                    lib.pop("rules", None)
+                if libCopy.rules:
+                    rules = libCopy.rules
+                    libCopy.rules = None
                 bucket = addOrGetBucket(buckets, rules)
                 if specifier.group == "org.lwjgl.lwjgl" and specifier.artifact == "lwjgl":
                     bucket.version = specifier.version
-                bucket.libraries.append(lib)
+                bucket.libraries.append(libCopy)
                 # set the LWJGL release time to the oldest Minecraft release it appeared in
                 if bucket.releaseTime == None:
-                    bucket.releaseTime = iso8601.parse_date(json_data["releaseTime"])
+                    bucket.releaseTime = versionFile.releaseTime
                 else:
-                    newDate = iso8601.parse_date(json_data["releaseTime"])
-                    if newDate < bucket.releaseTime:
-                        bucket.releaseTime = newDate
+                    if versionFile.releaseTime < bucket.releaseTime:
+                        bucket.releaseTime = versionFile.releaseTime
             else:
                 libs_minecraft.append(lib)
         if len(buckets) == 1:
@@ -86,13 +82,14 @@ for filename in os.listdir('mojang/versions'):
                 else:
                     keyBucket.libraries = sorted(keyBucket.libraries, key=itemgetter('name'))
                 addLWJGLVersion(lwjglVersions, keyBucket)
-        json_data["libraries"] = libs_minecraft
-        json_data["name"] = "Minecraft"
-        filenameOut = "multimc/net.minecraft/%s.json" % json_data["id"]
+        versionFile.libraries = libs_minecraft
+        versionFile.name = "Minecraft"
+        filenameOut = "multimc/net.minecraft/%s.json" % versionFile.id
         with open(filenameOut, 'w') as outfile:
-            json.dump(json_data, outfile, sort_keys=True, indent=4)
+            json.dump(versionFile.to_json(), outfile, sort_keys=True, indent=4)
 
 for version in lwjglVersions:
     versionObj = lwjglVersions[version]
     filename = "multimc/org.lwjgl/%s.json" % version
-    versionObj.write(filename)
+    with open(filename, 'w') as outfile:
+        json.dump(versionObj.to_json(), outfile, sort_keys=True, indent=4)

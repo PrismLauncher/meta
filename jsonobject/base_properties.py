@@ -93,7 +93,7 @@ class JsonProperty(object):
         return self
 
     def exclude(self, value):
-        return self.exclude_if_none and not value
+        return self.exclude_if_none and value == None
 
     def empty(self, value):
         return value is None

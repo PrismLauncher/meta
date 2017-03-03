@@ -5,7 +5,6 @@ import sys
 import datetime
 import time
 import decimal
-import iso8601
 from .base_properties import (
     AbstractDateProperty,
     AssertTypeProperty,
@@ -121,21 +120,6 @@ class TimeProperty(AbstractDateProperty):
     def _unwrap(self, value):
         if not self.exact:
             value = value.replace(microsecond=0)
-        return value, value.isoformat()
-
-
-class ISOTimestampProperty(AbstractDateProperty):
-
-    _type = datetime.datetime
-
-    def _wrap(self, value):
-        try:
-            return iso8601.parse_date(value)
-        except ValueError as e:
-            raise ValueError(
-                'Invalid ISO date/time {0!r} [{1}]'.format(value, e))
-
-    def _unwrap(self, value):
         return value, value.isoformat()
 
 
