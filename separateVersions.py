@@ -70,12 +70,7 @@ for filename in os.listdir('mojang/versions'):
                 if not bucket.libraries:
                     bucket.libraries = []
                 bucket.libraries.append(libCopy)
-                # set the LWJGL release time to the oldest Minecraft release it appeared in
-                if bucket.releaseTime == None:
-                    bucket.releaseTime = versionFile.releaseTime
-                else:
-                    if versionFile.releaseTime < bucket.releaseTime:
-                        bucket.releaseTime = versionFile.releaseTime
+                bucket.releaseTime = versionFile.releaseTime
             else:
                 libs_minecraft.append(lib)
         if len(buckets) == 1:
