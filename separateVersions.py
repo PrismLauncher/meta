@@ -41,12 +41,8 @@ def addLWJGLVersion(versions, bucket):
 
 # get the local version list
 staticVersionlist = None
-try:
-    with open("static/minecraft.json", 'r', encoding='utf-8') as legacyIndexFile:
-        staticVersionlist = LegacyOverrideIndexWrap(json.load(legacyIndexFile))
-except:
-    staticVersionlist = LegacyOverrideIndexWrap({})
-legacyIDs = set(staticVersionlist.versions.keys())
+with open("static/minecraft.json", 'r', encoding='utf-8') as legacyIndexFile:
+    staticVersionlist = LegacyOverrideIndex(json.load(legacyIndexFile))
 
 lwjglVersions = {}
 for filename in os.listdir('mojang/versions'):
@@ -87,6 +83,8 @@ for filename in os.listdir('mojang/versions'):
                 addLWJGLVersion(lwjglVersions, keyBucket)
         versionFile.libraries = libs_minecraft
         filenameOut = "multimc/net.minecraft/%s.json" % versionFile.version
+        if versionFile.version in staticVersionlist.versions:
+            ApplyLegacyOverride (versionFile, staticVersionlist.versions[versionFile.version])
         with open(filenameOut, 'w') as outfile:
             json.dump(versionFile.to_json(), outfile, sort_keys=True, indent=4)
 

@@ -196,6 +196,7 @@ class MultiMCVersionFile (JsonObject):
     releaseTime = ISOTimestampProperty(exclude_if_none=True, default=None)
     time = ISOTimestampProperty(exclude_if_none=True, default=None)
     type = StringProperty(exclude_if_none=True, default=None)
+    addTraits = SetProperty(StringProperty, name="+traits", exclude_if_none=True, default=None)
 
 def MojangToMultiMC (file, name, fileId, version):
     mmcFile = MultiMCVersionFile(
@@ -235,21 +236,27 @@ The MultiMC static override file for legacy looks like this:
 '''
 
 class LegacyOverrideEntry(JsonObject):
-    id = StringProperty()
-    checksum = StringProperty()
-    releaseTime = ISOTimestampProperty()
-    type = StringProperty()
-    mainClass = StringProperty()
-    appletClass = StringProperty()
-    addTraits = ListProperty(StringProperty, name="+traits")
+    releaseTime = ISOTimestampProperty(exclude_if_none=True, default=None)
+    mainClass = StringProperty(exclude_if_none=True, default=None)
+    appletClass = StringProperty(exclude_if_none=True, default=None)
+    addTraits = SetProperty(StringProperty, name="+traits", exclude_if_none=True, default=None)
 
 class LegacyOverrideIndex(JsonObject):
-    versions = ListProperty(LegacyOverrideEntry)
+    versions = DictProperty(LegacyOverrideEntry)
 
-class LegacyOverrideIndexWrap:
-    def __init__(self, json):
-        self.index = MojangIndex.wrap(json)
-        versionsDict = {}
-        for version in self.index.versions:
-            versionsDict[version.id] = version
-        self.versions = versionsDict
+def ApplyLegacyOverride (mmcFile, legacyOverride):
+    # simply hard override classes
+    mmcFile.mainClass = legacyOverride.mainClass
+    mmcFile.appletClass = legacyOverride.appletClass
+    # if we have an updated release time (more correct than Mojang), use it
+    if legacyOverride.releaseTime != None:
+        mmcFile.releaseTime = legacyOverride.releaseTime
+    # add traits, if any
+    if legacyOverride.addTraits:
+        if not mmcFile.addTraits:
+            mmcFile.addTraits = set()
+        mmcFile.addTraits = mmcFile.addTraits.union(legacyOverride.addTraits)
+    # remove all libraries - they are not needed for legacy
+    mmcFile.libraries = None
+    # remove minecraft arguments - we use our own hardcoded ones
+    mmcFile.minecraftArguments = None

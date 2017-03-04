@@ -9,6 +9,6 @@ __all__ = [
     'IntegerProperty', 'FloatProperty', 'DecimalProperty',
     'StringProperty', 'BooleanProperty',
     'DateProperty', 'DateTimeProperty', 'TimeProperty',
-    'ObjectProperty', 'ListProperty', 'DictProperty',
+    'ObjectProperty', 'ListProperty', 'DictProperty', 'SetProperty',
     'JsonObject', 'JsonArray', 'AbstractDateProperty', 'JsonProperty'
 ]
