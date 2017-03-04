@@ -111,7 +111,7 @@ class MojangAssets (MojangArtifactBase):
     totalSize = IntegerProperty()
 
 class MojangLibraryDownloads(JsonObject):
-    artifact = MojangArtifact(exclude_if_none=True)
+    artifact = ObjectProperty(MojangArtifact, exclude_if_none=True, default=None)
     classifiers = DictProperty(MojangArtifact, exclude_if_none=True, default=None)
 
 class MojangLibraryExtractRules(JsonObject):
@@ -132,31 +132,88 @@ class MojangLibraryExtractRules(JsonObject):
 '''
 
 class OSRule (JsonObject):
-    name = StringProperty(choices=["osx", "linux", "windows"])
+    name = StringProperty(choices=["osx", "linux", "windows"], required = True)
+    version = StringProperty(exclude_if_none=True, default=None)
 
 class MojangRule (JsonObject):
-    action = StringProperty(choices=["allow", "disallow"])
+    action = StringProperty(choices=["allow", "disallow"], required = True)
     os = ObjectProperty(OSRule, exclude_if_none=True, default=None)
 
 class MojangLibrary (JsonObject):
     extract = ObjectProperty(MojangLibraryExtractRules, exclude_if_none=True, default=None)
-    name = GradleSpecifierProperty()
-    downloads = ObjectProperty(MojangLibraryDownloads)
+    name = GradleSpecifierProperty(required = True)
+    downloads = ObjectProperty(MojangLibraryDownloads, exclude_if_none=True, default=None)
     natives = DictProperty(StringProperty, exclude_if_none=True, default=None)
     rules = ListProperty(MojangRule, exclude_if_none=True, default=None)
+
+class MojangLoggingArtifact (MojangArtifactBase):
+    id = StringProperty()
+
+class MojangLogging (JsonObject):
+    file = ObjectProperty(MojangLoggingArtifact, required = True)
+    argument = StringProperty(required = True)
+    type = StringProperty(required = True, choices=["log4j2-xml"])
+
+class UnknownMojangVersionException(Exception):
+    """Exception raised for unknown Mojang version file format versions.
+
+    Attributes:
+        message -- explanation of the error
+    """
+    def __init__(self, message):
+        self.message = message
+
+def validateSupportedMojangVersion(version):
+    supportedVersion = 18
+    if version > supportedVersion:
+        raise UnknownMojangVersionException("Unsupported Mojang format version: %d. Max supported is: %d" % (version, supportedVersion))
 
 class MojangVersionFile (JsonObject):
     assetIndex = ObjectProperty(MojangAssets, exclude_if_none=True, default=None)
     assets = StringProperty(exclude_if_none=True, default=None)
     downloads = DictProperty(MojangArtifactBase, exclude_if_none=True, default=None)
     id = StringProperty(exclude_if_none=True, default=None)
-    libraries = ListProperty(MojangLibrary)
+    libraries = ListProperty(MojangLibrary, exclude_if_none=True, default=None)
     mainClass = StringProperty(exclude_if_none=True, default=None)
+    processArguments = StringProperty(exclude_if_none=True, default=None)
     minecraftArguments = StringProperty(exclude_if_none=True, default=None)
-    minimumLauncherVersion = IntegerProperty(exclude_if_none=True, default=None)
-    releaseTime = ISOTimestampProperty()
+    minimumLauncherVersion = IntegerProperty(exclude_if_none=True, default=None, validators=validateSupportedMojangVersion)
+    releaseTime = ISOTimestampProperty(exclude_if_none=True, default=None)
     time = ISOTimestampProperty(exclude_if_none=True, default=None)
     type = StringProperty(exclude_if_none=True, default=None)
+    logging = DictProperty(MojangLogging, exclude_if_none=True, default=None)
+
+class MultiMCVersionFile (JsonObject):
+    name = StringProperty(required=True)
+    version = StringProperty(required=True)
+    fileId = StringProperty(required=True)
+    assetIndex = ObjectProperty(MojangAssets, exclude_if_none=True, default=None)
+    downloads = DictProperty(MojangArtifactBase, exclude_if_none=True, default=None)
+    libraries = ListProperty(MojangLibrary, exclude_if_none=True, default=None)
+    mainClass = StringProperty(exclude_if_none=True, default=None)
+    appletClass = StringProperty(exclude_if_none=True, default=None)
+    minecraftArguments = StringProperty(exclude_if_none=True, default=None)
+    releaseTime = ISOTimestampProperty(exclude_if_none=True, default=None)
+    time = ISOTimestampProperty(exclude_if_none=True, default=None)
+    type = StringProperty(exclude_if_none=True, default=None)
+
+def MojangToMultiMC (file, name, fileId, version):
+    mmcFile = MultiMCVersionFile(
+        {
+            "name": name,
+            "fileId": fileId,
+            "version": version
+        }
+    )
+    mmcFile.assetIndex = file.assetIndex
+    mmcFile.downloads = file.downloads
+    mmcFile.libraries = file.libraries
+    mmcFile.mainClass = file.mainClass
+    mmcFile.minecraftArguments = file.minecraftArguments
+    mmcFile.releaseTime = file.releaseTime
+    # time should not be set.
+    mmcFile.type = file.type
+    return mmcFile
 
 '''
 The MultiMC static override file for legacy looks like this:

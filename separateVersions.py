@@ -21,8 +21,13 @@ def addOrGetBucket(buckets, rules):
     if ruleHash in buckets:
         bucket = buckets[ruleHash]
     else:
-        bucket = MojangVersionFile()
-        bucket.name = "LWJGL"
+        bucket = MultiMCVersionFile(
+            {
+                "name": "LWJGL",
+                "version": "undetermined",
+                "fileId": "org.lwjgl"
+            }
+        )
         bucket.type = "release"
         buckets[ruleHash] = bucket
     return bucket
@@ -46,7 +51,8 @@ legacyIDs = set(staticVersionlist.versions.keys())
 lwjglVersions = {}
 for filename in os.listdir('mojang/versions'):
     with open("mojang/versions/" + filename) as json_file:
-        versionFile = MojangVersionFile(json.load(json_file))
+        mojangVersionFile = MojangVersionFile(json.load(json_file))
+        versionFile = MojangToMultiMC(mojangVersionFile, "Minecraft", "net.minecraft", mojangVersionFile.id)
         libs_minecraft = []
         buckets = {}
         for lib in versionFile.libraries:
@@ -61,6 +67,8 @@ for filename in os.listdir('mojang/versions'):
                 bucket = addOrGetBucket(buckets, rules)
                 if specifier.group == "org.lwjgl.lwjgl" and specifier.artifact == "lwjgl":
                     bucket.version = specifier.version
+                if not bucket.libraries:
+                    bucket.libraries = []
                 bucket.libraries.append(libCopy)
                 # set the LWJGL release time to the oldest Minecraft release it appeared in
                 if bucket.releaseTime == None:
@@ -83,8 +91,7 @@ for filename in os.listdir('mojang/versions'):
                     keyBucket.libraries = sorted(keyBucket.libraries, key=itemgetter('name'))
                 addLWJGLVersion(lwjglVersions, keyBucket)
         versionFile.libraries = libs_minecraft
-        versionFile.name = "Minecraft"
-        filenameOut = "multimc/net.minecraft/%s.json" % versionFile.id
+        filenameOut = "multimc/net.minecraft/%s.json" % versionFile.version
         with open(filenameOut, 'w') as outfile:
             json.dump(versionFile.to_json(), outfile, sort_keys=True, indent=4)
 

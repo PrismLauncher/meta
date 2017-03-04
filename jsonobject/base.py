@@ -182,7 +182,7 @@ class _JsonObjectPrivateInstanceVariables(object):
 @six.add_metaclass(JsonObjectMeta)
 class JsonObjectBase(object):
 
-    _allow_dynamic_properties = True
+    _allow_dynamic_properties = False
     _validate_required_lazily = False
 
     _properties_by_attr = None
