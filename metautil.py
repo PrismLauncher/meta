@@ -194,10 +194,10 @@ class MultiMCVersionFile (JsonObject):
     appletClass = StringProperty(exclude_if_none=True, default=None)
     minecraftArguments = StringProperty(exclude_if_none=True, default=None)
     releaseTime = ISOTimestampProperty(exclude_if_none=True, default=None)
-    time = ISOTimestampProperty(exclude_if_none=True, default=None)
     type = StringProperty(exclude_if_none=True, default=None)
     addTraits = SetProperty(StringProperty, name="+traits", exclude_if_none=True, default=None)
 
+# Convert Mojang version file object to a MultiMC version file object
 def MojangToMultiMC (file, name, fileId, version):
     mmcFile = MultiMCVersionFile(
         {
@@ -215,6 +215,25 @@ def MojangToMultiMC (file, name, fileId, version):
     # time should not be set.
     mmcFile.type = file.type
     return mmcFile
+
+class MultiMCVersionIndexEntry(JsonObject):
+    version = StringProperty()
+    type = StringProperty()
+    releaseTime = ISOTimestampProperty()
+    sha256 = StringProperty()
+
+class MultiMCVersionIndex(JsonObject):
+    uid = StringProperty()
+    latest = DictProperty(StringProperty, exclude_if_none=True, default=None)
+    recommended = DictProperty(StringProperty, exclude_if_none=True, default=None)
+    versions = ListProperty(MultiMCVersionIndexEntry)
+
+class MultiMCPackageIndexEntry(JsonObject):
+    uid = StringProperty()
+    sha256 = StringProperty()
+
+class MultiMCPackageIndex(JsonObject):
+    packages = ListProperty(MultiMCPackageIndexEntry)
 
 '''
 The MultiMC static override file for legacy looks like this:
