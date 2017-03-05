@@ -25,7 +25,7 @@ def addOrGetBucket(buckets, rules):
             {
                 "name": "LWJGL",
                 "version": "undetermined",
-                "fileId": "org.lwjgl"
+                "uid": "org.lwjgl"
             }
         )
         bucket.type = "release"

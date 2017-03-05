@@ -195,7 +195,7 @@ class VersionedJsonObject(JsonObject):
 class MultiMCVersionFile (VersionedJsonObject):
     name = StringProperty(required=True)
     version = StringProperty(required=True)
-    fileId = StringProperty(required=True)
+    uid = StringProperty(required=True)
     assetIndex = ObjectProperty(MojangAssets, exclude_if_none=True, default=None)
     downloads = DictProperty(MojangArtifactBase, exclude_if_none=True, default=None)
     libraries = ListProperty(MojangLibrary, exclude_if_none=True, default=None)
@@ -207,11 +207,11 @@ class MultiMCVersionFile (VersionedJsonObject):
     addTraits = ListProperty(StringProperty, name="+traits", exclude_if_none=True, default=None)
 
 # Convert Mojang version file object to a MultiMC version file object
-def MojangToMultiMC (file, name, fileId, version):
+def MojangToMultiMC (file, name, uid, version):
     mmcFile = MultiMCVersionFile(
         {
             "name": name,
-            "fileId": fileId,
+            "uid": uid,
             "version": version
         }
     )
