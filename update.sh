@@ -42,4 +42,6 @@ if ! git diff --cached --exit-code ; then
 fi
 cd "${BASEDIR}"
 
+s3cmd --exclude=".git*" --delete-removed sync ${BASEDIR}/${MMC_DIR}/ s3://meta.multimc.org || exit 2
+
 exit 0
