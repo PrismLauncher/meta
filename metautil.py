@@ -154,7 +154,7 @@ class MojangLogging (JsonObject):
     argument = StringProperty(required = True)
     type = StringProperty(required = True, choices=["log4j2-xml"])
 
-class UnknownMojangVersionException(Exception):
+class UnknownVersionException(Exception):
     """Exception raised for unknown Mojang version file format versions.
 
     Attributes:
@@ -166,7 +166,7 @@ class UnknownMojangVersionException(Exception):
 def validateSupportedMojangVersion(version):
     supportedVersion = 18
     if version > supportedVersion:
-        raise UnknownMojangVersionException("Unsupported Mojang format version: %d. Max supported is: %d" % (version, supportedVersion))
+        raise UnknownVersionException("Unsupported Mojang format version: %d. Max supported is: %d" % (version, supportedVersion))
 
 class MojangVersionFile (JsonObject):
     assetIndex = ObjectProperty(MojangAssets, exclude_if_none=True, default=None)
@@ -183,7 +183,16 @@ class MojangVersionFile (JsonObject):
     type = StringProperty(exclude_if_none=True, default=None)
     logging = DictProperty(MojangLogging, exclude_if_none=True, default=None)
 
-class MultiMCVersionFile (JsonObject):
+
+CurrentMultiMCFormatVersion = 0
+def validateSupportedMultiMCVersion(version):
+    if version > CurrentMultiMCFormatVersion:
+        raise UnknownVersionException("Unsupported MultiMC format version: %d. Max supported is: %d" % (version, CurrentMultiMCFormatVersion))
+
+class VersionedJsonObject(JsonObject):
+    formatVersion = IntegerProperty(default=CurrentMultiMCFormatVersion, validators=validateSupportedMultiMCVersion)
+
+class MultiMCVersionFile (VersionedJsonObject):
     name = StringProperty(required=True)
     version = StringProperty(required=True)
     fileId = StringProperty(required=True)
@@ -195,7 +204,7 @@ class MultiMCVersionFile (JsonObject):
     minecraftArguments = StringProperty(exclude_if_none=True, default=None)
     releaseTime = ISOTimestampProperty(exclude_if_none=True, default=None)
     type = StringProperty(exclude_if_none=True, default=None)
-    addTraits = SetProperty(StringProperty, name="+traits", exclude_if_none=True, default=None)
+    addTraits = ListProperty(StringProperty, name="+traits", exclude_if_none=True, default=None)
 
 # Convert Mojang version file object to a MultiMC version file object
 def MojangToMultiMC (file, name, fileId, version):
@@ -222,7 +231,7 @@ class MultiMCVersionIndexEntry(JsonObject):
     releaseTime = ISOTimestampProperty()
     sha256 = StringProperty()
 
-class MultiMCVersionIndex(JsonObject):
+class MultiMCVersionIndex(VersionedJsonObject):
     uid = StringProperty()
     latest = DictProperty(StringProperty, exclude_if_none=True, default=None)
     recommended = DictProperty(StringProperty, exclude_if_none=True, default=None)
@@ -232,7 +241,7 @@ class MultiMCPackageIndexEntry(JsonObject):
     uid = StringProperty()
     sha256 = StringProperty()
 
-class MultiMCPackageIndex(JsonObject):
+class MultiMCPackageIndex(VersionedJsonObject):
     packages = ListProperty(MultiMCPackageIndexEntry)
 
 '''
@@ -258,7 +267,7 @@ class LegacyOverrideEntry(JsonObject):
     releaseTime = ISOTimestampProperty(exclude_if_none=True, default=None)
     mainClass = StringProperty(exclude_if_none=True, default=None)
     appletClass = StringProperty(exclude_if_none=True, default=None)
-    addTraits = SetProperty(StringProperty, name="+traits", exclude_if_none=True, default=None)
+    addTraits = ListProperty(StringProperty, name="+traits", exclude_if_none=True, default=None)
 
 class LegacyOverrideIndex(JsonObject):
     versions = DictProperty(LegacyOverrideEntry)
@@ -273,8 +282,8 @@ def ApplyLegacyOverride (mmcFile, legacyOverride):
     # add traits, if any
     if legacyOverride.addTraits:
         if not mmcFile.addTraits:
-            mmcFile.addTraits = set()
-        mmcFile.addTraits = mmcFile.addTraits.union(legacyOverride.addTraits)
+            mmcFile.addTraits = []
+        mmcFile.addTraits = mmcFile.addTraits + legacyOverride.addTraits
     # remove all libraries - they are not needed for legacy
     mmcFile.libraries = None
     # remove minecraft arguments - we use our own hardcoded ones
