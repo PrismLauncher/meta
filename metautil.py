@@ -232,12 +232,14 @@ class MultiMCVersionIndexEntry(JsonObject):
     sha256 = StringProperty()
 
 class MultiMCVersionIndex(VersionedJsonObject):
+    name = StringProperty()
     uid = StringProperty()
     latest = DictProperty(StringProperty, exclude_if_none=True, default=None)
     recommended = DictProperty(StringProperty, exclude_if_none=True, default=None)
     versions = ListProperty(MultiMCVersionIndexEntry)
 
 class MultiMCPackageIndexEntry(JsonObject):
+    name = StringProperty()
     uid = StringProperty()
     sha256 = StringProperty()
 

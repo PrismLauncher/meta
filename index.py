@@ -30,6 +30,7 @@ for package in os.listdir('multimc'):
     versionList = MultiMCVersionIndex()
     versionList.uid = package
     latest = {}
+    name = None
 
     # walk through all the versions of the package
     for filename in os.listdir("multimc/%s" % (package)):
@@ -49,6 +50,8 @@ for package in os.listdir('multimc'):
         versionEntry.type = versionFile.type
         versionEntry.releaseTime = versionFile.releaseTime
         versionEntry.sha256 = filehash
+        if name == None:
+            name = versionFile.name
 
         # update the latest version of particular type (if needed)
         if versionFile.type:
@@ -61,6 +64,9 @@ for package in os.listdir('multimc'):
 
     # sort the versions in descending order by time of release
     versionList.versions = sorted(versionList.versions, key=itemgetter('releaseTime'), reverse=True)
+
+    # assign some values derived from the version files
+    versionList.name = name
 
     # if the latest version dict was populated, transform it into output
     if latest:
@@ -77,7 +83,8 @@ for package in os.listdir('multimc'):
     packageEntry = MultiMCPackageIndexEntry(
             {
                 "uid" : package,
-                "sha256": HashFile(hashlib.sha256, filepath)
+                "name" : name,
+                "sha256": HashFile(hashlib.sha256, outFilePath)
             }
         )
     packages.packages.append(packageEntry)
