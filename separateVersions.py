@@ -82,6 +82,7 @@ for filename in os.listdir('mojang/versions'):
                     keyBucket.libraries = sorted(keyBucket.libraries, key=itemgetter('name'))
                 addLWJGLVersion(lwjglVersions, keyBucket)
         versionFile.libraries = libs_minecraft
+        versionFile.id = mojangVersionFile.id
         filenameOut = "multimc/net.minecraft/%s.json" % versionFile.version
         if versionFile.version in staticVersionlist.versions:
             ApplyLegacyOverride (versionFile, staticVersionlist.versions[versionFile.version])

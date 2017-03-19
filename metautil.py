@@ -196,6 +196,7 @@ class MultiMCVersionFile (VersionedJsonObject):
     name = StringProperty(required=True)
     version = StringProperty(required=True)
     uid = StringProperty(required=True)
+    id = StringProperty(exclude_if_none=True, default=None) # this is the main Minecraft version ID Mojang uses...
     assetIndex = ObjectProperty(MojangAssets, exclude_if_none=True, default=None)
     downloads = DictProperty(MojangArtifactBase, exclude_if_none=True, default=None)
     libraries = ListProperty(MojangLibrary, exclude_if_none=True, default=None)
