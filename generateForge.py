@@ -70,8 +70,13 @@ def versionFromProfile(profile, version):
         if shouldIgnoreArtifact(mcFilter, forgeLib.name):
             continue
         fixedName = forgeLib.name
-        if fixedName.group == "net.minecraftforge" and fixedName.artifact == "forge":
-            fixedName.classifier = "universal"
+        if fixedName.group == "net.minecraftforge":
+            if fixedName.artifact == "minecraftforge":
+                fixedName.artifact = "forge"
+                fixedName.classifier = "universal"
+                fixedName.version = "%s-%s" % (result.mcVersion, fixedName.version)
+            elif fixedName.artifact == "forge":
+                fixedName.classifier = "universal"
         ourLib = MultiMCLibrary(name=fixedName)
         ourLib.url = forgeLib.url
         if forgeLib.checksums and len(forgeLib.checksums) == 2:
