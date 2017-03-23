@@ -43,11 +43,23 @@ class GradleSpecifier:
         else:
             return "%s:%s:%s" % (self.group, self.artifact, self.version)
 
+    def __repr__(self):
+        return "GradleSpecifier('" + self.toString() + "')"
+
     def isLwjgl(self):
         return self.group in ("org.lwjgl.lwjgl", "net.java.jinput", "net.java.jutils")
 
     def __lt__(self, other):
         return self.toString() < other.toString()
+
+    def __eq__(self, other):
+        return self.group == other.group and self.artifact == other.artifact and self.version == other.version and self.classifier == other.classifier
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __hash__(self):
+        return self.toString().__hash__()
 
 class GradleSpecifierProperty(JsonProperty):
     def wrap(self, value):
@@ -189,6 +201,10 @@ def validateSupportedMultiMCVersion(version):
     if version > CurrentMultiMCFormatVersion:
         raise UnknownVersionException("Unsupported MultiMC format version: %d. Max supported is: %d" % (version, CurrentMultiMCFormatVersion))
 
+class MultiMCLibrary (MojangLibrary):
+    url = StringProperty(exclude_if_none=True, default=None)
+    mmcHint = StringProperty(name="MMC-hint", exclude_if_none=True, default=None)
+
 class VersionedJsonObject(JsonObject):
     formatVersion = IntegerProperty(default=CurrentMultiMCFormatVersion, validators=validateSupportedMultiMCVersion)
 
@@ -196,16 +212,18 @@ class MultiMCVersionFile (VersionedJsonObject):
     name = StringProperty(required=True)
     version = StringProperty(required=True)
     uid = StringProperty(required=True)
-    id = StringProperty(exclude_if_none=True, default=None) # this is the main Minecraft version ID Mojang uses...
+    id = StringProperty(exclude_if_none=True, default=None) # DEPRECATED this is the main Minecraft version ID Mojang uses...
+    mcVersion = StringProperty(exclude_if_none=True, default=None) # DEPRECATED - replace with proper depends
     assetIndex = ObjectProperty(MojangAssets, exclude_if_none=True, default=None)
     downloads = DictProperty(MojangArtifactBase, exclude_if_none=True, default=None)
-    libraries = ListProperty(MojangLibrary, exclude_if_none=True, default=None)
+    libraries = ListProperty(MultiMCLibrary, exclude_if_none=True, default=None)
     mainClass = StringProperty(exclude_if_none=True, default=None)
     appletClass = StringProperty(exclude_if_none=True, default=None)
     minecraftArguments = StringProperty(exclude_if_none=True, default=None)
     releaseTime = ISOTimestampProperty(exclude_if_none=True, default=None)
     type = StringProperty(exclude_if_none=True, default=None)
     addTraits = ListProperty(StringProperty, name="+traits", exclude_if_none=True, default=None)
+    addTweakers = ListProperty(StringProperty, name="+tweakers", exclude_if_none=True, default=None)
 
 # Convert Mojang version file object to a MultiMC version file object
 def MojangToMultiMC (file, name, uid, version):

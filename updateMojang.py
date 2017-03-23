@@ -29,7 +29,7 @@ def get_file(path, url):
 # get the local version list
 localVersionlist = None
 try:
-    with open("mojang/version_manifest.json", 'r', encoding='utf-8') as localIndexFile:
+    with open("upstream/mojang/version_manifest.json", 'r', encoding='utf-8') as localIndexFile:
         localVersionlist = MojangIndexWrap(json.load(localIndexFile))
 except:
     localVersionlist = MojangIndexWrap({})
@@ -61,12 +61,12 @@ assets = {}
 for id in updatedIDs:
     version = remoteVersionlist.versions[id]
     print("Updating " + version.id + " to timestamp " + version.releaseTime.strftime('%s'))
-    assetId, assetUrl = get_version_file( "mojang/versions/" + id + '.json', version.url)
+    assetId, assetUrl = get_version_file( "upstream/mojang/versions/" + id + '.json', version.url)
     assets[assetId] = assetUrl
 
 for assetId, assetUrl in iter(assets.items()):
     print("assets", assetId, assetUrl)
-    get_file( "mojang/assets/" + assetId + '.json', assetUrl)
+    get_file( "upstream/mojang/assets/" + assetId + '.json', assetUrl)
 
-with open("mojang/version_manifest.json", 'w', encoding='utf-8') as f:
+with open("upstream/mojang/version_manifest.json", 'w', encoding='utf-8') as f:
     json.dump(main_json, f, sort_keys=True, indent=4)

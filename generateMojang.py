@@ -45,30 +45,30 @@ with open("static/minecraft.json", 'r', encoding='utf-8') as legacyIndexFile:
     staticVersionlist = LegacyOverrideIndex(json.load(legacyIndexFile))
 
 lwjglVersions = {}
-for filename in os.listdir('mojang/versions'):
-    with open("mojang/versions/" + filename) as json_file:
+for filename in os.listdir('upstream/mojang/versions'):
+    with open("upstream/mojang/versions/" + filename) as json_file:
         mojangVersionFile = MojangVersionFile(json.load(json_file))
         versionFile = MojangToMultiMC(mojangVersionFile, "Minecraft", "net.minecraft", mojangVersionFile.id)
         libs_minecraft = []
         buckets = {}
         for lib in versionFile.libraries:
-            libCopy = copy.deepcopy(lib)
-            specifier = libCopy.name
+            mmcLib = MultiMCLibrary(lib.to_json())
+            specifier = mmcLib.name
             ruleHash = None
             if specifier.isLwjgl():
                 rules = None
-                if libCopy.rules:
-                    rules = libCopy.rules
-                    libCopy.rules = None
+                if mmcLib.rules:
+                    rules = mmcLib.rules
+                    mmcLib.rules = None
                 bucket = addOrGetBucket(buckets, rules)
                 if specifier.group == "org.lwjgl.lwjgl" and specifier.artifact == "lwjgl":
                     bucket.version = specifier.version
                 if not bucket.libraries:
                     bucket.libraries = []
-                bucket.libraries.append(libCopy)
+                bucket.libraries.append(mmcLib)
                 bucket.releaseTime = versionFile.releaseTime
             else:
-                libs_minecraft.append(lib)
+                libs_minecraft.append(mmcLib)
         if len(buckets) == 1:
             addLWJGLVersion(lwjglVersions, buckets[None])
         else:
