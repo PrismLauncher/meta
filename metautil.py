@@ -213,7 +213,8 @@ class MultiMCVersionFile (VersionedJsonObject):
     version = StringProperty(required=True)
     uid = StringProperty(required=True)
     id = StringProperty(exclude_if_none=True, default=None) # DEPRECATED this is the main Minecraft version ID Mojang uses...
-    mcVersion = StringProperty(exclude_if_none=True, default=None) # DEPRECATED - replace with proper depends
+    parentUid = StringProperty(exclude_if_none=True, default=None)
+    requires = DictProperty(StringProperty, exclude_if_none=True, default=None)
     assetIndex = ObjectProperty(MojangAssets, exclude_if_none=True, default=None)
     downloads = DictProperty(MojangArtifactBase, exclude_if_none=True, default=None)
     libraries = ListProperty(MultiMCLibrary, exclude_if_none=True, default=None)
@@ -224,6 +225,7 @@ class MultiMCVersionFile (VersionedJsonObject):
     type = StringProperty(exclude_if_none=True, default=None)
     addTraits = ListProperty(StringProperty, name="+traits", exclude_if_none=True, default=None)
     addTweakers = ListProperty(StringProperty, name="+tweakers", exclude_if_none=True, default=None)
+    order = IntegerProperty()
 
 # Convert Mojang version file object to a MultiMC version file object
 def MojangToMultiMC (file, name, uid, version):
@@ -244,15 +246,35 @@ def MojangToMultiMC (file, name, uid, version):
     mmcFile.type = file.type
     return mmcFile
 
+class MultiMCSharedPackageData(JsonObject):
+    name = StringProperty(required=True)
+    uid = StringProperty(required=True)
+    parentUid = StringProperty(exclude_if_none=True, default=None)
+
+def writeSharedPackageData(uid, name, parentUid = None):
+    desc = MultiMCSharedPackageData({
+        'name': name,
+        'uid': uid
+        })
+    desc.parentUid = parentUid
+    with open("multimc/%s/package.json" % uid, 'w') as file:
+        json.dump(desc.to_json(), file, sort_keys=True, indent=4)
+
+def readSharedPackageData(uid):
+    with open("multimc/%s/package.json" % uid, 'r') as file:
+        return MultiMCSharedPackageData(json.load(file))
+
 class MultiMCVersionIndexEntry(JsonObject):
     version = StringProperty()
-    type = StringProperty()
+    type = StringProperty(exclude_if_none=True, default=None)
     releaseTime = ISOTimestampProperty()
+    requires = DictProperty(StringProperty, exclude_if_none=True, default=None)
     sha256 = StringProperty()
 
 class MultiMCVersionIndex(VersionedJsonObject):
     name = StringProperty()
     uid = StringProperty()
+    parentUid = StringProperty(exclude_if_none=True, default=None)
     latest = DictProperty(StringProperty, exclude_if_none=True, default=None)
     recommended = DictProperty(StringProperty, exclude_if_none=True, default=None)
     versions = ListProperty(MultiMCVersionIndexEntry)
@@ -260,6 +282,7 @@ class MultiMCVersionIndex(VersionedJsonObject):
 class MultiMCPackageIndexEntry(JsonObject):
     name = StringProperty()
     uid = StringProperty()
+    parentUid = StringProperty(exclude_if_none=True, default=None)
     sha256 = StringProperty()
 
 class MultiMCPackageIndex(VersionedJsonObject):

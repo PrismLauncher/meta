@@ -47,7 +47,9 @@ def shouldIgnoreArtifact(libSet, match):
 
 def versionFromProfile(profile, version):
     result = MultiMCVersionFile({"name":"Forge", "version":version.longVersion, "uid":"net.minecraftforge" })
-    result.mcVersion = profile.install.minecraft
+    mcversion = profile.install.minecraft
+    result.parentUid ='net.minecraft'
+    result.requires ={'net.minecraft': mcversion}
     result.mainClass = profile.versionInfo.mainClass
     args = profile.versionInfo.minecraftArguments
     tweakers = []
@@ -63,7 +65,7 @@ def versionFromProfile(profile, version):
     # result.minecraftArguments = args
     result.releaseTime = profile.versionInfo.time
     libs = []
-    mcFilter = loadMcVersionFilter(result.mcVersion)
+    mcFilter = loadMcVersionFilter(mcversion)
     for forgeLib in profile.versionInfo.libraries:
         if forgeLib.name.isLwjgl():
             continue
@@ -74,7 +76,7 @@ def versionFromProfile(profile, version):
             if fixedName.artifact == "minecraftforge":
                 fixedName.artifact = "forge"
                 fixedName.classifier = "universal"
-                fixedName.version = "%s-%s" % (result.mcVersion, fixedName.version)
+                fixedName.version = "%s-%s" % (mcversion, fixedName.version)
             elif fixedName.artifact == "forge":
                 fixedName.classifier = "universal"
         ourLib = MultiMCLibrary(name=fixedName)
@@ -83,6 +85,7 @@ def versionFromProfile(profile, version):
             ourLib.mmcHint = "forge-pack-xz"
         libs.append(ourLib)
     result.libraries = libs
+    result.order = 5
     return result
 
 # load the locally cached version list
@@ -91,6 +94,8 @@ with open("upstream/forge/index.json", 'r', encoding='utf-8') as f:
     remoteVersionlist = ForgeIndex(main_json)
 
 versions = []
+
+writeSharedPackageData('net.minecraftforge', 'Forge', 'net.minecraft')
 
 for id, entry in remoteVersionlist.number.items():
     if entry.mcversion == None:

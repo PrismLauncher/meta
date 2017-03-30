@@ -83,6 +83,8 @@ for filename in os.listdir('upstream/mojang/versions'):
                 addLWJGLVersion(lwjglVersions, keyBucket)
         versionFile.libraries = libs_minecraft
         versionFile.id = mojangVersionFile.id
+        versionFile.requires = {'org.lwjgl': '*'}
+        versionFile.order = -2
         filenameOut = "multimc/net.minecraft/%s.json" % versionFile.version
         if versionFile.version in staticVersionlist.versions:
             ApplyLegacyOverride (versionFile, staticVersionlist.versions[versionFile.version])
@@ -91,6 +93,29 @@ for filename in os.listdir('upstream/mojang/versions'):
 
 for version in lwjglVersions:
     versionObj = lwjglVersions[version]
+    versionObj.order = -1
     filename = "multimc/org.lwjgl/%s.json" % version
-    with open(filename, 'w') as outfile:
-        json.dump(versionObj.to_json(), outfile, sort_keys=True, indent=4)
+    good = True
+    for lib in versionObj.libraries:
+        if not lib.natives:
+            continue
+        checkedDict = {'linux', 'windows', 'osx'}
+        if not checkedDict.issubset(lib.natives.keys()):
+            print("Missing system classifier!", versionObj.version, lib.name, lib.natives.keys())
+            good = False
+            break
+        if lib.downloads:
+            for entry in checkedDict:
+                bakedEntry = lib.natives[entry]
+                if not bakedEntry in lib.downloads.classifiers:
+                    print("Missing download for classifier!", versionObj.version, lib.name, bakedEntry, lib.downloads.classifiers.keys())
+                    good = False
+                    break
+    if good:
+        with open(filename, 'w') as outfile:
+            json.dump(versionObj.to_json(), outfile, sort_keys=True, indent=4)
+    else:
+        print("Skipped LWJGL", versionObj.version)
+
+writeSharedPackageData('org.lwjgl', 'LWJGL', None)
+writeSharedPackageData('net.minecraft', 'Minecraft', None)
