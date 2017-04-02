@@ -23,6 +23,7 @@ function fail_out {
 currentDate=`date --iso-8601`
 
 ./updateMojang.py || fail_in
+./updateForge.py || fail_in
 cd "${BASEDIR}/${UPSTREAM_DIR}"
 git add mojang/version_manifest.json mojang/versions/* mojang/assets/* forge/*.json || fail_in
 if ! git diff --cached --exit-code ; then
