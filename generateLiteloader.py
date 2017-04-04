@@ -26,6 +26,7 @@ def processArtefacts(mcVersion, liteloader, notSnapshots):
         version.requires['net.minecraft'] = mcVersion
         version.releaseTime = datetime.utcfromtimestamp(int(artefact.timestamp))
         version.addTweakers = [artefact.tweakClass]
+        version.mainClass = "net.minecraft.launchwrapper.Launch"
         version.order = 10
         if notSnapshots:
             version.type = "release"
