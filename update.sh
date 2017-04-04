@@ -35,10 +35,11 @@ cd "${BASEDIR}"
 
 ./generateMojang.py || fail_out
 ./generateForge.py || fail_out
+./generateLiteloader.py || fail_out
 ./index.py || fail_out
 
 cd "${BASEDIR}/${MMC_DIR}"
-git add index.json org.lwjgl/* net.minecraft/* net.minecraftforge/* || fail_out
+git add index.json org.lwjgl/* net.minecraft/* net.minecraftforge/* com.mumfrey.liteloader/* || fail_out
 if ! git diff --cached --exit-code ; then
     git commit -a -m "Update ${currentDate}" || fail_out
     git push || exit 1
