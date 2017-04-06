@@ -27,14 +27,15 @@ for package in os.listdir('multimc'):
         continue
 
     sharedData = readSharedPackageData(package)
+    recommendedVersions = set()
+    if sharedData.recommended:
+        recommendedVersions = set(sharedData.recommended)
 
     # initialize output structures - version list level
     versionList = MultiMCVersionIndex()
     versionList.uid = package
     versionList.parentUid = sharedData.parentUid
     versionList.name = sharedData.name
-
-    latest = {}
 
     # walk through all the versions of the package
     for filename in os.listdir("multimc/%s" % (package)):
@@ -50,28 +51,17 @@ for package in os.listdir('multimc'):
 
         # pull information from the version file
         versionEntry = MultiMCVersionIndexEntry()
+        if versionFile.version in recommendedVersions:
+            versionEntry.recommended = True
         versionEntry.version = versionFile.version
         versionEntry.type = versionFile.type
         versionEntry.releaseTime = versionFile.releaseTime
         versionEntry.sha256 = filehash
         versionEntry.requires = versionFile.requires
-        # update the latest version of particular type (if needed)
-        if versionFile.type:
-            if versionFile.type in latest:
-                if latest[versionFile.type][1] < versionFile.releaseTime:
-                    latest[versionFile.type] = (versionFile.version, versionFile.releaseTime)
-            else:
-                latest[versionFile.type] = (versionFile.version, versionFile.releaseTime)
         versionList.versions.append(versionEntry)
 
     # sort the versions in descending order by time of release
     versionList.versions = sorted(versionList.versions, key=itemgetter('releaseTime'), reverse=True)
-
-    # if the latest version dict was populated, transform it into output
-    if latest:
-        versionList.latest = {}
-        for type, (version, releaseTime) in latest.items():
-            versionList.latest[type] = version
 
     # write the version index for the package
     outFilePath = "multimc/%s/index.json" % (package)

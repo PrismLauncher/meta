@@ -83,7 +83,8 @@ for filename in os.listdir('upstream/mojang/versions'):
                 addLWJGLVersion(lwjglVersions, keyBucket)
         versionFile.libraries = libs_minecraft
         versionFile.id = mojangVersionFile.id
-        versionFile.requires = {'org.lwjgl': '*'}
+        # TODO: add detection of LWJGL 3?
+        versionFile.requires = {'org.lwjgl': '2.*'}
         versionFile.order = -2
         filenameOut = "multimc/net.minecraft/%s.json" % versionFile.version
         if versionFile.version in staticVersionlist.versions:
@@ -117,5 +118,13 @@ for version in lwjglVersions:
     else:
         print("Skipped LWJGL", versionObj.version)
 
-writeSharedPackageData('org.lwjgl', 'LWJGL', None)
-writeSharedPackageData('net.minecraft', 'Minecraft', None)
+lwjglSharedData = MultiMCSharedPackageData(uid = 'org.lwjgl', name = 'LWJGL')
+lwjglSharedData.recommended = ['2.9.1']
+lwjglSharedData.write()
+
+with open("upstream/mojang/version_manifest.json", 'r', encoding='utf-8') as localIndexFile:
+    localVersionlist = MojangIndexWrap(json.load(localIndexFile))
+
+mcSharedData = MultiMCSharedPackageData(uid = 'net.minecraft', name = 'Minecraft')
+mcSharedData.recommended = [localVersionlist.latest['release']]
+mcSharedData.write()

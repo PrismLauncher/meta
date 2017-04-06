@@ -93,9 +93,9 @@ with open("upstream/forge/index.json", 'r', encoding='utf-8') as f:
     main_json = json.load(f)
     remoteVersionlist = ForgeIndex(main_json)
 
-versions = []
-
-writeSharedPackageData('net.minecraftforge', 'Forge', 'net.minecraft')
+recommendedIds = set([v for k, v in remoteVersionlist.promos.items() if 'recommended' in k])
+recommendedVersions = []
+print ('Recommended IDs:', recommendedIds)
 
 for id, entry in remoteVersionlist.number.items():
     if entry.mcversion == None:
@@ -106,6 +106,9 @@ for id, entry in remoteVersionlist.number.items():
     if version.url() == None:
         eprint ("Skipping %d with no valid files" % version.build)
         continue
+
+    if int(id) in recommendedIds:
+        recommendedVersions.append(version.longVersion)
 
     if version.usesInstaller():
         profileFilepath = "upstream/forge/%s.json" % version.longVersion
@@ -126,3 +129,10 @@ for id, entry in remoteVersionlist.number.items():
     else:
         # Generate json for legacy here
         pass
+
+print ('Recommended versions:', recommendedVersions)
+
+sharedData = MultiMCSharedPackageData(uid = 'net.minecraftforge', name = "Forge", parentUid = 'net.minecraft')
+sharedData.projectUrl = 'http://www.minecraftforge.net/forum/'
+sharedData.recommended = recommendedVersions
+sharedData.write()

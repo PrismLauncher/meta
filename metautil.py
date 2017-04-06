@@ -246,10 +246,18 @@ def MojangToMultiMC (file, name, uid, version):
     mmcFile.type = file.type
     return mmcFile
 
-class MultiMCSharedPackageData(JsonObject):
+class MultiMCSharedPackageData(VersionedJsonObject):
     name = StringProperty(required=True)
     uid = StringProperty(required=True)
     parentUid = StringProperty(exclude_if_none=True, default=None)
+    recommended = ListProperty(StringProperty, exclude_if_none=True, default=None)
+    authors = ListProperty(StringProperty, exclude_if_none=True, default=None)
+    description = StringProperty(exclude_if_none=True, default=None)
+    projectUrl = StringProperty(exclude_if_none=True, default=None)
+
+    def write(self):
+        with open("multimc/%s/package.json" % self.uid, 'w') as file:
+            json.dump(self.to_json(), file, sort_keys=True, indent=4)
 
 def writeSharedPackageData(uid, name, parentUid = None):
     desc = MultiMCSharedPackageData({
@@ -269,14 +277,13 @@ class MultiMCVersionIndexEntry(JsonObject):
     type = StringProperty(exclude_if_none=True, default=None)
     releaseTime = ISOTimestampProperty()
     requires = DictProperty(StringProperty, exclude_if_none=True, default=None)
+    recommended = BooleanProperty(exclude_if_none=True, default=None)
     sha256 = StringProperty()
 
 class MultiMCVersionIndex(VersionedJsonObject):
     name = StringProperty()
     uid = StringProperty()
     parentUid = StringProperty(exclude_if_none=True, default=None)
-    latest = DictProperty(StringProperty, exclude_if_none=True, default=None)
-    recommended = DictProperty(StringProperty, exclude_if_none=True, default=None)
     versions = ListProperty(MultiMCVersionIndexEntry)
 
 class MultiMCPackageIndexEntry(JsonObject):

@@ -52,7 +52,6 @@ def processArtefacts(mcVersion, liteloader, notSnapshots):
     return versions, latest
 
 allVersions = []
-latest = []
 recommended = []
 for mcVersion, versionObject in remoteVersionlist.versions.items():
     # ignore this for now. It should be a jar mod or something.
@@ -68,12 +67,8 @@ for mcVersion, versionObject in remoteVersionlist.versions.items():
         versions, latestSnapshot = processArtefacts(mcVersion, versionObject.snapshots.liteloader, False)
         allVersions.extend(versions)
 
-    if latestSnapshot:
-        latest.append(latestSnapshot)
-    elif latestRelease:
-        latest.append(latestRelease)
     if latestRelease:
-        recommended.append(latestRelease)
+        recommended.append(latestRelease.version)
 
 allVersions.sort(key=lambda x: x.releaseTime, reverse=True)
 
@@ -82,4 +77,9 @@ for version in allVersions:
     with open(outFilepath, 'w') as outfile:
         json.dump(version.to_json(), outfile, sort_keys=True, indent=4)
 
-writeSharedPackageData('com.mumfrey.liteloader', 'LiteLoader', 'net.minecraft')
+sharedData = MultiMCSharedPackageData(uid = 'com.mumfrey.liteloader', name = 'LiteLoader', parentUid = 'net.minecraft')
+sharedData.recommended = recommended
+sharedData.description = remoteVersionlist.meta.description
+sharedData.projectUrl = remoteVersionlist.meta.url
+sharedData.authors = [remoteVersionlist.meta.authors]
+sharedData.write()
