@@ -55,6 +55,10 @@ for filename in os.listdir('upstream/mojang/versions'):
             mmcLib = MultiMCLibrary(lib.to_json())
             specifier = mmcLib.name
             ruleHash = None
+            # ignore the mojang netty hack that prevents connection to select servers they don't like
+            if specifier.isMojangNetty():
+                print("Ignoring Mojang netty hack in version", versionFile.version)
+                continue
             if specifier.isLwjgl():
                 rules = None
                 if mmcLib.rules:
