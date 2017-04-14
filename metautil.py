@@ -215,12 +215,11 @@ class MultiMCVersionFile (VersionedJsonObject):
     name = StringProperty(required=True)
     version = StringProperty(required=True)
     uid = StringProperty(required=True)
-    id = StringProperty(exclude_if_none=True, default=None) # DEPRECATED this is the main Minecraft version ID Mojang uses...
     parentUid = StringProperty(exclude_if_none=True, default=None)
     requires = DictProperty(StringProperty, exclude_if_none=True, default=None)
     assetIndex = ObjectProperty(MojangAssets, exclude_if_none=True, default=None)
-    downloads = DictProperty(MojangArtifactBase, exclude_if_none=True, default=None)
     libraries = ListProperty(MultiMCLibrary, exclude_if_none=True, default=None)
+    mainJar = ObjectProperty(MultiMCLibrary, exclude_if_none=True, default=None)
     mainClass = StringProperty(exclude_if_none=True, default=None)
     appletClass = StringProperty(exclude_if_none=True, default=None)
     minecraftArguments = StringProperty(exclude_if_none=True, default=None)
@@ -240,9 +239,23 @@ def MojangToMultiMC (file, name, uid, version):
         }
     )
     mmcFile.assetIndex = file.assetIndex
-    mmcFile.downloads = file.downloads
     mmcFile.libraries = file.libraries
     mmcFile.mainClass = file.mainClass
+    if file.id:
+        mainJar = MultiMCLibrary(
+            {
+                "name": "com.mojang:minecraft:%s:client" % file.id,
+            }
+        )
+        cldl = file.downloads['client']
+        mainJar.downloads = MojangLibraryDownloads()
+        mainJar.downloads.artifact = MojangArtifact()
+        mainJar.downloads.artifact.path = "com/mojang/minecraft/%s/minecraft-%s-client.jar" % (file.id, file.id)
+        mainJar.downloads.artifact.url = cldl.url
+        mainJar.downloads.artifact.sha1 = cldl.sha1
+        mainJar.downloads.artifact.size = cldl.size
+        mmcFile.mainJar = mainJar
+
     mmcFile.minecraftArguments = file.minecraftArguments
     mmcFile.releaseTime = file.releaseTime
     # time should not be set.

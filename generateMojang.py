@@ -86,7 +86,6 @@ for filename in os.listdir('upstream/mojang/versions'):
                     keyBucket.libraries = sorted(keyBucket.libraries, key=itemgetter('name'))
                 addLWJGLVersion(lwjglVersions, keyBucket)
         versionFile.libraries = libs_minecraft
-        versionFile.id = mojangVersionFile.id
         # TODO: add detection of LWJGL 3?
         versionFile.requires = {'org.lwjgl': '2.*'}
         versionFile.order = -2
