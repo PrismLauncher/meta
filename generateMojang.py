@@ -39,6 +39,13 @@ def addLWJGLVersion(versions, bucket):
     else:
         versions[bucket.version] = bucket
 
+def removePathsFromLib(lib):
+    if mmcLib.downloads.artifact:
+        mmcLib.downloads.artifact.path = None
+    if mmcLib.downloads.classifiers:
+        for key, value in mmcLib.downloads.classifiers.items():
+            value.path = None
+
 # get the local version list
 staticVersionlist = None
 with open("static/minecraft.json", 'r', encoding='utf-8') as legacyIndexFile:
@@ -53,6 +60,7 @@ for filename in os.listdir('upstream/mojang/versions'):
         buckets = {}
         for lib in versionFile.libraries:
             mmcLib = MultiMCLibrary(lib.to_json())
+            removePathsFromLib(mmcLib)
             specifier = mmcLib.name
             ruleHash = None
             # ignore the mojang netty hack that prevents connection to select servers they don't like

@@ -124,7 +124,7 @@ class MojangArtifactBase (JsonObject):
     url = StringProperty()
 
 class MojangArtifact (MojangArtifactBase):
-    path = StringProperty()
+    path = StringProperty(exclude_if_none=True, default=None)
 
 class MojangAssets (MojangArtifactBase):
     id = StringProperty()
@@ -225,6 +225,7 @@ class MultiMCVersionFile (VersionedJsonObject):
     assetIndex = ObjectProperty(MojangAssets, exclude_if_none=True, default=None)
     libraries = ListProperty(MultiMCLibrary, exclude_if_none=True, default=None)
     mainJar = ObjectProperty(MultiMCLibrary, exclude_if_none=True, default=None)
+    jarMods = ListProperty(MultiMCLibrary, exclude_if_none=True, default=None)
     mainClass = StringProperty(exclude_if_none=True, default=None)
     appletClass = StringProperty(exclude_if_none=True, default=None)
     minecraftArguments = StringProperty(exclude_if_none=True, default=None)
@@ -255,7 +256,7 @@ def MojangToMultiMC (file, name, uid, version):
         cldl = file.downloads['client']
         mainJar.downloads = MojangLibraryDownloads()
         mainJar.downloads.artifact = MojangArtifact()
-        mainJar.downloads.artifact.path = "com/mojang/minecraft/%s/minecraft-%s-client.jar" % (file.id, file.id)
+        mainJar.downloads.artifact.path = None
         mainJar.downloads.artifact.url = cldl.url
         mainJar.downloads.artifact.sha1 = cldl.sha1
         mainJar.downloads.artifact.size = cldl.size
