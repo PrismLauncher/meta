@@ -119,8 +119,8 @@ class MojangIndexWrap:
 
 
 class MojangArtifactBase (JsonObject):
-    sha1 = StringProperty()
-    size = IntegerProperty()
+    sha1 = StringProperty(exclude_if_none=True, default=None)
+    size = IntegerProperty(exclude_if_none=True, default=None)
     url = StringProperty()
 
 class MojangArtifact (MojangArtifactBase):

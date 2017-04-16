@@ -88,6 +88,32 @@ def versionFromProfile(profile, version):
     result.order = 5
     return result
 
+def versionFromLegacy(version, legacyinfo : ForgeLegacyInfo):
+    result = MultiMCVersionFile({"name":"Forge", "version":version.longVersion, "uid":"net.minecraftforge" })
+    mcversion = version.mcversion_sane
+    result.parentUid ='net.minecraft'
+    result.requires ={'net.minecraft': mcversion}
+    result.releaseTime = legacyinfo.releaseTime
+    result.order = 5
+    if mcversion in fmlLibsMapping:
+        result.addTraits = ["legacyFML"]
+    url = version.url()
+    classifier = None
+    if "universal" in url:
+        classifier = "universal"
+    else:
+        classifier = "client"
+    coord = GradleSpecifier("net.minecraftforge:forge:%s:%s" % (version.longVersion,classifier))
+    mainmod = MultiMCLibrary(name = coord)
+    mainmod.downloads = MojangLibraryDownloads()
+    mainmod.downloads.artifact = MojangArtifact()
+    mainmod.downloads.artifact.path = None
+    mainmod.downloads.artifact.url = version.url()
+    mainmod.downloads.artifact.sha1 = legacyinfo.sha1
+    mainmod.downloads.artifact.size = legacyinfo.size
+    result.jarMods = [mainmod]
+    return result
+
 # load the locally cached version list
 with open("upstream/forge/index.json", 'r', encoding='utf-8') as f:
     main_json = json.load(f)
@@ -96,6 +122,12 @@ with open("upstream/forge/index.json", 'r', encoding='utf-8') as f:
 recommendedIds = set([v for k, v in remoteVersionlist.promos.items() if 'recommended' in k])
 recommendedVersions = []
 print ('Recommended IDs:', recommendedIds)
+
+tsPath = "static/forge-legacyinfo.json"
+
+legacyinfolist = None
+with open(tsPath, 'r', encoding='utf-8') as tsFile:
+    legacyinfolist = ForgeLegacyInfoList(json.load(tsFile))
 
 for id, entry in remoteVersionlist.number.items():
     if entry.mcversion == None:
@@ -110,25 +142,35 @@ for id, entry in remoteVersionlist.number.items():
     if int(id) in recommendedIds:
         recommendedVersions.append(version.longVersion)
 
+    # If we do not have the corresponding Minecraft version, we ignore it
+    if not os.path.isfile("multimc/net.minecraft/%s.json" % version.mcversion_sane):
+        eprint ("Skipping %d with no corresponding Minecraft version %s" % (version.build, version.mcversion_sane))
+        continue
+
+    outVersion = None
+
     if version.usesInstaller():
         profileFilepath = "upstream/forge/%s.json" % version.longVersion
         # If we do not have the Forge json, we ignore this version
         if not os.path.isfile(profileFilepath):
             eprint ("Skipping %d with missing profile json" % version.build)
             continue
-        # If we do not have the corresponding Minecraft version, we ignore it too
-        if not os.path.isfile("multimc/net.minecraft/%s.json" % version.mcversion_sane):
-            eprint ("Skipping %d with no corresponding Minecraft version" % version.build)
-            continue
         with open(profileFilepath, 'r', encoding='utf-8') as profileFile:
             profile = ForgeInstallerProfile(json.load(profileFile))
             outVersion = versionFromProfile(profile, version)
-            outFilepath = "multimc/net.minecraftforge/%s.json" % outVersion.version
-            with open(outFilepath, 'w') as outfile:
-                json.dump(outVersion.to_json(), outfile, sort_keys=True, indent=4)
     else:
         # Generate json for legacy here
-        pass
+        if version.mcversion_sane == "1.6.1":
+            continue
+        if not id in legacyinfolist.number:
+            print("Legacy id", id, "is missing in legacy info. Ignoring.")
+            continue
+
+        outVersion = versionFromLegacy(version, legacyinfolist.number[id])
+
+    outFilepath = "multimc/net.minecraftforge/%s.json" % outVersion.version
+    with open(outFilepath, 'w') as outfile:
+        json.dump(outVersion.to_json(), outfile, sort_keys=True, indent=4)
 
 print ('Recommended versions:', recommendedVersions)
 

@@ -211,3 +211,12 @@ class ForgeInstallerProfile(JsonObject):
     install = ObjectProperty(ForgeInstallerProfileInstallSection, required = True)
     versionInfo = ObjectProperty(ForgeVersionFile, required = True)
     optionals = ListProperty(ForgeOptional)
+
+class ForgeLegacyInfo(JsonObject):
+    releaseTime = ISOTimestampProperty()
+    size = IntegerProperty()
+    sha256 = StringProperty()
+    sha1 = StringProperty()
+
+class ForgeLegacyInfoList(JsonObject):
+    number = DictProperty(ForgeLegacyInfo)
