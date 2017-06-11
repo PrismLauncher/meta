@@ -50,7 +50,7 @@ class LiteloaderArtefacts(JsonObject):
     liteloader = DictProperty(LiteloaderArtefact, name="com.mumfrey:liteloader", required=True)
 
 class LiteloaderSnapshot(LiteloaderArtefact):
-    lastSuccessfulBuild = IntegerProperty(required=True)
+    lastSuccessfulBuild = IntegerProperty()
 
 class LiteloaderSnapshots(JsonObject):
     libraries = ListProperty(MultiMCLibrary, required=True)
