@@ -46,7 +46,7 @@ def shouldIgnoreArtifact(libSet, match):
     return False
 
 def versionFromProfile(profile, version):
-    result = MultiMCVersionFile({"name":"Forge", "version":version.longVersion, "uid":"net.minecraftforge" })
+    result = MultiMCVersionFile({"name":"Forge", "version":version.rawVersion, "uid":"net.minecraftforge" })
     mcversion = profile.install.minecraft
     result.parentUid ='net.minecraft'
     result.requires ={'net.minecraft': mcversion}
@@ -89,7 +89,7 @@ def versionFromProfile(profile, version):
     return result
 
 def versionFromLegacy(version, legacyinfo : ForgeLegacyInfo):
-    result = MultiMCVersionFile({"name":"Forge", "version":version.longVersion, "uid":"net.minecraftforge" })
+    result = MultiMCVersionFile({"name":"Forge", "version":version.rawVersion, "uid":"net.minecraftforge" })
     mcversion = version.mcversion_sane
     result.parentUid ='net.minecraft'
     result.requires ={'net.minecraft': mcversion}
@@ -140,7 +140,7 @@ for id, entry in remoteVersionlist.number.items():
         continue
 
     if int(id) in recommendedIds:
-        recommendedVersions.append(version.longVersion)
+        recommendedVersions.append(version.rawVersion)
 
     # If we do not have the corresponding Minecraft version, we ignore it
     if not os.path.isfile("multimc/net.minecraft/%s.json" % version.mcversion_sane):
