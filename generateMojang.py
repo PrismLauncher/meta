@@ -130,7 +130,7 @@ for version in lwjglVersions:
         print("Skipped LWJGL", versionObj.version)
 
 lwjglSharedData = MultiMCSharedPackageData(uid = 'org.lwjgl', name = 'LWJGL')
-lwjglSharedData.recommended = ['2.9.1']
+lwjglSharedData.recommended = ['2.9.4-nightly-20150209']
 lwjglSharedData.write()
 
 with open("upstream/mojang/version_manifest.json", 'r', encoding='utf-8') as localIndexFile:
