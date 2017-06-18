@@ -41,6 +41,7 @@ class LiteloaderArtefact(JsonObject):
     stream = StringProperty(required=True)
     file = StringProperty(required=True)
     version = StringProperty(required=True)
+    build = StringProperty(default=None, exclude_if_none=True)
     md5 = StringProperty(required=True)
     timestamp = StringProperty(required=True)
     srcJar = StringProperty(default=None, exclude_if_none=True)
