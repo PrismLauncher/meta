@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 from liteloaderutil import *
 from jsonobject import *
 from datetime import datetime
