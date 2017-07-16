@@ -3,3 +3,4 @@ multimc
 upstream
 __pycache__
 *.kdev4
+config_local.sh

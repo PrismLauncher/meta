@@ -7,8 +7,8 @@ BASEDIR=`pwd`
 set -x
 
 source config.sh
-if [ -f config_local.sh ]; then
-    source config_local.sh
+if [ -f config/config_local.sh ]; then
+    source config/config_local.sh
 fi
 
 MODE=${MODE:-develop}
@@ -46,7 +46,7 @@ cd "${BASEDIR}/${UPSTREAM_DIR}"
 git add mojang/version_manifest.json mojang/versions/* mojang/assets/* forge/*.json liteloader/*.json || fail_in
 if ! git diff --cached --exit-code ; then
     git commit -a -m "Update ${currentDate}" || fail_in
-    git push || exit 1
+    GIT_SSH_COMMAND="ssh -i ${BASEDIR}/config/meta-upstream.key" git push || exit 1
 fi
 cd "${BASEDIR}"
 
@@ -64,10 +64,10 @@ cd "${BASEDIR}/${MMC_DIR}"
 git add index.json org.lwjgl/* net.minecraft/* net.minecraftforge/* com.mumfrey.liteloader/* || fail_out
 if ! git diff --cached --exit-code ; then
     git commit -a -m "Update ${currentDate}" || fail_out
-    git push || exit 1
+    GIT_SSH_COMMAND="ssh -i ${BASEDIR}/config/meta-multimc.key" git push || exit 1
 fi
 cd "${BASEDIR}"
 
-s3cmd --exclude=".git*" --delete-removed sync ${BASEDIR}/${MMC_DIR}/ ${S3_BUCKET} || exit 2
+s3cmd -c ${BASEDIR}/config/s3cmd.cfg --exclude=".git*" --delete-removed sync ${BASEDIR}/${MMC_DIR}/ ${S3_BUCKET} || exit 2
 
 exit 0
