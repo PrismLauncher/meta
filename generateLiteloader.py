@@ -70,6 +70,8 @@ for mcVersion, versionObject in remoteVersionlist.versions.items():
     if latestRelease:
         recommended.append(latestRelease.version)
 
+recommended.sort()
+
 allVersions.sort(key=lambda x: x.releaseTime, reverse=True)
 
 for version in allVersions:

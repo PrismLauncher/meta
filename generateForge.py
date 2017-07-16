@@ -172,6 +172,8 @@ for id, entry in remoteVersionlist.number.items():
     with open(outFilepath, 'w') as outfile:
         json.dump(outVersion.to_json(), outfile, sort_keys=True, indent=4)
 
+recommendedVersions.sort()
+
 print ('Recommended versions:', recommendedVersions)
 
 sharedData = MultiMCSharedPackageData(uid = 'net.minecraftforge', name = "Forge", parentUid = 'net.minecraft')

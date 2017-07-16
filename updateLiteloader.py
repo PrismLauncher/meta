@@ -31,8 +31,8 @@ main_json = r.json()
 
 # make sure we understand the schema
 remoteVersionlist = LiteloaderIndex(copy.deepcopy(main_json))
-newStr = json.dumps(remoteVersionlist.to_json())
-origStr = json.dumps(main_json)
+newStr = json.dumps(remoteVersionlist.to_json(), sort_keys=True)
+origStr = json.dumps(main_json, sort_keys=True)
 assert newStr == origStr
 
 # save the json it to file
