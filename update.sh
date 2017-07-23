@@ -4,7 +4,7 @@ BASEDIR=$(dirname "$0")
 cd "${BASEDIR}"
 BASEDIR=`pwd`
 
-set -x
+#set -x
 
 source config.sh
 if [ -f config/config_local.sh ]; then
