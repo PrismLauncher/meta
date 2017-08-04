@@ -47,6 +47,11 @@ class LiteloaderArtefact(JsonObject):
     srcJar = StringProperty(default=None, exclude_if_none=True)
     mcpJar = StringProperty(default=None, exclude_if_none=True)
 
+class LiteloaderDev(JsonObject):
+    fgVersion = StringProperty(default=None ,exclude_if_none=True)
+    mappings = StringProperty(required=None, exclude_if_none=True)
+    mcp = StringProperty(default=None, exclude_if_none=True)
+
 class LiteloaderArtefacts(JsonObject):
     liteloader = DictProperty(LiteloaderArtefact, name="com.mumfrey:liteloader", required=True)
 
@@ -59,6 +64,7 @@ class LiteloaderSnapshots(JsonObject):
 
 '''
     "1.10.2":{
+        "dev": { ... },
         "repo":{ ... },
         "artefacts":{
             "com.mumfrey:liteloader":{ },
@@ -69,6 +75,7 @@ class LiteloaderSnapshots(JsonObject):
         }
 '''
 class LiteloaderEntry(JsonObject):
+    dev = ObjectProperty(LiteloaderDev, default=None, exclude_if_none=True)
     repo = ObjectProperty(LiteloaderRepo, required=True)
     artefacts = ObjectProperty(LiteloaderArtefacts, default=None, exclude_if_none=True)
     snapshots = ObjectProperty(LiteloaderSnapshots, default=None, exclude_if_none=True)
