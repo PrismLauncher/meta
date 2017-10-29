@@ -46,6 +46,18 @@ def removePathsFromLib(lib):
         for key, value in mmcLib.downloads.classifiers.items():
             value.path = None
 
+def adaptNewStyleArguments(arguments):
+    outarr = []
+    # we ignore the jvm arguments entirely.
+    # grab the strings, log the complex stuff
+    for arg in arguments.game:
+        if isinstance(arg, str):
+            outarr.append(arg)
+        else:
+            print("!!! Unrecognized structure in Minecraft game arguments:")
+            pprint(arg)
+    return ' '.join(outarr)
+
 # get the local version list
 staticVersionlist = None
 with open("static/minecraft.json", 'r', encoding='utf-8') as legacyIndexFile:
@@ -57,6 +69,7 @@ for filename in os.listdir('upstream/mojang/versions'):
         mojangVersionFile = MojangVersionFile(json.load(json_file))
         versionFile = MojangToMultiMC(mojangVersionFile, "Minecraft", "net.minecraft", mojangVersionFile.id)
         libs_minecraft = []
+        is_lwjgl_3 = False
         buckets = {}
         for lib in versionFile.libraries:
             mmcLib = MultiMCLibrary(lib.to_json())
@@ -74,6 +87,9 @@ for filename in os.listdir('upstream/mojang/versions'):
                     mmcLib.rules = None
                 bucket = addOrGetBucket(buckets, rules)
                 if specifier.group == "org.lwjgl.lwjgl" and specifier.artifact == "lwjgl":
+                    bucket.version = specifier.version
+                if specifier.group == "org.lwjgl" and specifier.artifact == "lwjgl":
+                    is_lwjgl_3 = True
                     bucket.version = specifier.version
                 if not bucket.libraries:
                     bucket.libraries = []
@@ -95,8 +111,14 @@ for filename in os.listdir('upstream/mojang/versions'):
                 addLWJGLVersion(lwjglVersions, keyBucket)
         versionFile.libraries = libs_minecraft
         # TODO: add detection of LWJGL 3?
-        versionFile.requires = {'org.lwjgl': '2.*'}
+        if is_lwjgl_3:
+            versionFile.requires = {'org.lwjgl3': '*'}
+        else:
+            versionFile.requires = {'org.lwjgl': '*'}
         versionFile.order = -2
+        # process 1.13 arguments into previous version
+        if not mojangVersionFile.minecraftArguments and mojangVersionFile.arguments:
+            versionFile.minecraftArguments = adaptNewStyleArguments(mojangVersionFile.arguments)
         filenameOut = "multimc/net.minecraft/%s.json" % versionFile.version
         if versionFile.version in staticVersionlist.versions:
             ApplyLegacyOverride (versionFile, staticVersionlist.versions[versionFile.version])
@@ -105,8 +127,18 @@ for filename in os.listdir('upstream/mojang/versions'):
 
 for version in lwjglVersions:
     versionObj = lwjglVersions[version]
+    if version[0] == '2':
+        filename = "multimc/org.lwjgl/%s.json" % version
+        versionObj.name = 'LWJGL 2'
+        versionObj.uid = 'org.lwjgl'
+    elif version[0] == '3':
+        filename = "multimc/org.lwjgl3/%s.json" % version
+        versionObj.name = 'LWJGL 3'
+        versionObj.uid = 'org.lwjgl3'
+    else:
+        raise Exception("LWJGL version not recognized: %s" % versionObj.version)
+
     versionObj.order = -1
-    filename = "multimc/org.lwjgl/%s.json" % version
     good = True
     for lib in versionObj.libraries:
         if not lib.natives:
@@ -131,6 +163,10 @@ for version in lwjglVersions:
 
 lwjglSharedData = MultiMCSharedPackageData(uid = 'org.lwjgl', name = 'LWJGL')
 lwjglSharedData.recommended = ['2.9.4-nightly-20150209']
+lwjglSharedData.write()
+
+lwjglSharedData = MultiMCSharedPackageData(uid = 'org.lwjgl3', name = 'LWJGL 3')
+lwjglSharedData.recommended = ['3.1.2']
 lwjglSharedData.write()
 
 with open("upstream/mojang/version_manifest.json", 'r', encoding='utf-8') as localIndexFile:

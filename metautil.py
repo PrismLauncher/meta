@@ -47,7 +47,7 @@ class GradleSpecifier:
         return "GradleSpecifier('" + self.toString() + "')"
 
     def isLwjgl(self):
-        return self.group in ("org.lwjgl.lwjgl", "net.java.jinput", "net.java.jutils")
+        return self.group in ("org.lwjgl", "org.lwjgl.lwjgl", "net.java.jinput", "net.java.jutils")
 
     def isMojangNetty(self):
         if self.group == "com.mojang":
@@ -174,6 +174,10 @@ class MojangLogging (JsonObject):
     argument = StringProperty(required = True)
     type = StringProperty(required = True, choices=["log4j2-xml"])
 
+class MojangArguments (JsonObject):
+    game = ListProperty(required = True)
+    jvm = ListProperty(required = True)
+
 class UnknownVersionException(Exception):
     """Exception raised for unknown Mojang version file format versions.
 
@@ -184,11 +188,12 @@ class UnknownVersionException(Exception):
         self.message = message
 
 def validateSupportedMojangVersion(version):
-    supportedVersion = 18
+    supportedVersion = 21
     if version > supportedVersion:
         raise UnknownVersionException("Unsupported Mojang format version: %d. Max supported is: %d" % (version, supportedVersion))
 
 class MojangVersionFile (JsonObject):
+    arguments = ObjectProperty(MojangArguments, exclude_if_none=True, default=None)
     assetIndex = ObjectProperty(MojangAssets, exclude_if_none=True, default=None)
     assets = StringProperty(exclude_if_none=True, default=None)
     downloads = DictProperty(MojangArtifactBase, exclude_if_none=True, default=None)
