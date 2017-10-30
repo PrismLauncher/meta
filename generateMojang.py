@@ -12,6 +12,8 @@ from pprint import pprint
 
 from metautil import *
 
+from distutils import version
+
 def addOrGetBucket(buckets, rules):
     ruleHash = None
     if rules:
@@ -63,12 +65,21 @@ staticVersionlist = None
 with open("static/minecraft.json", 'r', encoding='utf-8') as legacyIndexFile:
     staticVersionlist = LegacyOverrideIndex(json.load(legacyIndexFile))
 
+found_any_lwjgl3 = False
 lwjglVersions = {}
 for filename in os.listdir('upstream/mojang/versions'):
     with open("upstream/mojang/versions/" + filename) as json_file:
         mojangVersionFile = MojangVersionFile(json.load(json_file))
         versionFile = MojangToMultiMC(mojangVersionFile, "Minecraft", "net.minecraft", mojangVersionFile.id)
         libs_minecraft = []
+        # HACK: ignore new snapshots and versions temporarily
+        if versionFile.type == "snapshot":
+            cutoffTime = iso8601.parse_date("2017-10-25T14:43:50+00:00")
+            if versionFile.releaseTime >= cutoffTime:
+                continue
+        if versionFile.type == "release":
+            if version.LooseVersion(versionFile.version) >= version.LooseVersion("1.13"):
+                continue
         is_lwjgl_3 = False
         buckets = {}
         for lib in versionFile.libraries:
@@ -90,6 +101,7 @@ for filename in os.listdir('upstream/mojang/versions'):
                     bucket.version = specifier.version
                 if specifier.group == "org.lwjgl" and specifier.artifact == "lwjgl":
                     is_lwjgl_3 = True
+                    found_any_lwjgl3 = True
                     bucket.version = specifier.version
                 if not bucket.libraries:
                     bucket.libraries = []
@@ -125,14 +137,14 @@ for filename in os.listdir('upstream/mojang/versions'):
         with open(filenameOut, 'w') as outfile:
             json.dump(versionFile.to_json(), outfile, sort_keys=True, indent=4)
 
-for version in lwjglVersions:
-    versionObj = lwjglVersions[version]
-    if version[0] == '2':
-        filename = "multimc/org.lwjgl/%s.json" % version
+for lwjglVersion in lwjglVersions:
+    versionObj = lwjglVersions[lwjglVersion]
+    if lwjglVersion[0] == '2':
+        filename = "multimc/org.lwjgl/%s.json" % lwjglVersion
         versionObj.name = 'LWJGL 2'
         versionObj.uid = 'org.lwjgl'
-    elif version[0] == '3':
-        filename = "multimc/org.lwjgl3/%s.json" % version
+    elif lwjglVersion[0] == '3':
+        filename = "multimc/org.lwjgl3/%s.json" % lwjglVersion
         versionObj.name = 'LWJGL 3'
         versionObj.uid = 'org.lwjgl3'
     else:
@@ -165,9 +177,10 @@ lwjglSharedData = MultiMCSharedPackageData(uid = 'org.lwjgl', name = 'LWJGL')
 lwjglSharedData.recommended = ['2.9.4-nightly-20150209']
 lwjglSharedData.write()
 
-lwjglSharedData = MultiMCSharedPackageData(uid = 'org.lwjgl3', name = 'LWJGL 3')
-lwjglSharedData.recommended = ['3.1.2']
-lwjglSharedData.write()
+if found_any_lwjgl3:
+    lwjglSharedData = MultiMCSharedPackageData(uid = 'org.lwjgl3', name = 'LWJGL 3')
+    lwjglSharedData.recommended = ['3.1.2']
+    lwjglSharedData.write()
 
 with open("upstream/mojang/version_manifest.json", 'r', encoding='utf-8') as localIndexFile:
     localVersionlist = MojangIndexWrap(json.load(localIndexFile))

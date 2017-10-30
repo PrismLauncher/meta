@@ -62,6 +62,10 @@ cd "${BASEDIR}"
 
 cd "${BASEDIR}/${MMC_DIR}"
 git add index.json org.lwjgl/* net.minecraft/* net.minecraftforge/* com.mumfrey.liteloader/* || fail_out
+if [-d "org.lwjgl3"]; then
+    git add org.lwjgl3/* || fail_out
+fi
+
 if ! git diff --cached --exit-code ; then
     git commit -a -m "Update ${currentDate}" || fail_out
     GIT_SSH_COMMAND="ssh -i ${BASEDIR}/config/meta-multimc.key" git push || exit 1

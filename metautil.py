@@ -283,8 +283,11 @@ class MultiMCSharedPackageData(VersionedJsonObject):
     projectUrl = StringProperty(exclude_if_none=True, default=None)
 
     def write(self):
-        with open("multimc/%s/package.json" % self.uid, 'w') as file:
-            json.dump(self.to_json(), file, sort_keys=True, indent=4)
+        try:
+            with open("multimc/%s/package.json" % self.uid, 'w') as file:
+                json.dump(self.to_json(), file, sort_keys=True, indent=4)
+        except EnvironmentError as e:
+            print("Error while trying to save shared packaged data for %s:" % self.uid, e)
 
 def writeSharedPackageData(uid, name, parentUid = None):
     desc = MultiMCSharedPackageData({
