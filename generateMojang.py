@@ -72,14 +72,6 @@ for filename in os.listdir('upstream/mojang/versions'):
         mojangVersionFile = MojangVersionFile(json.load(json_file))
         versionFile = MojangToMultiMC(mojangVersionFile, "Minecraft", "net.minecraft", mojangVersionFile.id)
         libs_minecraft = []
-        # HACK: ignore new snapshots and versions temporarily
-        if versionFile.type == "snapshot":
-            cutoffTime = iso8601.parse_date("2017-10-25T14:43:50+00:00")
-            if versionFile.releaseTime >= cutoffTime:
-                continue
-        if versionFile.type == "release":
-            if version.LooseVersion(versionFile.version) >= version.LooseVersion("1.13"):
-                continue
         is_lwjgl_3 = False
         buckets = {}
         for lib in versionFile.libraries:
