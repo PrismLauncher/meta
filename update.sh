@@ -62,7 +62,7 @@ cd "${BASEDIR}"
 
 cd "${BASEDIR}/${MMC_DIR}"
 git add index.json org.lwjgl/* net.minecraft/* net.minecraftforge/* com.mumfrey.liteloader/* || fail_out
-if [-d "org.lwjgl3"]; then
+if [ -d "org.lwjgl3"]; then
     git add org.lwjgl3/* || fail_out
 fi
 
