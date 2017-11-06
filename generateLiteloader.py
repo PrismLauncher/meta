@@ -22,8 +22,7 @@ def processArtefacts(mcVersion, liteloader, notSnapshots):
             latestVersion = artefact.version
             continue
         version = MultiMCVersionFile(name="LiteLoader", uid="com.mumfrey.liteloader", version=artefact.version)
-        version.requires = {}
-        version.requires['net.minecraft'] = mcVersion
+        version.requires = [RequiresEntry(uid='net.minecraft', equals=mcVersion)]
         version.releaseTime = datetime.utcfromtimestamp(int(artefact.timestamp))
         version.addTweakers = [artefact.tweakClass]
         version.mainClass = "net.minecraft.launchwrapper.Launch"

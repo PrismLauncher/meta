@@ -116,9 +116,9 @@ for filename in os.listdir('upstream/mojang/versions'):
         versionFile.libraries = libs_minecraft
         # TODO: add detection of LWJGL 3?
         if is_lwjgl_3:
-            versionFile.requires = {'org.lwjgl3': '*'}
+            versionFile.requires = [RequiresEntry(uid='org.lwjgl3')]
         else:
-            versionFile.requires = {'org.lwjgl': '*'}
+            versionFile.requires = [RequiresEntry(uid='org.lwjgl')]
         versionFile.order = -2
         # process 1.13 arguments into previous version
         if not mojangVersionFile.minecraftArguments and mojangVersionFile.arguments:
