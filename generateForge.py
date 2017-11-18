@@ -49,7 +49,7 @@ def versionFromProfile(profile, version):
     result = MultiMCVersionFile({"name":"Forge", "version":version.rawVersion, "uid":"net.minecraftforge" })
     mcversion = profile.install.minecraft
     result.parentUid ='net.minecraft'
-    result.requires = [RequiresEntry(uid='net.minecraft', equals=mcversion)]
+    result.requires = [DependencyEntry(uid='net.minecraft', equals=mcversion)]
     result.mainClass = profile.versionInfo.mainClass
     args = profile.versionInfo.minecraftArguments
     tweakers = []
@@ -92,7 +92,7 @@ def versionFromLegacy(version, legacyinfo : ForgeLegacyInfo):
     result = MultiMCVersionFile({"name":"Forge", "version":version.rawVersion, "uid":"net.minecraftforge" })
     mcversion = version.mcversion_sane
     result.parentUid ='net.minecraft'
-    result.requires = [RequiresEntry(uid='net.minecraft', equals=mcversion)]
+    result.requires = [DependencyEntry(uid='net.minecraft', equals=mcversion)]
     result.releaseTime = legacyinfo.releaseTime
     result.order = 5
     if mcversion in fmlLibsMapping:

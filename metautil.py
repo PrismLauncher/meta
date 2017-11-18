@@ -221,7 +221,7 @@ class MultiMCLibrary (MojangLibrary):
 class VersionedJsonObject(JsonObject):
     formatVersion = IntegerProperty(default=CurrentMultiMCFormatVersion, validators=validateSupportedMultiMCVersion)
 
-class RequiresEntry (JsonObject):
+class DependencyEntry (JsonObject):
     uid = StringProperty(required=True)
     equals = StringProperty(exclude_if_none=True, default=None)
 
@@ -230,7 +230,8 @@ class MultiMCVersionFile (VersionedJsonObject):
     version = StringProperty(required=True)
     uid = StringProperty(required=True)
     parentUid = StringProperty(exclude_if_none=True, default=None)
-    requires = ListProperty(RequiresEntry, exclude_if_none=True, default=None)
+    requires = ListProperty(DependencyEntry, exclude_if_none=True, default=None)
+    conflicts = ListProperty(DependencyEntry, exclude_if_none=True, default=None)
     assetIndex = ObjectProperty(MojangAssets, exclude_if_none=True, default=None)
     libraries = ListProperty(MultiMCLibrary, exclude_if_none=True, default=None)
     mainJar = ObjectProperty(MultiMCLibrary, exclude_if_none=True, default=None)
@@ -310,7 +311,8 @@ class MultiMCVersionIndexEntry(JsonObject):
     version = StringProperty()
     type = StringProperty(exclude_if_none=True, default=None)
     releaseTime = ISOTimestampProperty()
-    requires = ListProperty(RequiresEntry, exclude_if_none=True, default=None)
+    requires = ListProperty(DependencyEntry, exclude_if_none=True, default=None)
+    conflicts = ListProperty(DependencyEntry, exclude_if_none=True, default=None)
     recommended = BooleanProperty(exclude_if_none=True, default=None)
     sha256 = StringProperty()
 

@@ -116,9 +116,9 @@ for filename in os.listdir('upstream/mojang/versions'):
         versionFile.libraries = libs_minecraft
         # TODO: add detection of LWJGL 3?
         if is_lwjgl_3:
-            versionFile.requires = [RequiresEntry(uid='org.lwjgl3')]
+            versionFile.requires = [DependencyEntry(uid='org.lwjgl3')]
         else:
-            versionFile.requires = [RequiresEntry(uid='org.lwjgl')]
+            versionFile.requires = [DependencyEntry(uid='org.lwjgl')]
         versionFile.order = -2
         # process 1.13 arguments into previous version
         if not mojangVersionFile.minecraftArguments and mojangVersionFile.arguments:
@@ -135,10 +135,12 @@ for lwjglVersion in lwjglVersions:
         filename = "multimc/org.lwjgl/%s.json" % lwjglVersion
         versionObj.name = 'LWJGL 2'
         versionObj.uid = 'org.lwjgl'
+        versionObj.conflicts = [DependencyEntry(uid='org.lwjgl3')]
     elif lwjglVersion[0] == '3':
         filename = "multimc/org.lwjgl3/%s.json" % lwjglVersion
         versionObj.name = 'LWJGL 3'
         versionObj.uid = 'org.lwjgl3'
+        versionObj.conflicts = [DependencyEntry(uid='org.lwjgl')]
     else:
         raise Exception("LWJGL version not recognized: %s" % versionObj.version)
 
@@ -165,7 +167,7 @@ for lwjglVersion in lwjglVersions:
     else:
         print("Skipped LWJGL", versionObj.version)
 
-lwjglSharedData = MultiMCSharedPackageData(uid = 'org.lwjgl', name = 'LWJGL')
+lwjglSharedData = MultiMCSharedPackageData(uid = 'org.lwjgl', name = 'LWJGL 2')
 lwjglSharedData.recommended = ['2.9.4-nightly-20150209']
 lwjglSharedData.write()
 
