@@ -18,6 +18,7 @@ def addOrGetBucket(buckets, rules):
     ruleHash = None
     if rules:
         ruleHash = hash(json.dumps(rules.to_json()))
+        print("ruleHash for", rules, "is", ruleHash)
 
     bucket = None
     if ruleHash in buckets:
@@ -69,6 +70,7 @@ found_any_lwjgl3 = False
 lwjglVersions = {}
 for filename in os.listdir('upstream/mojang/versions'):
     with open("upstream/mojang/versions/" + filename) as json_file:
+        print("Processing", filename)
         mojangVersionFile = MojangVersionFile(json.load(json_file))
         versionFile = MojangToMultiMC(mojangVersionFile, "Minecraft", "net.minecraft", mojangVersionFile.id)
         libs_minecraft = []
@@ -103,6 +105,7 @@ for filename in os.listdir('upstream/mojang/versions'):
                 libs_minecraft.append(mmcLib)
         if len(buckets) == 1:
             addLWJGLVersion(lwjglVersions, buckets[None])
+            print("Found only candidate LWJGL", buckets[None].version)
         else:
             for key in buckets:
                 if key == None:
@@ -113,6 +116,7 @@ for filename in os.listdir('upstream/mojang/versions'):
                 else:
                     keyBucket.libraries = sorted(keyBucket.libraries, key=itemgetter('name'))
                 addLWJGLVersion(lwjglVersions, keyBucket)
+                print("Found candidate LWJGL", keyBucket.version, key)
         versionFile.libraries = libs_minecraft
         # TODO: add detection of LWJGL 3?
         if is_lwjgl_3:
