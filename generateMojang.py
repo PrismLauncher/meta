@@ -150,6 +150,11 @@ for filename in os.listdir('upstream/mojang/versions'):
             error = "ERROR: cannot determine single suggested LWJGL version in %s" % mojangVersionFile.id
             print(error)
             raise Exception(error)
+        # if it uses LWJGL 3, add the trait that enables starting on first thread on macOS
+        if is_lwjgl_3:
+            if not versionFile.addTraits:
+                versionFile.addTraits = []
+            versionFile.addTraits.append("FirstThreadOnMacOS")
         versionFile.requires = [depentry]
         versionFile.order = -2
         # process 1.13 arguments into previous version
