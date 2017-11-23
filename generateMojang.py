@@ -18,7 +18,6 @@ def addOrGetBucket(buckets, rules):
     ruleHash = None
     if rules:
         ruleHash = hash(json.dumps(rules.to_json()))
-        print("ruleHash for", rules, "is", ruleHash)
 
     bucket = None
     if ruleHash in buckets:
@@ -61,6 +60,21 @@ def adaptNewStyleArguments(arguments):
             pprint(arg)
     return ' '.join(outarr)
 
+def isOnlyMacOS(rules, specifier):
+    allowsOSX = False
+    allowsAll = False
+    #print("Considering", specifier, "rules", rules)
+    if rules:
+        for rule in rules:
+            if rule.action == "allow" and rule.os and rule.os.name == "osx":
+                allowsOSX = True
+            if rule.action == "allow" and not rule.os:
+                allowsAll = True
+        if allowsOSX and not allowsAll:
+            return True
+    return False
+
+
 # get the local version list
 staticVersionlist = None
 with open("static/minecraft.json", 'r', encoding='utf-8') as legacyIndexFile:
@@ -90,6 +104,8 @@ for filename in os.listdir('upstream/mojang/versions'):
                 if mmcLib.rules:
                     rules = mmcLib.rules
                     mmcLib.rules = None
+                if isOnlyMacOS(rules, specifier):
+                    continue
                 bucket = addOrGetBucket(buckets, rules)
                 if specifier.group == "org.lwjgl.lwjgl" and specifier.artifact == "lwjgl":
                     bucket.version = specifier.version
@@ -107,6 +123,7 @@ for filename in os.listdir('upstream/mojang/versions'):
             addLWJGLVersion(lwjglVersions, buckets[None])
             print("Found only candidate LWJGL", buckets[None].version)
         else:
+            # multiple buckets for LWJGL. [None] is common to all, other keys are for different sets of rules
             for key in buckets:
                 if key == None:
                     continue
@@ -117,12 +134,23 @@ for filename in os.listdir('upstream/mojang/versions'):
                     keyBucket.libraries = sorted(keyBucket.libraries, key=itemgetter('name'))
                 addLWJGLVersion(lwjglVersions, keyBucket)
                 print("Found candidate LWJGL", keyBucket.version, key)
+            # remove the common bucket...
+            if None in buckets:
+                del buckets[None]
         versionFile.libraries = libs_minecraft
-        # TODO: add detection of LWJGL 3?
+        depentry = None
+
         if is_lwjgl_3:
-            versionFile.requires = [DependencyEntry(uid='org.lwjgl3')]
+            depentry = DependencyEntry(uid='org.lwjgl3')
         else:
-            versionFile.requires = [DependencyEntry(uid='org.lwjgl')]
+            depentry = DependencyEntry(uid='org.lwjgl')
+        if len(buckets) == 1:
+            depentry.suggests = next(iter(buckets.values())).version
+        else:
+            error = "ERROR: cannot determine single suggested LWJGL version in %s" % mojangVersionFile.id
+            print(error)
+            raise Exception(error)
+        versionFile.requires = [depentry]
         versionFile.order = -2
         # process 1.13 arguments into previous version
         if not mojangVersionFile.minecraftArguments and mojangVersionFile.arguments:

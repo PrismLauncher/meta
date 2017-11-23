@@ -224,6 +224,7 @@ class VersionedJsonObject(JsonObject):
 class DependencyEntry (JsonObject):
     uid = StringProperty(required=True)
     equals = StringProperty(exclude_if_none=True, default=None)
+    suggests = StringProperty(exclude_if_none=True, default=None)
 
 class MultiMCVersionFile (VersionedJsonObject):
     name = StringProperty(required=True)
