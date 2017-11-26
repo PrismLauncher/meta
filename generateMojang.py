@@ -181,6 +181,7 @@ for lwjglVersion in lwjglVersions:
     else:
         raise Exception("LWJGL version not recognized: %s" % versionObj.version)
 
+    versionObj.volatile = True
     versionObj.order = -1
     good = True
     for lib in versionObj.libraries:

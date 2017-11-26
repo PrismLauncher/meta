@@ -59,6 +59,7 @@ for package in os.listdir('multimc'):
         versionEntry.sha256 = filehash
         versionEntry.requires = versionFile.requires
         versionEntry.conflicts = versionFile.conflicts
+        versionEntry.volatile = versionFile.volatile
         versionList.versions.append(versionEntry)
 
     # sort the versions in descending order by time of release

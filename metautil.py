@@ -233,6 +233,7 @@ class MultiMCVersionFile (VersionedJsonObject):
     parentUid = StringProperty(exclude_if_none=True, default=None)
     requires = ListProperty(DependencyEntry, exclude_if_none=True, default=None)
     conflicts = ListProperty(DependencyEntry, exclude_if_none=True, default=None)
+    volatile = BooleanProperty(exclude_if_none=True, default=None)
     assetIndex = ObjectProperty(MojangAssets, exclude_if_none=True, default=None)
     libraries = ListProperty(MultiMCLibrary, exclude_if_none=True, default=None)
     mainJar = ObjectProperty(MultiMCLibrary, exclude_if_none=True, default=None)
@@ -315,6 +316,7 @@ class MultiMCVersionIndexEntry(JsonObject):
     requires = ListProperty(DependencyEntry, exclude_if_none=True, default=None)
     conflicts = ListProperty(DependencyEntry, exclude_if_none=True, default=None)
     recommended = BooleanProperty(exclude_if_none=True, default=None)
+    volatile = BooleanProperty(exclude_if_none=True, default=None)
     sha256 = StringProperty()
 
 class MultiMCVersionIndex(VersionedJsonObject):
