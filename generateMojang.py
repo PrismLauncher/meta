@@ -178,6 +178,9 @@ for lwjglVersion in lwjglVersions:
         versionObj.name = 'LWJGL 3'
         versionObj.uid = 'org.lwjgl3'
         versionObj.conflicts = [DependencyEntry(uid='org.lwjgl')]
+        # remove jutils and jinput from LWJGL 3 -- this is a dependency that Mojang kept in, but doesn't belong there anymore
+        filteredLibraries = list(filter(lambda lib: not lib.name.artifact in ["jutils", "jinput"], versionObj.libraries))
+        versionObj.libraries = filteredLibraries
     else:
         raise Exception("LWJGL version not recognized: %s" % versionObj.version)
 
