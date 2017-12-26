@@ -48,7 +48,6 @@ def shouldIgnoreArtifact(libSet, match):
 def versionFromProfile(profile, version):
     result = MultiMCVersionFile({"name":"Forge", "version":version.rawVersion, "uid":"net.minecraftforge" })
     mcversion = profile.install.minecraft
-    result.parentUid ='net.minecraft'
     result.requires = [DependencyEntry(uid='net.minecraft', equals=mcversion)]
     result.mainClass = profile.versionInfo.mainClass
     args = profile.versionInfo.minecraftArguments
@@ -91,7 +90,6 @@ def versionFromProfile(profile, version):
 def versionFromLegacy(version, legacyinfo : ForgeLegacyInfo):
     result = MultiMCVersionFile({"name":"Forge", "version":version.rawVersion, "uid":"net.minecraftforge" })
     mcversion = version.mcversion_sane
-    result.parentUid ='net.minecraft'
     result.requires = [DependencyEntry(uid='net.minecraft', equals=mcversion)]
     result.releaseTime = legacyinfo.releaseTime
     result.order = 5
@@ -176,7 +174,7 @@ recommendedVersions.sort()
 
 print ('Recommended versions:', recommendedVersions)
 
-sharedData = MultiMCSharedPackageData(uid = 'net.minecraftforge', name = "Forge", parentUid = 'net.minecraft')
+sharedData = MultiMCSharedPackageData(uid = 'net.minecraftforge', name = "Forge")
 sharedData.projectUrl = 'http://www.minecraftforge.net/forum/'
 sharedData.recommended = recommendedVersions
 sharedData.write()

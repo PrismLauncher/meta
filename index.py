@@ -34,7 +34,6 @@ for package in os.listdir('multimc'):
     # initialize output structures - version list level
     versionList = MultiMCVersionIndex()
     versionList.uid = package
-    versionList.parentUid = sharedData.parentUid
     versionList.name = sharedData.name
 
     # walk through all the versions of the package
@@ -78,7 +77,6 @@ for package in os.listdir('multimc'):
                 "sha256": HashFile(hashlib.sha256, outFilePath)
             }
         )
-    packageEntry.parentUid = sharedData.parentUid
     packages.packages.append(packageEntry)
 
 # write the repository package index

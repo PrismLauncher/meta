@@ -230,7 +230,6 @@ class MultiMCVersionFile (VersionedJsonObject):
     name = StringProperty(required=True)
     version = StringProperty(required=True)
     uid = StringProperty(required=True)
-    parentUid = StringProperty(exclude_if_none=True, default=None)
     requires = ListProperty(DependencyEntry, exclude_if_none=True, default=None)
     conflicts = ListProperty(DependencyEntry, exclude_if_none=True, default=None)
     volatile = BooleanProperty(exclude_if_none=True, default=None)
@@ -283,7 +282,6 @@ def MojangToMultiMC (file, name, uid, version):
 class MultiMCSharedPackageData(VersionedJsonObject):
     name = StringProperty(required=True)
     uid = StringProperty(required=True)
-    parentUid = StringProperty(exclude_if_none=True, default=None)
     recommended = ListProperty(StringProperty, exclude_if_none=True, default=None)
     authors = ListProperty(StringProperty, exclude_if_none=True, default=None)
     description = StringProperty(exclude_if_none=True, default=None)
@@ -296,12 +294,11 @@ class MultiMCSharedPackageData(VersionedJsonObject):
         except EnvironmentError as e:
             print("Error while trying to save shared packaged data for %s:" % self.uid, e)
 
-def writeSharedPackageData(uid, name, parentUid = None):
+def writeSharedPackageData(uid, name):
     desc = MultiMCSharedPackageData({
         'name': name,
         'uid': uid
         })
-    desc.parentUid = parentUid
     with open("multimc/%s/package.json" % uid, 'w') as file:
         json.dump(desc.to_json(), file, sort_keys=True, indent=4)
 
@@ -322,13 +319,11 @@ class MultiMCVersionIndexEntry(JsonObject):
 class MultiMCVersionIndex(VersionedJsonObject):
     name = StringProperty()
     uid = StringProperty()
-    parentUid = StringProperty(exclude_if_none=True, default=None)
     versions = ListProperty(MultiMCVersionIndexEntry)
 
 class MultiMCPackageIndexEntry(JsonObject):
     name = StringProperty()
     uid = StringProperty()
-    parentUid = StringProperty(exclude_if_none=True, default=None)
     sha256 = StringProperty()
 
 class MultiMCPackageIndex(VersionedJsonObject):

@@ -78,7 +78,7 @@ for version in allVersions:
     with open(outFilepath, 'w') as outfile:
         json.dump(version.to_json(), outfile, sort_keys=True, indent=4)
 
-sharedData = MultiMCSharedPackageData(uid = 'com.mumfrey.liteloader', name = 'LiteLoader', parentUid = 'net.minecraft')
+sharedData = MultiMCSharedPackageData(uid = 'com.mumfrey.liteloader', name = 'LiteLoader')
 sharedData.recommended = recommended
 sharedData.description = remoteVersionlist.meta.description
 sharedData.projectUrl = remoteVersionlist.meta.url
