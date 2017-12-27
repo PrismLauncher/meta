@@ -209,7 +209,7 @@ class MojangVersionFile (JsonObject):
     logging = DictProperty(MojangLogging, exclude_if_none=True, default=None)
 
 
-CurrentMultiMCFormatVersion = 0
+CurrentMultiMCFormatVersion = 1
 def validateSupportedMultiMCVersion(version):
     if version > CurrentMultiMCFormatVersion:
         raise UnknownVersionException("Unsupported MultiMC format version: %d. Max supported is: %d" % (version, CurrentMultiMCFormatVersion))
