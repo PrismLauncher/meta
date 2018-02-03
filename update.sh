@@ -72,6 +72,13 @@ if ! git diff --cached --exit-code ; then
 fi
 cd "${BASEDIR}"
 
-s3cmd -c ${BASEDIR}/config/s3cmd.cfg --exclude=".git*" --delete-removed sync ${BASEDIR}/${MMC_DIR}/ ${S3_BUCKET} || exit 2
+if [ "${DEPLOY_TO_FOLDER}" = true ] ; then
+    DEPLOY_FOLDER_var="DEPLOY_FOLDER_$MODE"
+    DEPLOY_FOLDER="${!DEPLOY_FOLDER_var}"
+    rsync -rvog --chown=${DEPLOY_FOLDER_USER}:${DEPLOY_FOLDER_GROUP} --exclude=.git /root/meta/multimc/ ${DEPLOY_FOLDER}
+fi
+if [ "${DEPLOY_TO_S3}" = true ] ; then
+    s3cmd -c ${BASEDIR}/config/s3cmd.cfg --exclude=".git*" --delete-removed sync ${BASEDIR}/${MMC_DIR}/ ${S3_BUCKET} || exit 2
+fi
 
 exit 0
