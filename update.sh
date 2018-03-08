@@ -75,6 +75,7 @@ cd "${BASEDIR}"
 if [ "${DEPLOY_TO_FOLDER}" = true ] ; then
     DEPLOY_FOLDER_var="DEPLOY_FOLDER_$MODE"
     DEPLOY_FOLDER="${!DEPLOY_FOLDER_var}"
+    echo "Deploying to ${DEPLOY_FOLDER}"
     rsync -rvog --chown=${DEPLOY_FOLDER_USER}:${DEPLOY_FOLDER_GROUP} --exclude=.git /root/meta/multimc/ ${DEPLOY_FOLDER}
 fi
 if [ "${DEPLOY_TO_S3}" = true ] ; then
