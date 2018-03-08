@@ -49,14 +49,6 @@ class GradleSpecifier:
     def isLwjgl(self):
         return self.group in ("org.lwjgl", "org.lwjgl.lwjgl", "net.java.jinput", "net.java.jutils")
 
-    def isMojangNetty(self):
-        if self.group == "com.mojang":
-            if self.artifact == "netty":
-                return True
-            if self.artifact == "patchy":
-                return True
-        return False
-
     def __lt__(self, other):
         return self.toString() < other.toString()
 
