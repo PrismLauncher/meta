@@ -141,7 +141,11 @@ for filename in os.listdir('upstream/mojang/versions'):
         else:
             depentry = DependencyEntry(uid='org.lwjgl')
         if len(buckets) == 1:
-            depentry.suggests = next(iter(buckets.values())).version
+            suggestedVersion = next(iter(buckets.values())).version
+            depentry.suggests = suggestedVersion
+            # HACK: forcing hard dependencies here for now... the UI doesn't know how to filter by this and it looks odd, but it works
+            if is_lwjgl_3:
+                depentry.equals = suggestedVersion
         else:
             error = "ERROR: cannot determine single suggested LWJGL version in %s" % mojangVersionFile.id
             print(error)
