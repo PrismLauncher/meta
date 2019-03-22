@@ -84,7 +84,7 @@ def getSingleForgeFilesManifest(longversion):
     files_manifest_file = Path(pathThing)
     from_file = False
     if files_manifest_file.is_file():
-        with open(files_manifest_file, 'r') as f:
+        with open(pathThing, 'r') as f:
             files_json=json.load(f)
             from_file = True
     else:
