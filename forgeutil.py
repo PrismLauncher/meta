@@ -54,6 +54,88 @@ class ForgeVersion:
         else:
             return self.universal_url
 
+# A post-processed entry constructed from the reconstructed Forge version index
+class ForgeVersion2:
+    def __init__(self, entry):
+        self.build = entry.build
+        self.rawVersion = entry.version
+        self.mcversion = entry.mcversion
+        self.mcversion_sane = self.mcversion.replace("_pre", "-pre", 1)
+        self.branch = entry.branch
+        self.installer_filename = None
+        self.installer_url = None
+        self.universal_filename = None
+        self.universal_url = None
+        self.changelog_url = None
+        self.longVersion = "%s-%s" % (self.mcversion, self.rawVersion)
+        if self.branch != None:
+            self.longVersion = self.longVersion + "-%s" % (self.branch)
+        for classifier, fileentry in entry.files.items():
+            extension = fileentry.extension
+            checksum = fileentry.hash
+            filename = fileentry.filename(self.longVersion)
+            url = fileentry.url(self.longVersion)
+            if classifier == "installer":
+                self.installer_filename = filename
+                self.installer_url = url
+            if classifier == "universal" or classifier == "client":
+                self.universal_filename = filename
+                self.universal_url = url
+            if classifier == "changelog":
+                self.changelog_url = url
+
+    def name(self):
+        return "Forge %d" % (self.build)
+
+    def usesInstaller(self):
+        if self.installer_url == None:
+            return False
+        if self.mcversion == "1.5.2":
+            return False
+        return True
+
+    def filename(self):
+        if self.usesInstaller():
+            return self.installer_filename
+        else:
+            return self.universal_filename
+
+    def url(self):
+        if self.usesInstaller():
+            return self.installer_url
+        else:
+            return self.universal_url
+
+class NewForgeFile(JsonObject):
+    classifier = StringProperty(required=True)
+    hash = StringProperty(required=True)
+    extension = StringProperty(required=True)
+
+    def filename(self, longversion):
+        return "%s-%s-%s.%s" % ("forge", longversion, self.classifier, self.extension)
+
+    def url(self, longversion):
+        return "https://files.minecraftforge.net/maven/net/minecraftforge/forge/%s/%s" % (longversion, self.filename(longversion))
+
+class NewForgeEntry(JsonObject):
+    longversion = StringProperty(required=True)
+    mcversion = StringProperty(required=True)
+    version = StringProperty(required=True)
+    build = IntegerProperty(required=True)
+    branch = StringProperty()
+    latest = BooleanProperty()
+    recommended = BooleanProperty()
+    files = DictProperty(NewForgeFile)
+
+class ForgeMcVersionInfo(JsonObject):
+    latest = StringProperty()
+    recommended = StringProperty()
+    versions = ListProperty(StringProperty())
+
+class NewForgeIndex(JsonObject):
+    versions = DictProperty(NewForgeEntry)
+    by_mcversion = DictProperty(ForgeMcVersionInfo)
+
 # A raw entry from the main Forge version index
 class ForgeEntry(JsonObject):
     branch = StringProperty()

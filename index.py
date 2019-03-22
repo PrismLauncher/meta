@@ -22,7 +22,7 @@ ignore = set(["index.json", "package.json", ".git"])
 packages = MultiMCPackageIndex()
 
 # walk thorugh all the package folders
-for package in os.listdir('multimc'):
+for package in sorted(os.listdir('multimc')):
     if package in ignore:
         continue
 

@@ -136,7 +136,7 @@ class JsonDict(SimpleDict):
 
     def __setitem__(self, key, value):
         if isinstance(key, int):
-            key = unicode(key)
+            key = str(key)
 
         wrapped, unwrapped = self.__unwrap(key, value)
         self._obj[key] = unwrapped
@@ -148,7 +148,7 @@ class JsonDict(SimpleDict):
 
     def __getitem__(self, key):
         if isinstance(key, int):
-            key = unicode(key)
+            key = str(key)
         return super(JsonDict, self).__getitem__(key)
 
 
