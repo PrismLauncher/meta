@@ -20,6 +20,7 @@ import os.path
 import datetime
 import hashlib
 from pathlib import Path
+from contextlib import suppress
 
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
@@ -79,7 +80,8 @@ for promoKey, shortversion in promotions_json.get('promos').items():
 versionExpression = re.compile("^(?P<mc>[0-9a-zA-Z_\\.]+)-(?P<ver>[0-9\\.]+\\.(?P<build>[0-9]+))(-(?P<branch>[a-zA-Z0-9\\.]+))?$")
 
 def getSingleForgeFilesManifest(longversion):
-    files_manifest_file = Path("upstream/forge/files_manifests/%s.json" % longversion)
+    pathThing = "upstream/forge/files_manifests/%s.json" % longversion
+    files_manifest_file = Path(pathThing)
     from_file = False
     if files_manifest_file.is_file():
         with open(files_manifest_file, 'r') as f:
@@ -127,7 +129,7 @@ def getSingleForgeFilesManifest(longversion):
                 assert False
 
     if not from_file:
-        with open(files_manifest_file, 'w', encoding='utf-8') as f:
+        with open(pathThing, 'w', encoding='utf-8') as f:
             json.dump(files_json, f, sort_keys=True, indent=4)
 
     return retDict
@@ -218,7 +220,6 @@ for id, entry in newIndex.versions.items():
     if version.usesInstaller():
         profileFilepath = "upstream/forge/installer_manifests/%s.json" % version.longVersion
         versionJsonFilepath = "upstream/forge/version_manifests/%s.json" % version.longVersion
-        print(version.name())
         if not os.path.isfile(profileFilepath):
             # grab the installer if it's not there
             if not os.path.isfile(jarFilepath):
@@ -235,11 +236,12 @@ for id, entry in newIndex.versions.items():
                         profileFile.write(profileZipEntry.read())
                         profileFile.close()
                     profileZipEntry.close()
-                with jar.open('version.json', 'r') as profileZipEntry:
-                    with open(versionJsonFilepath, 'wb') as versionJsonFile:
-                        versionJsonFile.write(profileZipEntry.read())
-                        versionJsonFile.close()
-                    profileZipEntry.close()
+                with suppress(KeyError):
+                    with jar.open('version.json', 'r') as profileZipEntry:
+                        with open(versionJsonFilepath, 'wb') as versionJsonFile:
+                            versionJsonFile.write(profileZipEntry.read())
+                            versionJsonFile.close()
+                        profileZipEntry.close()
     else:
         pass
         # ignore the two versions without install manifests and jar mod class files
