@@ -147,9 +147,19 @@ for filename in os.listdir('upstream/mojang/versions'):
             if is_lwjgl_3:
                 depentry.equals = suggestedVersion
         else:
-            error = "ERROR: cannot determine single suggested LWJGL version in %s" % mojangVersionFile.id
-            print(error)
-            raise Exception(error)
+            badVersions1 = {'3.1.6', '3.2.1'}
+            ourVersions = set()
+
+            for lwjgl in iter(buckets.values()):
+                ourVersions = ourVersions.union({lwjgl.version})
+
+            if ourVersions == badVersions1:
+                print("Found broken 3.1.6/3.2.1 combo, forcing LWJGL to 3.2.1")
+                suggestedVersion = '3.2.1'
+                depentry.suggests = suggestedVersion
+            else:
+                raise Exception("ERROR: cannot determine single suggested LWJGL version in %s" % mojangVersionFile.id)
+
         # if it uses LWJGL 3, add the trait that enables starting on first thread on macOS
         if is_lwjgl_3:
             if not versionFile.addTraits:
