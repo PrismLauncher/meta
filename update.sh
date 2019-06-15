@@ -45,8 +45,8 @@ cd "${BASEDIR}"
 
 cd "${BASEDIR}/${UPSTREAM_DIR}"
 git add mojang/version_manifest.json mojang/versions/* mojang/assets/* || fail_in
-git add forge/*.json || fail_in
-git add fabric/loader-installer-json/*.json fabric/meta-v2/*.json || fail_in
+git add forge/*.json forge/version_manifests/*.json forge/installer_manifests/*.json forge/files_manifests/*.json || fail_in
+git add fabric/loader-installer-json/*.json fabric/meta-v2/*.json fabric/jars/*.json || fail_in
 git add liteloader/*.json || fail_in
 if ! git diff --cached --exit-code ; then
     git commit -a -m "Update ${currentDate}" || fail_in
