@@ -55,6 +55,7 @@ def processIntermediaryVersion(it):
     version.order = 11
     version.type = "release"
     version.libraries = []
+    version.volatile = True
     mappingLib = MultiMCLibrary(name=GradleSpecifier(it["maven"]), url="https://maven.fabricmc.net")
     version.libraries.append(mappingLib)
     intermediaryVersions.append(version)
