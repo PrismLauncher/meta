@@ -40,10 +40,14 @@ cd "${BASEDIR}"
 
 ./updateMojang.py || fail_in
 ./updateForge2.py || fail_in
+./updateFabric.py || fail_in
 ./updateLiteloader.py || fail_in
 
 cd "${BASEDIR}/${UPSTREAM_DIR}"
-git add mojang/version_manifest.json mojang/versions/* mojang/assets/* forge/*.json liteloader/*.json || fail_in
+git add mojang/version_manifest.json mojang/versions/* mojang/assets/* || fail_in
+git add forge/*.json || fail_in
+git add fabric/loader-installer-json/*.json fabric/meta-v2/*.json || fail_in
+git add liteloader/*.json || fail_in
 if ! git diff --cached --exit-code ; then
     git commit -a -m "Update ${currentDate}" || fail_in
     GIT_SSH_COMMAND="ssh -i ${BASEDIR}/config/meta-upstream.key" git push || exit 1
@@ -57,11 +61,15 @@ cd "${BASEDIR}"
 
 ./generateMojang.py || fail_out
 ./generateForge2.py || fail_out
+./generateFabric.py || fail_in
 ./generateLiteloader.py || fail_out
 ./index.py || fail_out
 
 cd "${BASEDIR}/${MMC_DIR}"
-git add index.json org.lwjgl/* net.minecraft/* net.minecraftforge/* com.mumfrey.liteloader/* || fail_out
+git add index.json org.lwjgl/* net.minecraft/* || fail_out
+git add net.minecraftforge/* || fail_out
+git add net.fabricmc.fabric-loader/* net.fabricmc.intermediary/* || fail_out
+git add com.mumfrey.liteloader/* || fail_out
 if [ -d "org.lwjgl3" ]; then
     git add org.lwjgl3/* || fail_out
 fi
