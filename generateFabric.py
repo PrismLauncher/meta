@@ -29,7 +29,7 @@ def processLoaderVersion(loaderVersion, it, loaderData):
     versionJarInfo = loadJarInfo(it["maven"])
     version = MultiMCVersionFile(name="Fabric Loader", uid="net.fabricmc.fabric-loader", version=loaderVersion)
     version.releaseTime = versionJarInfo.releaseTime
-    version.requires = []
+    version.requires = [DependencyEntry(uid='net.fabricmc.intermediary')]
     version.order = 10
     if verStable:
         version.type = "release"
@@ -52,7 +52,7 @@ def processIntermediaryVersion(it):
     version = MultiMCVersionFile(name="Intermediary Mappings", uid="net.fabricmc.intermediary", version=it["version"])
     version.releaseTime = versionJarInfo.releaseTime
     version.requires = [DependencyEntry(uid='net.minecraft', equals=it["version"])]
-    version.order = 10
+    version.order = 11
     version.type = "release"
     version.libraries = []
     mappingLib = MultiMCLibrary(name=GradleSpecifier(it["maven"]), url="https://maven.fabricmc.net")
