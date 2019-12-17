@@ -143,7 +143,7 @@ for id, entry in remoteVersionlist.versions.items():
         eprint ("Skipping %s with no corresponding Minecraft version %s" % (id, version.mcversion_sane))
         continue
 
-    if version.mcversion_sane.startswith('1.13') or version.mcversion_sane.startswith('1.14'):
+    if version.mcversion_sane.startswith('1.13') or version.mcversion_sane.startswith('1.14') or version.mcversion_sane.startswith('1.15'):
         eprint ("Skipping %s with unsupported Minecraft version %s" % (id, version.mcversion_sane))
         continue
 
