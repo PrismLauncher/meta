@@ -112,6 +112,61 @@ def versionFromLegacy(version, legacyinfo : ForgeLegacyInfo):
     result.jarMods = [mainmod]
     return result
 
+def versionFromBuildSystemInstaller(installerVersion : MojangVersionFile, installerProfile: ForgeInstallerProfileV2, version: ForgeVersion2):
+    eprint("Generating Forge %s." % version.longVersion)
+    result = MultiMCVersionFile({"name":"Forge", "version":version.rawVersion, "uid":"net.minecraftforge" })
+    result.requires = [DependencyEntry(uid='net.minecraft', equals=version.mcversion_sane)]
+    result.mainClass = "io.github.zekerzhayard.forgewrapper.installer.Main"
+
+    # FIXME: Add the size and hash here
+    mavenLibs = []
+    InstallerLib = MultiMCLibrary(name=GradleSpecifier("net.minecraftforge:forge:%s:installer" % (version.longVersion)))
+    InstallerLib.url = "https://files.minecraftforge.net/maven/"
+    mavenLibs.append(InstallerLib)
+    for upstreamLib in installerProfile.libraries:
+        mmcLib = MultiMCLibrary(upstreamLib.to_json())
+        if mmcLib.name.group == "net.minecraftforge":
+            if mmcLib.name.artifact == "forge":
+                if mmcLib.name.classifier == "universal":
+                    mmcLib.downloads.artifact.url = "https://files.minecraftforge.net/maven/%s" % mmcLib.name.getPath()
+                    mavenLibs.append(mmcLib)
+                    continue
+        mavenLibs.append(mmcLib)
+
+    result.mavenFiles = mavenLibs
+
+    libraries = []
+    wrapperLib = MultiMCLibrary(name=GradleSpecifier("io.github.zekerzhayard:ForgeWrapper:1.4.0"))
+    wrapperLib.downloads = MojangLibraryDownloads()
+    wrapperLib.downloads.artifact = MojangArtifact()
+    wrapperLib.downloads.artifact.url = "https://files.multimc.org/maven/%s" % (wrapperLib.name.getPath())
+    wrapperLib.downloads.artifact.sha1 = "22e1818d7e7ae9568a6f399d1fbcaa3b4dbc5907"
+    wrapperLib.downloads.artifact.size = 19408
+
+    libraries.append(wrapperLib)
+    for upstreamLib in installerVersion.libraries:
+        mmcLib = MultiMCLibrary(upstreamLib.to_json())
+        if mmcLib.name.group == "net.minecraftforge":
+            if mmcLib.name.artifact == "forge":
+                fixedName = mmcLib.name
+                fixedName.classifier = "launcher"
+                mmcLib.downloads.artifact.path = fixedName.getPath()
+                mmcLib.downloads.artifact.url = "https://files.minecraftforge.net/maven/%s" % fixedName.getPath()
+                mmcLib.name = fixedName
+                libraries.append(mmcLib)
+                continue
+        libraries.append(mmcLib)
+    result.libraries = libraries
+
+    result.releaseTime = installerVersion.releaseTime
+    result.order = 5
+    mcArgs = "--username ${auth_player_name} --version ${version_name} --gameDir ${game_directory} --assetsDir ${assets_root} --assetIndex ${assets_index_name} --uuid ${auth_uuid} --accessToken ${auth_access_token} --userType ${user_type} --versionType ${version_type}"
+    for arg in installerVersion.arguments.game:
+        mcArgs += " %s" % arg
+    result.minecraftArguments = mcArgs
+    return result
+
+
 # load the locally cached version list
 with open("upstream/forge/derived_index.json", 'r', encoding='utf-8') as f:
     main_json = json.load(f)
@@ -143,31 +198,38 @@ for id, entry in remoteVersionlist.versions.items():
         eprint ("Skipping %s with no corresponding Minecraft version %s" % (id, version.mcversion_sane))
         continue
 
-    if version.mcversion_sane.startswith('1.13') or version.mcversion_sane.startswith('1.14') or version.mcversion_sane.startswith('1.15'):
-        eprint ("Skipping %s with unsupported Minecraft version %s" % (id, version.mcversion_sane))
-        continue
-
     outVersion = None
 
-    if version.usesInstaller():
-        profileFilepath = "upstream/forge/installer_manifests/%s.json" % version.longVersion
-        # If we do not have the Forge json, we ignore this version
-        if not os.path.isfile(profileFilepath):
-            eprint ("Skipping %s with missing profile json" % id)
-            continue
-        with open(profileFilepath, 'r', encoding='utf-8') as profileFile:
-            profile = ForgeInstallerProfile(json.load(profileFile))
-            outVersion = versionFromProfile(profile, version)
-    else:
-        # Generate json for legacy here
-        if version.mcversion_sane == "1.6.1":
-            continue
-        build = version.build
-        if not str(build).encode('utf-8').decode('utf8') in legacyinfolist.number:
-            eprint("Legacy build %d is missing in legacy info. Ignoring." % build)
-            continue
+    # Path for new-style build system based installers
+    installerVersionFilepath = "upstream/forge/version_manifests/%s.json" % version.longVersion
+    profileFilepath = "upstream/forge/installer_manifests/%s.json" % version.longVersion
 
-        outVersion = versionFromLegacy(version, legacyinfolist.number[build])
+    if os.path.isfile(installerVersionFilepath):
+        with open(installerVersionFilepath, 'r', encoding='utf-8') as installerVersionFile:
+            installerVersion = MojangVersionFile(json.load(installerVersionFile))
+        with open(profileFilepath, 'r', encoding='utf-8') as profileFile:
+            installerProfile = ForgeInstallerProfileV2(json.load(profileFile))
+        outVersion = versionFromBuildSystemInstaller(installerVersion, installerProfile, version)
+    else:
+        if version.usesInstaller():
+
+            # If we do not have the Forge json, we ignore this version
+            if not os.path.isfile(profileFilepath):
+                eprint ("Skipping %s with missing profile json" % id)
+                continue
+            with open(profileFilepath, 'r', encoding='utf-8') as profileFile:
+                profile = ForgeInstallerProfile(json.load(profileFile))
+                outVersion = versionFromProfile(profile, version)
+        else:
+            # Generate json for legacy here
+            if version.mcversion_sane == "1.6.1":
+                continue
+            build = version.build
+            if not str(build).encode('utf-8').decode('utf8') in legacyinfolist.number:
+                eprint("Legacy build %d is missing in legacy info. Ignoring." % build)
+                continue
+
+            outVersion = versionFromLegacy(version, legacyinfolist.number[build])
 
     outFilepath = "multimc/net.minecraftforge/%s.json" % outVersion.version
     with open(outFilepath, 'w') as outfile:

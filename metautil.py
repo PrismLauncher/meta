@@ -190,8 +190,8 @@ class MojangLogging (JsonObject):
     type = StringProperty(required = True, choices=["log4j2-xml"])
 
 class MojangArguments (JsonObject):
-    game = ListProperty(required = True)
-    jvm = ListProperty(required = True)
+    game = ListProperty(exclude_if_none=True, default=None)
+    jvm = ListProperty(exclude_if_none=True, default=None)
 
 class UnknownVersionException(Exception):
     """Exception raised for unknown Mojang version file format versions.
@@ -221,6 +221,7 @@ class MojangVersionFile (JsonObject):
     releaseTime = ISOTimestampProperty(exclude_if_none=True, default=None)
     time = ISOTimestampProperty(exclude_if_none=True, default=None)
     type = StringProperty(exclude_if_none=True, default=None)
+    inheritsFrom = StringProperty(exclude_if_none=True, default=None)
     logging = DictProperty(MojangLogging, exclude_if_none=True, default=None)
 
 
@@ -250,6 +251,7 @@ class MultiMCVersionFile (VersionedJsonObject):
     volatile = BooleanProperty(exclude_if_none=True, default=None)
     assetIndex = ObjectProperty(MojangAssets, exclude_if_none=True, default=None)
     libraries = ListProperty(MultiMCLibrary, exclude_if_none=True, default=None)
+    mavenFiles = ListProperty(MultiMCLibrary, exclude_if_none=True, default=None)
     mainJar = ObjectProperty(MultiMCLibrary, exclude_if_none=True, default=None)
     jarMods = ListProperty(MultiMCLibrary, exclude_if_none=True, default=None)
     mainClass = StringProperty(exclude_if_none=True, default=None)

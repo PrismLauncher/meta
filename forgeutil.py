@@ -302,3 +302,28 @@ class ForgeLegacyInfo(JsonObject):
 
 class ForgeLegacyInfoList(JsonObject):
     number = DictProperty(ForgeLegacyInfo)
+
+class DataSpec(JsonObject):
+    client = StringProperty()
+    server = StringProperty()
+
+class ProcessorSpec(JsonObject):
+    jar = StringProperty()
+    classpath = ListProperty(StringProperty)
+    args = ListProperty(StringProperty)
+    outputs = DictProperty(StringProperty)
+
+class ForgeInstallerProfileV2(JsonObject):
+    _comment = ListProperty(StringProperty)
+    spec = IntegerProperty()
+    profile = StringProperty()
+    version = StringProperty()
+    icon = StringProperty()
+    json = StringProperty()
+    path = GradleSpecifierProperty()
+    logo = StringProperty()
+    minecraft = StringProperty()
+    welcome = StringProperty()
+    data = DictProperty(DataSpec)
+    processors = ListProperty(ProcessorSpec)
+    libraries = ListProperty(MojangLibrary)
