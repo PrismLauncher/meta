@@ -28,20 +28,43 @@ class GradleSpecifier:
     '''
 
     def __init__(self, name):
-        components = name.split(':')
+        atSplit = name.split('@')
+
+        components = atSplit[0].split(':')
         self.group = components[0]
         self.artifact = components[1]
         self.version = components[2]
+
+        self.extension = 'jar'
+        if len(atSplit) == 2:
+            self.extension = atSplit[1]
+
         if len(components) == 4:
             self.classifier = components[3]
         else:
             self.classifier = None
 
     def toString(self):
+        extensionStr = ''
+        if self.extension != 'jar':
+            extensionStr = "@%s" % self.extension
         if self.classifier:
-            return "%s:%s:%s:%s" % (self.group, self.artifact, self.version, self.classifier)
+            return "%s:%s:%s:%s%s" % (self.group, self.artifact, self.version, self.classifier, extensionStr)
         else:
-            return "%s:%s:%s" % (self.group, self.artifact, self.version)
+            return "%s:%s:%s%s" % (self.group, self.artifact, self.version, extensionStr)
+
+    def getFilename(self):
+        if self.classifier:
+            return "%s-%s-%s.%s" % (self.artifact, self.version, self.classifier, self.extension)
+        else:
+            return "%s-%s.%s" % (self.artifact, self.version, self.extension)
+
+    def getBase(self):
+        return "%s/%s/%s/" % (self.group.replace('.','/'), self.artifact, self.version)
+
+    def getPath(self):
+        return self.getBase() + self.getFilename()
+
 
     def __repr__(self):
         return "GradleSpecifier('" + self.toString() + "')"

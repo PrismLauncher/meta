@@ -142,10 +142,12 @@ for filename in os.listdir('upstream/mojang/versions'):
             depentry = DependencyEntry(uid='org.lwjgl')
         if len(buckets) == 1:
             suggestedVersion = next(iter(buckets.values())).version
-            depentry.suggests = suggestedVersion
             # HACK: forcing hard dependencies here for now... the UI doesn't know how to filter by this and it looks odd, but it works
             if is_lwjgl_3:
+                depentry.suggests = suggestedVersion
                 depentry.equals = suggestedVersion
+            else:
+                depentry.suggests = '2.9.4-nightly-20150209'
         else:
             badVersions1 = {'3.1.6', '3.2.1'}
             ourVersions = set()
