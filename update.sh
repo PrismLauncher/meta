@@ -43,16 +43,18 @@ cd "${BASEDIR}"
 ./updateFabric.py || fail_in
 ./updateLiteloader.py || fail_in
 
-cd "${BASEDIR}/${UPSTREAM_DIR}"
-git add mojang/version_manifest.json mojang/versions/* mojang/assets/* || fail_in
-git add forge/*.json forge/version_manifests/*.json forge/installer_manifests/*.json forge/files_manifests/*.json || fail_in
-git add fabric/loader-installer-json/*.json fabric/meta-v2/*.json fabric/jars/*.json || fail_in
-git add liteloader/*.json || fail_in
-if ! git diff --cached --exit-code ; then
-    git commit -a -m "Update ${currentDate}" || fail_in
-    GIT_SSH_COMMAND="ssh -i ${BASEDIR}/config/meta-upstream.key" git push || exit 1
+if [ "${DEPLOY_TO_GIT}" = true ] ; then
+    cd "${BASEDIR}/${UPSTREAM_DIR}"
+    git add mojang/version_manifest.json mojang/versions/* mojang/assets/* || fail_in
+    git add forge/*.json forge/version_manifests/*.json forge/installer_manifests/*.json forge/files_manifests/*.json || fail_in
+    git add fabric/loader-installer-json/*.json fabric/meta-v2/*.json fabric/jars/*.json || fail_in
+    git add liteloader/*.json || fail_in
+    if ! git diff --cached --exit-code ; then
+        git commit -a -m "Update ${currentDate}" || fail_in
+        GIT_SSH_COMMAND="ssh -i ${BASEDIR}/config/meta-upstream.key" git push || exit 1
+    fi
+    cd "${BASEDIR}"
 fi
-cd "${BASEDIR}"
 
 cd "${BASEDIR}/${MMC_DIR}"
 git reset --hard HEAD || exit 1
@@ -65,21 +67,23 @@ cd "${BASEDIR}"
 ./generateLiteloader.py || fail_out
 ./index.py || fail_out
 
-cd "${BASEDIR}/${MMC_DIR}"
-git add index.json org.lwjgl/* net.minecraft/* || fail_out
-git add net.minecraftforge/* || fail_out
-git add net.fabricmc.fabric-loader/* net.fabricmc.intermediary/* || fail_out
-git add com.mumfrey.liteloader/* || fail_out
-if [ -d "org.lwjgl3" ]; then
-    git add org.lwjgl3/* || fail_out
+if [ "${DEPLOY_TO_GIT}" = true ] ; then
+    cd "${BASEDIR}/${MMC_DIR}"
+    git add index.json org.lwjgl/* net.minecraft/* || fail_out
+    git add net.minecraftforge/* || fail_out
+    git add net.fabricmc.fabric-loader/* net.fabricmc.intermediary/* || fail_out
+    git add com.mumfrey.liteloader/* || fail_out
+    if [ -d "org.lwjgl3" ]; then
+        git add org.lwjgl3/* || fail_out
+    fi
+
+    if ! git diff --cached --exit-code ; then
+        git commit -a -m "Update ${currentDate}" || fail_out
+        GIT_SSH_COMMAND="ssh -i ${BASEDIR}/config/meta-multimc.key" git push || exit 1
+    fi
 fi
 
-if ! git diff --cached --exit-code ; then
-    git commit -a -m "Update ${currentDate}" || fail_out
-    GIT_SSH_COMMAND="ssh -i ${BASEDIR}/config/meta-multimc.key" git push || exit 1
-fi
 cd "${BASEDIR}"
-
 if [ "${DEPLOY_TO_FOLDER}" = true ] ; then
     DEPLOY_FOLDER_var="DEPLOY_FOLDER_$MODE"
     DEPLOY_FOLDER="${!DEPLOY_FOLDER_var}"

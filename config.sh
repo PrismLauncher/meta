@@ -8,6 +8,7 @@ export BRANCH_master=master
 export BRANCH_develop=develop
 export DEPLOY_TO_S3=false
 export DEPLOY_TO_FOLDER=false
+export DEPLOY_TO_GIT=false
 export DEPLOY_FOLDER_master=/var/www/meta/v1/
 export DEPLOY_FOLDER_develop=/var/www/meta/dev/
 export DEPLOY_FOLDER_USER=http
