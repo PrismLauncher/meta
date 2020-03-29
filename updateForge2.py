@@ -134,6 +134,13 @@ def getSingleForgeFilesManifest(longversion):
 
     return retDict
 
+print("")
+print("Making dirs...")
+os.makedirs("upstream/forge/jars/", exist_ok=True)
+os.makedirs("upstream/forge/installer_info/", exist_ok=True)
+os.makedirs("upstream/forge/installer_manifests/", exist_ok=True)
+os.makedirs("upstream/forge/version_manifests/", exist_ok=True)
+os.makedirs("upstream/forge/files_manifests/", exist_ok=True)
 
 print("")
 print("Processing versions:")
@@ -218,9 +225,16 @@ for id, entry in newIndex.versions.items():
     jarFilepath = "upstream/forge/jars/%s" % version.filename()
 
     if version.usesInstaller():
+        installerInfoFilepath = "upstream/forge/installer_info/%s.json" % version.longVersion
         profileFilepath = "upstream/forge/installer_manifests/%s.json" % version.longVersion
         versionJsonFilepath = "upstream/forge/version_manifests/%s.json" % version.longVersion
+        installerRefreshRequired = False
         if not os.path.isfile(profileFilepath):
+            installerRefreshRequired = True
+        if not os.path.isfile(installerInfoFilepath):
+            installerRefreshRequired = True
+
+        if installerRefreshRequired:
             # grab the installer if it's not there
             if not os.path.isfile(jarFilepath):
                 eprint ("Downloading %s" % version.url())
@@ -229,6 +243,9 @@ for id, entry in newIndex.versions.items():
                 with open(jarFilepath, 'wb') as f:
                     for chunk in rfile.iter_content(chunk_size=128):
                         f.write(chunk)
+
+        # harvestables from the installer
+        if not os.path.isfile(profileFilepath):
             print(jarFilepath)
             with zipfile.ZipFile(jarFilepath, 'r') as jar:
                 with jar.open('install_profile.json', 'r') as profileZipEntry:
@@ -242,6 +259,16 @@ for id, entry in newIndex.versions.items():
                             versionJsonFile.write(profileZipEntry.read())
                             versionJsonFile.close()
                         profileZipEntry.close()
+
+        # installer info v1
+        if not os.path.isfile(installerInfoFilepath):
+            installerInfo = InstallerInfo()
+            installerInfo.sha1hash = filehash(jarFilepath, hashlib.sha1)
+            installerInfo.sha256hash = filehash(jarFilepath, hashlib.sha256)
+            installerInfo.size = os.path.getsize(jarFilepath)
+            with open(installerInfoFilepath, 'w', encoding='utf-8') as installerInfoFile:
+                json.dump(installerInfo.to_json(), installerInfoFile, sort_keys=True, indent=4)
+                installerInfoFile.close()
     else:
         pass
         # ignore the two versions without install manifests and jar mod class files

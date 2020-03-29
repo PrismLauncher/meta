@@ -120,9 +120,18 @@ def versionFromBuildSystemInstaller(installerVersion : MojangVersionFile, instal
 
     # FIXME: Add the size and hash here
     mavenLibs = []
-    InstallerLib = MultiMCLibrary(name=GradleSpecifier("net.minecraftforge:forge:%s:installer" % (version.longVersion)))
-    InstallerLib.url = "https://files.minecraftforge.net/maven/"
-    mavenLibs.append(InstallerLib)
+
+    # load the locally cached installer file info and use it to add the installer entry in the json
+    with open("upstream/forge/installer_info/%s.json" % version.longVersion, 'r', encoding='utf-8') as f:
+        installerInfo = InstallerInfo(json.load(f))
+        InstallerLib = MultiMCLibrary(name=GradleSpecifier("net.minecraftforge:forge:%s:installer" % (version.longVersion)))
+        InstallerLib.downloads = MojangLibraryDownloads()
+        InstallerLib.downloads.artifact = MojangArtifact()
+        InstallerLib.downloads.artifact.url = "https://files.minecraftforge.net/maven/%s" % (InstallerLib.name.getPath())
+        InstallerLib.downloads.artifact.sha1 = installerInfo.sha1hash
+        InstallerLib.downloads.artifact.size = installerInfo.size
+        mavenLibs.append(InstallerLib)
+
     for upstreamLib in installerProfile.libraries:
         mmcLib = MultiMCLibrary(upstreamLib.to_json())
         if mmcLib.name.group == "net.minecraftforge":
@@ -142,8 +151,8 @@ def versionFromBuildSystemInstaller(installerVersion : MojangVersionFile, instal
     wrapperLib.downloads.artifact.url = "https://files.multimc.org/maven/%s" % (wrapperLib.name.getPath())
     wrapperLib.downloads.artifact.sha1 = "82f01de97e29ba34be9fc628084b6d10ce2235c5"
     wrapperLib.downloads.artifact.size = 14351
-
     libraries.append(wrapperLib)
+
     for upstreamLib in installerVersion.libraries:
         mmcLib = MultiMCLibrary(upstreamLib.to_json())
         if mmcLib.name.group == "net.minecraftforge":
