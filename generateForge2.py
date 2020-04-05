@@ -87,6 +87,58 @@ def versionFromProfile(profile, version):
     result.order = 5
     return result
 
+def versionFromModernizedInstaller(installerVersion : MojangVersionFile, version: ForgeVersion2):
+    eprint("Generating Modernized Forge %s." % version.longVersion)
+    result = MultiMCVersionFile({"name":"Forge", "version":version.rawVersion, "uid":"net.minecraftforge" })
+    mcversion = version.mcversion
+    result.requires = [DependencyEntry(uid='net.minecraft', equals=mcversion)]
+    result.mainClass = installerVersion.mainClass
+    args = installerVersion.minecraftArguments
+    tweakers = []
+    expression = re.compile("--tweakClass ([a-zA-Z0-9\\.]+)")
+    match = expression.search(args)
+    while match != None:
+        tweakers.append(match.group(1));
+        args = args[:match.start()] + args[match.end():]
+        match = expression.search(args);
+    if len(tweakers) > 0:
+        args = args.strip()
+        result.addTweakers = tweakers;
+    # result.minecraftArguments = args
+    result.releaseTime = installerVersion.releaseTime
+    libs = []
+    mcFilter = loadMcVersionFilter(mcversion)
+    for upstreamLib in installerVersion.libraries:
+        mmcLib = MultiMCLibrary(upstreamLib.to_json())
+        if mmcLib.name.isLwjgl():
+            continue
+        if shouldIgnoreArtifact(mcFilter, mmcLib.name):
+            continue
+        if mmcLib.name.group == "net.minecraftforge":
+            if mmcLib.name.artifact == "forge":
+                fixedName = mmcLib.name
+                fixedName.classifier = "universal"
+                mmcLib.downloads.artifact.path = fixedName.getPath()
+                mmcLib.downloads.artifact.url = "https://files.minecraftforge.net/maven/%s" % fixedName.getPath()
+                mmcLib.name = fixedName
+                libs.append(mmcLib)
+                continue
+            elif mmcLib.name.artifact == "minecraftforge":
+                fixedName = mmcLib.name
+                fixedName.artifact = "forge"
+                fixedName.classifier = "universal"
+                fixedName.version = "%s-%s" % (mcversion, fixedName.version)
+                mmcLib.downloads.artifact.path = fixedName.getPath()
+                mmcLib.downloads.artifact.url = "https://files.minecraftforge.net/maven/%s" % fixedName.getPath()
+                mmcLib.name = fixedName
+                libs.append(mmcLib)
+                continue
+        libs.append(mmcLib)
+
+    result.libraries = libs
+    result.order = 5
+    return result
+
 def versionFromLegacy(version, legacyinfo : ForgeLegacyInfo):
     result = MultiMCVersionFile({"name":"Forge", "version":version.rawVersion, "uid":"net.minecraftforge" })
     mcversion = version.mcversion_sane
@@ -189,6 +241,43 @@ legacyinfolist = None
 with open(tsPath, 'r', encoding='utf-8') as tsFile:
     legacyinfolist = ForgeLegacyInfoList(json.load(tsFile))
 
+legacyVersions = [
+    "1.1",
+    "1.2.3",
+    "1.2.4",
+    "1.2.5",
+    "1.3.2",
+    "1.4.1",
+    "1.4.2",
+    "1.4.3",
+    "1.4.4",
+    "1.4.5",
+    "1.4.6",
+    "1.4.7",
+    "1.5",
+    "1.5.1",
+    "1.5.2",
+    "1.6.1",
+    "1.6.2",
+    "1.6.3",
+    "1.6.4",
+    "1.7.10",
+    "1.7.10-pre4",
+    "1.7.2",
+    "1.8",
+    "1.8.8",
+    "1.8.9",
+    "1.9",
+    "1.9.4",
+    "1.10",
+    "1.10.2",
+    "1.11",
+    "1.11.2",
+    "1.12",
+    "1.12.1",
+    "1.12.2",
+]
+
 for id, entry in remoteVersionlist.versions.items():
     if entry.mcversion == None:
         eprint ("Skipping %s with invalid MC version" % id)
@@ -216,9 +305,12 @@ for id, entry in remoteVersionlist.versions.items():
     if os.path.isfile(installerVersionFilepath):
         with open(installerVersionFilepath, 'r', encoding='utf-8') as installerVersionFile:
             installerVersion = MojangVersionFile(json.load(installerVersionFile))
-        with open(profileFilepath, 'r', encoding='utf-8') as profileFile:
-            installerProfile = ForgeInstallerProfileV2(json.load(profileFile))
-        outVersion = versionFromBuildSystemInstaller(installerVersion, installerProfile, version)
+        if entry.mcversion in legacyVersions:
+            outVersion = versionFromModernizedInstaller(installerVersion, version)
+        else:
+            with open(profileFilepath, 'r', encoding='utf-8') as profileFile:
+                installerProfile = ForgeInstallerProfileV2(json.load(profileFile))
+            outVersion = versionFromBuildSystemInstaller(installerVersion, installerProfile, version)
     else:
         if version.usesInstaller():
 
