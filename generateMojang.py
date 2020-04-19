@@ -14,6 +14,11 @@ from metautil import *
 
 from distutils import version
 
+from collections import defaultdict
+from collections import namedtuple
+from datetime import datetime
+import hashlib
+
 def addOrGetBucket(buckets, rules):
     ruleHash = None
     if rules:
@@ -34,12 +39,35 @@ def addOrGetBucket(buckets, rules):
         buckets[ruleHash] = bucket
     return bucket
 
-def addLWJGLVersion(versions, bucket):
-    if bucket.version in versions:
-        if bucket.releaseTime < versions[bucket.version].releaseTime:
-            versions[bucket.version].releaseTime = bucket.releaseTime
-    else:
-        versions[bucket.version] = bucket
+def hashVersion(lwjgl):
+    lwjglObjectCopy = copy.deepcopy(lwjgl)
+    lwjglObjectCopy.releaseTime = datetime.fromtimestamp(0)
+    return hashlib.sha1(json.dumps(lwjglObjectCopy.to_json()).encode("utf-8", "strict")).hexdigest()
+
+def sort_libs_by_name(library):
+    return library.name
+
+LWJGLEntry = namedtuple('LWJGLEntry', ('version', 'sha1'))
+
+lwjglVersionVariants = defaultdict(list)
+
+def addLWJGLVersion(versionVariants, lwjglObject):
+    lwjglObjectCopy = copy.deepcopy(lwjglObject)
+    libraries = list(lwjglObjectCopy.libraries)
+    libraries.sort(key=sort_libs_by_name)
+    lwjglObjectCopy.libraries = libraries
+
+    lwjglVersion = lwjglObjectCopy.version
+    lwjglObjectHash = hashVersion(lwjglObjectCopy)
+    found = False
+    for variant in versionVariants[lwjglVersion]:
+        existingHash = variant.sha1
+        if lwjglObjectHash == existingHash:
+            found = True
+            break
+    if not found:
+        print("!!! New variant for LWJGL version %s" % (lwjglVersion))
+        versionVariants[lwjglVersion].append(LWJGLEntry(version=lwjglObjectCopy, sha1=lwjglObjectHash))
 
 def removePathsFromLib(lib):
     if mmcLib.downloads.artifact:
@@ -81,7 +109,7 @@ with open("static/minecraft.json", 'r', encoding='utf-8') as legacyIndexFile:
     staticVersionlist = LegacyOverrideIndex(json.load(legacyIndexFile))
 
 found_any_lwjgl3 = False
-lwjglVersions = {}
+
 for filename in os.listdir('upstream/mojang/versions'):
     with open("upstream/mojang/versions/" + filename) as json_file:
         print("Processing", filename)
@@ -116,7 +144,7 @@ for filename in os.listdir('upstream/mojang/versions'):
             else:
                 libs_minecraft.append(mmcLib)
         if len(buckets) == 1:
-            addLWJGLVersion(lwjglVersions, buckets[None])
+            addLWJGLVersion(lwjglVersionVariants, buckets[None])
             print("Found only candidate LWJGL", buckets[None].version)
         else:
             # multiple buckets for LWJGL. [None] is common to all, other keys are for different sets of rules
@@ -128,7 +156,7 @@ for filename in os.listdir('upstream/mojang/versions'):
                     keyBucket.libraries = sorted(keyBucket.libraries + buckets[None].libraries, key=itemgetter('name'))
                 else:
                     keyBucket.libraries = sorted(keyBucket.libraries, key=itemgetter('name'))
-                addLWJGLVersion(lwjglVersions, keyBucket)
+                addLWJGLVersion(lwjglVersionVariants, keyBucket)
                 print("Found candidate LWJGL", keyBucket.version, key)
             # remove the common bucket...
             if None in buckets:
@@ -178,8 +206,9 @@ for filename in os.listdir('upstream/mojang/versions'):
         with open(filenameOut, 'w') as outfile:
             json.dump(versionFile.to_json(), outfile, sort_keys=True, indent=4)
 
-for lwjglVersion in lwjglVersions:
-    versionObj = lwjglVersions[lwjglVersion]
+def processSingleVariant(lwjglVariant):
+    lwjglVersion = lwjglVariant.version
+    versionObj = copy.deepcopy(lwjglVariant)
     if lwjglVersion[0] == '2':
         filename = "multimc/org.lwjgl/%s.json" % lwjglVersion
         versionObj.name = 'LWJGL 2'
@@ -219,6 +248,61 @@ for lwjglVersion in lwjglVersions:
             json.dump(versionObj.to_json(), outfile, sort_keys=True, indent=4)
     else:
         print("Skipped LWJGL", versionObj.version)
+
+
+passVariants = [
+    "dc788960f7e74062aee7cee0e1e7d0a14c342418", # 2.9.0
+    "cc1241e6cc967857961c7385ba078242d866d896", # 2.9.1
+    "569845af361b8cd54de7153c142053425944da57", # 2.9.1-nightly-20131120
+    "838930186ce1f4222f71b737ee17725d0fd14e5a", # 2.9.3
+    "079b297aa801e551cc96b5e06c44e4a921807c8a", # 2.9.4-nightly-20150209
+    "446142ccdcb27eca829be79702d6ff53420198a9", # 3.1.2
+    "48c276ed559a4b7ca680770b110b9b60d0b2a3b9", # 3.1.6
+    "4f9e33a93e5974e2ec433134983c110b3959aa31", # 3.2.1
+    "15d5562e9a3d11edec17c8e2de084a96fe9f371d", # 3.2.2 - our fixed version
+]
+
+badVariants = [
+    "032bfe9afc34cf1271037f734a6e7a8835fdfff0", # 2.9.0 - duplication nation
+    "859f5679c60fce520a7c8cfe0c5663f848ff51ab", # 2.9.0 - broken natives
+    "7811cd3ba93467842b1823ca8e571f3d49421291", # 3.1.6
+    "194e5109cbdfb8d5a7da918c449b7414cd609629", # 3.2.1
+    "74f2ae137e9767f0cfbe10ca9db38adaba08a4a6", # 3.2.2 - missing tinyfd
+    "eaeeca768920d981bdc8ea698305f4e9723c6ba8", # 3.2.2 - missing osx natives
+    "8a85feb57480e9cbb0b9c54e7b1751816122cf97", # 3.2.2 - missing other osx natives
+]
+
+# Add our own 3.2.2, with hookers and blackjack.
+with open("static/lwjgl-3.2.2.json", 'r', encoding='utf-8') as lwjgl322file:
+    lwjgl322 = MultiMCVersionFile(json.load(lwjgl322file))
+    addLWJGLVersion(lwjglVersionVariants, lwjgl322)
+
+for lwjglVersionVariant in lwjglVersionVariants:
+    decidedVariant = None
+    passedVariants = 0
+    unknownVariants = 0
+    print("%d variant(s) for LWJGL %s:" % (len(lwjglVersionVariants[lwjglVersionVariant]), lwjglVersionVariant))
+
+    for variant in lwjglVersionVariants[lwjglVersionVariant]:
+        if variant.sha1 in badVariants:
+            print("Variant %s ignored because it's marked as bad." % (variant.sha1))
+            continue
+        if variant.sha1 in passVariants:
+            print("Variant %s accepted." % (variant.sha1))
+            decidedVariant = variant
+            passedVariants += 1
+            continue
+
+        print("Variant %s:" % (variant.sha1))
+        print(json.dumps(variant.version.to_json(), sort_keys=True, indent=4))
+        print("")
+        unknownVariants += 1
+    print("")
+
+    if decidedVariant and passedVariants == 1 and unknownVariants == 0:
+        processSingleVariant(decidedVariant.version)
+    else:
+        raise Exception("No variant decided for version %s out of %d possible ones and %d unknown ones." % (lwjglVersionVariant, passedVariants, unknownVariants))
 
 lwjglSharedData = MultiMCSharedPackageData(uid = 'org.lwjgl', name = 'LWJGL 2')
 lwjglSharedData.recommended = ['2.9.4-nightly-20150209']

@@ -261,7 +261,7 @@ class MultiMCVersionFile (VersionedJsonObject):
     type = StringProperty(exclude_if_none=True, default=None)
     addTraits = ListProperty(StringProperty, name="+traits", exclude_if_none=True, default=None)
     addTweakers = ListProperty(StringProperty, name="+tweakers", exclude_if_none=True, default=None)
-    order = IntegerProperty()
+    order = IntegerProperty(exclude_if_none=True, default=None)
 
 # Convert Mojang version file object to a MultiMC version file object
 def MojangToMultiMC (file, name, uid, version):
