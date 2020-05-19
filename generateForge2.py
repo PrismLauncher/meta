@@ -80,8 +80,8 @@ def versionFromProfile(profile, version):
                 fixedName.classifier = "universal"
         ourLib = MultiMCLibrary(name=fixedName)
         ourLib.url = forgeLib.url
-        if forgeLib.checksums and len(forgeLib.checksums) == 2:
-            ourLib.mmcHint = "forge-pack-xz"
+        #if forgeLib.checksums and len(forgeLib.checksums) == 2:
+        #    ourLib.mmcHint = "forge-pack-xz"
         libs.append(ourLib)
     result.libraries = libs
     result.order = 5
