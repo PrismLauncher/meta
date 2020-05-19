@@ -79,7 +79,10 @@ def versionFromProfile(profile, version):
             elif fixedName.artifact == "forge":
                 fixedName.classifier = "universal"
         ourLib = MultiMCLibrary(name=fixedName)
-        ourLib.url = forgeLib.url
+        if forgeLib.url == "http://files.minecraftforge.net/maven/":
+            ourLib.url = "https://files.minecraftforge.net/maven/"
+        else:
+            ourLib.url = forgeLib.url
         #if forgeLib.checksums and len(forgeLib.checksums) == 2:
         #    ourLib.mmcHint = "forge-pack-xz"
         libs.append(ourLib)
@@ -341,6 +344,6 @@ recommendedVersions.sort()
 print ('Recommended versions:', recommendedVersions)
 
 sharedData = MultiMCSharedPackageData(uid = 'net.minecraftforge', name = "Forge")
-sharedData.projectUrl = 'http://www.minecraftforge.net/forum/'
+sharedData.projectUrl = 'https://www.minecraftforge.net/forum/'
 sharedData.recommended = recommendedVersions
 sharedData.write()
