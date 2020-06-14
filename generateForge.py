@@ -90,7 +90,7 @@ def versionFromProfile(profile, version):
     result.order = 5
     return result
 
-def versionFromModernizedInstaller(installerVersion : MojangVersionFile, version: ForgeVersion2):
+def versionFromModernizedInstaller(installerVersion : MojangVersionFile, version: ForgeVersion):
     eprint("Generating Modernized Forge %s." % version.longVersion)
     result = MultiMCVersionFile({"name":"Forge", "version":version.rawVersion, "uid":"net.minecraftforge" })
     mcversion = version.mcversion
@@ -167,7 +167,7 @@ def versionFromLegacy(version, legacyinfo : ForgeLegacyInfo):
     result.jarMods = [mainmod]
     return result
 
-def versionFromBuildSystemInstaller(installerVersion : MojangVersionFile, installerProfile: ForgeInstallerProfileV2, version: ForgeVersion2):
+def versionFromBuildSystemInstaller(installerVersion : MojangVersionFile, installerProfile: ForgeInstallerProfileV2, version: ForgeVersion):
     eprint("Generating Forge %s." % version.longVersion)
     result = MultiMCVersionFile({"name":"Forge", "version":version.rawVersion, "uid":"net.minecraftforge" })
     result.requires = [DependencyEntry(uid='net.minecraft', equals=version.mcversion_sane)]
@@ -234,7 +234,7 @@ def versionFromBuildSystemInstaller(installerVersion : MojangVersionFile, instal
 # load the locally cached version list
 with open("upstream/forge/derived_index.json", 'r', encoding='utf-8') as f:
     main_json = json.load(f)
-    remoteVersionlist = NewForgeIndex(main_json)
+    remoteVersionlist = DerivedForgeIndex(main_json)
 
 recommendedVersions = []
 
@@ -286,7 +286,7 @@ for id, entry in remoteVersionlist.versions.items():
         eprint ("Skipping %s with invalid MC version" % id)
         continue
 
-    version = ForgeVersion2(entry)
+    version = ForgeVersion(entry)
     if version.url() == None:
         eprint ("Skipping %s with no valid files" % id)
         continue

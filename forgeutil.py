@@ -1,61 +1,8 @@
 from metautil import *
 from collections import namedtuple
 
-# A post-processed entry constructed from the main Forge version index
-class ForgeVersion:
-    def __init__(self, entry, artifact, webpath):
-        self.build = entry.build
-        self.rawVersion = entry.version
-        self.mcversion = entry.mcversion
-        self.mcversion_sane = self.mcversion.replace("_pre", "-pre", 1)
-        self.branch = entry.branch
-        self.installer_filename = None
-        self.installer_url = None
-        self.universal_filename = None
-        self.universal_url = None
-        self.changelog_url = None
-        self.longVersion = "%s-%s" % (self.mcversion, self.rawVersion)
-        if self.branch != None:
-            self.longVersion = self.longVersion + "-%s" % (self.branch)
-        for file in entry.files:
-            extension = file[0]
-            part = file[1]
-            checksum = file[2]
-            filename = "%s-%s-%s.%s" % (artifact, self.longVersion, part, extension)
-            url = "%s%s/%s" % (webpath, self.longVersion, filename)
-            if part == "installer":
-                self.installer_filename = filename
-                self.installer_url = url
-            if part == "universal" or part == "client":
-                self.universal_filename = filename
-                self.universal_url = url
-            if part == "changelog":
-                self.changelog_url = url
-
-    def name(self):
-        return "Forge %d" % (self.build)
-
-    def usesInstaller(self):
-        if self.installer_url == None:
-            return False
-        if self.mcversion == "1.5.2":
-            return False
-        return True
-
-    def filename(self):
-        if self.usesInstaller():
-            return self.installer_filename
-        else:
-            return self.universal_filename
-
-    def url(self):
-        if self.usesInstaller():
-            return self.installer_url
-        else:
-            return self.universal_url
-
 # A post-processed entry constructed from the reconstructed Forge version index
-class ForgeVersion2:
+class ForgeVersion:
     def __init__(self, entry):
         self.build = entry.build
         self.rawVersion = entry.version
@@ -75,13 +22,13 @@ class ForgeVersion2:
             checksum = fileentry.hash
             filename = fileentry.filename(self.longVersion)
             url = fileentry.url(self.longVersion)
-            if classifier == "installer":
+            if (classifier == "installer") and (extension == "jar"):
                 self.installer_filename = filename
                 self.installer_url = url
-            if classifier == "universal" or classifier == "client":
+            if (classifier == "universal" or classifier == "client") and (extension == "jar" or extension == "zip"):
                 self.universal_filename = filename
                 self.universal_url = url
-            if classifier == "changelog":
+            if (classifier == "changelog") and (extension == "txt"):
                 self.changelog_url = url
 
     def name(self):
@@ -106,7 +53,7 @@ class ForgeVersion2:
         else:
             return self.universal_url
 
-class NewForgeFile(JsonObject):
+class ForgeFile(JsonObject):
     classifier = StringProperty(required=True)
     hash = StringProperty(required=True)
     extension = StringProperty(required=True)
@@ -117,7 +64,7 @@ class NewForgeFile(JsonObject):
     def url(self, longversion):
         return "https://files.minecraftforge.net/maven/net/minecraftforge/forge/%s/%s" % (longversion, self.filename(longversion))
 
-class NewForgeEntry(JsonObject):
+class ForgeEntry(JsonObject):
     longversion = StringProperty(required=True)
     mcversion = StringProperty(required=True)
     version = StringProperty(required=True)
@@ -125,37 +72,16 @@ class NewForgeEntry(JsonObject):
     branch = StringProperty()
     latest = BooleanProperty()
     recommended = BooleanProperty()
-    files = DictProperty(NewForgeFile)
+    files = DictProperty(ForgeFile)
 
 class ForgeMcVersionInfo(JsonObject):
     latest = StringProperty()
     recommended = StringProperty()
     versions = ListProperty(StringProperty())
 
-class NewForgeIndex(JsonObject):
-    versions = DictProperty(NewForgeEntry)
+class DerivedForgeIndex(JsonObject):
+    versions = DictProperty(ForgeEntry)
     by_mcversion = DictProperty(ForgeMcVersionInfo)
-
-# A raw entry from the main Forge version index
-class ForgeEntry(JsonObject):
-    branch = StringProperty()
-    build = IntegerProperty(required=True)
-    files = ListProperty(ListProperty(StringProperty()), required=True)
-    mcversion = StringProperty()
-    modified = FloatProperty(required=True)
-    version = StringProperty(required=True)
-
-# The raw Forge version index
-class ForgeIndex(JsonObject):
-    adfocus = StringProperty(required=True)
-    artifact = StringProperty(required=True)
-    name = StringProperty(required=True)
-    number = DictProperty(ForgeEntry, required=True)
-    branches = DictProperty(ListProperty(IntegerProperty()), required=True)
-    homepage = StringProperty(required=True)
-    mcversion = DictProperty(ListProperty(IntegerProperty()), required=True)
-    promos = DictProperty(IntegerProperty(), required=True)
-    webpath = StringProperty(required=True)
 
 '''
 FML library mappings - these are added to legacy Forge versions because Forge no longer can download these

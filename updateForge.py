@@ -50,7 +50,7 @@ promotedKeyExpression = re.compile("((?P<mc>[0-9\\.]+)-)?(?P<promotion>(latest)|
 
 recommendedSet = set()
 
-newIndex = NewForgeIndex()
+newIndex = DerivedForgeIndex()
 
 # FIXME: does not fully validate that the file has not changed format
 # NOTE: For some insane reason, the format of the versions here is special. It having a branch at the end means it affects that particular branch
@@ -114,7 +114,7 @@ def getSingleForgeFilesManifest(longversion):
                 index = index + 1
                 continue
 
-            fileObj = NewForgeFile(
+            fileObj = ForgeFile(
                 classifier=classifier,
                 hash=processedHash,
                 extension=extension
@@ -163,7 +163,7 @@ for mcversion, value in main_json.items():
 
         isRecommended = (version in recommendedSet)
 
-        entry = NewForgeEntry(
+        entry = ForgeEntry(
             longversion=longversion,
             mcversion=mcversion,
             version=version,
@@ -217,7 +217,7 @@ for id, entry in newIndex.versions.items():
         eprint ("Skipping %d with invalid MC version" % entry.build)
         continue
 
-    version = ForgeVersion2(entry)
+    version = ForgeVersion(entry)
     if version.url() == None:
         eprint ("Skipping %d with no valid files" % version.build)
         continue

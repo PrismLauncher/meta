@@ -39,7 +39,7 @@ git checkout ${BRANCH} || exit 1
 cd "${BASEDIR}"
 
 ./updateMojang.py || fail_in
-./updateForge2.py || fail_in
+./updateForge.py || fail_in
 ./updateFabric.py || fail_in
 ./updateLiteloader.py || fail_in
 
@@ -62,7 +62,7 @@ git checkout ${BRANCH} || exit 1
 cd "${BASEDIR}"
 
 ./generateMojang.py || fail_out
-./generateForge2.py || fail_out
+./generateForge.py || fail_out
 ./generateFabric.py || fail_in
 ./generateLiteloader.py || fail_out
 ./index.py || fail_out
