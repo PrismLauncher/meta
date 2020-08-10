@@ -36,7 +36,7 @@ def processArtefacts(mcVersion, liteloader, notSnapshots):
         # hack to make broken liteloader versions work
         for lib in libraries:
             if lib.name == GradleSpecifier("org.ow2.asm:asm-all:5.0.3"):
-                lib.url = "http://repo.maven.apache.org/maven2/"
+                lib.url = "https://repo.maven.apache.org/maven2/"
             if lib.name == GradleSpecifier("org.ow2.asm:asm-all:5.2"):
                 lib.url = "http://repo.liteloader.com/"
         liteloaderLib = MultiMCLibrary(
