@@ -29,14 +29,14 @@ def get_file(path, url):
 # get the local version list
 localVersionlist = None
 try:
-    with open("upstream/mojang/version_manifest.json", 'r', encoding='utf-8') as localIndexFile:
+    with open("upstream/mojang/version_manifest_v2.json", 'r', encoding='utf-8') as localIndexFile:
         localVersionlist = MojangIndexWrap(json.load(localIndexFile))
 except:
     localVersionlist = MojangIndexWrap({})
 localIDs = set(localVersionlist.versions.keys())
 
 # get the remote version list
-r = sess.get('https://launchermeta.mojang.com/mc/game/version_manifest.json')
+r = sess.get('https://launchermeta.mojang.com/mc/game/version_manifest_v2.json')
 r.raise_for_status()
 main_json = r.json()
 remoteVersionlist = MojangIndexWrap(main_json)
@@ -68,5 +68,5 @@ for assetId, assetUrl in iter(assets.items()):
     print("assets", assetId, assetUrl)
     get_file( "upstream/mojang/assets/" + assetId + '.json', assetUrl)
 
-with open("upstream/mojang/version_manifest.json", 'w', encoding='utf-8') as f:
+with open("upstream/mojang/version_manifest_v2.json", 'w', encoding='utf-8') as f:
     json.dump(main_json, f, sort_keys=True, indent=4)

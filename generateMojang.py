@@ -313,7 +313,7 @@ if found_any_lwjgl3:
     lwjglSharedData.recommended = ['3.1.2']
     lwjglSharedData.write()
 
-with open("upstream/mojang/version_manifest.json", 'r', encoding='utf-8') as localIndexFile:
+with open("upstream/mojang/version_manifest_v2.json", 'r', encoding='utf-8') as localIndexFile:
     localVersionlist = MojangIndexWrap(json.load(localIndexFile))
 
 mcSharedData = MultiMCSharedPackageData(uid = 'net.minecraft', name = 'Minecraft')

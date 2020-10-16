@@ -118,6 +118,8 @@ class MojangIndexEntry(JsonObject):
     time = ISOTimestampProperty()
     type = StringProperty()
     url = StringProperty()
+    sha1 = StringProperty(exclude_if_none=True, default=None)
+    complianceLevel = IntegerProperty(exclude_if_none=True, default=None)
 
 class MojangIndex(JsonObject):
     latest = DictProperty(StringProperty)
@@ -223,6 +225,7 @@ class MojangVersionFile (JsonObject):
     type = StringProperty(exclude_if_none=True, default=None)
     inheritsFrom = StringProperty(exclude_if_none=True, default=None)
     logging = DictProperty(MojangLogging, exclude_if_none=True, default=None)
+    complianceLevel = IntegerProperty(exclude_if_none=True, default=None)
 
 
 CurrentMultiMCFormatVersion = 1
@@ -263,6 +266,16 @@ class MultiMCVersionFile (VersionedJsonObject):
     addTweakers = ListProperty(StringProperty, name="+tweakers", exclude_if_none=True, default=None)
     order = IntegerProperty(exclude_if_none=True, default=None)
 
+class UnknownComplianceLevelException(Exception):
+    """Exception raised for unknown Mojang compliance level
+
+    Attributes:
+        message -- explanation of the error
+    """
+    def __init__(self, message):
+        self.message = message
+
+
 # Convert Mojang version file object to a MultiMC version file object
 def MojangToMultiMC (file, name, uid, version):
     mmcFile = MultiMCVersionFile(
@@ -294,6 +307,16 @@ def MojangToMultiMC (file, name, uid, version):
     mmcFile.releaseTime = file.releaseTime
     # time should not be set.
     mmcFile.type = file.type
+    maxSupportedLevel = 1
+    if file.complianceLevel:
+        if file.complianceLevel == 0:
+            pass
+        elif file.complianceLevel == 1:
+            if not mmcFile.addTraits:
+                mmcFile.addTraits = []
+            mmcFile.addTraits.append("XR:Initial")
+        else:
+            raise UnknownComplianceLevelException("Unsupported Mojang compliance level: %d. Max supported is: %d" % (file.complianceLevel, maxSupportedLevel))
     return mmcFile
 
 class MultiMCSharedPackageData(VersionedJsonObject):
