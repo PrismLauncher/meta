@@ -253,6 +253,7 @@ class ForgeInstallerProfileV2(JsonObject):
     data = DictProperty(DataSpec)
     processors = ListProperty(ProcessorSpec)
     libraries = ListProperty(MojangLibrary)
+    mirrorList = StringProperty(exclude_if_none=True, default=None)
 
 class InstallerInfo(JsonObject):
     sha1hash = StringProperty()
