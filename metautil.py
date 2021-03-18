@@ -195,6 +195,10 @@ class MojangArguments (JsonObject):
     game = ListProperty(exclude_if_none=True, default=None)
     jvm = ListProperty(exclude_if_none=True, default=None)
 
+class JavaVersion (JsonObject):
+    component = StringProperty(default="jre-legacy")
+    majorVersion = IntegerProperty(default=8)
+
 class UnknownVersionException(Exception):
     """Exception raised for unknown Mojang version file format versions.
 
@@ -226,7 +230,7 @@ class MojangVersionFile (JsonObject):
     inheritsFrom = StringProperty(exclude_if_none=True, default=None)
     logging = DictProperty(MojangLogging, exclude_if_none=True, default=None)
     complianceLevel = IntegerProperty(exclude_if_none=True, default=None)
-
+    javaVersion = ObjectProperty(JavaVersion, exclude_if_none=True, default=None)
 
 CurrentMultiMCFormatVersion = 1
 def validateSupportedMultiMCVersion(version):
