@@ -36,17 +36,17 @@ forever_cache = FileCache('http_cache', forever=True)
 sess = CacheControl(requests.Session(), forever_cache)
 
 # get the remote version list fragments
-r = sess.get('https://files.minecraftforge.net/maven/net/minecraftforge/forge/maven-metadata.json')
+r = sess.get('https://files.minecraftforge.net/net/minecraftforge/forge/maven-metadata.json')
 r.raise_for_status()
 main_json = r.json()
 assert type(main_json) == dict
 
-r = sess.get('https://files.minecraftforge.net/maven/net/minecraftforge/forge/promotions_slim.json')
+r = sess.get('https://files.minecraftforge.net/net/minecraftforge/forge/promotions_slim.json')
 r.raise_for_status()
 promotions_json = r.json()
 assert type(promotions_json) == dict
 
-promotedKeyExpression = re.compile("((?P<mc>[0-9\\.]+)-)?(?P<promotion>(latest)|(recommended))(-(?P<branch>[a-zA-Z0-9\\.]+))?")
+promotedKeyExpression = re.compile("(?P<mc>[^-]+)-(?P<promotion>(latest)|(recommended))(-(?P<branch>[a-zA-Z0-9\\.]+))?")
 
 recommendedSet = set()
 
@@ -88,7 +88,7 @@ def getSingleForgeFilesManifest(longversion):
             files_json=json.load(f)
             from_file = True
     else:
-        fileUrl = 'https://files.minecraftforge.net/maven/net/minecraftforge/forge/%s/meta.json' % longversion
+        fileUrl = 'https://files.minecraftforge.net/net/minecraftforge/forge/%s/meta.json' % longversion
         r = sess.get(fileUrl)
         r.raise_for_status()
         files_json = r.json()
