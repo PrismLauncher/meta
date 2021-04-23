@@ -9,6 +9,10 @@ from jsonobject import *
 from distutils.version import LooseVersion
 from enum import Enum
 
+import requests
+from cachecontrol import CacheControl
+from cachecontrol.caches import FileCache
+
 #with open('multimc/index.json', 'r', encoding='utf-8') as index:
     #packages = MultiMCPackageIndex(json.load(index))
 
@@ -100,5 +104,27 @@ for entry in forgeVersions.versions:
         for entry in forgeVersion.jarMods:
             urlSet.add(GetLibraryDownload(entry))
 
+    if forgeVersion.mavenFiles:
+        for entry in forgeVersion.mavenFiles:
+            urlSet.add(GetLibraryDownload(entry))
+
+forever_cache = FileCache('forge_cache', forever=True)
+sess = CacheControl(requests.Session(), forever_cache)
+
 for entry in urlSet:
-    print(entry)
+    libraryName = entry.name
+    folderPath = "maven/%s" % libraryName.getBase()
+    filePath = "maven/%s" % libraryName.getPath()
+    if not os.path.isfile(filePath):
+        os.makedirs(folderPath, exist_ok=True)
+        rfile = sess.get(entry.url, stream=True)
+        try:
+            rfile.raise_for_status()
+        except requests.exceptions.HTTPError as exc:
+            print('Missing: %s %s' % (entry.name, entry.url))
+            continue
+        print('Downloading %s' % entry.name)
+        print('To %s' % filePath)
+        with open(filePath, 'wb') as f:
+            for chunk in rfile.iter_content(chunk_size=4096):
+                f.write(chunk)
