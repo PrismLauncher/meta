@@ -213,6 +213,7 @@ tsPath = "static/forge-legacyinfo.json"
 print("Grabbing installers and dumping installer profiles...")
 # get the installer jars - if needed - and get the installer profiles out of them
 for id, entry in newIndex.versions.items():
+    eprint ("Updating Forge %s" % id)
     if entry.mcversion == None:
         eprint ("Skipping %d with invalid MC version" % entry.build)
         continue
@@ -244,6 +245,7 @@ for id, entry in newIndex.versions.items():
                     for chunk in rfile.iter_content(chunk_size=128):
                         f.write(chunk)
 
+        eprint ("Processing %s" % version.url())
         # harvestables from the installer
         if not os.path.isfile(profileFilepath):
             print(jarFilepath)
@@ -263,9 +265,13 @@ for id, entry in newIndex.versions.items():
         # installer info v1
         if not os.path.isfile(installerInfoFilepath):
             installerInfo = InstallerInfo()
+            eprint ("SHA1 %s" % jarFilepath)
             installerInfo.sha1hash = filehash(jarFilepath, hashlib.sha1)
+            eprint ("SHA256 %s" % jarFilepath)
             installerInfo.sha256hash = filehash(jarFilepath, hashlib.sha256)
+            eprint ("SIZE %s" % jarFilepath)
             installerInfo.size = os.path.getsize(jarFilepath)
+            eprint ("DUMP %s" % jarFilepath)
             with open(installerInfoFilepath, 'w', encoding='utf-8') as installerInfoFile:
                 json.dump(installerInfo.to_json(), installerInfoFile, sort_keys=True, indent=4)
                 installerInfoFile.close()

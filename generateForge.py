@@ -208,12 +208,20 @@ def versionFromBuildSystemInstaller(installerVersion : MojangVersionFile, instal
     #wrapperLib.downloads.artifact.size = 14351
     #libraries.append(wrapperLib)
 
-    wrapperLib = MultiMCLibrary(name=GradleSpecifier("io.github.zekerzhayard:ForgeWrapper:1.4.2"))
+    #wrapperLib = MultiMCLibrary(name=GradleSpecifier("io.github.zekerzhayard:ForgeWrapper:1.4.2"))
+    #wrapperLib.downloads = MojangLibraryDownloads()
+    #wrapperLib.downloads.artifact = MojangArtifact()
+    #wrapperLib.downloads.artifact.url = "https://files.multimc.org/maven/%s" % (wrapperLib.name.getPath())
+    #wrapperLib.downloads.artifact.sha1 = "79ff9c1530e8743450c5c3ebc6e07b535437aa6e"
+    #wrapperLib.downloads.artifact.size = 22346
+    #libraries.append(wrapperLib)
+
+    wrapperLib = MultiMCLibrary(name=GradleSpecifier("io.github.zekerzhayard:ForgeWrapper:1.5.1"))
     wrapperLib.downloads = MojangLibraryDownloads()
     wrapperLib.downloads.artifact = MojangArtifact()
     wrapperLib.downloads.artifact.url = "https://files.multimc.org/maven/%s" % (wrapperLib.name.getPath())
-    wrapperLib.downloads.artifact.sha1 = "79ff9c1530e8743450c5c3ebc6e07b535437aa6e"
-    wrapperLib.downloads.artifact.size = 22346
+    wrapperLib.downloads.artifact.sha1 = "90104e9aaa8fbedf6c3d1f6d0b90cabce080b5a9"
+    wrapperLib.downloads.artifact.size = 29892
     libraries.append(wrapperLib)
 
     for upstreamLib in installerVersion.libraries:
@@ -297,6 +305,21 @@ for id, entry in remoteVersionlist.versions.items():
     version = ForgeVersion(entry)
     if version.url() == None:
         eprint ("Skipping %s with no valid files" % id)
+        continue
+    eprint ("Processing Forge %s" % version.rawVersion)
+    versionElements = version.rawVersion.split('.')
+    if len(versionElements) < 1:
+        eprint ("Skipping version %s with not enough version elements" % (id))
+        continue
+
+    majorVersionStr = versionElements[0]
+    if not majorVersionStr.isnumeric():
+        eprint ("Skipping version %s with non-numeric major version %s" % (id, majorVersionStr))
+        continue
+
+    majorVersion = int(majorVersionStr)
+    if majorVersion >= 37:
+        eprint ("Skipping unsupported major version %d (%s)" % (majorVersion, id))
         continue
 
     if entry.recommended:
