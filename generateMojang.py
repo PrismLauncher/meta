@@ -82,6 +82,14 @@ def adaptNewStyleArguments(arguments):
     # grab the strings, log the complex stuff
     for arg in arguments.game:
         if isinstance(arg, str):
+            if arg == '--clientId':
+                continue
+            if arg == '${clientid}':
+                continue
+            if arg == '--xuid':
+                continue
+            if arg == '${auth_xuid}':
+                continue
             outarr.append(arg)
         else:
             print("!!! Unrecognized structure in Minecraft game arguments:")
