@@ -23,7 +23,7 @@ def loadJarInfo(mavenKey):
         return FabricJarInfo(json.load(jarInfoFile))
 
 def processLoaderVersion(loaderVersion, it, loaderData):
-    verStable = isFabricVerStable(loaderVersion)
+    verStable = it["stable"]
     if (len(loaderRecommended) < 1) and verStable:
         loaderRecommended.append(loaderVersion)
     versionJarInfo = loadJarInfo(it["maven"])
@@ -31,10 +31,7 @@ def processLoaderVersion(loaderVersion, it, loaderData):
     version.releaseTime = versionJarInfo.releaseTime
     version.requires = [DependencyEntry(uid='net.fabricmc.intermediary')]
     version.order = 10
-    if verStable:
-        version.type = "release"
-    else:
-        version.type = "snapshot"
+    version.type = "release"
     if isinstance(loaderData.mainClass, dict):
         version.mainClass = loaderData.mainClass["client"]
     else:

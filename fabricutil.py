@@ -1,11 +1,6 @@
 from metautil import *
 import jsonobject
 
-# barebones semver-like parser
-def isFabricVerStable(ver):
-    s = ver.split("+")
-    return ("-" not in s[0])
-
 class FabricInstallerArguments(JsonObject):
     client = ListProperty(StringProperty)
     common = ListProperty(StringProperty)
