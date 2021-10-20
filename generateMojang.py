@@ -137,6 +137,7 @@ for filename in os.listdir('upstream/mojang/versions'):
                     rules = mmcLib.rules
                     mmcLib.rules = None
                 if isOnlyMacOS(rules, specifier):
+                    print("Candidate library ",  specifier, " is only for macOS and is therefore ignored.")
                     continue
                 bucket = addOrGetBucket(buckets, rules)
                 if specifier.group == "org.lwjgl.lwjgl" and specifier.artifact == "lwjgl":
@@ -152,8 +153,11 @@ for filename in os.listdir('upstream/mojang/versions'):
             else:
                 libs_minecraft.append(mmcLib)
         if len(buckets) == 1:
-            addLWJGLVersion(lwjglVersionVariants, buckets[None])
-            print("Found only candidate LWJGL", buckets[None].version)
+            for key in buckets:
+                keyBucket = buckets[key]
+                keyBucket.libraries = sorted(keyBucket.libraries, key=itemgetter('name'))
+                addLWJGLVersion(lwjglVersionVariants, keyBucket)
+                print("Found only candidate LWJGL", keyBucket.version, key)
         else:
             # multiple buckets for LWJGL. [None] is common to all, other keys are for different sets of rules
             for key in buckets:
@@ -278,6 +282,7 @@ badVariants = [
     "74f2ae137e9767f0cfbe10ca9db38adaba08a4a6", # 3.2.2 - missing tinyfd
     "eaeeca768920d981bdc8ea698305f4e9723c6ba8", # 3.2.2 - missing osx natives
     "8a85feb57480e9cbb0b9c54e7b1751816122cf97", # 3.2.2 - missing other osx natives
+    "65d4ba873bc1244fda9fd7fabd5f6d917316a4e8", # 3.2.2 - introduced in 21w42a, missing jinput and jutils
 ]
 
 # Add our own 3.2.2, with hookers and blackjack.
