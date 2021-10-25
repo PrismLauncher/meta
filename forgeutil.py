@@ -53,6 +53,24 @@ class ForgeVersion:
         else:
             return self.universal_url
 
+    def isSupported(self):
+        if self.url() == None:
+            return False
+
+        versionElements = self.rawVersion.split('.')
+        if len(versionElements) < 1:
+            return False
+
+        majorVersionStr = versionElements[0]
+        if not majorVersionStr.isnumeric():
+            return False
+
+        majorVersion = int(majorVersionStr)
+        if majorVersion >= 37:
+            return False
+
+        return True
+
 class ForgeFile(JsonObject):
     classifier = StringProperty(required=True)
     hash = StringProperty(required=True)
@@ -238,6 +256,25 @@ class ProcessorSpec(JsonObject):
     classpath = ListProperty(StringProperty)
     args = ListProperty(StringProperty)
     outputs = DictProperty(StringProperty)
+
+# Note: This is only used in one version (1.12.2-14.23.5.2851) and we don't even use the installer profile in it.
+#       It's here just so it parses and we can continue...
+class ForgeInstallerProfileV1_5(JsonObject):
+    _comment = ListProperty(StringProperty)
+    spec = IntegerProperty()
+    profile = StringProperty()
+    version = StringProperty()
+    icon = StringProperty()
+    json = StringProperty()
+    path = GradleSpecifierProperty()
+    logo = StringProperty()
+    minecraft = StringProperty()
+    welcome = StringProperty()
+    # We don't know what 'data' actually is in this one. It's an empty array
+    data = ListProperty(StringProperty)
+    processors = ListProperty(ProcessorSpec)
+    libraries = ListProperty(MojangLibrary)
+    mirrorList = StringProperty(exclude_if_none=True, default=None)
 
 class ForgeInstallerProfileV2(JsonObject):
     _comment = ListProperty(StringProperty)

@@ -105,8 +105,16 @@ def getSingleForgeFilesManifest(longversion):
         while index < len(extensionObj.items()):
             mutableCopy = copy.deepcopy(extensionObj)
             extension, hash = mutableCopy.popitem()
+            if not type(classifier) == str:
+                pprint(classifier)
+                pprint(extensionObj)
+            if not type(hash) == str:
+                pprint(classifier)
+                pprint(extensionObj)
+                print('%s: Skipping missing hash for extension %s:' % (longversion, extension))
+                index = index + 1
+                continue
             assert type(classifier) == str
-            assert type(hash) == str
             processedHash = re.sub(r"\W", "", hash)
             if not len(processedHash) == 32:
                 print('%s: Skipping invalid hash for extension %s:' % (longversion, extension))
@@ -210,6 +218,8 @@ versions = []
 legacyinfolist = ForgeLegacyInfoList()
 tsPath = "static/forge-legacyinfo.json"
 
+fuckedVersions = []
+
 print("Grabbing installers and dumping installer profiles...")
 # get the installer jars - if needed - and get the installer profiles out of them
 for id, entry in newIndex.versions.items():
@@ -250,17 +260,54 @@ for id, entry in newIndex.versions.items():
         if not os.path.isfile(profileFilepath):
             print(jarFilepath)
             with zipfile.ZipFile(jarFilepath, 'r') as jar:
-                with jar.open('install_profile.json', 'r') as profileZipEntry:
-                    with open(profileFilepath, 'wb') as profileFile:
-                        profileFile.write(profileZipEntry.read())
-                        profileFile.close()
-                    profileZipEntry.close()
                 with suppress(KeyError):
                     with jar.open('version.json', 'r') as profileZipEntry:
-                        with open(versionJsonFilepath, 'wb') as versionJsonFile:
-                            versionJsonFile.write(profileZipEntry.read())
-                            versionJsonFile.close()
+                        versionJsonData = profileZipEntry.read();
+                        versionJsonJson = json.loads(versionJsonData)
                         profileZipEntry.close()
+
+                        # Process: does it parse?
+                        doesItParse = MojangVersionFile(versionJsonJson)
+
+                        with open(versionJsonFilepath, 'wb') as versionJsonFile:
+                            versionJsonFile.write(versionJsonData)
+                            versionJsonFile.close()
+
+                with jar.open('install_profile.json', 'r') as profileZipEntry:
+                    installProfileJsonData = profileZipEntry.read()
+                    profileZipEntry.close()
+
+                    # Process: does it parse?
+                    installProfileJsonJson = json.loads(installProfileJsonData)
+                    atLeastOneFormatWorked = False
+                    exception = None
+                    try:
+                        doesItParseV1 = ForgeInstallerProfile(installProfileJsonJson)
+                        atLeastOneFormatWorked = True
+                    except BaseException as err:
+                        exception = err
+                    try:
+                        doesItParseV2 = ForgeInstallerProfileV2(installProfileJsonJson)
+                        atLeastOneFormatWorked = True
+                    except BaseException as err:
+                        exception = err
+
+                    # NOTE: Only here for 1.12.2-14.23.5.2851
+                    try:
+                        doesItParseV1_5 = ForgeInstallerProfileV1_5(installProfileJsonJson)
+                        atLeastOneFormatWorked = True
+                    except BaseException as err:
+                        exception = err
+
+                    if not atLeastOneFormatWorked:
+                        if version.isSupported():
+                            raise exception
+                        else:
+                            eprint ("Version %s is not supported and won't be generated later." % version.longVersion)
+
+                    with open(profileFilepath, 'wb') as profileFile:
+                        profileFile.write(installProfileJsonData)
+                        profileFile.close()
 
         # installer info v1
         if not os.path.isfile(installerInfoFilepath):

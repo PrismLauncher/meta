@@ -80,7 +80,7 @@ def versionFromProfile(profile, version):
                 fixedName.classifier = "universal"
         ourLib = MultiMCLibrary(name=fixedName)
         if forgeLib.url == "http://files.minecraftforge.net/maven/":
-            ourLib.url = "https://files.minecraftforge.net/maven/"
+            ourLib.url = "https://maven.minecraftforge.net/"
         else:
             ourLib.url = forgeLib.url
         #if forgeLib.checksums and len(forgeLib.checksums) == 2:
@@ -336,6 +336,7 @@ for id, entry in remoteVersionlist.versions.items():
     installerVersionFilepath = "upstream/forge/version_manifests/%s.json" % version.longVersion
     profileFilepath = "upstream/forge/installer_manifests/%s.json" % version.longVersion
 
+    eprint(installerVersionFilepath)
     if os.path.isfile(installerVersionFilepath):
         with open(installerVersionFilepath, 'r', encoding='utf-8') as installerVersionFile:
             installerVersion = MojangVersionFile(json.load(installerVersionFile))
