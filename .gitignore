@@ -1,6 +1,8 @@
 http_cache
 multimc
 upstream
+forgemaven
+forge_cache
 __pycache__
 *.kdev4
 config_local.sh

@@ -13,3 +13,8 @@ export DEPLOY_FOLDER_master=/var/www/meta/v1/
 export DEPLOY_FOLDER_develop=/var/www/meta/dev/
 export DEPLOY_FOLDER_USER=http
 export DEPLOY_FOLDER_GROUP=http
+
+export UPDATE_FORGE_MAVEN=true
+export DEPLOY_FORGE_MAVEN=false
+export DEPLOY_FORGE_MAVEN_S3=false
+export S3_FORGE_MAVEN=s3://forgemaven.multimc.org/

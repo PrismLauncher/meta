@@ -113,8 +113,8 @@ sess = CacheControl(requests.Session(), forever_cache)
 
 for entry in urlSet:
     libraryName = entry.name
-    folderPath = "maven/%s" % libraryName.getBase()
-    filePath = "maven/%s" % libraryName.getPath()
+    folderPath = "forgemaven/%s" % libraryName.getBase()
+    filePath = "forgemaven/%s" % libraryName.getPath()
     if not os.path.isfile(filePath):
         os.makedirs(folderPath, exist_ok=True)
         rfile = sess.get(entry.url, stream=True)

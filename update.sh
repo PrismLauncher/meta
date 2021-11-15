@@ -83,6 +83,17 @@ if [ "${DEPLOY_TO_GIT}" = true ] ; then
     fi
 fi
 
+if [ "${UPDATE_FORGE_MAVEN}" = true ] ; then
+    echo "Updating the copy of Forge maven"
+    ./enumerateForge.py
+    if [ "${DEPLOY_FORGE_MAVEN}" = true ] ; then
+        chown -RL ${DEPLOY_FOLDER_USER}:${DEPLOY_FOLDER_GROUP} ${BASEDIR}/forgemaven/
+        if [ "${DEPLOY_FORGE_MAVEN_S3}" = true ] ; then
+            s3cmd -c ${BASEDIR}/config/s3cmd.cfg --exclude=".git*" --delete-removed sync ${BASEDIR}/forgemaven/ ${S3_FORGE_MAVEN} || exit 2
+        fi
+    fi
+fi
+
 cd "${BASEDIR}"
 if [ "${DEPLOY_TO_FOLDER}" = true ] ; then
     DEPLOY_FOLDER_var="DEPLOY_FOLDER_$MODE"
