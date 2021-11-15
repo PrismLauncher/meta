@@ -85,6 +85,7 @@ fi
 
 if [ "${UPDATE_FORGE_MAVEN}" = true ] ; then
     echo "Updating the copy of Forge maven"
+    cd "${BASEDIR}"
     ./enumerateForge.py
     if [ "${DEPLOY_FORGE_MAVEN}" = true ] ; then
         chown -RL ${DEPLOY_FOLDER_USER}:${DEPLOY_FOLDER_GROUP} ${BASEDIR}/forgemaven/
