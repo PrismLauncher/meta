@@ -65,9 +65,9 @@ class ForgeVersion:
         if not majorVersionStr.isnumeric():
             return False
 
-        majorVersion = int(majorVersionStr)
-        if majorVersion >= 37:
-            return False
+        #majorVersion = int(majorVersionStr)
+        #if majorVersion >= 37:
+        #    return False
 
         return True
 
@@ -256,6 +256,7 @@ class ProcessorSpec(JsonObject):
     classpath = ListProperty(StringProperty)
     args = ListProperty(StringProperty)
     outputs = DictProperty(StringProperty)
+    sides = ListProperty(StringProperty, exclude_if_none=True, default=None)
 
 # Note: This is only used in one version (1.12.2-14.23.5.2851) and we don't even use the installer profile in it.
 #       It's here just so it parses and we can continue...
@@ -291,6 +292,7 @@ class ForgeInstallerProfileV2(JsonObject):
     processors = ListProperty(ProcessorSpec)
     libraries = ListProperty(MojangLibrary)
     mirrorList = StringProperty(exclude_if_none=True, default=None)
+    serverJarPath = StringProperty(exclude_if_none=True, default=None)
 
 class InstallerInfo(JsonObject):
     sha1hash = StringProperty()

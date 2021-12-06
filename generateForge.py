@@ -327,9 +327,9 @@ for id, entry in remoteVersionlist.versions.items():
         continue
 
     majorVersion = int(majorVersionStr)
-    if majorVersion >= 37:
-        eprint ("Skipping unsupported major version %d (%s)" % (majorVersion, id))
-        continue
+    #if majorVersion >= 37:
+    #    eprint ("Skipping unsupported major version %d (%s)" % (majorVersion, id))
+    #    continue
 
     if entry.recommended:
         recommendedVersions.append(version.rawVersion)
