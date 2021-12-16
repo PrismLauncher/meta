@@ -153,7 +153,7 @@ for filename in os.listdir('upstream/mojang/versions'):
             else:
                 # FIXME: workaround for insane log4j nonsense from December 2021. Probably needs adjustment.
                 if mmcLib.name.isLog4j():
-                    log4jVersion = '2.15.0'
+                    log4jVersion = '2.16.0'
                     if mmcLib.name.version == '2.0-beta9':
                         log4jVersion = '2.0-beta9-fixed'
 
@@ -161,16 +161,17 @@ for filename in os.listdir('upstream/mojang/versions'):
                     replacementLib.downloads = MojangLibraryDownloads()
                     replacementLib.downloads.artifact = MojangArtifact()
                     replacementLib.downloads.artifact.url = "https://files.multimc.org/maven/%s" % (replacementLib.name.getPath())
-                    if log4jVersion == "2.15.0":
+
+                    if log4jVersion == "2.16.0":
                         if mmcLib.name.artifact == "log4j-api":
-                            replacementLib.downloads.artifact.sha1 = "42319af9991a86b4475ab3316633a3d03e2d29e1"
-                            replacementLib.downloads.artifact.size = 301805
+                            replacementLib.downloads.artifact.sha1 = "f821a18687126c2e2f227038f540e7953ad2cc8c"
+                            replacementLib.downloads.artifact.size = 301892
                         elif mmcLib.name.artifact == "log4j-core":
-                            replacementLib.downloads.artifact.sha1 = "9bd89149d5083a2a3ab64dcc88b0227da14152ec"
-                            replacementLib.downloads.artifact.size = 1789769
+                            replacementLib.downloads.artifact.sha1 = "539a445388aee52108700f26d9644989e7916e7c"
+                            replacementLib.downloads.artifact.size = 1789565
                         elif mmcLib.name.artifact == "log4j-slf4j18-impl":
-                            replacementLib.downloads.artifact.sha1 = "7c3f5758e86e1668929e907a5609a83671e21b30"
-                            replacementLib.downloads.artifact.size = 21222
+                            replacementLib.downloads.artifact.sha1 = "0c880a059056df5725f5d8d1035276d9749eba6d"
+                            replacementLib.downloads.artifact.size = 21249
                         else:
                             raise Exception("ERROR: unhandled log4j artifact %s!" % mmcLib.name.artifact)
                     elif log4jVersion == "2.0-beta9-fixed":
