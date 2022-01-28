@@ -1,20 +1,12 @@
 export UPSTREAM_DIR=upstream
-export UPSTREAM_REPO=git@github.com:MultiMC/meta-upstream.git
+export UPSTREAM_REPO=git@github.com:PolyMC/meta-upstream.git
 export MMC_DIR=multimc
-export MMC_REPO=git@github.com:MultiMC/meta-multimc.git
-export S3_master=s3://meta.multimc.org/v1/
-export S3_develop=s3://meta.multimc.org/dev/
+export MMC_REPO=git@github.com:PolyMC/meta-polymc.git
 export BRANCH_master=master
 export BRANCH_develop=develop
 export DEPLOY_TO_S3=false
-export DEPLOY_TO_FOLDER=false
-export DEPLOY_TO_GIT=false
-export DEPLOY_FOLDER_master=/var/www/meta/v1/
-export DEPLOY_FOLDER_develop=/var/www/meta/dev/
+export DEPLOY_TO_FOLDER=true
+export DEPLOY_FOLDER_master=/srv/meta/v1/
+export DEPLOY_FOLDER_develop=/srv/meta/dev/
 export DEPLOY_FOLDER_USER=http
 export DEPLOY_FOLDER_GROUP=http
-
-export UPDATE_FORGE_MAVEN=true
-export DEPLOY_FORGE_MAVEN=false
-export DEPLOY_FORGE_MAVEN_S3=false
-export S3_FORGE_MAVEN=s3://forgemaven.multimc.org/

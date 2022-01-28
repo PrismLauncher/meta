@@ -160,7 +160,7 @@ for filename in os.listdir('upstream/mojang/versions'):
                     replacementLib = MultiMCLibrary(name=GradleSpecifier("org.apache.logging.log4j:%s:%s" % (mmcLib.name.artifact, log4jVersion)))
                     replacementLib.downloads = MojangLibraryDownloads()
                     replacementLib.downloads.artifact = MojangArtifact()
-                    replacementLib.downloads.artifact.url = "https://files.multimc.org/maven/%s" % (replacementLib.name.getPath())
+                    replacementLib.downloads.artifact.url = "https://meta.polymc.org/maven/%s" % (replacementLib.name.getPath())
 
                     if log4jVersion == "2.16.0":
                         if mmcLib.name.artifact == "log4j-api":
@@ -297,32 +297,34 @@ def processSingleVariant(lwjglVariant):
 
 
 passVariants = [
-    "dc788960f7e74062aee7cee0e1e7d0a14c342418", # 2.9.0
-    "cc1241e6cc967857961c7385ba078242d866d896", # 2.9.1
-    "569845af361b8cd54de7153c142053425944da57", # 2.9.1-nightly-20131120
-    "838930186ce1f4222f71b737ee17725d0fd14e5a", # 2.9.3
-    "079b297aa801e551cc96b5e06c44e4a921807c8a", # 2.9.4-nightly-20150209
-    "446142ccdcb27eca829be79702d6ff53420198a9", # 3.1.2
-    "48c276ed559a4b7ca680770b110b9b60d0b2a3b9", # 3.1.6
-    "4f9e33a93e5974e2ec433134983c110b3959aa31", # 3.2.1
-    "15d5562e9a3d11edec17c8e2de084a96fe9f371d", # 3.2.2 - our fixed version
+    "052e510a2f7f2d5d8c3ecb9b56330c2ada6525aa", # 2.9.0
+    "cee21a30bbd11e9cda6b2ffdb107eb279e7fc2f4", # 2.9.1
+    "e29c23ddd882d31d04624f27d1bf2f461bad2cac", # 2.9.1-nightly-20131120
+    "3e0f048ff0a3b6ebf30d7d7a12bc61d1ca55ec1d", # 2.9.3
+    "0f2b1287a39cffee5f88afa287a79eb0f130cf2f", # 2.9.4-nightly-20150209
+    "5e686afe52b072ffef9dc716b04109d45a3d662c", # 3.1.2
+    "f1437e21fb6fff0a359d31f60b61795a1ff113cd", # 3.1.6
+    "cb2da930d079fba83b88e989f76e392ac532a859", # 3.2.1
+    "782b8365dd5ba9437d03113c295a62247543493b", # 3.2.2
 ]
 
 badVariants = [
     "032bfe9afc34cf1271037f734a6e7a8835fdfff0", # 2.9.0 - duplication nation
     "859f5679c60fce520a7c8cfe0c5663f848ff51ab", # 2.9.0 - broken natives
+    "143fc2e22a97042b06e87d599a06b411606a11de", # 2.9.0 - old cringe version
+    "a5340aa0194e31371d961da8c7419d7b7acc769e", # 2.9.0 - 2010 moment
     "7811cd3ba93467842b1823ca8e571f3d49421291", # 3.1.6
+    "a3179ec5cb1ff62b46e4407ae53487c53e5e42c8", # 3.1.6 - old cringe version
     "194e5109cbdfb8d5a7da918c449b7414cd609629", # 3.2.1
+    "95df90ab21aa9e9f45d7a9e09da7761d95b3cc42", # 3.2.1 - old cringe version
     "74f2ae137e9767f0cfbe10ca9db38adaba08a4a6", # 3.2.2 - missing tinyfd
     "eaeeca768920d981bdc8ea698305f4e9723c6ba8", # 3.2.2 - missing osx natives
     "8a85feb57480e9cbb0b9c54e7b1751816122cf97", # 3.2.2 - missing other osx natives
     "65d4ba873bc1244fda9fd7fabd5f6d917316a4e8", # 3.2.2 - introduced in 21w42a, missing jinput and jutils
+    "80d5d553b2b32cd8a2ee2e89576af12fba452bad", # 3.2.2 - old cringe version (ends with bad therefore bad)
+    "dc63fc89717e85261bca306c6dcc791294006195", # 3.2.2 - old cringe version
+    "d46aa08f10fccd75e2e3f26dc5ee677c7d472231", # 3.2.2 - old cringe version
 ]
-
-# Add our own 3.2.2, with hookers and blackjack.
-with open("static/lwjgl-3.2.2.json", 'r', encoding='utf-8') as lwjgl322file:
-    lwjgl322 = MultiMCVersionFile(json.load(lwjgl322file))
-    addLWJGLVersion(lwjglVersionVariants, lwjgl322)
 
 for lwjglVersionVariant in lwjglVersionVariants:
     decidedVariant = None
