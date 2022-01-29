@@ -27,7 +27,7 @@ def processLoaderVersion(loaderVersion, it, loaderData):
     if (len(loaderRecommended) < 1) and verStable:
         loaderRecommended.append(loaderVersion)
     versionJarInfo = loadJarInfo(it["maven"])
-    version = MultiMCVersionFile(name="Fabric Loader", uid="net.fabricmc.fabric-loader", version=loaderVersion)
+    version = PolyMCVersionFile(name="Fabric Loader", uid="net.fabricmc.fabric-loader", version=loaderVersion)
     version.releaseTime = versionJarInfo.releaseTime
     version.requires = [DependencyEntry(uid='net.fabricmc.intermediary')]
     version.order = 10
@@ -39,21 +39,21 @@ def processLoaderVersion(loaderVersion, it, loaderData):
     version.libraries = []
     version.libraries.extend(loaderData.libraries.common)
     version.libraries.extend(loaderData.libraries.client)
-    loaderLib = MultiMCLibrary(name=GradleSpecifier(it["maven"]), url="https://maven.fabricmc.net")
+    loaderLib = PolyMCLibrary(name=GradleSpecifier(it["maven"]), url="https://maven.fabricmc.net")
     version.libraries.append(loaderLib)
     loaderVersions.append(version)
 
 def processIntermediaryVersion(it):
     intermediaryRecommended.append(it["version"])
     versionJarInfo = loadJarInfo(it["maven"])
-    version = MultiMCVersionFile(name="Intermediary Mappings", uid="net.fabricmc.intermediary", version=it["version"])
+    version = PolyMCVersionFile(name="Intermediary Mappings", uid="net.fabricmc.intermediary", version=it["version"])
     version.releaseTime = versionJarInfo.releaseTime
     version.requires = [DependencyEntry(uid='net.minecraft', equals=it["version"])]
     version.order = 11
     version.type = "release"
     version.libraries = []
     version.volatile = True
-    mappingLib = MultiMCLibrary(name=GradleSpecifier(it["maven"]), url="https://maven.fabricmc.net")
+    mappingLib = PolyMCLibrary(name=GradleSpecifier(it["maven"]), url="https://maven.fabricmc.net")
     version.libraries.append(mappingLib)
     intermediaryVersions.append(version)
 
@@ -76,7 +76,7 @@ for version in loaderVersions:
     with open(outFilepath, 'w') as outfile:
         json.dump(version.to_json(), outfile, sort_keys=True, indent=4)
 
-sharedData = MultiMCSharedPackageData(uid = 'net.fabricmc.fabric-loader', name = 'Fabric Loader')
+sharedData = PolyMCSharedPackageData(uid = 'net.fabricmc.fabric-loader', name = 'Fabric Loader')
 sharedData.recommended = loaderRecommended
 sharedData.description = "Fabric Loader is a tool to load Fabric-compatible mods in game environments."
 sharedData.projectUrl = "https://fabricmc.net"
@@ -88,7 +88,7 @@ for version in intermediaryVersions:
     with open(outFilepath, 'w') as outfile:
         json.dump(version.to_json(), outfile, sort_keys=True, indent=4)
 
-sharedData = MultiMCSharedPackageData(uid = 'net.fabricmc.intermediary', name = 'Intermediary Mappings')
+sharedData = PolyMCSharedPackageData(uid = 'net.fabricmc.intermediary', name = 'Intermediary Mappings')
 sharedData.recommended = intermediaryRecommended
 sharedData.description = "Intermediary mappings allow using Fabric Loader with mods for Minecraft in a more compatible manner."
 sharedData.projectUrl = "https://fabricmc.net"

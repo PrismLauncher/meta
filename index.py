@@ -19,7 +19,7 @@ def HashFile(hash, fname):
 ignore = set(["index.json", "package.json", ".git"])
 
 # initialize output structures - package list level
-packages = MultiMCPackageIndex()
+packages = PolyMCPackageIndex()
 
 # walk thorugh all the package folders
 for package in sorted(os.listdir('polymc')):
@@ -32,7 +32,7 @@ for package in sorted(os.listdir('polymc')):
         recommendedVersions = set(sharedData.recommended)
 
     # initialize output structures - version list level
-    versionList = MultiMCVersionIndex()
+    versionList = PolyMCVersionIndex()
     versionList.uid = package
     versionList.name = sharedData.name
 
@@ -46,10 +46,10 @@ for package in sorted(os.listdir('polymc')):
         filehash = HashFile(hashlib.sha256, filepath)
         versionFile = None
         with open(filepath) as json_file:
-            versionFile = MultiMCVersionFile(json.load(json_file))
+            versionFile = PolyMCVersionFile(json.load(json_file))
 
         # pull information from the version file
-        versionEntry = MultiMCVersionIndexEntry()
+        versionEntry = PolyMCVersionIndexEntry()
         if versionFile.version in recommendedVersions:
             versionEntry.recommended = True
         versionEntry.version = versionFile.version
@@ -70,7 +70,7 @@ for package in sorted(os.listdir('polymc')):
         json.dump(versionList.to_json(), outfile, sort_keys=True, indent=4)
 
     # insert entry into the package index
-    packageEntry = MultiMCPackageIndexEntry(
+    packageEntry = PolyMCPackageIndexEntry(
             {
                 "uid" : package,
                 "name" : sharedData.name,

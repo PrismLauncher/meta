@@ -14,7 +14,7 @@ from cachecontrol import CacheControl
 from cachecontrol.caches import FileCache
 
 #with open('polymc/index.json', 'r', encoding='utf-8') as index:
-    #packages = MultiMCPackageIndex(json.load(index))
+    #packages = PolyMCPackageIndex(json.load(index))
 
 #for entry in packages.packages:
     #print (entry)
@@ -54,12 +54,12 @@ class MojangLibrary (JsonObject):
     natives = DictProperty(StringProperty, exclude_if_none=True, default=None)
     rules = ListProperty(MojangRule, exclude_if_none=True, default=None)
 
-class MultiMCLibrary (MojangLibrary):
+class PolyMCLibrary (MojangLibrary):
     url = StringProperty(exclude_if_none=True, default=None)
     mmcHint = StringProperty(name="MMC-hint", exclude_if_none=True, default=None)
 
 
-def GetLibraryDownload (library : MultiMCLibrary):
+def GetLibraryDownload (library : PolyMCLibrary):
     if library.natives:
         raise Exception('Natives are not handled yet')
 
@@ -87,7 +87,7 @@ def GetLibraryDownload (library : MultiMCLibrary):
     return DownloadEntry(url, kind, name)
 
 with open('polymc/net.minecraftforge/index.json', 'r', encoding='utf-8') as forgeIndex:
-    forgeVersions = MultiMCVersionIndex(json.load(forgeIndex))
+    forgeVersions = PolyMCVersionIndex(json.load(forgeIndex))
 
 urlSet = set()
 
@@ -95,7 +95,7 @@ for entry in forgeVersions.versions:
     versionString = entry.version
     versionPath = "polymc/net.minecraftforge/%s.json" % versionString
     with open(versionPath, 'r') as infile:
-        forgeVersion = MultiMCVersionFile(json.load(infile))
+        forgeVersion = PolyMCVersionFile(json.load(infile))
     if forgeVersion.libraries:
         for entry in forgeVersion.libraries:
             urlSet.add(GetLibraryDownload(entry))

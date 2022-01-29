@@ -236,24 +236,24 @@ class MojangVersionFile (JsonObject):
     complianceLevel = IntegerProperty(exclude_if_none=True, default=None)
     javaVersion = ObjectProperty(JavaVersion, exclude_if_none=True, default=None)
 
-CurrentMultiMCFormatVersion = 1
-def validateSupportedMultiMCVersion(version):
-    if version > CurrentMultiMCFormatVersion:
-        raise UnknownVersionException("Unsupported MultiMC format version: %d. Max supported is: %d" % (version, CurrentMultiMCFormatVersion))
+CurrentPolyMCFormatVersion = 1
+def validateSupportedPolyMCVersion(version):
+    if version > CurrentPolyMCFormatVersion:
+        raise UnknownVersionException("Unsupported PolyMC format version: %d. Max supported is: %d" % (version, CurrentPolyMCFormatVersion))
 
-class MultiMCLibrary (MojangLibrary):
+class PolyMCLibrary (MojangLibrary):
     url = StringProperty(exclude_if_none=True, default=None)
     mmcHint = StringProperty(name="MMC-hint", exclude_if_none=True, default=None)
 
 class VersionedJsonObject(JsonObject):
-    formatVersion = IntegerProperty(default=CurrentMultiMCFormatVersion, validators=validateSupportedMultiMCVersion)
+    formatVersion = IntegerProperty(default=CurrentPolyMCFormatVersion, validators=validateSupportedPolyMCVersion)
 
 class DependencyEntry (JsonObject):
     uid = StringProperty(required=True)
     equals = StringProperty(exclude_if_none=True, default=None)
     suggests = StringProperty(exclude_if_none=True, default=None)
 
-class MultiMCVersionFile (VersionedJsonObject):
+class PolyMCVersionFile (VersionedJsonObject):
     name = StringProperty(required=True)
     version = StringProperty(required=True)
     uid = StringProperty(required=True)
@@ -261,10 +261,10 @@ class MultiMCVersionFile (VersionedJsonObject):
     conflicts = ListProperty(DependencyEntry, exclude_if_none=True, default=None)
     volatile = BooleanProperty(exclude_if_none=True, default=None)
     assetIndex = ObjectProperty(MojangAssets, exclude_if_none=True, default=None)
-    libraries = ListProperty(MultiMCLibrary, exclude_if_none=True, default=None)
-    mavenFiles = ListProperty(MultiMCLibrary, exclude_if_none=True, default=None)
-    mainJar = ObjectProperty(MultiMCLibrary, exclude_if_none=True, default=None)
-    jarMods = ListProperty(MultiMCLibrary, exclude_if_none=True, default=None)
+    libraries = ListProperty(PolyMCLibrary, exclude_if_none=True, default=None)
+    mavenFiles = ListProperty(PolyMCLibrary, exclude_if_none=True, default=None)
+    mainJar = ObjectProperty(PolyMCLibrary, exclude_if_none=True, default=None)
+    jarMods = ListProperty(PolyMCLibrary, exclude_if_none=True, default=None)
     mainClass = StringProperty(exclude_if_none=True, default=None)
     appletClass = StringProperty(exclude_if_none=True, default=None)
     minecraftArguments = StringProperty(exclude_if_none=True, default=None)
@@ -284,9 +284,9 @@ class UnknownComplianceLevelException(Exception):
         self.message = message
 
 
-# Convert Mojang version file object to a MultiMC version file object
-def MojangToMultiMC (file, name, uid, version):
-    mmcFile = MultiMCVersionFile(
+# Convert Mojang version file object to a PolyMC version file object
+def MojangToPolyMC (file, name, uid, version):
+    mmcFile = PolyMCVersionFile(
         {
             "name": name,
             "uid": uid,
@@ -297,7 +297,7 @@ def MojangToMultiMC (file, name, uid, version):
     mmcFile.libraries = file.libraries
     mmcFile.mainClass = file.mainClass
     if file.id:
-        mainJar = MultiMCLibrary(
+        mainJar = PolyMCLibrary(
             {
                 "name": "com.mojang:minecraft:%s:client" % file.id,
             }
@@ -327,7 +327,7 @@ def MojangToMultiMC (file, name, uid, version):
             raise UnknownComplianceLevelException("Unsupported Mojang compliance level: %d. Max supported is: %d" % (file.complianceLevel, maxSupportedLevel))
     return mmcFile
 
-class MultiMCSharedPackageData(VersionedJsonObject):
+class PolyMCSharedPackageData(VersionedJsonObject):
     name = StringProperty(required=True)
     uid = StringProperty(required=True)
     recommended = ListProperty(StringProperty, exclude_if_none=True, default=None)
@@ -343,7 +343,7 @@ class MultiMCSharedPackageData(VersionedJsonObject):
             print("Error while trying to save shared packaged data for %s:" % self.uid, e)
 
 def writeSharedPackageData(uid, name):
-    desc = MultiMCSharedPackageData({
+    desc = PolyMCSharedPackageData({
         'name': name,
         'uid': uid
         })
@@ -352,9 +352,9 @@ def writeSharedPackageData(uid, name):
 
 def readSharedPackageData(uid):
     with open("polymc/%s/package.json" % uid, 'r') as file:
-        return MultiMCSharedPackageData(json.load(file))
+        return PolyMCSharedPackageData(json.load(file))
 
-class MultiMCVersionIndexEntry(JsonObject):
+class PolyMCVersionIndexEntry(JsonObject):
     version = StringProperty()
     type = StringProperty(exclude_if_none=True, default=None)
     releaseTime = ISOTimestampProperty()
@@ -364,21 +364,21 @@ class MultiMCVersionIndexEntry(JsonObject):
     volatile = BooleanProperty(exclude_if_none=True, default=None)
     sha256 = StringProperty()
 
-class MultiMCVersionIndex(VersionedJsonObject):
+class PolyMCVersionIndex(VersionedJsonObject):
     name = StringProperty()
     uid = StringProperty()
-    versions = ListProperty(MultiMCVersionIndexEntry)
+    versions = ListProperty(PolyMCVersionIndexEntry)
 
-class MultiMCPackageIndexEntry(JsonObject):
+class PolyMCPackageIndexEntry(JsonObject):
     name = StringProperty()
     uid = StringProperty()
     sha256 = StringProperty()
 
-class MultiMCPackageIndex(VersionedJsonObject):
-    packages = ListProperty(MultiMCPackageIndexEntry)
+class PolyMCPackageIndex(VersionedJsonObject):
+    packages = ListProperty(PolyMCPackageIndexEntry)
 
 '''
-The MultiMC static override file for legacy looks like this:
+The PolyMC static override file for legacy looks like this:
 {
     "versions": [
         ...

@@ -10,9 +10,9 @@ class FabricInstallerLaunchwrapper(JsonObject):
     tweakers = ObjectProperty(FabricInstallerArguments, required=True)
 
 class FabricInstallerLibraries(JsonObject):
-    client = ListProperty(MultiMCLibrary)
-    common = ListProperty(MultiMCLibrary)
-    server = ListProperty(MultiMCLibrary)
+    client = ListProperty(PolyMCLibrary)
+    common = ListProperty(PolyMCLibrary)
+    server = ListProperty(PolyMCLibrary)
 
 class FabricInstallerDataV1(JsonObject):
     version = IntegerProperty(required=True)

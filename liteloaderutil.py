@@ -37,7 +37,7 @@ class LiteloaderRepo(JsonObject):
 '''
 class LiteloaderArtefact(JsonObject):
     tweakClass = StringProperty(required=True)
-    libraries = ListProperty(MultiMCLibrary, required=True)
+    libraries = ListProperty(PolyMCLibrary, required=True)
     stream = StringProperty(required=True)
     file = StringProperty(required=True)
     version = StringProperty(required=True)
@@ -59,7 +59,7 @@ class LiteloaderSnapshot(LiteloaderArtefact):
     lastSuccessfulBuild = IntegerProperty()
 
 class LiteloaderSnapshots(JsonObject):
-    libraries = ListProperty(MultiMCLibrary, required=True)
+    libraries = ListProperty(PolyMCLibrary, required=True)
     liteloader = DictProperty(LiteloaderSnapshot, name="com.mumfrey:liteloader", required=True)
 
 '''

@@ -28,7 +28,7 @@ def addOrGetBucket(buckets, rules):
     if ruleHash in buckets:
         bucket = buckets[ruleHash]
     else:
-        bucket = MultiMCVersionFile(
+        bucket = PolyMCVersionFile(
             {
                 "name": "LWJGL",
                 "version": "undetermined",
@@ -122,12 +122,12 @@ for filename in os.listdir('upstream/mojang/versions'):
     with open("upstream/mojang/versions/" + filename) as json_file:
         print("Processing", filename)
         mojangVersionFile = MojangVersionFile(json.load(json_file))
-        versionFile = MojangToMultiMC(mojangVersionFile, "Minecraft", "net.minecraft", mojangVersionFile.id)
+        versionFile = MojangToPolyMC(mojangVersionFile, "Minecraft", "net.minecraft", mojangVersionFile.id)
         libs_minecraft = []
         is_lwjgl_3 = False
         buckets = {}
         for lib in versionFile.libraries:
-            mmcLib = MultiMCLibrary(lib.to_json())
+            mmcLib = PolyMCLibrary(lib.to_json())
             removePathsFromLib(mmcLib)
             specifier = mmcLib.name
             ruleHash = None
@@ -157,7 +157,7 @@ for filename in os.listdir('upstream/mojang/versions'):
                     if mmcLib.name.version == '2.0-beta9':
                         log4jVersion = '2.0-beta9-fixed'
 
-                    replacementLib = MultiMCLibrary(name=GradleSpecifier("org.apache.logging.log4j:%s:%s" % (mmcLib.name.artifact, log4jVersion)))
+                    replacementLib = PolyMCLibrary(name=GradleSpecifier("org.apache.logging.log4j:%s:%s" % (mmcLib.name.artifact, log4jVersion)))
                     replacementLib.downloads = MojangLibraryDownloads()
                     replacementLib.downloads.artifact = MojangArtifact()
                     replacementLib.downloads.artifact.url = "https://meta.polymc.org/maven/%s" % (replacementLib.name.getPath())
@@ -353,18 +353,18 @@ for lwjglVersionVariant in lwjglVersionVariants:
     else:
         raise Exception("No variant decided for version %s out of %d possible ones and %d unknown ones." % (lwjglVersionVariant, passedVariants, unknownVariants))
 
-lwjglSharedData = MultiMCSharedPackageData(uid = 'org.lwjgl', name = 'LWJGL 2')
+lwjglSharedData = PolyMCSharedPackageData(uid = 'org.lwjgl', name = 'LWJGL 2')
 lwjglSharedData.recommended = ['2.9.4-nightly-20150209']
 lwjglSharedData.write()
 
 if found_any_lwjgl3:
-    lwjglSharedData = MultiMCSharedPackageData(uid = 'org.lwjgl3', name = 'LWJGL 3')
+    lwjglSharedData = PolyMCSharedPackageData(uid = 'org.lwjgl3', name = 'LWJGL 3')
     lwjglSharedData.recommended = ['3.1.2']
     lwjglSharedData.write()
 
 with open("upstream/mojang/version_manifest_v2.json", 'r', encoding='utf-8') as localIndexFile:
     localVersionlist = MojangIndexWrap(json.load(localIndexFile))
 
-mcSharedData = MultiMCSharedPackageData(uid = 'net.minecraft', name = 'Minecraft')
+mcSharedData = PolyMCSharedPackageData(uid = 'net.minecraft', name = 'Minecraft')
 mcSharedData.recommended = [localVersionlist.latest['release']]
 mcSharedData.write()
