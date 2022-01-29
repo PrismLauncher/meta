@@ -103,7 +103,7 @@ class DerivedForgeIndex(JsonObject):
 
 '''
 FML library mappings - these are added to legacy Forge versions because Forge no longer can download these
-by itself - the locations have changed and some of this has to be rehosted on MultiMC servers.
+by itself - the locations have changed and some of this has to be rehosted on PolyMC servers.
 '''
 
 FMLLib = namedtuple('FMLLib', ('filename', 'checksum', 'ours'))
