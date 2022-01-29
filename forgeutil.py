@@ -1,5 +1,7 @@
-from metautil import *
 from collections import namedtuple
+
+from metautil import *
+
 
 # A post-processed entry constructed from the reconstructed Forge version index
 class ForgeVersion:

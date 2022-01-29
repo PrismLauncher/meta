@@ -1,5 +1,6 @@
-from metautil import *
 import jsonobject
+from metautil import *
+
 
 class FabricInstallerArguments(JsonObject):
     client = ListProperty(StringProperty)

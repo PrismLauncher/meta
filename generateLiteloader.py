@@ -1,10 +1,11 @@
 #!/usr/bin/python3
-from liteloaderutil import *
-from jsonobject import *
-from datetime import datetime
-from pprint import pprint
 import copy
 import os
+from datetime import datetime
+from pprint import pprint
+
+from jsonobject import *
+from liteloaderutil import *
 
 PMC_DIR = os.environ["PMC_DIR"]
 UPSTREAM_DIR = os.environ["UPSTREAM_DIR"]

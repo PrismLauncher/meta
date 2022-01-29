@@ -1,23 +1,17 @@
 #!/usr/bin/python3
-
-import os
-import json
 import copy
 import datetime
-import iso8601
-
+import hashlib
+import json
+import os
+from collections import defaultdict, namedtuple
+from datetime import datetime
+from distutils import version
 from operator import itemgetter
-
 from pprint import pprint
 
+import iso8601
 from metautil import *
-
-from distutils import version
-
-from collections import defaultdict
-from collections import namedtuple
-from datetime import datetime
-import hashlib
 
 PMC_DIR = os.environ["PMC_DIR"]
 UPSTREAM_DIR = os.environ["UPSTREAM_DIR"]

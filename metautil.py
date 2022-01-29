@@ -1,9 +1,10 @@
+import datetime
 import json
 import os
 from pprint import pprint
-from jsonobject import *
-import datetime
+
 import iso8601
+from jsonobject import *
 
 PMC_DIR = os.environ["PMC_DIR"]
 

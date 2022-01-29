@@ -1,11 +1,10 @@
 #!/usr/bin/python3
-
 import hashlib
-import os
 import json
+import os
+from operator import itemgetter
 
 from metautil import *
-from operator import itemgetter
 
 PMC_DIR = os.environ["PMC_DIR"]
 

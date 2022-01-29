@@ -2,19 +2,17 @@
 '''
  Get the source files necessary for generating Forge versions
 '''
-from __future__ import print_function
+import copy
+import json
+import os
+import os.path
 import sys
 
 import requests
 from cachecontrol import CacheControl
 from cachecontrol.caches import FileCache
-
-import os
-import json
 from jsonobject import *
 from liteloaderutil import *
-import os.path
-import copy
 
 UPSTREAM_DIR = os.environ["UPSTREAM_DIR"]
 

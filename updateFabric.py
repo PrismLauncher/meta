@@ -1,12 +1,14 @@
 #!/usr/bin/python3
-import os, requests
-from cachecontrol import CacheControl
 import datetime
-import hashlib, json
+import hashlib
+import json
+import os
 import zipfile
-from fabricutil import *
 
+import requests
+from cachecontrol import CacheControl
 from cachecontrol.caches import FileCache
+from fabricutil import *
 
 UPSTREAM_DIR = os.environ["UPSTREAM_DIR"]
 

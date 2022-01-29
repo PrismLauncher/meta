@@ -1,11 +1,11 @@
 #!/usr/bin/python3
-import requests
-from cachecontrol import CacheControl
 import json
 import os
-from metautil import *
 
+import requests
+from cachecontrol import CacheControl
 from cachecontrol.caches import FileCache
+from metautil import *
 
 UPSTREAM_DIR = os.environ["UPSTREAM_DIR"]
 

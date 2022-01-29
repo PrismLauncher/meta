@@ -1,12 +1,12 @@
 #!/usr/bin/python3
-from __future__ import print_function
-import sys
 import os
 import re
-from metautil import *
+import sys
+from distutils.version import LooseVersion
+
 from forgeutil import *
 from jsonobject import *
-from distutils.version import LooseVersion
+from metautil import *
 
 PMC_DIR = os.environ["PMC_DIR"]
 UPSTREAM_DIR = os.environ["UPSTREAM_DIR"]

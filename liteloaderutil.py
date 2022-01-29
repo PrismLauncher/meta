@@ -1,5 +1,6 @@
 from metautil import *
 
+
 '''
     "repo":{
         "stream":"RELEASE",
@@ -100,4 +101,3 @@ class LiteloaderMeta(JsonObject):
 class LiteloaderIndex(JsonObject):
     meta = ObjectProperty(LiteloaderMeta, required=True)
     versions = DictProperty(LiteloaderEntry)
-

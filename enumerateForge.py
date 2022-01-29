@@ -1,17 +1,16 @@
 #!/usr/bin/python3
-from __future__ import print_function
-import sys
 import os
 import re
-from metautil import *
-from forgeutil import *
-from jsonobject import *
+import sys
 from distutils.version import LooseVersion
 from enum import Enum
 
 import requests
 from cachecontrol import CacheControl
 from cachecontrol.caches import FileCache
+from forgeutil import *
+from jsonobject import *
+from metautil import *
 
 PMC_DIR = os.environ["PMC_DIR"]
 
