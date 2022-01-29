@@ -17,7 +17,7 @@ def loadMcVersionFilter(version):
     if version in mcVersionCache:
         return mcVersionCache[version]
     libSet = set()
-    with open("multimc/net.minecraft/%s.json" % version, 'r', encoding='utf-8') as mcFile:
+    with open("polymc/net.minecraft/%s.json" % version, 'r', encoding='utf-8') as mcFile:
         mcVersion = MultiMCVersionFile(json.load(mcFile))
         for lib in mcVersion.libraries:
             libSet.add(lib.name)
@@ -374,7 +374,7 @@ for id, entry in remoteVersionlist.versions.items():
         recommendedVersions.append(version.rawVersion)
 
     # If we do not have the corresponding Minecraft version, we ignore it
-    if not os.path.isfile("multimc/net.minecraft/%s.json" % version.mcversion_sane):
+    if not os.path.isfile("polymc/net.minecraft/%s.json" % version.mcversion_sane):
         eprint ("Skipping %s with no corresponding Minecraft version %s" % (id, version.mcversion_sane))
         continue
 
@@ -415,7 +415,7 @@ for id, entry in remoteVersionlist.versions.items():
 
             outVersion = versionFromLegacy(version, legacyinfolist.number[build])
 
-    outFilepath = "multimc/net.minecraftforge/%s.json" % outVersion.version
+    outFilepath = "polymc/net.minecraftforge/%s.json" % outVersion.version
     with open(outFilepath, 'w') as outfile:
         json.dump(outVersion.to_json(), outfile, sort_keys=True, indent=4)
 

@@ -76,7 +76,7 @@ recommended.sort()
 allVersions.sort(key=lambda x: x.releaseTime, reverse=True)
 
 for version in allVersions:
-    outFilepath = "multimc/com.mumfrey.liteloader/%s.json" % version.version
+    outFilepath = "polymc/com.mumfrey.liteloader/%s.json" % version.version
     with open(outFilepath, 'w') as outfile:
         json.dump(version.to_json(), outfile, sort_keys=True, indent=4)
 

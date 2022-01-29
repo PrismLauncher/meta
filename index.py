@@ -22,7 +22,7 @@ ignore = set(["index.json", "package.json", ".git"])
 packages = MultiMCPackageIndex()
 
 # walk thorugh all the package folders
-for package in sorted(os.listdir('multimc')):
+for package in sorted(os.listdir('polymc')):
     if package in ignore:
         continue
 
@@ -37,12 +37,12 @@ for package in sorted(os.listdir('multimc')):
     versionList.name = sharedData.name
 
     # walk through all the versions of the package
-    for filename in os.listdir("multimc/%s" % (package)):
+    for filename in os.listdir("polymc/%s" % (package)):
         if filename in ignore:
             continue
 
         # parse and hash the version file
-        filepath = "multimc/%s/%s" % (package, filename)
+        filepath = "polymc/%s/%s" % (package, filename)
         filehash = HashFile(hashlib.sha256, filepath)
         versionFile = None
         with open(filepath) as json_file:
@@ -65,7 +65,7 @@ for package in sorted(os.listdir('multimc')):
     versionList.versions = sorted(versionList.versions, key=itemgetter('releaseTime'), reverse=True)
 
     # write the version index for the package
-    outFilePath = "multimc/%s/index.json" % (package)
+    outFilePath = "polymc/%s/index.json" % (package)
     with open(outFilePath, 'w') as outfile:
         json.dump(versionList.to_json(), outfile, sort_keys=True, indent=4)
 
@@ -80,5 +80,5 @@ for package in sorted(os.listdir('multimc')):
     packages.packages.append(packageEntry)
 
 # write the repository package index
-with open("multimc/index.json", 'w') as outfile:
+with open("polymc/index.json", 'w') as outfile:
     json.dump(packages.to_json(), outfile, sort_keys=True, indent=4)

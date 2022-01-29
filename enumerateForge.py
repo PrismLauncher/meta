@@ -13,7 +13,7 @@ import requests
 from cachecontrol import CacheControl
 from cachecontrol.caches import FileCache
 
-#with open('multimc/index.json', 'r', encoding='utf-8') as index:
+#with open('polymc/index.json', 'r', encoding='utf-8') as index:
     #packages = MultiMCPackageIndex(json.load(index))
 
 #for entry in packages.packages:
@@ -86,14 +86,14 @@ def GetLibraryDownload (library : MultiMCLibrary):
 
     return DownloadEntry(url, kind, name)
 
-with open('multimc/net.minecraftforge/index.json', 'r', encoding='utf-8') as forgeIndex:
+with open('polymc/net.minecraftforge/index.json', 'r', encoding='utf-8') as forgeIndex:
     forgeVersions = MultiMCVersionIndex(json.load(forgeIndex))
 
 urlSet = set()
 
 for entry in forgeVersions.versions:
     versionString = entry.version
-    versionPath = "multimc/net.minecraftforge/%s.json" % versionString
+    versionPath = "polymc/net.minecraftforge/%s.json" % versionString
     with open(versionPath, 'r') as infile:
         forgeVersion = MultiMCVersionFile(json.load(infile))
     if forgeVersion.libraries:

@@ -246,7 +246,7 @@ for filename in os.listdir('upstream/mojang/versions'):
         # process 1.13 arguments into previous version
         if not mojangVersionFile.minecraftArguments and mojangVersionFile.arguments:
             versionFile.minecraftArguments = adaptNewStyleArguments(mojangVersionFile.arguments)
-        filenameOut = "multimc/net.minecraft/%s.json" % versionFile.version
+        filenameOut = "polymc/net.minecraft/%s.json" % versionFile.version
         if versionFile.version in staticVersionlist.versions:
             ApplyLegacyOverride (versionFile, staticVersionlist.versions[versionFile.version])
         with open(filenameOut, 'w') as outfile:
@@ -256,12 +256,12 @@ def processSingleVariant(lwjglVariant):
     lwjglVersion = lwjglVariant.version
     versionObj = copy.deepcopy(lwjglVariant)
     if lwjglVersion[0] == '2':
-        filename = "multimc/org.lwjgl/%s.json" % lwjglVersion
+        filename = "polymc/org.lwjgl/%s.json" % lwjglVersion
         versionObj.name = 'LWJGL 2'
         versionObj.uid = 'org.lwjgl'
         versionObj.conflicts = [DependencyEntry(uid='org.lwjgl3')]
     elif lwjglVersion[0] == '3':
-        filename = "multimc/org.lwjgl3/%s.json" % lwjglVersion
+        filename = "polymc/org.lwjgl3/%s.json" % lwjglVersion
         versionObj.name = 'LWJGL 3'
         versionObj.uid = 'org.lwjgl3'
         versionObj.conflicts = [DependencyEntry(uid='org.lwjgl')]

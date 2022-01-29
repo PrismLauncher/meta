@@ -337,7 +337,7 @@ class MultiMCSharedPackageData(VersionedJsonObject):
 
     def write(self):
         try:
-            with open("multimc/%s/package.json" % self.uid, 'w') as file:
+            with open("polymc/%s/package.json" % self.uid, 'w') as file:
                 json.dump(self.to_json(), file, sort_keys=True, indent=4)
         except EnvironmentError as e:
             print("Error while trying to save shared packaged data for %s:" % self.uid, e)
@@ -347,11 +347,11 @@ def writeSharedPackageData(uid, name):
         'name': name,
         'uid': uid
         })
-    with open("multimc/%s/package.json" % uid, 'w') as file:
+    with open("polymc/%s/package.json" % uid, 'w') as file:
         json.dump(desc.to_json(), file, sort_keys=True, indent=4)
 
 def readSharedPackageData(uid):
-    with open("multimc/%s/package.json" % uid, 'r') as file:
+    with open("polymc/%s/package.json" % uid, 'r') as file:
         return MultiMCSharedPackageData(json.load(file))
 
 class MultiMCVersionIndexEntry(JsonObject):

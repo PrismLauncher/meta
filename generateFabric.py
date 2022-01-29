@@ -15,8 +15,8 @@ def mkdirs(path):
     if not os.path.exists(path):
         os.makedirs(path)
 
-mkdirs("multimc/net.fabricmc.fabric-loader")
-mkdirs("multimc/net.fabricmc.intermediary")
+mkdirs("polymc/net.fabricmc.fabric-loader")
+mkdirs("polymc/net.fabricmc.intermediary")
 
 def loadJarInfo(mavenKey):
     with open("upstream/fabric/jars/" + mavenKey.replace(":", ".") + ".json", 'r', encoding='utf-8') as jarInfoFile:
@@ -72,7 +72,7 @@ with open("upstream/fabric/meta-v2/intermediary.json", 'r', encoding='utf-8') as
         processIntermediaryVersion(it)
 
 for version in loaderVersions:
-    outFilepath = "multimc/net.fabricmc.fabric-loader/%s.json" % version.version
+    outFilepath = "polymc/net.fabricmc.fabric-loader/%s.json" % version.version
     with open(outFilepath, 'w') as outfile:
         json.dump(version.to_json(), outfile, sort_keys=True, indent=4)
 
@@ -84,7 +84,7 @@ sharedData.authors = ["Fabric Developers"]
 sharedData.write()
 
 for version in intermediaryVersions:
-    outFilepath = "multimc/net.fabricmc.intermediary/%s.json" % version.version
+    outFilepath = "polymc/net.fabricmc.intermediary/%s.json" % version.version
     with open(outFilepath, 'w') as outfile:
         json.dump(version.to_json(), outfile, sort_keys=True, indent=4)
 
