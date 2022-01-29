@@ -1,23 +1,19 @@
-#!/usr/bin/python3
-
-import os
-import json
 import copy
 import datetime
-import iso8601
-
+import hashlib
+import json
+import os
+from collections import defaultdict, namedtuple
+from datetime import datetime
+from distutils import version
 from operator import itemgetter
-
 from pprint import pprint
 
+import iso8601
 from metautil import *
 
-from distutils import version
-
-from collections import defaultdict
-from collections import namedtuple
-from datetime import datetime
-import hashlib
+PMC_DIR = os.environ["PMC_DIR"]
+UPSTREAM_DIR = os.environ["UPSTREAM_DIR"]
 
 def addOrGetBucket(buckets, rules):
     ruleHash = None
@@ -28,7 +24,7 @@ def addOrGetBucket(buckets, rules):
     if ruleHash in buckets:
         bucket = buckets[ruleHash]
     else:
-        bucket = MultiMCVersionFile(
+        bucket = PolyMCVersionFile(
             {
                 "name": "LWJGL",
                 "version": "undetermined",
@@ -70,10 +66,10 @@ def addLWJGLVersion(versionVariants, lwjglObject):
         versionVariants[lwjglVersion].append(LWJGLEntry(version=lwjglObjectCopy, sha1=lwjglObjectHash))
 
 def removePathsFromLib(lib):
-    if mmcLib.downloads.artifact:
-        mmcLib.downloads.artifact.path = None
-    if mmcLib.downloads.classifiers:
-        for key, value in mmcLib.downloads.classifiers.items():
+    if pmcLib.downloads.artifact:
+        pmcLib.downloads.artifact.path = None
+    if pmcLib.downloads.classifiers:
+        for key, value in pmcLib.downloads.classifiers.items():
             value.path = None
 
 def adaptNewStyleArguments(arguments):
@@ -118,24 +114,24 @@ with open("static/minecraft.json", 'r', encoding='utf-8') as legacyIndexFile:
 
 found_any_lwjgl3 = False
 
-for filename in os.listdir('upstream/mojang/versions'):
-    with open("upstream/mojang/versions/" + filename) as json_file:
+for filename in os.listdir(UPSTREAM_DIR + '/mojang/versions'):
+    with open(UPSTREAM_DIR + "/mojang/versions/" + filename) as json_file:
         print("Processing", filename)
         mojangVersionFile = MojangVersionFile(json.load(json_file))
-        versionFile = MojangToMultiMC(mojangVersionFile, "Minecraft", "net.minecraft", mojangVersionFile.id)
+        versionFile = MojangToPolyMC(mojangVersionFile, "Minecraft", "net.minecraft", mojangVersionFile.id)
         libs_minecraft = []
         is_lwjgl_3 = False
         buckets = {}
         for lib in versionFile.libraries:
-            mmcLib = MultiMCLibrary(lib.to_json())
-            removePathsFromLib(mmcLib)
-            specifier = mmcLib.name
+            pmcLib = PolyMCLibrary(lib.to_json())
+            removePathsFromLib(pmcLib)
+            specifier = pmcLib.name
             ruleHash = None
             if specifier.isLwjgl():
                 rules = None
-                if mmcLib.rules:
-                    rules = mmcLib.rules
-                    mmcLib.rules = None
+                if pmcLib.rules:
+                    rules = pmcLib.rules
+                    pmcLib.rules = None
                 if isOnlyMacOS(rules, specifier):
                     print("Candidate library ",  specifier, " is only for macOS and is therefore ignored.")
                     continue
@@ -148,44 +144,44 @@ for filename in os.listdir('upstream/mojang/versions'):
                     bucket.version = specifier.version
                 if not bucket.libraries:
                     bucket.libraries = []
-                bucket.libraries.append(mmcLib)
+                bucket.libraries.append(pmcLib)
                 bucket.releaseTime = versionFile.releaseTime
             else:
                 # FIXME: workaround for insane log4j nonsense from December 2021. Probably needs adjustment.
-                if mmcLib.name.isLog4j():
+                if pmcLib.name.isLog4j():
                     log4jVersion = '2.16.0'
-                    if mmcLib.name.version == '2.0-beta9':
+                    if pmcLib.name.version == '2.0-beta9':
                         log4jVersion = '2.0-beta9-fixed'
 
-                    replacementLib = MultiMCLibrary(name=GradleSpecifier("org.apache.logging.log4j:%s:%s" % (mmcLib.name.artifact, log4jVersion)))
+                    replacementLib = PolyMCLibrary(name=GradleSpecifier("org.apache.logging.log4j:%s:%s" % (pmcLib.name.artifact, log4jVersion)))
                     replacementLib.downloads = MojangLibraryDownloads()
                     replacementLib.downloads.artifact = MojangArtifact()
                     replacementLib.downloads.artifact.url = "https://meta.polymc.org/maven/%s" % (replacementLib.name.getPath())
 
                     if log4jVersion == "2.16.0":
-                        if mmcLib.name.artifact == "log4j-api":
+                        if pmcLib.name.artifact == "log4j-api":
                             replacementLib.downloads.artifact.sha1 = "f821a18687126c2e2f227038f540e7953ad2cc8c"
                             replacementLib.downloads.artifact.size = 301892
-                        elif mmcLib.name.artifact == "log4j-core":
+                        elif pmcLib.name.artifact == "log4j-core":
                             replacementLib.downloads.artifact.sha1 = "539a445388aee52108700f26d9644989e7916e7c"
                             replacementLib.downloads.artifact.size = 1789565
-                        elif mmcLib.name.artifact == "log4j-slf4j18-impl":
+                        elif pmcLib.name.artifact == "log4j-slf4j18-impl":
                             replacementLib.downloads.artifact.sha1 = "0c880a059056df5725f5d8d1035276d9749eba6d"
                             replacementLib.downloads.artifact.size = 21249
                         else:
-                            raise Exception("ERROR: unhandled log4j artifact %s!" % mmcLib.name.artifact)
+                            raise Exception("ERROR: unhandled log4j artifact %s!" % pmcLib.name.artifact)
                     elif log4jVersion == "2.0-beta9-fixed":
-                        if mmcLib.name.artifact == "log4j-api":
+                        if pmcLib.name.artifact == "log4j-api":
                             replacementLib.downloads.artifact.sha1 = "b61eaf2e64d8b0277e188262a8b771bbfa1502b3"
                             replacementLib.downloads.artifact.size = 107347
-                        elif mmcLib.name.artifact == "log4j-core":
+                        elif pmcLib.name.artifact == "log4j-core":
                             replacementLib.downloads.artifact.sha1 = "677991ea2d7426f76309a73739cecf609679492c"
                             replacementLib.downloads.artifact.size = 677588
                         else:
-                            raise Exception("ERROR: unhandled log4j artifact %s!" % mmcLib.name.artifact)
+                            raise Exception("ERROR: unhandled log4j artifact %s!" % pmcLib.name.artifact)
                     libs_minecraft.append(replacementLib)
                 else:
-                    libs_minecraft.append(mmcLib)
+                    libs_minecraft.append(pmcLib)
         if len(buckets) == 1:
             for key in buckets:
                 keyBucket = buckets[key]
@@ -246,7 +242,7 @@ for filename in os.listdir('upstream/mojang/versions'):
         # process 1.13 arguments into previous version
         if not mojangVersionFile.minecraftArguments and mojangVersionFile.arguments:
             versionFile.minecraftArguments = adaptNewStyleArguments(mojangVersionFile.arguments)
-        filenameOut = "multimc/net.minecraft/%s.json" % versionFile.version
+        filenameOut = PMC_DIR + "/net.minecraft/%s.json" % versionFile.version
         if versionFile.version in staticVersionlist.versions:
             ApplyLegacyOverride (versionFile, staticVersionlist.versions[versionFile.version])
         with open(filenameOut, 'w') as outfile:
@@ -256,12 +252,12 @@ def processSingleVariant(lwjglVariant):
     lwjglVersion = lwjglVariant.version
     versionObj = copy.deepcopy(lwjglVariant)
     if lwjglVersion[0] == '2':
-        filename = "multimc/org.lwjgl/%s.json" % lwjglVersion
+        filename = PMC_DIR + "/org.lwjgl/%s.json" % lwjglVersion
         versionObj.name = 'LWJGL 2'
         versionObj.uid = 'org.lwjgl'
         versionObj.conflicts = [DependencyEntry(uid='org.lwjgl3')]
     elif lwjglVersion[0] == '3':
-        filename = "multimc/org.lwjgl3/%s.json" % lwjglVersion
+        filename = PMC_DIR + "/org.lwjgl3/%s.json" % lwjglVersion
         versionObj.name = 'LWJGL 3'
         versionObj.uid = 'org.lwjgl3'
         versionObj.conflicts = [DependencyEntry(uid='org.lwjgl')]
@@ -353,18 +349,18 @@ for lwjglVersionVariant in lwjglVersionVariants:
     else:
         raise Exception("No variant decided for version %s out of %d possible ones and %d unknown ones." % (lwjglVersionVariant, passedVariants, unknownVariants))
 
-lwjglSharedData = MultiMCSharedPackageData(uid = 'org.lwjgl', name = 'LWJGL 2')
+lwjglSharedData = PolyMCSharedPackageData(uid = 'org.lwjgl', name = 'LWJGL 2')
 lwjglSharedData.recommended = ['2.9.4-nightly-20150209']
 lwjglSharedData.write()
 
 if found_any_lwjgl3:
-    lwjglSharedData = MultiMCSharedPackageData(uid = 'org.lwjgl3', name = 'LWJGL 3')
+    lwjglSharedData = PolyMCSharedPackageData(uid = 'org.lwjgl3', name = 'LWJGL 3')
     lwjglSharedData.recommended = ['3.1.2']
     lwjglSharedData.write()
 
-with open("upstream/mojang/version_manifest_v2.json", 'r', encoding='utf-8') as localIndexFile:
+with open(UPSTREAM_DIR + "/mojang/version_manifest_v2.json", 'r', encoding='utf-8') as localIndexFile:
     localVersionlist = MojangIndexWrap(json.load(localIndexFile))
 
-mcSharedData = MultiMCSharedPackageData(uid = 'net.minecraft', name = 'Minecraft')
+mcSharedData = PolyMCSharedPackageData(uid = 'net.minecraft', name = 'Minecraft')
 mcSharedData.recommended = [localVersionlist.latest['release']]
 mcSharedData.write()

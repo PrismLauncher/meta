@@ -1,20 +1,21 @@
 #!/usr/bin/python3
-from __future__ import print_function
-import sys
 import os
 import re
-from metautil import *
-from forgeutil import *
-from jsonobject import *
+import sys
 from distutils.version import LooseVersion
 from enum import Enum
 
 import requests
 from cachecontrol import CacheControl
 from cachecontrol.caches import FileCache
+from forgeutil import *
+from jsonobject import *
+from metautil import *
 
-#with open('multimc/index.json', 'r', encoding='utf-8') as index:
-    #packages = MultiMCPackageIndex(json.load(index))
+PMC_DIR = os.environ["PMC_DIR"]
+
+#with open(PMC_DIR + '/index.json', 'r', encoding='utf-8') as index:
+    #packages = PolyMCPackageIndex(json.load(index))
 
 #for entry in packages.packages:
     #print (entry)
@@ -54,17 +55,17 @@ class MojangLibrary (JsonObject):
     natives = DictProperty(StringProperty, exclude_if_none=True, default=None)
     rules = ListProperty(MojangRule, exclude_if_none=True, default=None)
 
-class MultiMCLibrary (MojangLibrary):
+class PolyMCLibrary (MojangLibrary):
     url = StringProperty(exclude_if_none=True, default=None)
-    mmcHint = StringProperty(name="MMC-hint", exclude_if_none=True, default=None)
+    pmcHint = StringProperty(name="PMC-hint", exclude_if_none=True, default=None)
 
 
-def GetLibraryDownload (library : MultiMCLibrary):
+def GetLibraryDownload (library : PolyMCLibrary):
     if library.natives:
         raise Exception('Natives are not handled yet')
 
     name = library.name
-    if library.mmcHint == 'forge-pack-xz':
+    if library.pmcHint == 'forge-pack-xz':
         kind = DownloadType.FORGE_XZ
         name.extension = 'jar.pack.xz'
     else:
@@ -86,16 +87,16 @@ def GetLibraryDownload (library : MultiMCLibrary):
 
     return DownloadEntry(url, kind, name)
 
-with open('multimc/net.minecraftforge/index.json', 'r', encoding='utf-8') as forgeIndex:
-    forgeVersions = MultiMCVersionIndex(json.load(forgeIndex))
+with open(PMC_DIR + '/net.minecraftforge/index.json', 'r', encoding='utf-8') as forgeIndex:
+    forgeVersions = PolyMCVersionIndex(json.load(forgeIndex))
 
 urlSet = set()
 
 for entry in forgeVersions.versions:
     versionString = entry.version
-    versionPath = "multimc/net.minecraftforge/%s.json" % versionString
+    versionPath = PMC_DIR + "/net.minecraftforge/%s.json" % versionString
     with open(versionPath, 'r') as infile:
-        forgeVersion = MultiMCVersionFile(json.load(infile))
+        forgeVersion = PolyMCVersionFile(json.load(infile))
     if forgeVersion.libraries:
         for entry in forgeVersion.libraries:
             urlSet.add(GetLibraryDownload(entry))

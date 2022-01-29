@@ -26,7 +26,7 @@ function fail_in {
 }
 
 function fail_out {
-    cd "${BASEDIR}/${MMC_DIR}"
+    cd "${BASEDIR}/${PMC_DIR}"
     git reset --hard HEAD
     exit 1
 }
@@ -38,10 +38,10 @@ git reset --hard HEAD || exit 1
 git checkout ${BRANCH} || exit 1
 cd "${BASEDIR}"
 
-./updateMojang.py || fail_in
-./updateForge.py || fail_in
-./updateFabric.py || fail_in
-./updateLiteloader.py || fail_in
+python updateMojang.py || fail_in
+python updateForge.py || fail_in
+python updateFabric.py || fail_in
+python updateLiteloader.py || fail_in
 
 if [ "${DEPLOY_TO_GIT}" = true ] ; then
     cd "${BASEDIR}/${UPSTREAM_DIR}"
@@ -56,19 +56,19 @@ if [ "${DEPLOY_TO_GIT}" = true ] ; then
     cd "${BASEDIR}"
 fi
 
-cd "${BASEDIR}/${MMC_DIR}"
+cd "${BASEDIR}/${PMC_DIR}"
 git reset --hard HEAD || exit 1
 git checkout ${BRANCH} || exit 1
 cd "${BASEDIR}"
 
-./generateMojang.py || fail_out
-./generateForge.py || fail_out
-./generateFabric.py || fail_in
-./generateLiteloader.py || fail_out
-./index.py || fail_out
+python generateMojang.py || fail_out
+python generateForge.py || fail_out
+python generateFabric.py || fail_in
+python generateLiteloader.py || fail_out
+python index.py || fail_out
 
 if [ "${DEPLOY_TO_GIT}" = true ] ; then
-    cd "${BASEDIR}/${MMC_DIR}"
+    cd "${BASEDIR}/${PMC_DIR}"
     git add index.json org.lwjgl/* net.minecraft/* || fail_out
     git add net.minecraftforge/* || fail_out
     git add net.fabricmc.fabric-loader/* net.fabricmc.intermediary/* || fail_out
@@ -100,10 +100,10 @@ if [ "${DEPLOY_TO_FOLDER}" = true ] ; then
     DEPLOY_FOLDER_var="DEPLOY_FOLDER_$MODE"
     DEPLOY_FOLDER="${!DEPLOY_FOLDER_var}"
     echo "Deploying to ${DEPLOY_FOLDER}"
-    rsync -rvog --chown=${DEPLOY_FOLDER_USER}:${DEPLOY_FOLDER_GROUP} --exclude=.git ${BASEDIR}/${MMC_DIR}/ ${DEPLOY_FOLDER}
+    rsync -rvog --chown=${DEPLOY_FOLDER_USER}:${DEPLOY_FOLDER_GROUP} --exclude=.git ${BASEDIR}/${PMC_DIR}/ ${DEPLOY_FOLDER}
 fi
 if [ "${DEPLOY_TO_S3}" = true ] ; then
-    s3cmd -c ${BASEDIR}/config/s3cmd.cfg --exclude=".git*" --delete-removed sync ${BASEDIR}/${MMC_DIR}/ ${S3_BUCKET} || exit 2
+    s3cmd -c ${BASEDIR}/config/s3cmd.cfg --exclude=".git*" --delete-removed sync ${BASEDIR}/${PMC_DIR}/ ${S3_BUCKET} || exit 2
 fi
 
 exit 0

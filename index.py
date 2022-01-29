@@ -1,11 +1,11 @@
-#!/usr/bin/python3
-
 import hashlib
-import os
 import json
+import os
+from operator import itemgetter
 
 from metautil import *
-from operator import itemgetter
+
+PMC_DIR = os.environ["PMC_DIR"]
 
 # take the hash type (like hashlib.md5) and filename, return hex string of hash
 def HashFile(hash, fname):
@@ -19,10 +19,10 @@ def HashFile(hash, fname):
 ignore = set(["index.json", "package.json", ".git"])
 
 # initialize output structures - package list level
-packages = MultiMCPackageIndex()
+packages = PolyMCPackageIndex()
 
 # walk thorugh all the package folders
-for package in sorted(os.listdir('multimc')):
+for package in sorted(os.listdir(PMC_DIR)):
     if package in ignore:
         continue
 
@@ -32,24 +32,24 @@ for package in sorted(os.listdir('multimc')):
         recommendedVersions = set(sharedData.recommended)
 
     # initialize output structures - version list level
-    versionList = MultiMCVersionIndex()
+    versionList = PolyMCVersionIndex()
     versionList.uid = package
     versionList.name = sharedData.name
 
     # walk through all the versions of the package
-    for filename in os.listdir("multimc/%s" % (package)):
+    for filename in os.listdir(PMC_DIR + "/%s" % (package)):
         if filename in ignore:
             continue
 
         # parse and hash the version file
-        filepath = "multimc/%s/%s" % (package, filename)
+        filepath = PMC_DIR + "/%s/%s" % (package, filename)
         filehash = HashFile(hashlib.sha256, filepath)
         versionFile = None
         with open(filepath) as json_file:
-            versionFile = MultiMCVersionFile(json.load(json_file))
+            versionFile = PolyMCVersionFile(json.load(json_file))
 
         # pull information from the version file
-        versionEntry = MultiMCVersionIndexEntry()
+        versionEntry = PolyMCVersionIndexEntry()
         if versionFile.version in recommendedVersions:
             versionEntry.recommended = True
         versionEntry.version = versionFile.version
@@ -65,12 +65,12 @@ for package in sorted(os.listdir('multimc')):
     versionList.versions = sorted(versionList.versions, key=itemgetter('releaseTime'), reverse=True)
 
     # write the version index for the package
-    outFilePath = "multimc/%s/index.json" % (package)
+    outFilePath = PMC_DIR + "/%s/index.json" % (package)
     with open(outFilePath, 'w') as outfile:
         json.dump(versionList.to_json(), outfile, sort_keys=True, indent=4)
 
     # insert entry into the package index
-    packageEntry = MultiMCPackageIndexEntry(
+    packageEntry = PolyMCPackageIndexEntry(
             {
                 "uid" : package,
                 "name" : sharedData.name,
@@ -80,5 +80,5 @@ for package in sorted(os.listdir('multimc')):
     packages.packages.append(packageEntry)
 
 # write the repository package index
-with open("multimc/index.json", 'w') as outfile:
+with open(PMC_DIR + "/index.json", 'w') as outfile:
     json.dump(packages.to_json(), outfile, sort_keys=True, indent=4)

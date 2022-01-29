@@ -13,8 +13,8 @@ popd
 echo
 
 
-echo "MultiMC:"
-pushd "${MMC_DIR}"
+echo "PolyMC:"
+pushd "${PMC_DIR}"
 git status
 popd
 echo

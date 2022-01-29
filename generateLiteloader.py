@@ -1,13 +1,17 @@
-#!/usr/bin/python3
-from liteloaderutil import *
-from jsonobject import *
+import copy
+import os
 from datetime import datetime
 from pprint import pprint
-import copy
+
+from jsonobject import *
+from liteloaderutil import *
+
+PMC_DIR = os.environ["PMC_DIR"]
+UPSTREAM_DIR = os.environ["UPSTREAM_DIR"]
 
 # load the locally cached version list
 def loadLiteloaderJson():
-    with open("upstream/liteloader/versions.json", 'r', encoding='utf-8') as f:
+    with open(UPSTREAM_DIR + "/liteloader/versions.json", 'r', encoding='utf-8') as f:
         return LiteloaderIndex(json.load(f))
 
 remoteVersionlist = loadLiteloaderJson()
@@ -21,7 +25,7 @@ def processArtefacts(mcVersion, liteloader, notSnapshots):
         if id == 'latest':
             latestVersion = artefact.version
             continue
-        version = MultiMCVersionFile(name="LiteLoader", uid="com.mumfrey.liteloader", version=artefact.version)
+        version = PolyMCVersionFile(name="LiteLoader", uid="com.mumfrey.liteloader", version=artefact.version)
         version.requires = [DependencyEntry(uid='net.minecraft', equals=mcVersion)]
         version.releaseTime = datetime.utcfromtimestamp(int(artefact.timestamp))
         version.addTweakers = [artefact.tweakClass]
@@ -39,12 +43,12 @@ def processArtefacts(mcVersion, liteloader, notSnapshots):
                 lib.url = "https://repo.maven.apache.org/maven2/"
             if lib.name == GradleSpecifier("org.ow2.asm:asm-all:5.2"):
                 lib.url = "http://repo.liteloader.com/"
-        liteloaderLib = MultiMCLibrary(
+        liteloaderLib = PolyMCLibrary(
             name=GradleSpecifier("com.mumfrey:liteloader:%s" % version.version),
             url = "http://dl.liteloader.com/versions/"
         )
         if not notSnapshots:
-            liteloaderLib.mmcHint = "always-stale"
+            liteloaderLib.pmcHint = "always-stale"
         libraries.append(liteloaderLib)
         version.libraries = libraries
         versions.append(version)
@@ -76,11 +80,11 @@ recommended.sort()
 allVersions.sort(key=lambda x: x.releaseTime, reverse=True)
 
 for version in allVersions:
-    outFilepath = "multimc/com.mumfrey.liteloader/%s.json" % version.version
+    outFilepath = PMC_DIR + "/com.mumfrey.liteloader/%s.json" % version.version
     with open(outFilepath, 'w') as outfile:
         json.dump(version.to_json(), outfile, sort_keys=True, indent=4)
 
-sharedData = MultiMCSharedPackageData(uid = 'com.mumfrey.liteloader', name = 'LiteLoader')
+sharedData = PolyMCSharedPackageData(uid = 'com.mumfrey.liteloader', name = 'LiteLoader')
 sharedData.recommended = recommended
 sharedData.description = remoteVersionlist.meta.description
 sharedData.projectUrl = remoteVersionlist.meta.url
