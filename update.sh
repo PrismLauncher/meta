@@ -38,10 +38,10 @@ git reset --hard HEAD || exit 1
 git checkout ${BRANCH} || exit 1
 cd "${BASEDIR}"
 
-./updateMojang.py || fail_in
-./updateForge.py || fail_in
-./updateFabric.py || fail_in
-./updateLiteloader.py || fail_in
+python updateMojang.py || fail_in
+python updateForge.py || fail_in
+python updateFabric.py || fail_in
+python updateLiteloader.py || fail_in
 
 if [ "${DEPLOY_TO_GIT}" = true ] ; then
     cd "${BASEDIR}/${UPSTREAM_DIR}"
@@ -61,11 +61,11 @@ git reset --hard HEAD || exit 1
 git checkout ${BRANCH} || exit 1
 cd "${BASEDIR}"
 
-./generateMojang.py || fail_out
-./generateForge.py || fail_out
-./generateFabric.py || fail_in
-./generateLiteloader.py || fail_out
-./index.py || fail_out
+python generateMojang.py || fail_out
+python generateForge.py || fail_out
+python generateFabric.py || fail_in
+python generateLiteloader.py || fail_out
+python index.py || fail_out
 
 if [ "${DEPLOY_TO_GIT}" = true ] ; then
     cd "${BASEDIR}/${PMC_DIR}"
