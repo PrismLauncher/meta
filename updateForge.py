@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 '''
  Get the source files necessary for generating Forge versions
 '''

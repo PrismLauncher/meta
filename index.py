@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 import hashlib
 import json
 import os

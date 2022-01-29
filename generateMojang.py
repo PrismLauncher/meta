@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 import copy
 import datetime
 import hashlib
