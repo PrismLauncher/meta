@@ -86,7 +86,7 @@ def versionFromProfile(profile, version):
         else:
             ourLib.url = forgeLib.url
         #if forgeLib.checksums and len(forgeLib.checksums) == 2:
-        #    ourLib.mmcHint = "forge-pack-xz"
+        #    ourLib.pmcHint = "forge-pack-xz"
         libs.append(ourLib)
     result.libraries = libs
     result.order = 5
@@ -114,33 +114,33 @@ def versionFromModernizedInstaller(installerVersion : MojangVersionFile, version
     libs = []
     mcFilter = loadMcVersionFilter(mcversion)
     for upstreamLib in installerVersion.libraries:
-        mmcLib = PolyMCLibrary(upstreamLib.to_json())
-        if mmcLib.name.isLwjgl():
+        pmcLib = PolyMCLibrary(upstreamLib.to_json())
+        if pmcLib.name.isLwjgl():
             continue
-        if mmcLib.name.isLog4j():
+        if pmcLib.name.isLog4j():
             continue
-        if shouldIgnoreArtifact(mcFilter, mmcLib.name):
+        if shouldIgnoreArtifact(mcFilter, pmcLib.name):
             continue
-        if mmcLib.name.group == "net.minecraftforge":
-            if mmcLib.name.artifact == "forge":
-                fixedName = mmcLib.name
+        if pmcLib.name.group == "net.minecraftforge":
+            if pmcLib.name.artifact == "forge":
+                fixedName = pmcLib.name
                 fixedName.classifier = "universal"
-                mmcLib.downloads.artifact.path = fixedName.getPath()
-                mmcLib.downloads.artifact.url = "https://files.minecraftforge.net/maven/%s" % fixedName.getPath()
-                mmcLib.name = fixedName
-                libs.append(mmcLib)
+                pmcLib.downloads.artifact.path = fixedName.getPath()
+                pmcLib.downloads.artifact.url = "https://files.minecraftforge.net/maven/%s" % fixedName.getPath()
+                pmcLib.name = fixedName
+                libs.append(pmcLib)
                 continue
-            elif mmcLib.name.artifact == "minecraftforge":
-                fixedName = mmcLib.name
+            elif pmcLib.name.artifact == "minecraftforge":
+                fixedName = pmcLib.name
                 fixedName.artifact = "forge"
                 fixedName.classifier = "universal"
                 fixedName.version = "%s-%s" % (mcversion, fixedName.version)
-                mmcLib.downloads.artifact.path = fixedName.getPath()
-                mmcLib.downloads.artifact.url = "https://files.minecraftforge.net/maven/%s" % fixedName.getPath()
-                mmcLib.name = fixedName
-                libs.append(mmcLib)
+                pmcLib.downloads.artifact.path = fixedName.getPath()
+                pmcLib.downloads.artifact.url = "https://files.minecraftforge.net/maven/%s" % fixedName.getPath()
+                pmcLib.name = fixedName
+                libs.append(pmcLib)
                 continue
-        libs.append(mmcLib)
+        libs.append(pmcLib)
 
     result.libraries = libs
     result.order = 5
@@ -192,16 +192,16 @@ def versionFromBuildSystemInstaller(installerVersion : MojangVersionFile, instal
         mavenLibs.append(InstallerLib)
 
     for upstreamLib in installerProfile.libraries:
-        mmcLib = PolyMCLibrary(upstreamLib.to_json())
-        if mmcLib.name.group == "net.minecraftforge":
-            if mmcLib.name.artifact == "forge":
-                if mmcLib.name.classifier == "universal":
-                    mmcLib.downloads.artifact.url = "https://files.minecraftforge.net/maven/%s" % mmcLib.name.getPath()
-                    mavenLibs.append(mmcLib)
+        pmcLib = PolyMCLibrary(upstreamLib.to_json())
+        if pmcLib.name.group == "net.minecraftforge":
+            if pmcLib.name.artifact == "forge":
+                if pmcLib.name.classifier == "universal":
+                    pmcLib.downloads.artifact.url = "https://files.minecraftforge.net/maven/%s" % pmcLib.name.getPath()
+                    mavenLibs.append(pmcLib)
                     continue
-        if mmcLib.name.isLog4j():
+        if pmcLib.name.isLog4j():
             continue
-        mavenLibs.append(mmcLib)
+        mavenLibs.append(pmcLib)
 
     result.mavenFiles = mavenLibs
 
@@ -246,7 +246,7 @@ def versionFromBuildSystemInstaller(installerVersion : MojangVersionFile, instal
     #wrapperLib.downloads.artifact.size = 34299
     #libraries.append(wrapperLib)
 
-    #wrapperLib = PolyMCLibrary(name=GradleSpecifier("io.github.zekerzhayard:ForgeWrapper:mmc1"))
+    #wrapperLib = PolyMCLibrary(name=GradleSpecifier("io.github.zekerzhayard:ForgeWrapper:pmc1"))
     #wrapperLib.downloads = MojangLibraryDownloads()
     #wrapperLib.downloads.artifact = MojangArtifact()
     #wrapperLib.downloads.artifact.url = "https://meta.polymc.org/maven/%s" % (wrapperLib.name.getPath())
@@ -262,7 +262,7 @@ def versionFromBuildSystemInstaller(installerVersion : MojangVersionFile, instal
     #wrapperLib.downloads.artifact.size = 34331
     #libraries.append(wrapperLib)
 
-    wrapperLib = PolyMCLibrary(name=GradleSpecifier("io.github.zekerzhayard:ForgeWrapper:mmc2"))
+    wrapperLib = PolyMCLibrary(name=GradleSpecifier("io.github.zekerzhayard:ForgeWrapper:pmc2"))
     wrapperLib.downloads = MojangLibraryDownloads()
     wrapperLib.downloads.artifact = MojangArtifact()
     wrapperLib.downloads.artifact.url = "https://meta.polymc.org/maven/%s" % (wrapperLib.name.getPath())
@@ -271,19 +271,19 @@ def versionFromBuildSystemInstaller(installerVersion : MojangVersionFile, instal
     libraries.append(wrapperLib)
 
     for upstreamLib in installerVersion.libraries:
-        mmcLib = PolyMCLibrary(upstreamLib.to_json())
-        if mmcLib.name.group == "net.minecraftforge":
-            if mmcLib.name.artifact == "forge":
-                fixedName = mmcLib.name
+        pmcLib = PolyMCLibrary(upstreamLib.to_json())
+        if pmcLib.name.group == "net.minecraftforge":
+            if pmcLib.name.artifact == "forge":
+                fixedName = pmcLib.name
                 fixedName.classifier = "launcher"
-                mmcLib.downloads.artifact.path = fixedName.getPath()
-                mmcLib.downloads.artifact.url = "https://files.minecraftforge.net/maven/%s" % fixedName.getPath()
-                mmcLib.name = fixedName
-                libraries.append(mmcLib)
+                pmcLib.downloads.artifact.path = fixedName.getPath()
+                pmcLib.downloads.artifact.url = "https://files.minecraftforge.net/maven/%s" % fixedName.getPath()
+                pmcLib.name = fixedName
+                libraries.append(pmcLib)
                 continue
-        if mmcLib.name.isLog4j():
+        if pmcLib.name.isLog4j():
             continue
-        libraries.append(mmcLib)
+        libraries.append(pmcLib)
     result.libraries = libraries
 
     result.releaseTime = installerVersion.releaseTime

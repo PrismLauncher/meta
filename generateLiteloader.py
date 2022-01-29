@@ -44,7 +44,7 @@ def processArtefacts(mcVersion, liteloader, notSnapshots):
             url = "http://dl.liteloader.com/versions/"
         )
         if not notSnapshots:
-            liteloaderLib.mmcHint = "always-stale"
+            liteloaderLib.pmcHint = "always-stale"
         libraries.append(liteloaderLib)
         version.libraries = libraries
         versions.append(version)

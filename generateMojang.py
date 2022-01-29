@@ -70,10 +70,10 @@ def addLWJGLVersion(versionVariants, lwjglObject):
         versionVariants[lwjglVersion].append(LWJGLEntry(version=lwjglObjectCopy, sha1=lwjglObjectHash))
 
 def removePathsFromLib(lib):
-    if mmcLib.downloads.artifact:
-        mmcLib.downloads.artifact.path = None
-    if mmcLib.downloads.classifiers:
-        for key, value in mmcLib.downloads.classifiers.items():
+    if pmcLib.downloads.artifact:
+        pmcLib.downloads.artifact.path = None
+    if pmcLib.downloads.classifiers:
+        for key, value in pmcLib.downloads.classifiers.items():
             value.path = None
 
 def adaptNewStyleArguments(arguments):
@@ -127,15 +127,15 @@ for filename in os.listdir('upstream/mojang/versions'):
         is_lwjgl_3 = False
         buckets = {}
         for lib in versionFile.libraries:
-            mmcLib = PolyMCLibrary(lib.to_json())
-            removePathsFromLib(mmcLib)
-            specifier = mmcLib.name
+            pmcLib = PolyMCLibrary(lib.to_json())
+            removePathsFromLib(pmcLib)
+            specifier = pmcLib.name
             ruleHash = None
             if specifier.isLwjgl():
                 rules = None
-                if mmcLib.rules:
-                    rules = mmcLib.rules
-                    mmcLib.rules = None
+                if pmcLib.rules:
+                    rules = pmcLib.rules
+                    pmcLib.rules = None
                 if isOnlyMacOS(rules, specifier):
                     print("Candidate library ",  specifier, " is only for macOS and is therefore ignored.")
                     continue
@@ -148,44 +148,44 @@ for filename in os.listdir('upstream/mojang/versions'):
                     bucket.version = specifier.version
                 if not bucket.libraries:
                     bucket.libraries = []
-                bucket.libraries.append(mmcLib)
+                bucket.libraries.append(pmcLib)
                 bucket.releaseTime = versionFile.releaseTime
             else:
                 # FIXME: workaround for insane log4j nonsense from December 2021. Probably needs adjustment.
-                if mmcLib.name.isLog4j():
+                if pmcLib.name.isLog4j():
                     log4jVersion = '2.16.0'
-                    if mmcLib.name.version == '2.0-beta9':
+                    if pmcLib.name.version == '2.0-beta9':
                         log4jVersion = '2.0-beta9-fixed'
 
-                    replacementLib = PolyMCLibrary(name=GradleSpecifier("org.apache.logging.log4j:%s:%s" % (mmcLib.name.artifact, log4jVersion)))
+                    replacementLib = PolyMCLibrary(name=GradleSpecifier("org.apache.logging.log4j:%s:%s" % (pmcLib.name.artifact, log4jVersion)))
                     replacementLib.downloads = MojangLibraryDownloads()
                     replacementLib.downloads.artifact = MojangArtifact()
                     replacementLib.downloads.artifact.url = "https://meta.polymc.org/maven/%s" % (replacementLib.name.getPath())
 
                     if log4jVersion == "2.16.0":
-                        if mmcLib.name.artifact == "log4j-api":
+                        if pmcLib.name.artifact == "log4j-api":
                             replacementLib.downloads.artifact.sha1 = "f821a18687126c2e2f227038f540e7953ad2cc8c"
                             replacementLib.downloads.artifact.size = 301892
-                        elif mmcLib.name.artifact == "log4j-core":
+                        elif pmcLib.name.artifact == "log4j-core":
                             replacementLib.downloads.artifact.sha1 = "539a445388aee52108700f26d9644989e7916e7c"
                             replacementLib.downloads.artifact.size = 1789565
-                        elif mmcLib.name.artifact == "log4j-slf4j18-impl":
+                        elif pmcLib.name.artifact == "log4j-slf4j18-impl":
                             replacementLib.downloads.artifact.sha1 = "0c880a059056df5725f5d8d1035276d9749eba6d"
                             replacementLib.downloads.artifact.size = 21249
                         else:
-                            raise Exception("ERROR: unhandled log4j artifact %s!" % mmcLib.name.artifact)
+                            raise Exception("ERROR: unhandled log4j artifact %s!" % pmcLib.name.artifact)
                     elif log4jVersion == "2.0-beta9-fixed":
-                        if mmcLib.name.artifact == "log4j-api":
+                        if pmcLib.name.artifact == "log4j-api":
                             replacementLib.downloads.artifact.sha1 = "b61eaf2e64d8b0277e188262a8b771bbfa1502b3"
                             replacementLib.downloads.artifact.size = 107347
-                        elif mmcLib.name.artifact == "log4j-core":
+                        elif pmcLib.name.artifact == "log4j-core":
                             replacementLib.downloads.artifact.sha1 = "677991ea2d7426f76309a73739cecf609679492c"
                             replacementLib.downloads.artifact.size = 677588
                         else:
-                            raise Exception("ERROR: unhandled log4j artifact %s!" % mmcLib.name.artifact)
+                            raise Exception("ERROR: unhandled log4j artifact %s!" % pmcLib.name.artifact)
                     libs_minecraft.append(replacementLib)
                 else:
-                    libs_minecraft.append(mmcLib)
+                    libs_minecraft.append(pmcLib)
         if len(buckets) == 1:
             for key in buckets:
                 keyBucket = buckets[key]

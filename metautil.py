@@ -243,7 +243,7 @@ def validateSupportedPolyMCVersion(version):
 
 class PolyMCLibrary (MojangLibrary):
     url = StringProperty(exclude_if_none=True, default=None)
-    mmcHint = StringProperty(name="MMC-hint", exclude_if_none=True, default=None)
+    pmcHint = StringProperty(name="PMC-hint", exclude_if_none=True, default=None)
 
 class VersionedJsonObject(JsonObject):
     formatVersion = IntegerProperty(default=CurrentPolyMCFormatVersion, validators=validateSupportedPolyMCVersion)
@@ -286,16 +286,16 @@ class UnknownComplianceLevelException(Exception):
 
 # Convert Mojang version file object to a PolyMC version file object
 def MojangToPolyMC (file, name, uid, version):
-    mmcFile = PolyMCVersionFile(
+    pmcFile = PolyMCVersionFile(
         {
             "name": name,
             "uid": uid,
             "version": version
         }
     )
-    mmcFile.assetIndex = file.assetIndex
-    mmcFile.libraries = file.libraries
-    mmcFile.mainClass = file.mainClass
+    pmcFile.assetIndex = file.assetIndex
+    pmcFile.libraries = file.libraries
+    pmcFile.mainClass = file.mainClass
     if file.id:
         mainJar = PolyMCLibrary(
             {
@@ -309,23 +309,23 @@ def MojangToPolyMC (file, name, uid, version):
         mainJar.downloads.artifact.url = cldl.url
         mainJar.downloads.artifact.sha1 = cldl.sha1
         mainJar.downloads.artifact.size = cldl.size
-        mmcFile.mainJar = mainJar
+        pmcFile.mainJar = mainJar
 
-    mmcFile.minecraftArguments = file.minecraftArguments
-    mmcFile.releaseTime = file.releaseTime
+    pmcFile.minecraftArguments = file.minecraftArguments
+    pmcFile.releaseTime = file.releaseTime
     # time should not be set.
-    mmcFile.type = file.type
+    pmcFile.type = file.type
     maxSupportedLevel = 1
     if file.complianceLevel:
         if file.complianceLevel == 0:
             pass
         elif file.complianceLevel == 1:
-            if not mmcFile.addTraits:
-                mmcFile.addTraits = []
-            mmcFile.addTraits.append("XR:Initial")
+            if not pmcFile.addTraits:
+                pmcFile.addTraits = []
+            pmcFile.addTraits.append("XR:Initial")
         else:
             raise UnknownComplianceLevelException("Unsupported Mojang compliance level: %d. Max supported is: %d" % (file.complianceLevel, maxSupportedLevel))
-    return mmcFile
+    return pmcFile
 
 class PolyMCSharedPackageData(VersionedJsonObject):
     name = StringProperty(required=True)
@@ -405,19 +405,19 @@ class LegacyOverrideEntry(JsonObject):
 class LegacyOverrideIndex(JsonObject):
     versions = DictProperty(LegacyOverrideEntry)
 
-def ApplyLegacyOverride (mmcFile, legacyOverride):
+def ApplyLegacyOverride (pmcFile, legacyOverride):
     # simply hard override classes
-    mmcFile.mainClass = legacyOverride.mainClass
-    mmcFile.appletClass = legacyOverride.appletClass
+    pmcFile.mainClass = legacyOverride.mainClass
+    pmcFile.appletClass = legacyOverride.appletClass
     # if we have an updated release time (more correct than Mojang), use it
     if legacyOverride.releaseTime != None:
-        mmcFile.releaseTime = legacyOverride.releaseTime
+        pmcFile.releaseTime = legacyOverride.releaseTime
     # add traits, if any
     if legacyOverride.addTraits:
-        if not mmcFile.addTraits:
-            mmcFile.addTraits = []
-        mmcFile.addTraits = mmcFile.addTraits + legacyOverride.addTraits
+        if not pmcFile.addTraits:
+            pmcFile.addTraits = []
+        pmcFile.addTraits = pmcFile.addTraits + legacyOverride.addTraits
     # remove all libraries - they are not needed for legacy
-    mmcFile.libraries = None
+    pmcFile.libraries = None
     # remove minecraft arguments - we use our own hardcoded ones
-    mmcFile.minecraftArguments = None
+    pmcFile.minecraftArguments = None
