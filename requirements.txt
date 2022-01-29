@@ -1,0 +1,4 @@
+cachecontrol = "0.12.10"
+iso8601 = "1.0.2"
+requests = "2.27.1"
+lockfile = "0.12.2"
