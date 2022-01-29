@@ -9,6 +9,7 @@ import requests
 from cachecontrol import CacheControl
 from cachecontrol.caches import FileCache
 
+import os
 import json
 import copy
 import re
@@ -21,6 +22,8 @@ import datetime
 import hashlib
 from pathlib import Path
 from contextlib import suppress
+
+UPSTREAM_DIR = os.environ["UPSTREAM_DIR"]
 
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
@@ -80,7 +83,7 @@ for promoKey, shortversion in promotions_json.get('promos').items():
 versionExpression = re.compile("^(?P<mc>[0-9a-zA-Z_\\.]+)-(?P<ver>[0-9\\.]+\\.(?P<build>[0-9]+))(-(?P<branch>[a-zA-Z0-9\\.]+))?$")
 
 def getSingleForgeFilesManifest(longversion):
-    pathThing = "upstream/forge/files_manifests/%s.json" % longversion
+    pathThing = UPSTREAM_DIR + "/forge/files_manifests/%s.json" % longversion
     files_manifest_file = Path(pathThing)
     from_file = False
     if files_manifest_file.is_file():
@@ -144,11 +147,11 @@ def getSingleForgeFilesManifest(longversion):
 
 print("")
 print("Making dirs...")
-os.makedirs("upstream/forge/jars/", exist_ok=True)
-os.makedirs("upstream/forge/installer_info/", exist_ok=True)
-os.makedirs("upstream/forge/installer_manifests/", exist_ok=True)
-os.makedirs("upstream/forge/version_manifests/", exist_ok=True)
-os.makedirs("upstream/forge/files_manifests/", exist_ok=True)
+os.makedirs(UPSTREAM_DIR + "/forge/jars/", exist_ok=True)
+os.makedirs(UPSTREAM_DIR + "/forge/installer_info/", exist_ok=True)
+os.makedirs(UPSTREAM_DIR + "/forge/installer_manifests/", exist_ok=True)
+os.makedirs(UPSTREAM_DIR + "/forge/version_manifests/", exist_ok=True)
+os.makedirs(UPSTREAM_DIR + "/forge/files_manifests/", exist_ok=True)
 
 print("")
 print("Processing versions:")
@@ -205,13 +208,13 @@ for mcversion, info in newIndex.by_mcversion.items():
 print("")
 print("Dumping index files...")
 
-with open("upstream/forge/maven-metadata.json", 'w', encoding='utf-8') as f:
+with open(UPSTREAM_DIR + "/forge/maven-metadata.json", 'w', encoding='utf-8') as f:
     json.dump(main_json, f, sort_keys=True, indent=4)
 
-with open("upstream/forge/promotions_slim.json", 'w', encoding='utf-8') as f:
+with open(UPSTREAM_DIR + "/forge/promotions_slim.json", 'w', encoding='utf-8') as f:
     json.dump(promotions_json, f, sort_keys=True, indent=4)
 
-with open("upstream/forge/derived_index.json", 'w', encoding='utf-8') as f:
+with open(UPSTREAM_DIR + "/forge/derived_index.json", 'w', encoding='utf-8') as f:
     json.dump(newIndex.to_json(), f, sort_keys=True, indent=4)
 
 versions = []
@@ -233,12 +236,12 @@ for id, entry in newIndex.versions.items():
         eprint ("Skipping %d with no valid files" % version.build)
         continue
 
-    jarFilepath = "upstream/forge/jars/%s" % version.filename()
+    jarFilepath = UPSTREAM_DIR + "/forge/jars/%s" % version.filename()
 
     if version.usesInstaller():
-        installerInfoFilepath = "upstream/forge/installer_info/%s.json" % version.longVersion
-        profileFilepath = "upstream/forge/installer_manifests/%s.json" % version.longVersion
-        versionJsonFilepath = "upstream/forge/version_manifests/%s.json" % version.longVersion
+        installerInfoFilepath = UPSTREAM_DIR + "/forge/installer_info/%s.json" % version.longVersion
+        profileFilepath = UPSTREAM_DIR + "/forge/installer_manifests/%s.json" % version.longVersion
+        versionJsonFilepath = UPSTREAM_DIR + "/forge/version_manifests/%s.json" % version.longVersion
         installerRefreshRequired = False
         if not os.path.isfile(profileFilepath):
             installerRefreshRequired = True

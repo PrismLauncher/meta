@@ -2,9 +2,12 @@
 import requests
 from cachecontrol import CacheControl
 import json
+import os
 from metautil import *
 
 from cachecontrol.caches import FileCache
+
+UPSTREAM_DIR = os.environ["UPSTREAM_DIR"]
 
 forever_cache = FileCache('http_cache', forever=True)
 sess = CacheControl(requests.Session(), forever_cache)
@@ -29,7 +32,7 @@ def get_file(path, url):
 # get the local version list
 localVersionlist = None
 try:
-    with open("upstream/mojang/version_manifest_v2.json", 'r', encoding='utf-8') as localIndexFile:
+    with open(UPSTREAM_DIR + "/mojang/version_manifest_v2.json", 'r', encoding='utf-8') as localIndexFile:
         localVersionlist = MojangIndexWrap(json.load(localIndexFile))
 except:
     localVersionlist = MojangIndexWrap({})
@@ -61,12 +64,12 @@ assets = {}
 for id in updatedIDs:
     version = remoteVersionlist.versions[id]
     print("Updating " + version.id + " to timestamp " + version.releaseTime.strftime('%s'))
-    assetId, assetUrl = get_version_file( "upstream/mojang/versions/" + id + '.json', version.url)
+    assetId, assetUrl = get_version_file( UPSTREAM_DIR + "/mojang/versions/" + id + '.json', version.url)
     assets[assetId] = assetUrl
 
 for assetId, assetUrl in iter(assets.items()):
     print("assets", assetId, assetUrl)
-    get_file( "upstream/mojang/assets/" + assetId + '.json', assetUrl)
+    get_file( UPSTREAM_DIR + "/mojang/assets/" + assetId + '.json', assetUrl)
 
-with open("upstream/mojang/version_manifest_v2.json", 'w', encoding='utf-8') as f:
+with open(UPSTREAM_DIR + "/mojang/version_manifest_v2.json", 'w', encoding='utf-8') as f:
     json.dump(main_json, f, sort_keys=True, indent=4)

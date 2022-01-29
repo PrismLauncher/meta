@@ -19,6 +19,9 @@ from collections import namedtuple
 from datetime import datetime
 import hashlib
 
+PMC_DIR = os.environ["PMC_DIR"]
+UPSTREAM_DIR = os.environ["UPSTREAM_DIR"]
+
 def addOrGetBucket(buckets, rules):
     ruleHash = None
     if rules:
@@ -118,8 +121,8 @@ with open("static/minecraft.json", 'r', encoding='utf-8') as legacyIndexFile:
 
 found_any_lwjgl3 = False
 
-for filename in os.listdir('upstream/mojang/versions'):
-    with open("upstream/mojang/versions/" + filename) as json_file:
+for filename in os.listdir(UPSTREAM_DIR + '/mojang/versions'):
+    with open(UPSTREAM_DIR + "/mojang/versions/" + filename) as json_file:
         print("Processing", filename)
         mojangVersionFile = MojangVersionFile(json.load(json_file))
         versionFile = MojangToPolyMC(mojangVersionFile, "Minecraft", "net.minecraft", mojangVersionFile.id)
@@ -246,7 +249,7 @@ for filename in os.listdir('upstream/mojang/versions'):
         # process 1.13 arguments into previous version
         if not mojangVersionFile.minecraftArguments and mojangVersionFile.arguments:
             versionFile.minecraftArguments = adaptNewStyleArguments(mojangVersionFile.arguments)
-        filenameOut = "polymc/net.minecraft/%s.json" % versionFile.version
+        filenameOut = PMC_DIR + "/net.minecraft/%s.json" % versionFile.version
         if versionFile.version in staticVersionlist.versions:
             ApplyLegacyOverride (versionFile, staticVersionlist.versions[versionFile.version])
         with open(filenameOut, 'w') as outfile:
@@ -256,12 +259,12 @@ def processSingleVariant(lwjglVariant):
     lwjglVersion = lwjglVariant.version
     versionObj = copy.deepcopy(lwjglVariant)
     if lwjglVersion[0] == '2':
-        filename = "polymc/org.lwjgl/%s.json" % lwjglVersion
+        filename = PMC_DIR + "/org.lwjgl/%s.json" % lwjglVersion
         versionObj.name = 'LWJGL 2'
         versionObj.uid = 'org.lwjgl'
         versionObj.conflicts = [DependencyEntry(uid='org.lwjgl3')]
     elif lwjglVersion[0] == '3':
-        filename = "polymc/org.lwjgl3/%s.json" % lwjglVersion
+        filename = PMC_DIR + "/org.lwjgl3/%s.json" % lwjglVersion
         versionObj.name = 'LWJGL 3'
         versionObj.uid = 'org.lwjgl3'
         versionObj.conflicts = [DependencyEntry(uid='org.lwjgl')]
@@ -362,7 +365,7 @@ if found_any_lwjgl3:
     lwjglSharedData.recommended = ['3.1.2']
     lwjglSharedData.write()
 
-with open("upstream/mojang/version_manifest_v2.json", 'r', encoding='utf-8') as localIndexFile:
+with open(UPSTREAM_DIR + "/mojang/version_manifest_v2.json", 'r', encoding='utf-8') as localIndexFile:
     localVersionlist = MojangIndexWrap(json.load(localIndexFile))
 
 mcSharedData = PolyMCSharedPackageData(uid = 'net.minecraft', name = 'Minecraft')

@@ -13,7 +13,9 @@ import requests
 from cachecontrol import CacheControl
 from cachecontrol.caches import FileCache
 
-#with open('polymc/index.json', 'r', encoding='utf-8') as index:
+PMC_DIR = os.environ["PMC_DIR"]
+
+#with open(PMC_DIR + '/index.json', 'r', encoding='utf-8') as index:
     #packages = PolyMCPackageIndex(json.load(index))
 
 #for entry in packages.packages:
@@ -86,14 +88,14 @@ def GetLibraryDownload (library : PolyMCLibrary):
 
     return DownloadEntry(url, kind, name)
 
-with open('polymc/net.minecraftforge/index.json', 'r', encoding='utf-8') as forgeIndex:
+with open(PMC_DIR + '/net.minecraftforge/index.json', 'r', encoding='utf-8') as forgeIndex:
     forgeVersions = PolyMCVersionIndex(json.load(forgeIndex))
 
 urlSet = set()
 
 for entry in forgeVersions.versions:
     versionString = entry.version
-    versionPath = "polymc/net.minecraftforge/%s.json" % versionString
+    versionPath = PMC_DIR + "/net.minecraftforge/%s.json" % versionString
     with open(versionPath, 'r') as infile:
         forgeVersion = PolyMCVersionFile(json.load(infile))
     if forgeVersion.libraries:

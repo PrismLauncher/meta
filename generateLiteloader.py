@@ -4,10 +4,14 @@ from jsonobject import *
 from datetime import datetime
 from pprint import pprint
 import copy
+import os
+
+PMC_DIR = os.environ["PMC_DIR"]
+UPSTREAM_DIR = os.environ["UPSTREAM_DIR"]
 
 # load the locally cached version list
 def loadLiteloaderJson():
-    with open("upstream/liteloader/versions.json", 'r', encoding='utf-8') as f:
+    with open(UPSTREAM_DIR + "/liteloader/versions.json", 'r', encoding='utf-8') as f:
         return LiteloaderIndex(json.load(f))
 
 remoteVersionlist = loadLiteloaderJson()
@@ -76,7 +80,7 @@ recommended.sort()
 allVersions.sort(key=lambda x: x.releaseTime, reverse=True)
 
 for version in allVersions:
-    outFilepath = "polymc/com.mumfrey.liteloader/%s.json" % version.version
+    outFilepath = PMC_DIR + "/com.mumfrey.liteloader/%s.json" % version.version
     with open(outFilepath, 'w') as outfile:
         json.dump(version.to_json(), outfile, sort_keys=True, indent=4)
 

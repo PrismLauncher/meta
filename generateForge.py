@@ -8,6 +8,9 @@ from forgeutil import *
 from jsonobject import *
 from distutils.version import LooseVersion
 
+PMC_DIR = os.environ["PMC_DIR"]
+UPSTREAM_DIR = os.environ["UPSTREAM_DIR"]
+
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
 
@@ -17,7 +20,7 @@ def loadMcVersionFilter(version):
     if version in mcVersionCache:
         return mcVersionCache[version]
     libSet = set()
-    with open("polymc/net.minecraft/%s.json" % version, 'r', encoding='utf-8') as mcFile:
+    with open(PMC_DIR + "/net.minecraft/%s.json" % version, 'r', encoding='utf-8') as mcFile:
         mcVersion = PolyMCVersionFile(json.load(mcFile))
         for lib in mcVersion.libraries:
             libSet.add(lib.name)
@@ -181,7 +184,7 @@ def versionFromBuildSystemInstaller(installerVersion : MojangVersionFile, instal
     mavenLibs = []
 
     # load the locally cached installer file info and use it to add the installer entry in the json
-    with open("upstream/forge/installer_info/%s.json" % version.longVersion, 'r', encoding='utf-8') as f:
+    with open(UPSTREAM_DIR + "/forge/installer_info/%s.json" % version.longVersion, 'r', encoding='utf-8') as f:
         installerInfo = InstallerInfo(json.load(f))
         InstallerLib = PolyMCLibrary(name=GradleSpecifier("net.minecraftforge:forge:%s:installer" % (version.longVersion)))
         InstallerLib.downloads = MojangLibraryDownloads()
@@ -296,7 +299,7 @@ def versionFromBuildSystemInstaller(installerVersion : MojangVersionFile, instal
 
 
 # load the locally cached version list
-with open("upstream/forge/derived_index.json", 'r', encoding='utf-8') as f:
+with open(UPSTREAM_DIR + "/forge/derived_index.json", 'r', encoding='utf-8') as f:
     main_json = json.load(f)
     remoteVersionlist = DerivedForgeIndex(main_json)
 
@@ -374,15 +377,15 @@ for id, entry in remoteVersionlist.versions.items():
         recommendedVersions.append(version.rawVersion)
 
     # If we do not have the corresponding Minecraft version, we ignore it
-    if not os.path.isfile("polymc/net.minecraft/%s.json" % version.mcversion_sane):
+    if not os.path.isfile(PMC_DIR + "/net.minecraft/%s.json" % version.mcversion_sane):
         eprint ("Skipping %s with no corresponding Minecraft version %s" % (id, version.mcversion_sane))
         continue
 
     outVersion = None
 
     # Path for new-style build system based installers
-    installerVersionFilepath = "upstream/forge/version_manifests/%s.json" % version.longVersion
-    profileFilepath = "upstream/forge/installer_manifests/%s.json" % version.longVersion
+    installerVersionFilepath = UPSTREAM_DIR + "/forge/version_manifests/%s.json" % version.longVersion
+    profileFilepath = UPSTREAM_DIR + "/forge/installer_manifests/%s.json" % version.longVersion
 
     eprint(installerVersionFilepath)
     if os.path.isfile(installerVersionFilepath):
@@ -415,7 +418,7 @@ for id, entry in remoteVersionlist.versions.items():
 
             outVersion = versionFromLegacy(version, legacyinfolist.number[build])
 
-    outFilepath = "polymc/net.minecraftforge/%s.json" % outVersion.version
+    outFilepath = PMC_DIR + "/net.minecraftforge/%s.json" % outVersion.version
     with open(outFilepath, 'w') as outfile:
         json.dump(outVersion.to_json(), outfile, sort_keys=True, indent=4)
 

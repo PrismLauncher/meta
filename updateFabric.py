@@ -8,6 +8,8 @@ from fabricutil import *
 
 from cachecontrol.caches import FileCache
 
+UPSTREAM_DIR = os.environ["UPSTREAM_DIR"]
+
 forever_cache = FileCache('http_cache', forever=True)
 sess = CacheControl(requests.Session(), forever_cache)
 
@@ -62,20 +64,20 @@ def compute_jar_file(path, url):
     with open(path + ".json", 'w') as outfile:
         json.dump(data.to_json(), outfile, sort_keys=True, indent=4)
 
-mkdirs("upstream/fabric/meta-v2")
-mkdirs("upstream/fabric/loader-installer-json")
-mkdirs("upstream/fabric/jars")
+mkdirs(UPSTREAM_DIR + "/fabric/meta-v2")
+mkdirs(UPSTREAM_DIR + "/fabric/loader-installer-json")
+mkdirs(UPSTREAM_DIR + "/fabric/jars")
 
 # get the version list for each component we are interested in
 for component in ["intermediary", "loader"]:
-    index = get_json_file("upstream/fabric/meta-v2/" + component + ".json", "https://meta.fabricmc.net/v2/versions/" + component)
+    index = get_json_file(UPSTREAM_DIR + "/fabric/meta-v2/" + component + ".json", "https://meta.fabricmc.net/v2/versions/" + component)
     for it in index:
         jarMavenUrl = get_maven_url(it["maven"], "https://maven.fabricmc.net/", ".jar")
-        compute_jar_file("upstream/fabric/jars/" + it["maven"].replace(":", "."), jarMavenUrl)
+        compute_jar_file(UPSTREAM_DIR + "/fabric/jars/" + it["maven"].replace(":", "."), jarMavenUrl)
 
 # for each loader, download installer JSON file from maven
-with open("upstream/fabric/meta-v2/loader.json", 'r', encoding='utf-8') as loaderVersionIndexFile:
+with open(UPSTREAM_DIR + "/fabric/meta-v2/loader.json", 'r', encoding='utf-8') as loaderVersionIndexFile:
     loaderVersionIndex = json.load(loaderVersionIndexFile)
     for it in loaderVersionIndex:
         mavenUrl = get_maven_url(it["maven"], "https://maven.fabricmc.net/", ".json")
-        get_json_file("upstream/fabric/loader-installer-json/" + it["version"] + ".json", mavenUrl)
+        get_json_file(UPSTREAM_DIR + "/fabric/loader-installer-json/" + it["version"] + ".json", mavenUrl)

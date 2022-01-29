@@ -9,11 +9,14 @@ import requests
 from cachecontrol import CacheControl
 from cachecontrol.caches import FileCache
 
+import os
 import json
 from jsonobject import *
 from liteloaderutil import *
 import os.path
 import copy
+
+UPSTREAM_DIR = os.environ["UPSTREAM_DIR"]
 
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
@@ -36,5 +39,5 @@ origStr = json.dumps(main_json, sort_keys=True)
 assert newStr == origStr
 
 # save the json it to file
-with open("upstream/liteloader/versions.json", 'w', encoding='utf-8') as f:
+with open(UPSTREAM_DIR + "/liteloader/versions.json", 'w', encoding='utf-8') as f:
     json.dump(main_json, f, sort_keys=True, indent=4)
