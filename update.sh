@@ -26,7 +26,7 @@ function fail_in {
 }
 
 function fail_out {
-    cd "${BASEDIR}/${MMC_DIR}"
+    cd "${BASEDIR}/${PMC_DIR}"
     git reset --hard HEAD
     exit 1
 }
@@ -56,7 +56,7 @@ if [ "${DEPLOY_TO_GIT}" = true ] ; then
     cd "${BASEDIR}"
 fi
 
-cd "${BASEDIR}/${MMC_DIR}"
+cd "${BASEDIR}/${PMC_DIR}"
 git reset --hard HEAD || exit 1
 git checkout ${BRANCH} || exit 1
 cd "${BASEDIR}"
@@ -68,7 +68,7 @@ cd "${BASEDIR}"
 ./index.py || fail_out
 
 if [ "${DEPLOY_TO_GIT}" = true ] ; then
-    cd "${BASEDIR}/${MMC_DIR}"
+    cd "${BASEDIR}/${PMC_DIR}"
     git add index.json org.lwjgl/* net.minecraft/* || fail_out
     git add net.minecraftforge/* || fail_out
     git add net.fabricmc.fabric-loader/* net.fabricmc.intermediary/* || fail_out
@@ -100,10 +100,10 @@ if [ "${DEPLOY_TO_FOLDER}" = true ] ; then
     DEPLOY_FOLDER_var="DEPLOY_FOLDER_$MODE"
     DEPLOY_FOLDER="${!DEPLOY_FOLDER_var}"
     echo "Deploying to ${DEPLOY_FOLDER}"
-    rsync -rvog --chown=${DEPLOY_FOLDER_USER}:${DEPLOY_FOLDER_GROUP} --exclude=.git ${BASEDIR}/${MMC_DIR}/ ${DEPLOY_FOLDER}
+    rsync -rvog --chown=${DEPLOY_FOLDER_USER}:${DEPLOY_FOLDER_GROUP} --exclude=.git ${BASEDIR}/${PMC_DIR}/ ${DEPLOY_FOLDER}
 fi
 if [ "${DEPLOY_TO_S3}" = true ] ; then
-    s3cmd -c ${BASEDIR}/config/s3cmd.cfg --exclude=".git*" --delete-removed sync ${BASEDIR}/${MMC_DIR}/ ${S3_BUCKET} || exit 2
+    s3cmd -c ${BASEDIR}/config/s3cmd.cfg --exclude=".git*" --delete-removed sync ${BASEDIR}/${PMC_DIR}/ ${S3_BUCKET} || exit 2
 fi
 
 exit 0

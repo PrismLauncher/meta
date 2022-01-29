@@ -1,6 +1,6 @@
 export UPSTREAM_DIR=upstream
 export UPSTREAM_REPO=git@github.com:PolyMC/meta-upstream.git
-export MMC_DIR=multimc
+export PMC_DIR=multimc
 export MMC_REPO=git@github.com:PolyMC/meta-polymc.git
 export BRANCH_master=master
 export BRANCH_develop=develop

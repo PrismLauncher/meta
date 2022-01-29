@@ -14,7 +14,7 @@ echo
 
 
 echo "MultiMC:"
-pushd "${MMC_DIR}"
+pushd "${PMC_DIR}"
 git status
 popd
 echo
