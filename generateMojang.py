@@ -14,6 +14,24 @@ from metautil import *
 PMC_DIR = os.environ["PMC_DIR"]
 UPSTREAM_DIR = os.environ["UPSTREAM_DIR"]
 
+LOG4J_VERSION_OVERRIDE = "2.17.1"  # This is the only version that's patched (as of 2022/02/18)
+LOG4J_MAVEN_REPO = "https://repo1.maven.org/maven2/%s"
+
+LOG4J_HASHES = {
+    "log4j-api": {
+        "sha1": "d771af8e336e372fb5399c99edabe0919aeaf5b2",
+        "size": 301872
+    },
+    "log4j-core": {
+        "sha1": "779f60f3844dadc3ef597976fcb1e5127b1f343d",
+        "size": 1790452
+    },
+    "log4j-slf4j18-impl": {
+        "sha1": "ca499d751f4ddd8afb016ef698c30be0da1d09f7",
+        "size": 21268
+    }
+};
+
 def addOrGetBucket(buckets, rules):
     ruleHash = None
     if rules:
@@ -148,36 +166,14 @@ for filename in os.listdir(UPSTREAM_DIR + '/mojang/versions'):
             else:
                 # FIXME: workaround for insane log4j nonsense from December 2021. Probably needs adjustment.
                 if pmcLib.name.isLog4j():
-                    log4jVersion = '2.16.0'
-                    if pmcLib.name.version == '2.0-beta9':
-                        log4jVersion = '2.0-beta9-fixed'
-
-                    replacementLib = PolyMCLibrary(name=GradleSpecifier("org.apache.logging.log4j:%s:%s" % (pmcLib.name.artifact, log4jVersion)))
+                    replacementLib = PolyMCLibrary(name=GradleSpecifier("org.apache.logging.log4j:%s:%s" % (pmcLib.name.artifact, LOG4J_VERSION_OVERRIDE)))
                     replacementLib.downloads = MojangLibraryDownloads()
                     replacementLib.downloads.artifact = MojangArtifact()
-                    replacementLib.downloads.artifact.url = "https://meta.polymc.org/maven/%s" % (replacementLib.name.getPath())
-
-                    if log4jVersion == "2.16.0":
-                        if pmcLib.name.artifact == "log4j-api":
-                            replacementLib.downloads.artifact.sha1 = "f821a18687126c2e2f227038f540e7953ad2cc8c"
-                            replacementLib.downloads.artifact.size = 301892
-                        elif pmcLib.name.artifact == "log4j-core":
-                            replacementLib.downloads.artifact.sha1 = "539a445388aee52108700f26d9644989e7916e7c"
-                            replacementLib.downloads.artifact.size = 1789565
-                        elif pmcLib.name.artifact == "log4j-slf4j18-impl":
-                            replacementLib.downloads.artifact.sha1 = "0c880a059056df5725f5d8d1035276d9749eba6d"
-                            replacementLib.downloads.artifact.size = 21249
-                        else:
-                            raise Exception("ERROR: unhandled log4j artifact %s!" % pmcLib.name.artifact)
-                    elif log4jVersion == "2.0-beta9-fixed":
-                        if pmcLib.name.artifact == "log4j-api":
-                            replacementLib.downloads.artifact.sha1 = "b61eaf2e64d8b0277e188262a8b771bbfa1502b3"
-                            replacementLib.downloads.artifact.size = 107347
-                        elif pmcLib.name.artifact == "log4j-core":
-                            replacementLib.downloads.artifact.sha1 = "677991ea2d7426f76309a73739cecf609679492c"
-                            replacementLib.downloads.artifact.size = 677588
-                        else:
-                            raise Exception("ERROR: unhandled log4j artifact %s!" % pmcLib.name.artifact)
+                    replacementLib.downloads.artifact.url = LOG4J_MAVEN_REPO % (replacementLib.name.getPath())
+                    replacementLib.downloads.artifact.sha1 = LOG4J_HASHES[pmcLib.name.artifact]["sha1"]
+                    replacementLib.downloads.artifact.size = LOG4J_HASHES[pmcLib.name.artifact]["size"]
+                    if pmcLib.name.artifact not in LOG4J_HASHES:
+                        raise Exception("ERROR: unhandled log4j artifact %s!" % pmcLib.name.artifact)
                     libs_minecraft.append(replacementLib)
                 else:
                     libs_minecraft.append(pmcLib)
