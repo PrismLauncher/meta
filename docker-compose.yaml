@@ -1,0 +1,12 @@
+version: "3"
+
+services:
+  meta:
+    build: .
+    environment:
+      MODE: master
+    volumes:
+      - "./caches:/app/caches"
+      - "./upstream:/app/upstream"
+      - "./polymc:/app/polymc"
+      - "./public:/app/public"

@@ -11,7 +11,7 @@ from fabricutil import *
 
 UPSTREAM_DIR = os.environ["UPSTREAM_DIR"]
 
-forever_cache = FileCache('http_cache', forever=True)
+forever_cache = FileCache('caches/http_cache', forever=True)
 sess = CacheControl(requests.Session(), forever_cache)
 
 def mkdirs(path):

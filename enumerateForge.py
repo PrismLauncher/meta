@@ -109,13 +109,13 @@ for entry in forgeVersions.versions:
         for entry in forgeVersion.mavenFiles:
             urlSet.add(GetLibraryDownload(entry))
 
-forever_cache = FileCache('forge_cache', forever=True)
+forever_cache = FileCache('caches/forge_cache', forever=True)
 sess = CacheControl(requests.Session(), forever_cache)
 
 for entry in urlSet:
     libraryName = entry.name
-    folderPath = "forgemaven/%s" % libraryName.getBase()
-    filePath = "forgemaven/%s" % libraryName.getPath()
+    folderPath = "caches/forgemaven/%s" % libraryName.getBase()
+    filePath = "caches/forgemaven/%s" % libraryName.getPath()
     if not os.path.isfile(filePath):
         os.makedirs(folderPath, exist_ok=True)
         rfile = sess.get(entry.url, stream=True)

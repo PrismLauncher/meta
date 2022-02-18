@@ -32,7 +32,7 @@ def filehash(filename, hashtype, blocksize=65536):
             hash.update(block)
     return hash.hexdigest()
 
-forever_cache = FileCache('http_cache', forever=True)
+forever_cache = FileCache('caches/http_cache', forever=True)
 sess = CacheControl(requests.Session(), forever_cache)
 
 # get the remote version list fragments
