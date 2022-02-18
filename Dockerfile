@@ -1,6 +1,6 @@
 FROM python:3.10.2-bullseye
 
-RUN pip install cachecontrol iso8601 requests lockfile jsonobject \
+RUN pip install cachecontrol iso8601 requests lockfile jsonobject six \
     && apt-get update && apt-get install -y rsync
 
 RUN useradd -Ud /app user
