@@ -1,10 +1,8 @@
-import os
 import re
 import sys
 from distutils.version import LooseVersion
 
 from forgeutil import *
-from jsonobject import *
 from metautil import *
 
 PMC_DIR = os.environ["PMC_DIR"]

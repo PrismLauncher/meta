@@ -1,10 +1,4 @@
-import copy
-import os
-from datetime import datetime
-from pprint import pprint
-
 from fabricutil import *
-from jsonobject import *
 
 PMC_DIR = os.environ["PMC_DIR"]
 UPSTREAM_DIR = os.environ["UPSTREAM_DIR"]

@@ -1,6 +1,4 @@
 import hashlib
-import json
-import os
 from operator import itemgetter
 
 from metautil import *

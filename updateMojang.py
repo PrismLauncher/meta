@@ -1,6 +1,3 @@
-import json
-import os
-
 import requests
 from cachecontrol import CacheControl
 from cachecontrol.caches import FileCache

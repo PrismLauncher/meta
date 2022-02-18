@@ -1,14 +1,9 @@
 import copy
-import datetime
 import hashlib
-import json
-import os
 from collections import defaultdict, namedtuple
-from distutils import version
 from operator import itemgetter
 from pprint import pprint
 
-import iso8601
 from metautil import *
 
 PMC_DIR = os.environ["PMC_DIR"]

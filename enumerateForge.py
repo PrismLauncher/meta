@@ -1,14 +1,8 @@
-import os
-import re
-import sys
-from distutils.version import LooseVersion
 from enum import Enum
 
 import requests
 from cachecontrol import CacheControl
 from cachecontrol.caches import FileCache
-from forgeutil import *
-from jsonobject import *
 from metautil import *
 
 PMC_DIR = os.environ["PMC_DIR"]

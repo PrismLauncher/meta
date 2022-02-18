@@ -1,7 +1,6 @@
 import datetime
 import json
 import os
-from pprint import pprint
 
 import iso8601
 from jsonobject import *
