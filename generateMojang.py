@@ -4,7 +4,6 @@ import hashlib
 import json
 import os
 from collections import defaultdict, namedtuple
-from datetime import datetime
 from distutils import version
 from operator import itemgetter
 from pprint import pprint
@@ -37,8 +36,8 @@ def addOrGetBucket(buckets, rules):
 
 def hashVersion(lwjgl):
     lwjglObjectCopy = copy.deepcopy(lwjgl)
-    lwjglObjectCopy.releaseTime = datetime.fromtimestamp(0)
-    return hashlib.sha1(json.dumps(lwjglObjectCopy.to_json()).encode("utf-8", "strict")).hexdigest()
+    lwjglObjectCopy.releaseTime = datetime.datetime.fromtimestamp(0)
+    return hashlib.sha1(json.dumps(lwjglObjectCopy.to_json(), sort_keys=True).encode("utf-8", "strict")).hexdigest()
 
 def sort_libs_by_name(library):
     return library.name
@@ -293,33 +292,25 @@ def processSingleVariant(lwjglVariant):
 
 
 passVariants = [
-    "052e510a2f7f2d5d8c3ecb9b56330c2ada6525aa", # 2.9.0
-    "cee21a30bbd11e9cda6b2ffdb107eb279e7fc2f4", # 2.9.1
-    "e29c23ddd882d31d04624f27d1bf2f461bad2cac", # 2.9.1-nightly-20131120
-    "3e0f048ff0a3b6ebf30d7d7a12bc61d1ca55ec1d", # 2.9.3
-    "0f2b1287a39cffee5f88afa287a79eb0f130cf2f", # 2.9.4-nightly-20150209
-    "5e686afe52b072ffef9dc716b04109d45a3d662c", # 3.1.2
-    "f1437e21fb6fff0a359d31f60b61795a1ff113cd", # 3.1.6
-    "cb2da930d079fba83b88e989f76e392ac532a859", # 3.2.1
-    "782b8365dd5ba9437d03113c295a62247543493b", # 3.2.2
+    "41d3ed7a755d15ad9e2f5a8aea51481858d60763", # 3.2.2 (2021-12-10 03:36:38+00:00)
+    "57455f0bb479e07e5b554766f9f0310a6c245e10", # 3.1.2 (2018-06-21 12:57:11+00:00)
+    "abfbb7905498983ab3300ae2b897ccd3c11ab8bb", # 2.9.0 (2013-10-21 16:34:47+00:00)
+    "47fd9d3677d7a0bcdb280453a7e7ac1fdbdab70d", # 2.9.4-nightly-20150209 (2016-12-20 14:05:34+00:00)
+    "8ee2407d76c3af7882ab897b6ef25392839d2ab0", # 3.1.6 (2019-04-18 11:05:19+00:00)
+    "428282d96ee546aae07d0717fef71ab8213d1176", # 3.2.1 (2019-04-18 11:05:19+00:00)
+    "c7a84795ac3197bb476949665f3eda9c79436cf7", # 2.9.1 (2014-05-22 14:44:33+00:00)
+    "66a60d78abe20960f1befd0fd5819a8855100055", # 2.9.1-nightly-20131120 (2013-12-06 13:55:34+00:00)
+    "15a92ddad26186e720117fc0e318c6ddb8bae14e", # 2.9.3 (2015-01-30 11:58:24+00:00)
 ]
 
 badVariants = [
-    "032bfe9afc34cf1271037f734a6e7a8835fdfff0", # 2.9.0 - duplication nation
-    "859f5679c60fce520a7c8cfe0c5663f848ff51ab", # 2.9.0 - broken natives
-    "143fc2e22a97042b06e87d599a06b411606a11de", # 2.9.0 - old cringe version
-    "a5340aa0194e31371d961da8c7419d7b7acc769e", # 2.9.0 - 2010 moment
-    "7811cd3ba93467842b1823ca8e571f3d49421291", # 3.1.6
-    "a3179ec5cb1ff62b46e4407ae53487c53e5e42c8", # 3.1.6 - old cringe version
-    "194e5109cbdfb8d5a7da918c449b7414cd609629", # 3.2.1
-    "95df90ab21aa9e9f45d7a9e09da7761d95b3cc42", # 3.2.1 - old cringe version
-    "74f2ae137e9767f0cfbe10ca9db38adaba08a4a6", # 3.2.2 - missing tinyfd
-    "eaeeca768920d981bdc8ea698305f4e9723c6ba8", # 3.2.2 - missing osx natives
-    "8a85feb57480e9cbb0b9c54e7b1751816122cf97", # 3.2.2 - missing other osx natives
-    "65d4ba873bc1244fda9fd7fabd5f6d917316a4e8", # 3.2.2 - introduced in 21w42a, missing jinput and jutils
-    "80d5d553b2b32cd8a2ee2e89576af12fba452bad", # 3.2.2 - old cringe version (ends with bad therefore bad)
-    "dc63fc89717e85261bca306c6dcc791294006195", # 3.2.2 - old cringe version
-    "d46aa08f10fccd75e2e3f26dc5ee677c7d472231", # 3.2.2 - old cringe version
+    "089446ef48f6ac70a3e2bc4a02cd1f34060d31bd", # 3.2.2 (2021-08-25 14:41:57+00:00)
+    "6a0aaa55846ebccae9cf69e1ac2e284b3f0d81d0", # 3.2.2 (2019-07-19 09:25:47+00:00)
+    "e3ecb31817e009ebfb3a8ed41b7b779d31e55b43", # 3.2.2 (2019-07-04 14:41:05+00:00)
+    "2d0b7aa8397278c5b5f7e9cd025544af5e820072", # 2.9.0 (2013-09-06 12:31:58+00:00)
+    "905c3a9d80a804c2d03a577775b75f45c1837263", # 2.9.0 (2011-03-30 22:00:00+00:00)
+    "d889b127fbabd3493115beb228730146072549a4", # 3.1.6 (2018-11-29 13:11:38+00:00)
+    "0034e86cec334f9142ca4ace843c91eb649017fd", # 3.2.1 (2019-02-13 16:12:08+00:00)
 ]
 
 for lwjglVersionVariant in lwjglVersionVariants:
@@ -338,9 +329,7 @@ for lwjglVersionVariant in lwjglVersionVariants:
             passedVariants += 1
             continue
 
-        print("Variant %s:" % (variant.sha1))
-        print(json.dumps(variant.version.to_json(), sort_keys=True, indent=4))
-        print("")
+        print(f"    \"{variant.sha1}\", # {lwjglVersionVariant} ({variant.version.releaseTime})")
         unknownVariants += 1
     print("")
 

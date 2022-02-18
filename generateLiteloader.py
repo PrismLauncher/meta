@@ -1,6 +1,6 @@
 import copy
 import os
-from datetime import datetime
+import datetime
 from pprint import pprint
 
 from jsonobject import *
@@ -27,7 +27,7 @@ def processArtefacts(mcVersion, liteloader, notSnapshots):
             continue
         version = PolyMCVersionFile(name="LiteLoader", uid="com.mumfrey.liteloader", version=artefact.version)
         version.requires = [DependencyEntry(uid='net.minecraft', equals=mcVersion)]
-        version.releaseTime = datetime.utcfromtimestamp(int(artefact.timestamp))
+        version.releaseTime = datetime.datetime.utcfromtimestamp(int(artefact.timestamp))
         version.addTweakers = [artefact.tweakClass]
         version.mainClass = "net.minecraft.launchwrapper.Launch"
         version.order = 10
