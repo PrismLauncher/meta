@@ -7,13 +7,16 @@ class FabricInstallerArguments(JsonObject):
     common = ListProperty(StringProperty)
     server = ListProperty(StringProperty)
 
+
 class FabricInstallerLaunchwrapper(JsonObject):
     tweakers = ObjectProperty(FabricInstallerArguments, required=True)
+
 
 class FabricInstallerLibraries(JsonObject):
     client = ListProperty(PolyMCLibrary)
     common = ListProperty(PolyMCLibrary)
     server = ListProperty(PolyMCLibrary)
+
 
 class FabricInstallerDataV1(JsonObject):
     version = IntegerProperty(required=True)
@@ -21,6 +24,7 @@ class FabricInstallerDataV1(JsonObject):
     mainClass = jsonobject.DefaultProperty()
     arguments = ObjectProperty(FabricInstallerArguments, required=False)
     launchwrapper = ObjectProperty(FabricInstallerLaunchwrapper, required=False)
+
 
 class FabricJarInfo(JsonObject):
     releaseTime = ISOTimestampProperty()

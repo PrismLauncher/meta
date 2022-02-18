@@ -5,6 +5,7 @@ from metautil import *
 
 PMC_DIR = os.environ["PMC_DIR"]
 
+
 # take the hash type (like hashlib.md5) and filename, return hex string of hash
 def HashFile(hash, fname):
     hash_instance = hash()
@@ -12,6 +13,7 @@ def HashFile(hash, fname):
         for chunk in iter(lambda: f.read(4096), b""):
             hash_instance.update(chunk)
     return hash_instance.hexdigest()
+
 
 # ignore these files when indexing versions
 ignore = set(["index.json", "package.json", ".git"])
@@ -69,12 +71,12 @@ for package in sorted(os.listdir(PMC_DIR)):
 
     # insert entry into the package index
     packageEntry = PolyMCPackageIndexEntry(
-            {
-                "uid" : package,
-                "name" : sharedData.name,
-                "sha256": HashFile(hashlib.sha256, outFilePath)
-            }
-        )
+        {
+            "uid": package,
+            "name": sharedData.name,
+            "sha256": HashFile(hashlib.sha256, outFilePath)
+        }
+    )
     packages.packages.append(packageEntry)
 
 # write the repository package index

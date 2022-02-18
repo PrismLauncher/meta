@@ -14,7 +14,6 @@ from .base_properties import (
 )
 from .containers import JsonArray, JsonDict, JsonSet
 
-
 if sys.version > '3':
     unicode = str
     long = int
@@ -62,7 +61,6 @@ class DecimalProperty(JsonProperty):
 
 
 class DateProperty(AbstractDateProperty):
-
     _type = datetime.date
 
     def _wrap(self, value):
@@ -77,7 +75,6 @@ class DateProperty(AbstractDateProperty):
 
 
 class DateTimeProperty(AbstractDateProperty):
-
     _type = datetime.datetime
 
     def _wrap(self, value):
@@ -103,7 +100,6 @@ class DateTimeProperty(AbstractDateProperty):
 
 
 class TimeProperty(AbstractDateProperty):
-
     _type = datetime.time
 
     def _wrap(self, value):
@@ -124,7 +120,6 @@ class TimeProperty(AbstractDateProperty):
 
 
 class ObjectProperty(JsonContainerProperty):
-
     default = lambda self: self.item_type()
 
     def wrap(self, obj, string_conversions=None):
@@ -137,7 +132,6 @@ class ObjectProperty(JsonContainerProperty):
 
 
 class ListProperty(JsonContainerProperty):
-
     _type = default = list
     container_class = JsonArray
 
@@ -146,7 +140,6 @@ class ListProperty(JsonContainerProperty):
 
 
 class DictProperty(JsonContainerProperty):
-
     _type = default = dict
     container_class = JsonDict
 
@@ -155,7 +148,6 @@ class DictProperty(JsonContainerProperty):
 
 
 class SetProperty(JsonContainerProperty):
-
     _type = default = set
     container_class = JsonSet
 

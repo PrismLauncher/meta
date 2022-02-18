@@ -7,18 +7,20 @@ from metautil import *
 
 PMC_DIR = os.environ["PMC_DIR"]
 
-#with open(PMC_DIR + '/index.json', 'r', encoding='utf-8') as index:
-    #packages = PolyMCPackageIndex(json.load(index))
 
-#for entry in packages.packages:
-    #print (entry)
+# with open(PMC_DIR + '/index.json', 'r', encoding='utf-8') as index:
+# packages = PolyMCPackageIndex(json.load(index))
+
+# for entry in packages.packages:
+# print (entry)
 
 class DownloadType(Enum):
     NORMAL = 1
     FORGE_XZ = 2
 
+
 class DownloadEntry:
-    def __init__(self, url : str, kind : DownloadType, name : GradleSpecifier):
+    def __init__(self, url: str, kind: DownloadType, name: GradleSpecifier):
         self.name = name
         self.url = url
         self.kind = kind
@@ -41,19 +43,21 @@ class DownloadEntry:
     def __repr__(self):
         return "DownloadEntry('" + self.toString() + "')"
 
-class MojangLibrary (JsonObject):
+
+class MojangLibrary(JsonObject):
     extract = ObjectProperty(MojangLibraryExtractRules, exclude_if_none=True, default=None)
-    name = GradleSpecifierProperty(required = True)
+    name = GradleSpecifierProperty(required=True)
     downloads = ObjectProperty(MojangLibraryDownloads, exclude_if_none=True, default=None)
     natives = DictProperty(StringProperty, exclude_if_none=True, default=None)
     rules = ListProperty(MojangRule, exclude_if_none=True, default=None)
 
-class PolyMCLibrary (MojangLibrary):
+
+class PolyMCLibrary(MojangLibrary):
     url = StringProperty(exclude_if_none=True, default=None)
     mmcHint = StringProperty(name="MMC-hint", exclude_if_none=True, default=None)  # this is supposed to be MMC-hint!
 
 
-def GetLibraryDownload (library : PolyMCLibrary):
+def GetLibraryDownload(library: PolyMCLibrary):
     if library.natives:
         raise Exception('Natives are not handled yet')
 
@@ -69,7 +73,6 @@ def GetLibraryDownload (library : PolyMCLibrary):
         if url.endswith('.zip'):
             name.extension = 'zip'
 
-
     if library.downloads:
         url = library.downloads.artifact.url
     else:
@@ -79,6 +82,7 @@ def GetLibraryDownload (library : PolyMCLibrary):
             url = 'https://libraries.minecraft.net/' + name.getPath()
 
     return DownloadEntry(url, kind, name)
+
 
 with open(PMC_DIR + '/net.minecraftforge/index.json', 'r', encoding='utf-8') as forgeIndex:
     forgeVersions = PolyMCVersionIndex(json.load(forgeIndex))

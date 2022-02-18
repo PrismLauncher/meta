@@ -16,6 +16,7 @@ class SimpleDict(dict):
     Re-implements destructive methods of dict
     to use only setitem and getitem and delitem
     """
+
     def update(self, E=None, **F):
         for dct in (E, F):
             if dct:

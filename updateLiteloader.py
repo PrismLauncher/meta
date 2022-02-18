@@ -11,12 +11,13 @@ from liteloaderutil import *
 
 UPSTREAM_DIR = os.environ["UPSTREAM_DIR"]
 
+
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
 
+
 forever_cache = FileCache('caches/http_cache', forever=True)
 sess = CacheControl(requests.Session(), forever_cache)
-
 
 # get the remote version list
 r = sess.get('http://dl.liteloader.com/versions/versions.json')

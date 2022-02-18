@@ -13,7 +13,6 @@ else:
 
 
 class JsonProperty(object):
-
     default = None
     type_config = None
 
@@ -124,7 +123,6 @@ class JsonProperty(object):
 
 
 class JsonContainerProperty(JsonProperty):
-
     _type = default = None
     container_class = None
 
@@ -259,7 +257,7 @@ class DefaultProperty(JsonProperty):
 
             if convert is not None:
                 try:
-                    #sometimes regex fail so return value
+                    # sometimes regex fail so return value
                     value = convert(value)
                 except Exception:
                     pass
@@ -290,7 +288,6 @@ class AssertTypeProperty(JsonProperty):
 
 
 class AbstractDateProperty(JsonProperty):
-
     _type = None
 
     def __init__(self, exact=False, *args, **kwargs):

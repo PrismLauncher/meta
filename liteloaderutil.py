@@ -1,6 +1,5 @@
 from metautil import *
 
-
 '''
     "repo":{
         "stream":"RELEASE",
@@ -9,11 +8,14 @@ from metautil import *
         "classifier":""
     },
 '''
+
+
 class LiteloaderRepo(JsonObject):
     stream = StringProperty(required=True)
     type = StringProperty(required=True)
     url = StringProperty(required=True)
     classifier = StringProperty(required=True)
+
 
 '''
     "53639d52340479ccf206a04f5e16606f":{
@@ -36,6 +38,8 @@ class LiteloaderRepo(JsonObject):
         "timestamp":"1367366420"
     },
 '''
+
+
 class LiteloaderArtefact(JsonObject):
     tweakClass = StringProperty(required=True)
     libraries = ListProperty(PolyMCLibrary, required=True)
@@ -48,20 +52,25 @@ class LiteloaderArtefact(JsonObject):
     srcJar = StringProperty(default=None, exclude_if_none=True)
     mcpJar = StringProperty(default=None, exclude_if_none=True)
 
+
 class LiteloaderDev(JsonObject):
-    fgVersion = StringProperty(default=None ,exclude_if_none=True)
+    fgVersion = StringProperty(default=None, exclude_if_none=True)
     mappings = StringProperty(required=None, exclude_if_none=True)
     mcp = StringProperty(default=None, exclude_if_none=True)
+
 
 class LiteloaderArtefacts(JsonObject):
     liteloader = DictProperty(LiteloaderArtefact, name="com.mumfrey:liteloader", required=True)
 
+
 class LiteloaderSnapshot(LiteloaderArtefact):
     lastSuccessfulBuild = IntegerProperty()
+
 
 class LiteloaderSnapshots(JsonObject):
     libraries = ListProperty(PolyMCLibrary, required=True)
     liteloader = DictProperty(LiteloaderSnapshot, name="com.mumfrey:liteloader", required=True)
+
 
 '''
     "1.10.2":{
@@ -75,11 +84,14 @@ class LiteloaderSnapshots(JsonObject):
             ...
         }
 '''
+
+
 class LiteloaderEntry(JsonObject):
     dev = ObjectProperty(LiteloaderDev, default=None, exclude_if_none=True)
     repo = ObjectProperty(LiteloaderRepo, required=True)
     artefacts = ObjectProperty(LiteloaderArtefacts, default=None, exclude_if_none=True)
     snapshots = ObjectProperty(LiteloaderSnapshots, default=None, exclude_if_none=True)
+
 
 '''
     "meta":{
@@ -90,12 +102,15 @@ class LiteloaderEntry(JsonObject):
         "updatedTime":1487763247
     },
 '''
+
+
 class LiteloaderMeta(JsonObject):
     description = StringProperty(required=True)
     authors = StringProperty(required=True)
     url = StringProperty(required=True)
     updated = ISOTimestampProperty(required=True)
     updatedTime = IntegerProperty(required=True)
+
 
 # The raw Forge version index
 class LiteloaderIndex(JsonObject):

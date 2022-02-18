@@ -67,11 +67,12 @@ class ForgeVersion:
         if not majorVersionStr.isnumeric():
             return False
 
-        #majorVersion = int(majorVersionStr)
-        #if majorVersion >= 37:
+        # majorVersion = int(majorVersionStr)
+        # if majorVersion >= 37:
         #    return False
 
         return True
+
 
 class ForgeFile(JsonObject):
     classifier = StringProperty(required=True)
@@ -82,7 +83,9 @@ class ForgeFile(JsonObject):
         return "%s-%s-%s.%s" % ("forge", longversion, self.classifier, self.extension)
 
     def url(self, longversion):
-        return "https://files.minecraftforge.net/maven/net/minecraftforge/forge/%s/%s" % (longversion, self.filename(longversion))
+        return "https://files.minecraftforge.net/maven/net/minecraftforge/forge/%s/%s" % (
+        longversion, self.filename(longversion))
+
 
 class ForgeEntry(JsonObject):
     longversion = StringProperty(required=True)
@@ -94,14 +97,17 @@ class ForgeEntry(JsonObject):
     recommended = BooleanProperty()
     files = DictProperty(ForgeFile)
 
+
 class ForgeMcVersionInfo(JsonObject):
     latest = StringProperty()
     recommended = StringProperty()
     versions = ListProperty(StringProperty())
 
+
 class DerivedForgeIndex(JsonObject):
     versions = DictProperty(ForgeEntry)
     by_mcversion = DictProperty(ForgeMcVersionInfo)
+
 
 '''
 FML library mappings - these are added to legacy Forge versions because Forge no longer can download these
@@ -185,29 +191,34 @@ fmlLibsMapping["1.5.2"] = [
     "modList":"none"
 },
 '''
+
+
 class ForgeInstallerProfileInstallSection(JsonObject):
-    profileName = StringProperty(required = True)
-    target = StringProperty(required = True)
-    path = GradleSpecifierProperty(required = True)
-    version = StringProperty(required = True)
-    filePath = StringProperty(required = True)
-    welcome = StringProperty(required = True)
-    minecraft = StringProperty(required = True)
-    logo = StringProperty(required = True)
-    mirrorList = StringProperty(required = True)
+    profileName = StringProperty(required=True)
+    target = StringProperty(required=True)
+    path = GradleSpecifierProperty(required=True)
+    version = StringProperty(required=True)
+    filePath = StringProperty(required=True)
+    welcome = StringProperty(required=True)
+    minecraft = StringProperty(required=True)
+    logo = StringProperty(required=True)
+    mirrorList = StringProperty(required=True)
     modList = StringProperty(exclude_if_none=True, default=None)
 
-class ForgeLibrary (MojangLibrary):
+
+class ForgeLibrary(MojangLibrary):
     url = StringProperty(exclude_if_none=True)
     serverreq = BooleanProperty(exclude_if_none=True, default=None)
     clientreq = BooleanProperty(exclude_if_none=True, default=None)
     checksums = ListProperty(StringProperty)
     comment = StringProperty()
 
-class ForgeVersionFile (MojangVersionFile):
-    libraries = ListProperty(ForgeLibrary, exclude_if_none=True, default=None) # overrides Mojang libraries
+
+class ForgeVersionFile(MojangVersionFile):
+    libraries = ListProperty(ForgeLibrary, exclude_if_none=True, default=None)  # overrides Mojang libraries
     inheritsFrom = StringProperty()
     jar = StringProperty()
+
 
 '''
 "optionals": [
@@ -224,7 +235,9 @@ class ForgeVersionFile (MojangVersionFile):
     }
 ]
 '''
-class ForgeOptional (JsonObject):
+
+
+class ForgeOptional(JsonObject):
     name = StringProperty()
     client = BooleanProperty()
     server = BooleanProperty()
@@ -235,10 +248,12 @@ class ForgeOptional (JsonObject):
     artifact = GradleSpecifierProperty()
     maven = StringProperty()
 
+
 class ForgeInstallerProfile(JsonObject):
-    install = ObjectProperty(ForgeInstallerProfileInstallSection, required = True)
-    versionInfo = ObjectProperty(ForgeVersionFile, required = True)
+    install = ObjectProperty(ForgeInstallerProfileInstallSection, required=True)
+    versionInfo = ObjectProperty(ForgeVersionFile, required=True)
     optionals = ListProperty(ForgeOptional)
+
 
 class ForgeLegacyInfo(JsonObject):
     releaseTime = ISOTimestampProperty()
@@ -246,12 +261,15 @@ class ForgeLegacyInfo(JsonObject):
     sha256 = StringProperty()
     sha1 = StringProperty()
 
+
 class ForgeLegacyInfoList(JsonObject):
     number = DictProperty(ForgeLegacyInfo)
+
 
 class DataSpec(JsonObject):
     client = StringProperty()
     server = StringProperty()
+
 
 class ProcessorSpec(JsonObject):
     jar = StringProperty()
@@ -259,6 +277,7 @@ class ProcessorSpec(JsonObject):
     args = ListProperty(StringProperty)
     outputs = DictProperty(StringProperty)
     sides = ListProperty(StringProperty, exclude_if_none=True, default=None)
+
 
 # Note: This is only used in one version (1.12.2-14.23.5.2851) and we don't even use the installer profile in it.
 #       It's here just so it parses and we can continue...
@@ -279,6 +298,7 @@ class ForgeInstallerProfileV1_5(JsonObject):
     libraries = ListProperty(MojangLibrary)
     mirrorList = StringProperty(exclude_if_none=True, default=None)
 
+
 class ForgeInstallerProfileV2(JsonObject):
     _comment = ListProperty(StringProperty)
     spec = IntegerProperty()
@@ -295,6 +315,7 @@ class ForgeInstallerProfileV2(JsonObject):
     libraries = ListProperty(MojangLibrary)
     mirrorList = StringProperty(exclude_if_none=True, default=None)
     serverJarPath = StringProperty(exclude_if_none=True, default=None)
+
 
 class InstallerInfo(JsonObject):
     sha1hash = StringProperty()

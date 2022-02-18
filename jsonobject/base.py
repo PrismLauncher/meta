@@ -10,7 +10,6 @@ from .exceptions import (
 from .base_properties import JsonProperty, DefaultProperty
 from .utils import check_type
 
-
 JsonObjectClassSettings = namedtuple('JsonObjectClassSettings', ['type_config'])
 
 CLASS_SETTINGS_ATTR = '_$_class_settings'
@@ -60,6 +59,7 @@ class TypeConfig(object):
     instead of the default.
 
     """
+
     def __init__(self, properties=None, string_conversions=None):
         self._properties = properties if properties is not None else {}
 
@@ -108,11 +108,11 @@ class TypeConfig(object):
             result.append((pattern, conversion))
         return result
 
+
 META_ATTRS = ('properties', 'string_conversions', 'update_properties')
 
 
 class JsonObjectMeta(type):
-
     class Meta(object):
         pass
 
@@ -181,7 +181,6 @@ class _JsonObjectPrivateInstanceVariables(object):
 
 @six.add_metaclass(JsonObjectMeta)
 class JsonObjectBase(object):
-
     _allow_dynamic_properties = False
     _validate_required_lazily = False
 
@@ -305,9 +304,9 @@ class JsonObjectBase(object):
 
     def __is_dynamic_property(self, name):
         return (
-            name not in self._properties_by_attr and
-            not name.startswith('_') and
-            not inspect.isdatadescriptor(getattr(self.__class__, name, None))
+                name not in self._properties_by_attr and
+                not name.startswith('_') and
+                not inspect.isdatadescriptor(getattr(self.__class__, name, None))
         )
 
     def __setattr__(self, name, value):
