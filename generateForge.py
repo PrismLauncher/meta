@@ -88,7 +88,7 @@ def versionFromProfile(profile, version):
         else:
             ourLib.url = forgeLib.url
         #if forgeLib.checksums and len(forgeLib.checksums) == 2:
-        #    ourLib.pmcHint = "forge-pack-xz"
+        #    ourLib.mmcHint = "forge-pack-xz"
         libs.append(ourLib)
     result.libraries = libs
     result.order = 5

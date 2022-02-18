@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 import os
 import re
 import sys
@@ -57,7 +56,7 @@ class MojangLibrary (JsonObject):
 
 class PolyMCLibrary (MojangLibrary):
     url = StringProperty(exclude_if_none=True, default=None)
-    pmcHint = StringProperty(name="PMC-hint", exclude_if_none=True, default=None)
+    mmcHint = StringProperty(name="MMC-hint", exclude_if_none=True, default=None)  # this is supposed to be MMC-hint!
 
 
 def GetLibraryDownload (library : PolyMCLibrary):
@@ -65,7 +64,7 @@ def GetLibraryDownload (library : PolyMCLibrary):
         raise Exception('Natives are not handled yet')
 
     name = library.name
-    if library.pmcHint == 'forge-pack-xz':
+    if library.mmcHint == 'forge-pack-xz':
         kind = DownloadType.FORGE_XZ
         name.extension = 'jar.pack.xz'
     else:

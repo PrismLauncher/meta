@@ -247,7 +247,7 @@ def validateSupportedPolyMCVersion(version):
 
 class PolyMCLibrary (MojangLibrary):
     url = StringProperty(exclude_if_none=True, default=None)
-    pmcHint = StringProperty(name="PMC-hint", exclude_if_none=True, default=None)
+    mmcHint = StringProperty(name="MMC-hint", exclude_if_none=True, default=None)  # this is supposed to be MMC-hint!
 
 class VersionedJsonObject(JsonObject):
     formatVersion = IntegerProperty(default=CurrentPolyMCFormatVersion, validators=validateSupportedPolyMCVersion)
