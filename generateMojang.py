@@ -9,21 +9,37 @@ from metautil import *
 PMC_DIR = os.environ["PMC_DIR"]
 UPSTREAM_DIR = os.environ["UPSTREAM_DIR"]
 
-LOG4J_VERSION_OVERRIDE = "2.17.1"  # This is the only version that's patched (as of 2022/02/18)
-LOG4J_MAVEN_REPO = "https://repo1.maven.org/maven2/%s"
+
+def map_log4j_artifact(version):
+    if version == "2.0-beta9":
+        return ("2.0-beta9-fixed", "https://polymc.github.io/files/maven/%s")
+    return ("2.17.1", "https://repo1.maven.org/maven2/%s")  # This is the only version that's patched (as of 2022/02/19)
+
 
 LOG4J_HASHES = {
-    "log4j-api": {
-        "sha1": "d771af8e336e372fb5399c99edabe0919aeaf5b2",
-        "size": 301872
+    "2.0-beta9-fixed": {
+        "log4j-api": {
+            "sha1": "b61eaf2e64d8b0277e188262a8b771bbfa1502b3",
+            "size": 107347
+        },
+        "log4j-core": {
+            "sha1": "677991ea2d7426f76309a73739cecf609679492c",
+            "size": 677588
+        }
     },
-    "log4j-core": {
-        "sha1": "779f60f3844dadc3ef597976fcb1e5127b1f343d",
-        "size": 1790452
-    },
-    "log4j-slf4j18-impl": {
-        "sha1": "ca499d751f4ddd8afb016ef698c30be0da1d09f7",
-        "size": 21268
+    "2.17.1": {
+        "log4j-api": {
+            "sha1": "d771af8e336e372fb5399c99edabe0919aeaf5b2",
+            "size": 301872
+        },
+        "log4j-core": {
+            "sha1": "779f60f3844dadc3ef597976fcb1e5127b1f343d",
+            "size": 1790452
+        },
+        "log4j-slf4j18-impl": {
+            "sha1": "ca499d751f4ddd8afb016ef698c30be0da1d09f7",
+            "size": 21268
+        }
     }
 }
 
@@ -193,15 +209,21 @@ for filename in os.listdir(UPSTREAM_DIR + '/mojang/versions'):
             else:
                 # FIXME: workaround for insane log4j nonsense from December 2021. Probably needs adjustment.
                 if pmcLib.name.isLog4j():
+                    versionOverride, mavenOverride = map_log4j_artifact(pmcLib.name.version)
+
+                    if versionOverride not in LOG4J_HASHES:
+                        raise Exception("ERROR: unhandled log4j version (overriden) %s!" % versionOverride)
+
+                    if pmcLib.name.artifact not in LOG4J_HASHES[versionOverride]:
+                        raise Exception("ERROR: unhandled log4j artifact %s!" % pmcLib.name.artifact)
+
                     replacementLib = PolyMCLibrary(name=GradleSpecifier(
-                        "org.apache.logging.log4j:%s:%s" % (pmcLib.name.artifact, LOG4J_VERSION_OVERRIDE)))
+                        "org.apache.logging.log4j:%s:%s" % (pmcLib.name.artifact, versionOverride)))
                     replacementLib.downloads = MojangLibraryDownloads()
                     replacementLib.downloads.artifact = MojangArtifact()
-                    replacementLib.downloads.artifact.url = LOG4J_MAVEN_REPO % (replacementLib.name.getPath())
-                    replacementLib.downloads.artifact.sha1 = LOG4J_HASHES[pmcLib.name.artifact]["sha1"]
-                    replacementLib.downloads.artifact.size = LOG4J_HASHES[pmcLib.name.artifact]["size"]
-                    if pmcLib.name.artifact not in LOG4J_HASHES:
-                        raise Exception("ERROR: unhandled log4j artifact %s!" % pmcLib.name.artifact)
+                    replacementLib.downloads.artifact.url = mavenOverride % (replacementLib.name.getPath())
+                    replacementLib.downloads.artifact.sha1 = LOG4J_HASHES[versionOverride][pmcLib.name.artifact]["sha1"]
+                    replacementLib.downloads.artifact.size = LOG4J_HASHES[versionOverride][pmcLib.name.artifact]["size"]
                     libs_minecraft.append(replacementLib)
                 else:
                     libs_minecraft.append(pmcLib)
