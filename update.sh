@@ -51,7 +51,7 @@ if [ "${DEPLOY_TO_GIT}" = true ] ; then
     upstream_git add liteloader/*.json || fail_in
     if ! upstream_git diff --cached --exit-code ; then
         upstream_git commit -a -m "Update ${currentDate}" || fail_in
-        GIT_SSH_COMMAND="ssh -i ${BASEDIR}/config/meta-upstream.key" upstream_git push || exit 1
+        GIT_SSH_COMMAND="ssh -i ${BASEDIR}/config/deploy.key" upstream_git push || exit 1
     fi
 fi
 
@@ -75,7 +75,7 @@ if [ "${DEPLOY_TO_GIT}" = true ] ; then
 
     if ! polymc_git diff --cached --exit-code ; then
         polymc_git commit -a -m "Update ${currentDate}" || fail_out
-        GIT_SSH_COMMAND="ssh -i ${BASEDIR}/config/meta-polymc.key" polymc_git push || exit 1
+        GIT_SSH_COMMAND="ssh -i ${BASEDIR}/config/deploy.key" polymc_git push || exit 1
     fi
 fi
 
