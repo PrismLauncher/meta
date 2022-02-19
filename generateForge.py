@@ -8,6 +8,7 @@ from metautil import *
 PMC_DIR = os.environ["PMC_DIR"]
 UPSTREAM_DIR = os.environ["UPSTREAM_DIR"]
 
+FORGEWRAPPER_MAVEN = "https://polymc.github.io/files/maven/%s"
 
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
@@ -279,7 +280,7 @@ def versionFromBuildSystemInstaller(installerVersion: MojangVersionFile, install
     wrapperLib = PolyMCLibrary(name=GradleSpecifier("io.github.zekerzhayard:ForgeWrapper:pmc2"))
     wrapperLib.downloads = MojangLibraryDownloads()
     wrapperLib.downloads.artifact = MojangArtifact()
-    wrapperLib.downloads.artifact.url = "https://meta.polymc.org/maven/%s" % (wrapperLib.name.getPath())
+    wrapperLib.downloads.artifact.url = FORGEWRAPPER_MAVEN % (wrapperLib.name.getPath())
     wrapperLib.downloads.artifact.sha1 = "4ee5f25cc9c7efbf54aff4c695da1054c1a1d7a3"
     wrapperLib.downloads.artifact.size = 34444
     libraries.append(wrapperLib)
