@@ -277,7 +277,7 @@ def versionFromBuildSystemInstaller(installerVersion: MojangVersionFile, install
     # wrapperLib.downloads.artifact.size = 34331
     # libraries.append(wrapperLib)
 
-    wrapperLib = PolyMCLibrary(name=GradleSpecifier("io.github.zekerzhayard:ForgeWrapper:pmc2"))
+    wrapperLib = PolyMCLibrary(name=GradleSpecifier("io.github.zekerzhayard:ForgeWrapper:mmc2"))
     wrapperLib.downloads = MojangLibraryDownloads()
     wrapperLib.downloads.artifact = MojangArtifact()
     wrapperLib.downloads.artifact.url = FORGEWRAPPER_MAVEN % (wrapperLib.name.getPath())
