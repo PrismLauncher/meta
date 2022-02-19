@@ -9,6 +9,7 @@ It is recommended to use Docker to deploy the environment.
 - Configure `config/config_local.sh`
   - The defaults should be fine (apart from commiter email and name perhaps)
 - Put your SSH key (which have push access to meta-upstream and meta-polymc) at `config/deploy.key`
+- Pull meta- repos: `bash clone.sh`
 - Customize docker-compose.yaml
   - You might want to add `restart: always`
 - Run `docker-compose up -d --build`
