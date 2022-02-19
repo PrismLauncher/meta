@@ -16,7 +16,7 @@ def HashFile(hash, fname):
 
 
 # ignore these files when indexing versions
-ignore = set(["index.json", "package.json", ".git"])
+ignore = set(["index.json", "package.json", ".git", ".github"])
 
 # initialize output structures - package list level
 packages = PolyMCPackageIndex()
