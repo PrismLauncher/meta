@@ -1,14 +1,23 @@
 FROM python:3.10.2-bullseye
 
 RUN pip install cachecontrol iso8601 requests lockfile jsonobject six \
-    && apt-get update && apt-get install -y rsync
+    && apt-get update && apt-get install -y rsync cron
 
-RUN useradd -Ud /app user
-USER user
-WORKDIR /app
+# add our cronjob
+COPY docker/update.cron /etc/cron.d/meta-update
+RUN chmod 644 /etc/cron.d/meta-update \
+    && crontab /etc/cron.d/meta-update
 
-COPY . .
+# install entrypoint
+COPY docker/entrypoint.sh /usr/local/bin/entrypoint
+RUN chmod +x /usr/local/bin/entrypoint
 
-ENV MODE=master
+RUN useradd -Um user \
+    && mkdir -p /home/user/.ssh \
+    && ssh-keyscan github.com > /home/user/.ssh/known_hosts \
+    && mkdir -p /app
 
-CMD ["/bin/bash", "update.sh"]
+COPY . /app/
+
+ENTRYPOINT ["/usr/local/bin/entrypoint"]
+CMD ["update"]

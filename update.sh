@@ -27,12 +27,14 @@ function fail_out {
 }
 
 function upstream_git {
-    git -C "${BASEDIR}/${UPSTREAM_DIR}" $@
+    git -C "${BASEDIR}/${UPSTREAM_DIR}" "$@"
 }
 
 function polymc_git {
-    git -C "${BASEDIR}/${UPSTREAM_DIR}" $@
+    git -C "${BASEDIR}/${PMC_DIR}" "$@"
 }
+
+# make sure we *could* push to our repo
 
 currentDate=`date --iso-8601`
 
@@ -60,7 +62,7 @@ polymc_git checkout ${BRANCH} || exit 1
 
 python generateMojang.py || fail_out
 python generateForge.py || fail_out
-python generateFabric.py || fail_in
+python generateFabric.py || fail_out
 python generateLiteloader.py || fail_out
 python index.py || fail_out
 

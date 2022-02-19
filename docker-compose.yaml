@@ -3,6 +3,7 @@ version: "3"
 services:
   meta:
     build: .
+    command: cron
     environment:
       MODE: master
     volumes:
@@ -10,3 +11,4 @@ services:
       - "./upstream:/app/upstream"
       - "./polymc:/app/polymc"
       - "./public:/app/public"
+      - "./config:/app/config"
