@@ -44,6 +44,7 @@ upstream_git checkout "${BRANCH}" || exit 1
 python updateMojang.py || fail_in
 python updateForge.py || fail_in
 python updateFabric.py || fail_in
+python updateQuilt.py || fail_in
 python updateLiteloader.py || fail_in
 
 if [ "${DEPLOY_TO_GIT}" = true ] ; then
@@ -63,6 +64,7 @@ polymc_git checkout "${BRANCH}" || exit 1
 python generateMojang.py || fail_out
 python generateForge.py || fail_out
 python generateFabric.py || fail_out
+python generateQuilt.py || fail_in
 python generateLiteloader.py || fail_out
 python index.py || fail_out
 
