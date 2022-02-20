@@ -47,11 +47,13 @@ def processLoaderVersion(loaderVersion, it, loaderData):
 
 
 def processIntermediaryVersion(it):
+    minecraftVersion = it["version"].split("+", 2)[0]  # version format is like 1.18.2-pre1+build.1
+
     intermediaryRecommended.append(it["version"])
     versionJarInfo = loadJarInfo(it["maven"])
     version = PolyMCVersionFile(name="Quilt Intermediary Mappings", uid="org.quiltmc.quilt-mappings", version=it["version"])
     version.releaseTime = versionJarInfo.releaseTime
-    version.requires = [DependencyEntry(uid='net.minecraft', equals=it["version"])]
+    version.requires = [DependencyEntry(uid='net.minecraft', equals=minecraftVersion)]
     version.order = 11
     version.type = "release"
     version.libraries = []
