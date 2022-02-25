@@ -11,7 +11,6 @@ It is recommended to use Docker to deploy the environment.
 - Put your SSH key (which has push access to meta-upstream and meta-polymc) at `config/deploy.key`
 - Pull meta- repos: `bash clone.sh`
 - Customize docker-compose.yaml
-  - You might want to add `restart: always`
 - Run `docker-compose up -d --build`
 - Observe Cron logs using `docker-compose logs -f` (Runs hourly by default)
 - (Optional) Run once to fill caches: `docker-compose run meta update`
