@@ -1,0 +1,16 @@
+version: "3"
+
+services:
+  meta:
+    build:
+      context: .
+      args:
+        UID: 1000
+        GID: 1000
+    command: update
+    volumes:
+      - "./caches:/app/caches"
+      - "./upstream:/app/upstream"
+      - "./polymc:/app/polymc"
+      - "./public:/app/public"
+      - "./config:/app/config"

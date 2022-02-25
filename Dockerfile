@@ -1,4 +1,6 @@
 FROM python:3.10.2-bullseye
+ARG UID=1337
+ARG GID=1337
 
 RUN pip install cachecontrol iso8601 requests lockfile jsonobject six \
     && apt-get update && apt-get install -y rsync cron
@@ -12,10 +14,12 @@ RUN chmod 644 /etc/cron.d/meta-update \
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint
 RUN chmod +x /usr/local/bin/entrypoint
 
-RUN useradd -Um user \
+RUN groupadd -g $GID user \
+    && useradd -m -g $GID -u $UID user \
     && mkdir -p /home/user/.ssh \
     && ssh-keyscan github.com > /home/user/.ssh/known_hosts \
-    && mkdir -p /app
+    && mkdir -p /app \
+    && chown -R $UID:$GID /app /home/user/.ssh
 
 COPY . /app/
 
