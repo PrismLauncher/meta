@@ -1,15 +1,14 @@
 import datetime
 import json
 import os
-from pprint import pprint
 
 import iso8601
 from jsonobject import *
 
 PMC_DIR = os.environ["PMC_DIR"]
 
-class ISOTimestampProperty(AbstractDateProperty):
 
+class ISOTimestampProperty(AbstractDateProperty):
     _type = datetime.datetime
 
     def _wrap(self, value):
@@ -64,11 +63,10 @@ class GradleSpecifier:
             return "%s-%s.%s" % (self.artifact, self.version, self.extension)
 
     def getBase(self):
-        return "%s/%s/%s/" % (self.group.replace('.','/'), self.artifact, self.version)
+        return "%s/%s/%s/" % (self.group.replace('.', '/'), self.artifact, self.version)
 
     def getPath(self):
         return self.getBase() + self.getFilename()
-
 
     def __repr__(self):
         return "GradleSpecifier('" + self.toString() + "')"
@@ -78,7 +76,6 @@ class GradleSpecifier:
 
     def isLog4j(self):
         return self.group == "org.apache.logging.log4j"
-
 
     def __lt__(self, other):
         return self.toString() < other.toString()
@@ -92,12 +89,14 @@ class GradleSpecifier:
     def __hash__(self):
         return self.toString().__hash__()
 
+
 class GradleSpecifierProperty(JsonProperty):
     def wrap(self, value):
         return GradleSpecifier(value)
 
     def unwrap(self, value):
         return value, value.toString()
+
 
 '''
 Mojang index files look like this:
@@ -120,6 +119,7 @@ Mojang index files look like this:
 }
 '''
 
+
 class MojangIndexEntry(JsonObject):
     id = StringProperty()
     releaseTime = ISOTimestampProperty()
@@ -129,9 +129,11 @@ class MojangIndexEntry(JsonObject):
     sha1 = StringProperty(exclude_if_none=True, default=None)
     complianceLevel = IntegerProperty(exclude_if_none=True, default=None)
 
+
 class MojangIndex(JsonObject):
     latest = DictProperty(StringProperty)
     versions = ListProperty(MojangIndexEntry)
+
 
 class MojangIndexWrap:
     def __init__(self, json):
@@ -143,24 +145,29 @@ class MojangIndexWrap:
         self.versions = versionsDict
 
 
-class MojangArtifactBase (JsonObject):
+class MojangArtifactBase(JsonObject):
     sha1 = StringProperty(exclude_if_none=True, default=None)
     size = IntegerProperty(exclude_if_none=True, default=None)
     url = StringProperty()
 
-class MojangArtifact (MojangArtifactBase):
+
+class MojangArtifact(MojangArtifactBase):
     path = StringProperty(exclude_if_none=True, default=None)
 
-class MojangAssets (MojangArtifactBase):
+
+class MojangAssets(MojangArtifactBase):
     id = StringProperty()
     totalSize = IntegerProperty()
+
 
 class MojangLibraryDownloads(JsonObject):
     artifact = ObjectProperty(MojangArtifact, exclude_if_none=True, default=None)
     classifiers = DictProperty(MojangArtifact, exclude_if_none=True, default=None)
 
+
 class MojangLibraryExtractRules(JsonObject):
     exclude = ListProperty(StringProperty)
+
 
 '''
             "rules": [
@@ -176,36 +183,44 @@ class MojangLibraryExtractRules(JsonObject):
             ]
 '''
 
-class OSRule (JsonObject):
-    name = StringProperty(choices=["osx", "linux", "windows"], required = True)
+
+class OSRule(JsonObject):
+    name = StringProperty(choices=["osx", "linux", "windows"], required=True)
     version = StringProperty(exclude_if_none=True, default=None)
 
-class MojangRule (JsonObject):
-    action = StringProperty(choices=["allow", "disallow"], required = True)
+
+class MojangRule(JsonObject):
+    action = StringProperty(choices=["allow", "disallow"], required=True)
     os = ObjectProperty(OSRule, exclude_if_none=True, default=None)
 
-class MojangLibrary (JsonObject):
+
+class MojangLibrary(JsonObject):
     extract = ObjectProperty(MojangLibraryExtractRules, exclude_if_none=True, default=None)
-    name = GradleSpecifierProperty(required = True)
+    name = GradleSpecifierProperty(required=True)
     downloads = ObjectProperty(MojangLibraryDownloads, exclude_if_none=True, default=None)
     natives = DictProperty(StringProperty, exclude_if_none=True, default=None)
     rules = ListProperty(MojangRule, exclude_if_none=True, default=None)
 
-class MojangLoggingArtifact (MojangArtifactBase):
+
+class MojangLoggingArtifact(MojangArtifactBase):
     id = StringProperty()
 
-class MojangLogging (JsonObject):
-    file = ObjectProperty(MojangLoggingArtifact, required = True)
-    argument = StringProperty(required = True)
-    type = StringProperty(required = True, choices=["log4j2-xml"])
 
-class MojangArguments (JsonObject):
+class MojangLogging(JsonObject):
+    file = ObjectProperty(MojangLoggingArtifact, required=True)
+    argument = StringProperty(required=True)
+    type = StringProperty(required=True, choices=["log4j2-xml"])
+
+
+class MojangArguments(JsonObject):
     game = ListProperty(exclude_if_none=True, default=None)
     jvm = ListProperty(exclude_if_none=True, default=None)
 
-class JavaVersion (JsonObject):
+
+class JavaVersion(JsonObject):
     component = StringProperty(default="jre-legacy")
     majorVersion = IntegerProperty(default=8)
+
 
 class UnknownVersionException(Exception):
     """Exception raised for unknown Mojang version file format versions.
@@ -213,15 +228,19 @@ class UnknownVersionException(Exception):
     Attributes:
         message -- explanation of the error
     """
+
     def __init__(self, message):
         self.message = message
+
 
 def validateSupportedMojangVersion(version):
     supportedVersion = 21
     if version > supportedVersion:
-        raise UnknownVersionException("Unsupported Mojang format version: %d. Max supported is: %d" % (version, supportedVersion))
+        raise UnknownVersionException(
+            "Unsupported Mojang format version: %d. Max supported is: %d" % (version, supportedVersion))
 
-class MojangVersionFile (JsonObject):
+
+class MojangVersionFile(JsonObject):
     arguments = ObjectProperty(MojangArguments, exclude_if_none=True, default=None)
     assetIndex = ObjectProperty(MojangAssets, exclude_if_none=True, default=None)
     assets = StringProperty(exclude_if_none=True, default=None)
@@ -231,7 +250,8 @@ class MojangVersionFile (JsonObject):
     mainClass = StringProperty(exclude_if_none=True, default=None)
     processArguments = StringProperty(exclude_if_none=True, default=None)
     minecraftArguments = StringProperty(exclude_if_none=True, default=None)
-    minimumLauncherVersion = IntegerProperty(exclude_if_none=True, default=None, validators=validateSupportedMojangVersion)
+    minimumLauncherVersion = IntegerProperty(exclude_if_none=True, default=None,
+                                             validators=validateSupportedMojangVersion)
     releaseTime = ISOTimestampProperty(exclude_if_none=True, default=None)
     time = ISOTimestampProperty(exclude_if_none=True, default=None)
     type = StringProperty(exclude_if_none=True, default=None)
@@ -240,24 +260,32 @@ class MojangVersionFile (JsonObject):
     complianceLevel = IntegerProperty(exclude_if_none=True, default=None)
     javaVersion = ObjectProperty(JavaVersion, exclude_if_none=True, default=None)
 
+
 CurrentPolyMCFormatVersion = 1
+
+
 def validateSupportedPolyMCVersion(version):
     if version > CurrentPolyMCFormatVersion:
-        raise UnknownVersionException("Unsupported PolyMC format version: %d. Max supported is: %d" % (version, CurrentPolyMCFormatVersion))
+        raise UnknownVersionException(
+            "Unsupported PolyMC format version: %d. Max supported is: %d" % (version, CurrentPolyMCFormatVersion))
 
-class PolyMCLibrary (MojangLibrary):
+
+class PolyMCLibrary(MojangLibrary):
     url = StringProperty(exclude_if_none=True, default=None)
-    pmcHint = StringProperty(name="PMC-hint", exclude_if_none=True, default=None)
+    mmcHint = StringProperty(name="MMC-hint", exclude_if_none=True, default=None)  # this is supposed to be MMC-hint!
+
 
 class VersionedJsonObject(JsonObject):
     formatVersion = IntegerProperty(default=CurrentPolyMCFormatVersion, validators=validateSupportedPolyMCVersion)
 
-class DependencyEntry (JsonObject):
+
+class DependencyEntry(JsonObject):
     uid = StringProperty(required=True)
     equals = StringProperty(exclude_if_none=True, default=None)
     suggests = StringProperty(exclude_if_none=True, default=None)
 
-class PolyMCVersionFile (VersionedJsonObject):
+
+class PolyMCVersionFile(VersionedJsonObject):
     name = StringProperty(required=True)
     version = StringProperty(required=True)
     uid = StringProperty(required=True)
@@ -278,18 +306,20 @@ class PolyMCVersionFile (VersionedJsonObject):
     addTweakers = ListProperty(StringProperty, name="+tweakers", exclude_if_none=True, default=None)
     order = IntegerProperty(exclude_if_none=True, default=None)
 
+
 class UnknownComplianceLevelException(Exception):
     """Exception raised for unknown Mojang compliance level
 
     Attributes:
         message -- explanation of the error
     """
+
     def __init__(self, message):
         self.message = message
 
 
 # Convert Mojang version file object to a PolyMC version file object
-def MojangToPolyMC (file, name, uid, version):
+def MojangToPolyMC(file, name, uid, version):
     pmcFile = PolyMCVersionFile(
         {
             "name": name,
@@ -328,8 +358,10 @@ def MojangToPolyMC (file, name, uid, version):
                 pmcFile.addTraits = []
             pmcFile.addTraits.append("XR:Initial")
         else:
-            raise UnknownComplianceLevelException("Unsupported Mojang compliance level: %d. Max supported is: %d" % (file.complianceLevel, maxSupportedLevel))
+            raise UnknownComplianceLevelException("Unsupported Mojang compliance level: %d. Max supported is: %d" % (
+            file.complianceLevel, maxSupportedLevel))
     return pmcFile
+
 
 class PolyMCSharedPackageData(VersionedJsonObject):
     name = StringProperty(required=True)
@@ -346,17 +378,20 @@ class PolyMCSharedPackageData(VersionedJsonObject):
         except EnvironmentError as e:
             print("Error while trying to save shared packaged data for %s:" % self.uid, e)
 
+
 def writeSharedPackageData(uid, name):
     desc = PolyMCSharedPackageData({
         'name': name,
         'uid': uid
-        })
+    })
     with open(PMC_DIR + "/%s/package.json" % uid, 'w') as file:
         json.dump(desc.to_json(), file, sort_keys=True, indent=4)
+
 
 def readSharedPackageData(uid):
     with open(PMC_DIR + "/%s/package.json" % uid, 'r') as file:
         return PolyMCSharedPackageData(json.load(file))
+
 
 class PolyMCVersionIndexEntry(JsonObject):
     version = StringProperty()
@@ -368,18 +403,22 @@ class PolyMCVersionIndexEntry(JsonObject):
     volatile = BooleanProperty(exclude_if_none=True, default=None)
     sha256 = StringProperty()
 
+
 class PolyMCVersionIndex(VersionedJsonObject):
     name = StringProperty()
     uid = StringProperty()
     versions = ListProperty(PolyMCVersionIndexEntry)
+
 
 class PolyMCPackageIndexEntry(JsonObject):
     name = StringProperty()
     uid = StringProperty()
     sha256 = StringProperty()
 
+
 class PolyMCPackageIndex(VersionedJsonObject):
     packages = ListProperty(PolyMCPackageIndexEntry)
+
 
 '''
 The PolyMC static override file for legacy looks like this:
@@ -400,16 +439,19 @@ The PolyMC static override file for legacy looks like this:
 }
 '''
 
+
 class LegacyOverrideEntry(JsonObject):
     releaseTime = ISOTimestampProperty(exclude_if_none=True, default=None)
     mainClass = StringProperty(exclude_if_none=True, default=None)
     appletClass = StringProperty(exclude_if_none=True, default=None)
     addTraits = ListProperty(StringProperty, name="+traits", exclude_if_none=True, default=None)
 
+
 class LegacyOverrideIndex(JsonObject):
     versions = DictProperty(LegacyOverrideEntry)
 
-def ApplyLegacyOverride (pmcFile, legacyOverride):
+
+def ApplyLegacyOverride(pmcFile, legacyOverride):
     # simply hard override classes
     pmcFile.mainClass = legacyOverride.mainClass
     pmcFile.appletClass = legacyOverride.appletClass

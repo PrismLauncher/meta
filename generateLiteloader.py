@@ -1,20 +1,17 @@
-import copy
-import os
-from datetime import datetime
-from pprint import pprint
-
-from jsonobject import *
 from liteloaderutil import *
 
 PMC_DIR = os.environ["PMC_DIR"]
 UPSTREAM_DIR = os.environ["UPSTREAM_DIR"]
+
 
 # load the locally cached version list
 def loadLiteloaderJson():
     with open(UPSTREAM_DIR + "/liteloader/versions.json", 'r', encoding='utf-8') as f:
         return LiteloaderIndex(json.load(f))
 
+
 remoteVersionlist = loadLiteloaderJson()
+
 
 def processArtefacts(mcVersion, liteloader, notSnapshots):
     versions = []
@@ -27,7 +24,7 @@ def processArtefacts(mcVersion, liteloader, notSnapshots):
             continue
         version = PolyMCVersionFile(name="LiteLoader", uid="com.mumfrey.liteloader", version=artefact.version)
         version.requires = [DependencyEntry(uid='net.minecraft', equals=mcVersion)]
-        version.releaseTime = datetime.utcfromtimestamp(int(artefact.timestamp))
+        version.releaseTime = datetime.datetime.utcfromtimestamp(int(artefact.timestamp))
         version.addTweakers = [artefact.tweakClass]
         version.mainClass = "net.minecraft.launchwrapper.Launch"
         version.order = 10
@@ -45,16 +42,17 @@ def processArtefacts(mcVersion, liteloader, notSnapshots):
                 lib.url = "http://repo.liteloader.com/"
         liteloaderLib = PolyMCLibrary(
             name=GradleSpecifier("com.mumfrey:liteloader:%s" % version.version),
-            url = "http://dl.liteloader.com/versions/"
+            url="http://dl.liteloader.com/versions/"
         )
         if not notSnapshots:
-            liteloaderLib.pmcHint = "always-stale"
+            liteloaderLib.mmcHint = "always-stale"
         libraries.append(liteloaderLib)
         version.libraries = libraries
         versions.append(version)
     if latestVersion:
         latest = lookup[latestVersion]
     return versions, latest
+
 
 allVersions = []
 recommended = []
@@ -84,7 +82,7 @@ for version in allVersions:
     with open(outFilepath, 'w') as outfile:
         json.dump(version.to_json(), outfile, sort_keys=True, indent=4)
 
-sharedData = PolyMCSharedPackageData(uid = 'com.mumfrey.liteloader', name = 'LiteLoader')
+sharedData = PolyMCSharedPackageData(uid='com.mumfrey.liteloader', name='LiteLoader')
 sharedData.recommended = recommended
 sharedData.description = remoteVersionlist.meta.description
 sharedData.projectUrl = remoteVersionlist.meta.url

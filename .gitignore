@@ -1,8 +1,8 @@
-http_cache
+public/*/
+
+caches/
+!caches/*/.keep
+__pycache__
+config_local.sh
 polymc
 upstream
-forgemaven
-forge_cache
-__pycache__
-*.kdev4
-config_local.sh

@@ -2,25 +2,22 @@
  Get the source files necessary for generating Forge versions
 '''
 import copy
-import json
-import os
-import os.path
 import sys
 
 import requests
 from cachecontrol import CacheControl
 from cachecontrol.caches import FileCache
-from jsonobject import *
 from liteloaderutil import *
 
 UPSTREAM_DIR = os.environ["UPSTREAM_DIR"]
 
+
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
 
-forever_cache = FileCache('http_cache', forever=True)
-sess = CacheControl(requests.Session(), forever_cache)
 
+forever_cache = FileCache('caches/http_cache', forever=True)
+sess = CacheControl(requests.Session(), forever_cache)
 
 # get the remote version list
 r = sess.get('http://dl.liteloader.com/versions/versions.json')

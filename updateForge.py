@@ -2,28 +2,26 @@
  Get the source files necessary for generating Forge versions
 '''
 import copy
-import datetime
 import hashlib
-import json
-import os
-import os.path
 import re
 import sys
 import zipfile
 from contextlib import suppress
 from pathlib import Path
+from pprint import pprint
 
 import requests
 from cachecontrol import CacheControl
 from cachecontrol.caches import FileCache
 from forgeutil import *
-from jsonobject import *
 from metautil import *
 
 UPSTREAM_DIR = os.environ["UPSTREAM_DIR"]
 
+
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
+
 
 def filehash(filename, hashtype, blocksize=65536):
     hash = hashtype()
@@ -32,7 +30,8 @@ def filehash(filename, hashtype, blocksize=65536):
             hash.update(block)
     return hash.hexdigest()
 
-forever_cache = FileCache('http_cache', forever=True)
+
+forever_cache = FileCache('caches/http_cache', forever=True)
 sess = CacheControl(requests.Session(), forever_cache)
 
 # get the remote version list fragments
@@ -71,13 +70,15 @@ for promoKey, shortversion in promotions_json.get('promos').items():
         continue
     elif match.group('promotion') == 'recommended':
         recommendedSet.add(shortversion)
-        print ('%s added to recommended set' % shortversion)
+        print('%s added to recommended set' % shortversion)
     elif match.group('promotion') == 'latest':
         pass
     else:
         assert False
 
-versionExpression = re.compile("^(?P<mc>[0-9a-zA-Z_\\.]+)-(?P<ver>[0-9\\.]+\\.(?P<build>[0-9]+))(-(?P<branch>[a-zA-Z0-9\\.]+))?$")
+versionExpression = re.compile(
+    "^(?P<mc>[0-9a-zA-Z_\\.]+)-(?P<ver>[0-9\\.]+\\.(?P<build>[0-9]+))(-(?P<branch>[a-zA-Z0-9\\.]+))?$")
+
 
 def getSingleForgeFilesManifest(longversion):
     pathThing = UPSTREAM_DIR + "/forge/files_manifests/%s.json" % longversion
@@ -85,7 +86,7 @@ def getSingleForgeFilesManifest(longversion):
     from_file = False
     if files_manifest_file.is_file():
         with open(pathThing, 'r') as f:
-            files_json=json.load(f)
+            files_json = json.load(f)
             from_file = True
     else:
         fileUrl = 'https://files.minecraftforge.net/net/minecraftforge/forge/%s/meta.json' % longversion
@@ -142,6 +143,7 @@ def getSingleForgeFilesManifest(longversion):
 
     return retDict
 
+
 print("")
 print("Making dirs...")
 os.makedirs(UPSTREAM_DIR + "/forge/jars/", exist_ok=True)
@@ -189,8 +191,8 @@ for mcversion, value in main_json.items():
             newIndex.by_mcversion.setdefault(mcversion, ForgeMcVersionInfo())
         newIndex.by_mcversion[mcversion].versions.append(longversion)
         # NOTE: we add this later after the fact. The forge promotions file lies about these.
-        #if entry.latest:
-            #newIndex.by_mcversion[mcversion].latest = longversion
+        # if entry.latest:
+        # newIndex.by_mcversion[mcversion].latest = longversion
         if entry.recommended:
             newIndex.by_mcversion[mcversion].recommended = longversion
 
@@ -223,14 +225,14 @@ fuckedVersions = []
 print("Grabbing installers and dumping installer profiles...")
 # get the installer jars - if needed - and get the installer profiles out of them
 for id, entry in newIndex.versions.items():
-    eprint ("Updating Forge %s" % id)
+    eprint("Updating Forge %s" % id)
     if entry.mcversion == None:
-        eprint ("Skipping %d with invalid MC version" % entry.build)
+        eprint("Skipping %d with invalid MC version" % entry.build)
         continue
 
     version = ForgeVersion(entry)
     if version.url() == None:
-        eprint ("Skipping %d with no valid files" % version.build)
+        eprint("Skipping %d with no valid files" % version.build)
         continue
 
     jarFilepath = UPSTREAM_DIR + "/forge/jars/%s" % version.filename()
@@ -248,14 +250,14 @@ for id, entry in newIndex.versions.items():
         if installerRefreshRequired:
             # grab the installer if it's not there
             if not os.path.isfile(jarFilepath):
-                eprint ("Downloading %s" % version.url())
+                eprint("Downloading %s" % version.url())
                 rfile = sess.get(version.url(), stream=True)
                 rfile.raise_for_status()
                 with open(jarFilepath, 'wb') as f:
                     for chunk in rfile.iter_content(chunk_size=128):
                         f.write(chunk)
 
-        eprint ("Processing %s" % version.url())
+        eprint("Processing %s" % version.url())
         # harvestables from the installer
         if not os.path.isfile(profileFilepath):
             print(jarFilepath)
@@ -303,7 +305,7 @@ for id, entry in newIndex.versions.items():
                         if version.isSupported():
                             raise exception
                         else:
-                            eprint ("Version %s is not supported and won't be generated later." % version.longVersion)
+                            eprint("Version %s is not supported and won't be generated later." % version.longVersion)
 
                     with open(profileFilepath, 'wb') as profileFile:
                         profileFile.write(installProfileJsonData)
@@ -312,13 +314,13 @@ for id, entry in newIndex.versions.items():
         # installer info v1
         if not os.path.isfile(installerInfoFilepath):
             installerInfo = InstallerInfo()
-            eprint ("SHA1 %s" % jarFilepath)
+            eprint("SHA1 %s" % jarFilepath)
             installerInfo.sha1hash = filehash(jarFilepath, hashlib.sha1)
-            eprint ("SHA256 %s" % jarFilepath)
+            eprint("SHA256 %s" % jarFilepath)
             installerInfo.sha256hash = filehash(jarFilepath, hashlib.sha256)
-            eprint ("SIZE %s" % jarFilepath)
+            eprint("SIZE %s" % jarFilepath)
             installerInfo.size = os.path.getsize(jarFilepath)
-            eprint ("DUMP %s" % jarFilepath)
+            eprint("DUMP %s" % jarFilepath)
             with open(installerInfoFilepath, 'w', encoding='utf-8') as installerInfoFile:
                 json.dump(installerInfo.to_json(), installerInfoFile, sort_keys=True, indent=4)
                 installerInfoFile.close()
@@ -339,7 +341,7 @@ for id, entry in newIndex.versions.items():
                     for chunk in rfile.iter_content(chunk_size=128):
                         f.write(chunk)
             # find the latest timestamp in the zip file
-            tstamp =  datetime.datetime.fromtimestamp(0)
+            tstamp = datetime.datetime.fromtimestamp(0)
             with zipfile.ZipFile(jarFilepath, 'r') as jar:
                 allinfo = jar.infolist()
                 for info in allinfo:

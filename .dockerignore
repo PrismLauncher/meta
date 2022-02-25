@@ -1,0 +1,9 @@
+.git/
+
+caches/
+__pycache__/
+public/
+
+polymc/
+upstream/
+config/

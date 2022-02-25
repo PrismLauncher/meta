@@ -1,20 +1,23 @@
-import os
 import re
 import sys
 from distutils.version import LooseVersion
 
 from forgeutil import *
-from jsonobject import *
 from metautil import *
 
 PMC_DIR = os.environ["PMC_DIR"]
 UPSTREAM_DIR = os.environ["UPSTREAM_DIR"]
 
+FORGEWRAPPER_MAVEN = "https://polymc.github.io/files/maven/%s"
+
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
 
+
 # Contruct a set of libraries out of a Minecraft version file, for filtering.
 mcVersionCache = {}
+
+
 def loadMcVersionFilter(version):
     if version in mcVersionCache:
         return mcVersionCache[version]
@@ -26,11 +29,14 @@ def loadMcVersionFilter(version):
         mcVersionCache[version] = libSet
         return libSet
 
+
 '''
 Match a library coordinate to a set of library coordinates.
  * Block those that pass completely.
  * For others, block those with lower versions than in the set.
 '''
+
+
 def shouldIgnoreArtifact(libSet, match):
     for ver in libSet:
         if ver.group == match.group and ver.artifact == match.artifact and ver.classifier == match.classifier:
@@ -47,8 +53,9 @@ def shouldIgnoreArtifact(libSet, match):
     # No match found in the set - we need to keep this
     return False
 
+
 def versionFromProfile(profile, version):
-    result = PolyMCVersionFile({"name":"Forge", "version":version.rawVersion, "uid":"net.minecraftforge" })
+    result = PolyMCVersionFile({"name": "Forge", "version": version.rawVersion, "uid": "net.minecraftforge"})
     mcversion = profile.install.minecraft
     result.requires = [DependencyEntry(uid='net.minecraft', equals=mcversion)]
     result.mainClass = profile.versionInfo.mainClass
@@ -87,16 +94,17 @@ def versionFromProfile(profile, version):
             ourLib.url = "https://maven.minecraftforge.net/"
         else:
             ourLib.url = forgeLib.url
-        #if forgeLib.checksums and len(forgeLib.checksums) == 2:
-        #    ourLib.pmcHint = "forge-pack-xz"
+        # if forgeLib.checksums and len(forgeLib.checksums) == 2:
+        #    ourLib.mmcHint = "forge-pack-xz"
         libs.append(ourLib)
     result.libraries = libs
     result.order = 5
     return result
 
-def versionFromModernizedInstaller(installerVersion : MojangVersionFile, version: ForgeVersion):
+
+def versionFromModernizedInstaller(installerVersion: MojangVersionFile, version: ForgeVersion):
     eprint("Generating Modernized Forge %s." % version.longVersion)
-    result = PolyMCVersionFile({"name":"Forge", "version":version.rawVersion, "uid":"net.minecraftforge" })
+    result = PolyMCVersionFile({"name": "Forge", "version": version.rawVersion, "uid": "net.minecraftforge"})
     mcversion = version.mcversion
     result.requires = [DependencyEntry(uid='net.minecraft', equals=mcversion)]
     result.mainClass = installerVersion.mainClass
@@ -148,8 +156,9 @@ def versionFromModernizedInstaller(installerVersion : MojangVersionFile, version
     result.order = 5
     return result
 
-def versionFromLegacy(version, legacyinfo : ForgeLegacyInfo):
-    result = PolyMCVersionFile({"name":"Forge", "version":version.rawVersion, "uid":"net.minecraftforge" })
+
+def versionFromLegacy(version, legacyinfo: ForgeLegacyInfo):
+    result = PolyMCVersionFile({"name": "Forge", "version": version.rawVersion, "uid": "net.minecraftforge"})
     mcversion = version.mcversion_sane
     result.requires = [DependencyEntry(uid='net.minecraft', equals=mcversion)]
     result.releaseTime = legacyinfo.releaseTime
@@ -162,8 +171,8 @@ def versionFromLegacy(version, legacyinfo : ForgeLegacyInfo):
         classifier = "universal"
     else:
         classifier = "client"
-    coord = GradleSpecifier("net.minecraftforge:forge:%s:%s" % (version.longVersion,classifier))
-    mainmod = PolyMCLibrary(name = coord)
+    coord = GradleSpecifier("net.minecraftforge:forge:%s:%s" % (version.longVersion, classifier))
+    mainmod = PolyMCLibrary(name=coord)
     mainmod.downloads = MojangLibraryDownloads()
     mainmod.downloads.artifact = MojangArtifact()
     mainmod.downloads.artifact.path = None
@@ -173,9 +182,11 @@ def versionFromLegacy(version, legacyinfo : ForgeLegacyInfo):
     result.jarMods = [mainmod]
     return result
 
-def versionFromBuildSystemInstaller(installerVersion : MojangVersionFile, installerProfile: ForgeInstallerProfileV2, version: ForgeVersion):
+
+def versionFromBuildSystemInstaller(installerVersion: MojangVersionFile, installerProfile: ForgeInstallerProfileV2,
+                                    version: ForgeVersion):
     eprint("Generating Forge %s." % version.longVersion)
-    result = PolyMCVersionFile({"name":"Forge", "version":version.rawVersion, "uid":"net.minecraftforge" })
+    result = PolyMCVersionFile({"name": "Forge", "version": version.rawVersion, "uid": "net.minecraftforge"})
     result.requires = [DependencyEntry(uid='net.minecraft', equals=version.mcversion_sane)]
     result.mainClass = "io.github.zekerzhayard.forgewrapper.installer.Main"
 
@@ -185,10 +196,12 @@ def versionFromBuildSystemInstaller(installerVersion : MojangVersionFile, instal
     # load the locally cached installer file info and use it to add the installer entry in the json
     with open(UPSTREAM_DIR + "/forge/installer_info/%s.json" % version.longVersion, 'r', encoding='utf-8') as f:
         installerInfo = InstallerInfo(json.load(f))
-        InstallerLib = PolyMCLibrary(name=GradleSpecifier("net.minecraftforge:forge:%s:installer" % (version.longVersion)))
+        InstallerLib = PolyMCLibrary(
+            name=GradleSpecifier("net.minecraftforge:forge:%s:installer" % (version.longVersion)))
         InstallerLib.downloads = MojangLibraryDownloads()
         InstallerLib.downloads.artifact = MojangArtifact()
-        InstallerLib.downloads.artifact.url = "https://files.minecraftforge.net/maven/%s" % (InstallerLib.name.getPath())
+        InstallerLib.downloads.artifact.url = "https://files.minecraftforge.net/maven/%s" % (
+            InstallerLib.name.getPath())
         InstallerLib.downloads.artifact.sha1 = installerInfo.sha1hash
         InstallerLib.downloads.artifact.size = installerInfo.size
         mavenLibs.append(InstallerLib)
@@ -208,66 +221,66 @@ def versionFromBuildSystemInstaller(installerVersion : MojangVersionFile, instal
     result.mavenFiles = mavenLibs
 
     libraries = []
-    #wrapperLib = PolyMCLibrary(name=GradleSpecifier("io.github.zekerzhayard:ForgeWrapper:1.4.1"))
-    #wrapperLib.downloads = MojangLibraryDownloads()
-    #wrapperLib.downloads.artifact = MojangArtifact()
-    #wrapperLib.downloads.artifact.url = "https://meta.polymc.org/maven/%s" % (wrapperLib.name.getPath())
-    #wrapperLib.downloads.artifact.sha1 = "82f01de97e29ba34be9fc628084b6d10ce2235c5"
-    #wrapperLib.downloads.artifact.size = 14351
-    #libraries.append(wrapperLib)
+    # wrapperLib = PolyMCLibrary(name=GradleSpecifier("io.github.zekerzhayard:ForgeWrapper:1.4.1"))
+    # wrapperLib.downloads = MojangLibraryDownloads()
+    # wrapperLib.downloads.artifact = MojangArtifact()
+    # wrapperLib.downloads.artifact.url = "https://meta.polymc.org/maven/%s" % (wrapperLib.name.getPath())
+    # wrapperLib.downloads.artifact.sha1 = "82f01de97e29ba34be9fc628084b6d10ce2235c5"
+    # wrapperLib.downloads.artifact.size = 14351
+    # libraries.append(wrapperLib)
 
-    #wrapperLib = PolyMCLibrary(name=GradleSpecifier("io.github.zekerzhayard:ForgeWrapper:1.4.2"))
-    #wrapperLib.downloads = MojangLibraryDownloads()
-    #wrapperLib.downloads.artifact = MojangArtifact()
-    #wrapperLib.downloads.artifact.url = "https://meta.polymc.org/maven/%s" % (wrapperLib.name.getPath())
-    #wrapperLib.downloads.artifact.sha1 = "79ff9c1530e8743450c5c3ebc6e07b535437aa6e"
-    #wrapperLib.downloads.artifact.size = 22346
-    #libraries.append(wrapperLib)
+    # wrapperLib = PolyMCLibrary(name=GradleSpecifier("io.github.zekerzhayard:ForgeWrapper:1.4.2"))
+    # wrapperLib.downloads = MojangLibraryDownloads()
+    # wrapperLib.downloads.artifact = MojangArtifact()
+    # wrapperLib.downloads.artifact.url = "https://meta.polymc.org/maven/%s" % (wrapperLib.name.getPath())
+    # wrapperLib.downloads.artifact.sha1 = "79ff9c1530e8743450c5c3ebc6e07b535437aa6e"
+    # wrapperLib.downloads.artifact.size = 22346
+    # libraries.append(wrapperLib)
 
-    #wrapperLib = PolyMCLibrary(name=GradleSpecifier("io.github.zekerzhayard:ForgeWrapper:1.5.1"))
-    #wrapperLib.downloads = MojangLibraryDownloads()
-    #wrapperLib.downloads.artifact = MojangArtifact()
-    #wrapperLib.downloads.artifact.url = "https://meta.polymc.org/maven/%s" % (wrapperLib.name.getPath())
-    #wrapperLib.downloads.artifact.sha1 = "90104e9aaa8fbedf6c3d1f6d0b90cabce080b5a9"
-    #wrapperLib.downloads.artifact.size = 29892
-    #libraries.append(wrapperLib)
+    # wrapperLib = PolyMCLibrary(name=GradleSpecifier("io.github.zekerzhayard:ForgeWrapper:1.5.1"))
+    # wrapperLib.downloads = MojangLibraryDownloads()
+    # wrapperLib.downloads.artifact = MojangArtifact()
+    # wrapperLib.downloads.artifact.url = "https://meta.polymc.org/maven/%s" % (wrapperLib.name.getPath())
+    # wrapperLib.downloads.artifact.sha1 = "90104e9aaa8fbedf6c3d1f6d0b90cabce080b5a9"
+    # wrapperLib.downloads.artifact.size = 29892
+    # libraries.append(wrapperLib)
 
-    #wrapperLib = PolyMCLibrary(name=GradleSpecifier("io.github.zekerzhayard:ForgeWrapper:1.5.3"))
-    #wrapperLib.downloads = MojangLibraryDownloads()
-    #wrapperLib.downloads.artifact = MojangArtifact()
-    #wrapperLib.downloads.artifact.url = "https://meta.polymc.org/maven/%s" % (wrapperLib.name.getPath())
-    #wrapperLib.downloads.artifact.sha1 = "2b0e06937349a209dbb90dca6381258daa456ad7"
-    #wrapperLib.downloads.artifact.size = 30486
-    #libraries.append(wrapperLib)
+    # wrapperLib = PolyMCLibrary(name=GradleSpecifier("io.github.zekerzhayard:ForgeWrapper:1.5.3"))
+    # wrapperLib.downloads = MojangLibraryDownloads()
+    # wrapperLib.downloads.artifact = MojangArtifact()
+    # wrapperLib.downloads.artifact.url = "https://meta.polymc.org/maven/%s" % (wrapperLib.name.getPath())
+    # wrapperLib.downloads.artifact.sha1 = "2b0e06937349a209dbb90dca6381258daa456ad7"
+    # wrapperLib.downloads.artifact.size = 30486
+    # libraries.append(wrapperLib)
 
-    #wrapperLib = PolyMCLibrary(name=GradleSpecifier("io.github.zekerzhayard:ForgeWrapper:1.5.4"))
-    #wrapperLib.downloads = MojangLibraryDownloads()
-    #wrapperLib.downloads.artifact = MojangArtifact()
-    #wrapperLib.downloads.artifact.url = "https://meta.polymc.org/maven/%s" % (wrapperLib.name.getPath())
-    #wrapperLib.downloads.artifact.sha1 = "e97805af76d4c1cebb753132eadbabd92e67a17b"
-    #wrapperLib.downloads.artifact.size = 34299
-    #libraries.append(wrapperLib)
+    # wrapperLib = PolyMCLibrary(name=GradleSpecifier("io.github.zekerzhayard:ForgeWrapper:1.5.4"))
+    # wrapperLib.downloads = MojangLibraryDownloads()
+    # wrapperLib.downloads.artifact = MojangArtifact()
+    # wrapperLib.downloads.artifact.url = "https://meta.polymc.org/maven/%s" % (wrapperLib.name.getPath())
+    # wrapperLib.downloads.artifact.sha1 = "e97805af76d4c1cebb753132eadbabd92e67a17b"
+    # wrapperLib.downloads.artifact.size = 34299
+    # libraries.append(wrapperLib)
 
-    #wrapperLib = PolyMCLibrary(name=GradleSpecifier("io.github.zekerzhayard:ForgeWrapper:pmc1"))
-    #wrapperLib.downloads = MojangLibraryDownloads()
-    #wrapperLib.downloads.artifact = MojangArtifact()
-    #wrapperLib.downloads.artifact.url = "https://meta.polymc.org/maven/%s" % (wrapperLib.name.getPath())
-    #wrapperLib.downloads.artifact.sha1 = "e8e0fe708742ecf15ab4af55ae8227fa4349362d"
-    #wrapperLib.downloads.artifact.size = 34628
-    #libraries.append(wrapperLib)
+    # wrapperLib = PolyMCLibrary(name=GradleSpecifier("io.github.zekerzhayard:ForgeWrapper:pmc1"))
+    # wrapperLib.downloads = MojangLibraryDownloads()
+    # wrapperLib.downloads.artifact = MojangArtifact()
+    # wrapperLib.downloads.artifact.url = "https://meta.polymc.org/maven/%s" % (wrapperLib.name.getPath())
+    # wrapperLib.downloads.artifact.sha1 = "e8e0fe708742ecf15ab4af55ae8227fa4349362d"
+    # wrapperLib.downloads.artifact.size = 34628
+    # libraries.append(wrapperLib)
 
-    #wrapperLib = PolyMCLibrary(name=GradleSpecifier("io.github.zekerzhayard:ForgeWrapper:1.5.5"))
-    #wrapperLib.downloads = MojangLibraryDownloads()
-    #wrapperLib.downloads.artifact = MojangArtifact()
-    #wrapperLib.downloads.artifact.url = "https://meta.polymc.org/maven/%s" % (wrapperLib.name.getPath())
-    #wrapperLib.downloads.artifact.sha1 = "566dfd60aacffaa02884614835f1151d36f1f985"
-    #wrapperLib.downloads.artifact.size = 34331
-    #libraries.append(wrapperLib)
+    # wrapperLib = PolyMCLibrary(name=GradleSpecifier("io.github.zekerzhayard:ForgeWrapper:1.5.5"))
+    # wrapperLib.downloads = MojangLibraryDownloads()
+    # wrapperLib.downloads.artifact = MojangArtifact()
+    # wrapperLib.downloads.artifact.url = "https://meta.polymc.org/maven/%s" % (wrapperLib.name.getPath())
+    # wrapperLib.downloads.artifact.sha1 = "566dfd60aacffaa02884614835f1151d36f1f985"
+    # wrapperLib.downloads.artifact.size = 34331
+    # libraries.append(wrapperLib)
 
-    wrapperLib = PolyMCLibrary(name=GradleSpecifier("io.github.zekerzhayard:ForgeWrapper:pmc2"))
+    wrapperLib = PolyMCLibrary(name=GradleSpecifier("io.github.zekerzhayard:ForgeWrapper:mmc2"))
     wrapperLib.downloads = MojangLibraryDownloads()
     wrapperLib.downloads.artifact = MojangArtifact()
-    wrapperLib.downloads.artifact.url = "https://meta.polymc.org/maven/%s" % (wrapperLib.name.getPath())
+    wrapperLib.downloads.artifact.url = FORGEWRAPPER_MAVEN % (wrapperLib.name.getPath())
     wrapperLib.downloads.artifact.sha1 = "4ee5f25cc9c7efbf54aff4c695da1054c1a1d7a3"
     wrapperLib.downloads.artifact.size = 34444
     libraries.append(wrapperLib)
@@ -349,26 +362,26 @@ legacyVersions = [
 
 for id, entry in remoteVersionlist.versions.items():
     if entry.mcversion == None:
-        eprint ("Skipping %s with invalid MC version" % id)
+        eprint("Skipping %s with invalid MC version" % id)
         continue
 
     version = ForgeVersion(entry)
     if version.url() == None:
-        eprint ("Skipping %s with no valid files" % id)
+        eprint("Skipping %s with no valid files" % id)
         continue
-    eprint ("Processing Forge %s" % version.rawVersion)
+    eprint("Processing Forge %s" % version.rawVersion)
     versionElements = version.rawVersion.split('.')
     if len(versionElements) < 1:
-        eprint ("Skipping version %s with not enough version elements" % (id))
+        eprint("Skipping version %s with not enough version elements" % (id))
         continue
 
     majorVersionStr = versionElements[0]
     if not majorVersionStr.isnumeric():
-        eprint ("Skipping version %s with non-numeric major version %s" % (id, majorVersionStr))
+        eprint("Skipping version %s with non-numeric major version %s" % (id, majorVersionStr))
         continue
 
     majorVersion = int(majorVersionStr)
-    #if majorVersion >= 37:
+    # if majorVersion >= 37:
     #    eprint ("Skipping unsupported major version %d (%s)" % (majorVersion, id))
     #    continue
 
@@ -377,7 +390,7 @@ for id, entry in remoteVersionlist.versions.items():
 
     # If we do not have the corresponding Minecraft version, we ignore it
     if not os.path.isfile(PMC_DIR + "/net.minecraft/%s.json" % version.mcversion_sane):
-        eprint ("Skipping %s with no corresponding Minecraft version %s" % (id, version.mcversion_sane))
+        eprint("Skipping %s with no corresponding Minecraft version %s" % (id, version.mcversion_sane))
         continue
 
     outVersion = None
@@ -401,7 +414,7 @@ for id, entry in remoteVersionlist.versions.items():
 
             # If we do not have the Forge json, we ignore this version
             if not os.path.isfile(profileFilepath):
-                eprint ("Skipping %s with missing profile json" % id)
+                eprint("Skipping %s with missing profile json" % id)
                 continue
             with open(profileFilepath, 'r', encoding='utf-8') as profileFile:
                 profile = ForgeInstallerProfile(json.load(profileFile))
@@ -423,9 +436,9 @@ for id, entry in remoteVersionlist.versions.items():
 
 recommendedVersions.sort()
 
-print ('Recommended versions:', recommendedVersions)
+print('Recommended versions:', recommendedVersions)
 
-sharedData = PolyMCSharedPackageData(uid = 'net.minecraftforge', name = "Forge")
+sharedData = PolyMCSharedPackageData(uid='net.minecraftforge', name="Forge")
 sharedData.projectUrl = 'https://www.minecraftforge.net/forum/'
 sharedData.recommended = recommendedVersions
 sharedData.write()

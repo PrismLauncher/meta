@@ -3,6 +3,7 @@ from .base_properties import DefaultProperty
 from .utils import check_type, SimpleDict
 import copy
 
+
 class JsonArray(list):
     def __init__(self, _obj=None, wrapper=None, type_config=None):
         super(JsonArray, self).__init__()
@@ -12,8 +13,8 @@ class JsonArray(list):
         assert type_config is not None
         self._type_config = type_config
         self._wrapper = (
-            wrapper or
-            DefaultProperty(type_config=self._type_config)
+                wrapper or
+                DefaultProperty(type_config=self._type_config)
         )
         for item in self._obj:
             super(JsonArray, self).append(self._wrapper.wrap(item))
@@ -118,8 +119,8 @@ class JsonDict(SimpleDict):
         assert type_config is not None
         self._type_config = type_config
         self._wrapper = (
-            wrapper or
-            DefaultProperty(type_config=self._type_config)
+                wrapper or
+                DefaultProperty(type_config=self._type_config)
         )
         for key, value in self._obj.items():
             self[key] = self.__wrap(key, value)
@@ -161,8 +162,8 @@ class JsonSet(set):
         assert type_config is not None
         self._type_config = type_config
         self._wrapper = (
-            wrapper or
-            DefaultProperty(type_config=self._type_config)
+                wrapper or
+                DefaultProperty(type_config=self._type_config)
         )
         for item in self._obj:
             super(JsonSet, self).add(self._wrapper.wrap(item))

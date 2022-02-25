@@ -1,7 +1,4 @@
-import datetime
 import hashlib
-import json
-import os
 import zipfile
 
 import requests
@@ -11,12 +8,14 @@ from fabricutil import *
 
 UPSTREAM_DIR = os.environ["UPSTREAM_DIR"]
 
-forever_cache = FileCache('http_cache', forever=True)
+forever_cache = FileCache('caches/http_cache', forever=True)
 sess = CacheControl(requests.Session(), forever_cache)
+
 
 def mkdirs(path):
     if not os.path.exists(path):
         os.makedirs(path)
+
 
 def filehash(filename, hashtype, blocksize=65536):
     hash = hashtype()
@@ -25,11 +24,13 @@ def filehash(filename, hashtype, blocksize=65536):
             hash.update(block)
     return hash.hexdigest()
 
+
 def get_maven_url(mavenKey, server, ext):
     mavenParts = mavenKey.split(":", 3)
     mavenVerUrl = server + mavenParts[0].replace(".", "/") + "/" + mavenParts[1] + "/" + mavenParts[2] + "/"
     mavenUrl = mavenVerUrl + mavenParts[1] + "-" + mavenParts[2] + ext
     return mavenUrl
+
 
 def get_json_file(path, url):
     with open(path, 'w', encoding='utf-8') as f:
@@ -39,6 +40,7 @@ def get_json_file(path, url):
         json.dump(version_json, f, sort_keys=True, indent=4)
         return version_json
 
+
 def get_binary_file(path, url):
     with open(path, 'w', encoding='utf-8') as f:
         r = sess.get(url)
@@ -46,6 +48,7 @@ def get_binary_file(path, url):
         with open(path, 'wb') as f:
             for chunk in r.iter_content(chunk_size=128):
                 f.write(chunk)
+
 
 def compute_jar_file(path, url):
     jarPath = path + ".jar"
@@ -65,13 +68,15 @@ def compute_jar_file(path, url):
     with open(path + ".json", 'w') as outfile:
         json.dump(data.to_json(), outfile, sort_keys=True, indent=4)
 
+
 mkdirs(UPSTREAM_DIR + "/fabric/meta-v2")
 mkdirs(UPSTREAM_DIR + "/fabric/loader-installer-json")
 mkdirs(UPSTREAM_DIR + "/fabric/jars")
 
 # get the version list for each component we are interested in
 for component in ["intermediary", "loader"]:
-    index = get_json_file(UPSTREAM_DIR + "/fabric/meta-v2/" + component + ".json", "https://meta.fabricmc.net/v2/versions/" + component)
+    index = get_json_file(UPSTREAM_DIR + "/fabric/meta-v2/" + component + ".json",
+                          "https://meta.fabricmc.net/v2/versions/" + component)
     for it in index:
         jarMavenUrl = get_maven_url(it["maven"], "https://maven.fabricmc.net/", ".jar")
         compute_jar_file(UPSTREAM_DIR + "/fabric/jars/" + it["maven"].replace(":", "."), jarMavenUrl)

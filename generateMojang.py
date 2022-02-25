@@ -1,19 +1,72 @@
 import copy
-import datetime
 import hashlib
-import json
-import os
 from collections import defaultdict, namedtuple
-from datetime import datetime
-from distutils import version
 from operator import itemgetter
 from pprint import pprint
 
-import iso8601
 from metautil import *
 
 PMC_DIR = os.environ["PMC_DIR"]
 UPSTREAM_DIR = os.environ["UPSTREAM_DIR"]
+
+
+def map_log4j_artifact(version):
+    if version == "2.0-beta9":
+        return ("2.0-beta9-fixed", "https://polymc.github.io/files/maven/%s")
+    return ("2.17.1", "https://repo1.maven.org/maven2/%s")  # This is the only version that's patched (as of 2022/02/19)
+
+
+LOG4J_HASHES = {
+    "2.0-beta9-fixed": {
+        "log4j-api": {
+            "sha1": "b61eaf2e64d8b0277e188262a8b771bbfa1502b3",
+            "size": 107347
+        },
+        "log4j-core": {
+            "sha1": "677991ea2d7426f76309a73739cecf609679492c",
+            "size": 677588
+        }
+    },
+    "2.17.1": {
+        "log4j-api": {
+            "sha1": "d771af8e336e372fb5399c99edabe0919aeaf5b2",
+            "size": 301872
+        },
+        "log4j-core": {
+            "sha1": "779f60f3844dadc3ef597976fcb1e5127b1f343d",
+            "size": 1790452
+        },
+        "log4j-slf4j18-impl": {
+            "sha1": "ca499d751f4ddd8afb016ef698c30be0da1d09f7",
+            "size": 21268
+        }
+    }
+}
+
+# LWJGL versions we want
+passVariants = [
+    "41d3ed7a755d15ad9e2f5a8aea51481858d60763",  # 3.2.2 (2021-12-10 03:36:38+00:00)
+    "57455f0bb479e07e5b554766f9f0310a6c245e10",  # 3.1.2 (2018-06-21 12:57:11+00:00)
+    "abfbb7905498983ab3300ae2b897ccd3c11ab8bb",  # 2.9.0 (2013-10-21 16:34:47+00:00)
+    "47fd9d3677d7a0bcdb280453a7e7ac1fdbdab70d",  # 2.9.4-nightly-20150209 (2016-12-20 14:05:34+00:00)
+    "8ee2407d76c3af7882ab897b6ef25392839d2ab0",  # 3.1.6 (2019-04-18 11:05:19+00:00)
+    "428282d96ee546aae07d0717fef71ab8213d1176",  # 3.2.1 (2019-04-18 11:05:19+00:00)
+    "c7a84795ac3197bb476949665f3eda9c79436cf7",  # 2.9.1 (2014-05-22 14:44:33+00:00)
+    "66a60d78abe20960f1befd0fd5819a8855100055",  # 2.9.1-nightly-20131120 (2013-12-06 13:55:34+00:00)
+    "15a92ddad26186e720117fc0e318c6ddb8bae14e",  # 2.9.3 (2015-01-30 11:58:24+00:00)
+]
+
+# LWJGL versions we def. don't want!
+badVariants = [
+    "089446ef48f6ac70a3e2bc4a02cd1f34060d31bd",  # 3.2.2 (2021-08-25 14:41:57+00:00)
+    "6a0aaa55846ebccae9cf69e1ac2e284b3f0d81d0",  # 3.2.2 (2019-07-19 09:25:47+00:00)
+    "e3ecb31817e009ebfb3a8ed41b7b779d31e55b43",  # 3.2.2 (2019-07-04 14:41:05+00:00)
+    "2d0b7aa8397278c5b5f7e9cd025544af5e820072",  # 2.9.0 (2013-09-06 12:31:58+00:00)
+    "905c3a9d80a804c2d03a577775b75f45c1837263",  # 2.9.0 (2011-03-30 22:00:00+00:00)
+    "d889b127fbabd3493115beb228730146072549a4",  # 3.1.6 (2018-11-29 13:11:38+00:00)
+    "0034e86cec334f9142ca4ace843c91eb649017fd",  # 3.2.1 (2019-02-13 16:12:08+00:00)
+]
+
 
 def addOrGetBucket(buckets, rules):
     ruleHash = None
@@ -35,17 +88,21 @@ def addOrGetBucket(buckets, rules):
         buckets[ruleHash] = bucket
     return bucket
 
+
 def hashVersion(lwjgl):
     lwjglObjectCopy = copy.deepcopy(lwjgl)
-    lwjglObjectCopy.releaseTime = datetime.fromtimestamp(0)
-    return hashlib.sha1(json.dumps(lwjglObjectCopy.to_json()).encode("utf-8", "strict")).hexdigest()
+    lwjglObjectCopy.releaseTime = datetime.datetime.fromtimestamp(0)
+    return hashlib.sha1(json.dumps(lwjglObjectCopy.to_json(), sort_keys=True).encode("utf-8", "strict")).hexdigest()
+
 
 def sort_libs_by_name(library):
     return library.name
 
+
 LWJGLEntry = namedtuple('LWJGLEntry', ('version', 'sha1'))
 
 lwjglVersionVariants = defaultdict(list)
+
 
 def addLWJGLVersion(versionVariants, lwjglObject):
     lwjglObjectCopy = copy.deepcopy(lwjglObject)
@@ -65,12 +122,14 @@ def addLWJGLVersion(versionVariants, lwjglObject):
         print("!!! New variant for LWJGL version %s" % (lwjglVersion))
         versionVariants[lwjglVersion].append(LWJGLEntry(version=lwjglObjectCopy, sha1=lwjglObjectHash))
 
+
 def removePathsFromLib(lib):
     if pmcLib.downloads.artifact:
         pmcLib.downloads.artifact.path = None
     if pmcLib.downloads.classifiers:
         for key, value in pmcLib.downloads.classifiers.items():
             value.path = None
+
 
 def adaptNewStyleArguments(arguments):
     outarr = []
@@ -92,10 +151,11 @@ def adaptNewStyleArguments(arguments):
             pprint(arg)
     return ' '.join(outarr)
 
+
 def isOnlyMacOS(rules, specifier):
     allowsOSX = False
     allowsAll = False
-    #print("Considering", specifier, "rules", rules)
+    # print("Considering", specifier, "rules", rules)
     if rules:
         for rule in rules:
             if rule.action == "allow" and rule.os and rule.os.name == "osx":
@@ -133,7 +193,7 @@ for filename in os.listdir(UPSTREAM_DIR + '/mojang/versions'):
                     rules = pmcLib.rules
                     pmcLib.rules = None
                 if isOnlyMacOS(rules, specifier):
-                    print("Candidate library ",  specifier, " is only for macOS and is therefore ignored.")
+                    print("Candidate library ", specifier, " is only for macOS and is therefore ignored.")
                     continue
                 bucket = addOrGetBucket(buckets, rules)
                 if specifier.group == "org.lwjgl.lwjgl" and specifier.artifact == "lwjgl":
@@ -149,36 +209,21 @@ for filename in os.listdir(UPSTREAM_DIR + '/mojang/versions'):
             else:
                 # FIXME: workaround for insane log4j nonsense from December 2021. Probably needs adjustment.
                 if pmcLib.name.isLog4j():
-                    log4jVersion = '2.16.0'
-                    if pmcLib.name.version == '2.0-beta9':
-                        log4jVersion = '2.0-beta9-fixed'
+                    versionOverride, mavenOverride = map_log4j_artifact(pmcLib.name.version)
 
-                    replacementLib = PolyMCLibrary(name=GradleSpecifier("org.apache.logging.log4j:%s:%s" % (pmcLib.name.artifact, log4jVersion)))
+                    if versionOverride not in LOG4J_HASHES:
+                        raise Exception("ERROR: unhandled log4j version (overriden) %s!" % versionOverride)
+
+                    if pmcLib.name.artifact not in LOG4J_HASHES[versionOverride]:
+                        raise Exception("ERROR: unhandled log4j artifact %s!" % pmcLib.name.artifact)
+
+                    replacementLib = PolyMCLibrary(name=GradleSpecifier(
+                        "org.apache.logging.log4j:%s:%s" % (pmcLib.name.artifact, versionOverride)))
                     replacementLib.downloads = MojangLibraryDownloads()
                     replacementLib.downloads.artifact = MojangArtifact()
-                    replacementLib.downloads.artifact.url = "https://meta.polymc.org/maven/%s" % (replacementLib.name.getPath())
-
-                    if log4jVersion == "2.16.0":
-                        if pmcLib.name.artifact == "log4j-api":
-                            replacementLib.downloads.artifact.sha1 = "f821a18687126c2e2f227038f540e7953ad2cc8c"
-                            replacementLib.downloads.artifact.size = 301892
-                        elif pmcLib.name.artifact == "log4j-core":
-                            replacementLib.downloads.artifact.sha1 = "539a445388aee52108700f26d9644989e7916e7c"
-                            replacementLib.downloads.artifact.size = 1789565
-                        elif pmcLib.name.artifact == "log4j-slf4j18-impl":
-                            replacementLib.downloads.artifact.sha1 = "0c880a059056df5725f5d8d1035276d9749eba6d"
-                            replacementLib.downloads.artifact.size = 21249
-                        else:
-                            raise Exception("ERROR: unhandled log4j artifact %s!" % pmcLib.name.artifact)
-                    elif log4jVersion == "2.0-beta9-fixed":
-                        if pmcLib.name.artifact == "log4j-api":
-                            replacementLib.downloads.artifact.sha1 = "b61eaf2e64d8b0277e188262a8b771bbfa1502b3"
-                            replacementLib.downloads.artifact.size = 107347
-                        elif pmcLib.name.artifact == "log4j-core":
-                            replacementLib.downloads.artifact.sha1 = "677991ea2d7426f76309a73739cecf609679492c"
-                            replacementLib.downloads.artifact.size = 677588
-                        else:
-                            raise Exception("ERROR: unhandled log4j artifact %s!" % pmcLib.name.artifact)
+                    replacementLib.downloads.artifact.url = mavenOverride % (replacementLib.name.getPath())
+                    replacementLib.downloads.artifact.sha1 = LOG4J_HASHES[versionOverride][pmcLib.name.artifact]["sha1"]
+                    replacementLib.downloads.artifact.size = LOG4J_HASHES[versionOverride][pmcLib.name.artifact]["size"]
                     libs_minecraft.append(replacementLib)
                 else:
                     libs_minecraft.append(pmcLib)
@@ -244,9 +289,10 @@ for filename in os.listdir(UPSTREAM_DIR + '/mojang/versions'):
             versionFile.minecraftArguments = adaptNewStyleArguments(mojangVersionFile.arguments)
         filenameOut = PMC_DIR + "/net.minecraft/%s.json" % versionFile.version
         if versionFile.version in staticVersionlist.versions:
-            ApplyLegacyOverride (versionFile, staticVersionlist.versions[versionFile.version])
+            ApplyLegacyOverride(versionFile, staticVersionlist.versions[versionFile.version])
         with open(filenameOut, 'w') as outfile:
             json.dump(versionFile.to_json(), outfile, sort_keys=True, indent=4)
+
 
 def processSingleVariant(lwjglVariant):
     lwjglVersion = lwjglVariant.version
@@ -262,7 +308,8 @@ def processSingleVariant(lwjglVariant):
         versionObj.uid = 'org.lwjgl3'
         versionObj.conflicts = [DependencyEntry(uid='org.lwjgl')]
         # remove jutils and jinput from LWJGL 3 -- this is a dependency that Mojang kept in, but doesn't belong there anymore
-        filteredLibraries = list(filter(lambda lib: not lib.name.artifact in ["jutils", "jinput"], versionObj.libraries))
+        filteredLibraries = list(
+            filter(lambda lib: not lib.name.artifact in ["jutils", "jinput"], versionObj.libraries))
         versionObj.libraries = filteredLibraries
     else:
         raise Exception("LWJGL version not recognized: %s" % versionObj.version)
@@ -282,7 +329,8 @@ def processSingleVariant(lwjglVariant):
             for entry in checkedDict:
                 bakedEntry = lib.natives[entry]
                 if not bakedEntry in lib.downloads.classifiers:
-                    print("Missing download for classifier!", versionObj.version, lib.name, bakedEntry, lib.downloads.classifiers.keys())
+                    print("Missing download for classifier!", versionObj.version, lib.name, bakedEntry,
+                          lib.downloads.classifiers.keys())
                     good = False
                     break
     if good:
@@ -291,36 +339,6 @@ def processSingleVariant(lwjglVariant):
     else:
         print("Skipped LWJGL", versionObj.version)
 
-
-passVariants = [
-    "052e510a2f7f2d5d8c3ecb9b56330c2ada6525aa", # 2.9.0
-    "cee21a30bbd11e9cda6b2ffdb107eb279e7fc2f4", # 2.9.1
-    "e29c23ddd882d31d04624f27d1bf2f461bad2cac", # 2.9.1-nightly-20131120
-    "3e0f048ff0a3b6ebf30d7d7a12bc61d1ca55ec1d", # 2.9.3
-    "0f2b1287a39cffee5f88afa287a79eb0f130cf2f", # 2.9.4-nightly-20150209
-    "5e686afe52b072ffef9dc716b04109d45a3d662c", # 3.1.2
-    "f1437e21fb6fff0a359d31f60b61795a1ff113cd", # 3.1.6
-    "cb2da930d079fba83b88e989f76e392ac532a859", # 3.2.1
-    "782b8365dd5ba9437d03113c295a62247543493b", # 3.2.2
-]
-
-badVariants = [
-    "032bfe9afc34cf1271037f734a6e7a8835fdfff0", # 2.9.0 - duplication nation
-    "859f5679c60fce520a7c8cfe0c5663f848ff51ab", # 2.9.0 - broken natives
-    "143fc2e22a97042b06e87d599a06b411606a11de", # 2.9.0 - old cringe version
-    "a5340aa0194e31371d961da8c7419d7b7acc769e", # 2.9.0 - 2010 moment
-    "7811cd3ba93467842b1823ca8e571f3d49421291", # 3.1.6
-    "a3179ec5cb1ff62b46e4407ae53487c53e5e42c8", # 3.1.6 - old cringe version
-    "194e5109cbdfb8d5a7da918c449b7414cd609629", # 3.2.1
-    "95df90ab21aa9e9f45d7a9e09da7761d95b3cc42", # 3.2.1 - old cringe version
-    "74f2ae137e9767f0cfbe10ca9db38adaba08a4a6", # 3.2.2 - missing tinyfd
-    "eaeeca768920d981bdc8ea698305f4e9723c6ba8", # 3.2.2 - missing osx natives
-    "8a85feb57480e9cbb0b9c54e7b1751816122cf97", # 3.2.2 - missing other osx natives
-    "65d4ba873bc1244fda9fd7fabd5f6d917316a4e8", # 3.2.2 - introduced in 21w42a, missing jinput and jutils
-    "80d5d553b2b32cd8a2ee2e89576af12fba452bad", # 3.2.2 - old cringe version (ends with bad therefore bad)
-    "dc63fc89717e85261bca306c6dcc791294006195", # 3.2.2 - old cringe version
-    "d46aa08f10fccd75e2e3f26dc5ee677c7d472231", # 3.2.2 - old cringe version
-]
 
 for lwjglVersionVariant in lwjglVersionVariants:
     decidedVariant = None
@@ -338,29 +356,28 @@ for lwjglVersionVariant in lwjglVersionVariants:
             passedVariants += 1
             continue
 
-        print("Variant %s:" % (variant.sha1))
-        print(json.dumps(variant.version.to_json(), sort_keys=True, indent=4))
-        print("")
+        print(f"    \"{variant.sha1}\",  # {lwjglVersionVariant} ({variant.version.releaseTime})")
         unknownVariants += 1
     print("")
 
     if decidedVariant and passedVariants == 1 and unknownVariants == 0:
         processSingleVariant(decidedVariant.version)
     else:
-        raise Exception("No variant decided for version %s out of %d possible ones and %d unknown ones." % (lwjglVersionVariant, passedVariants, unknownVariants))
+        raise Exception("No variant decided for version %s out of %d possible ones and %d unknown ones." % (
+        lwjglVersionVariant, passedVariants, unknownVariants))
 
-lwjglSharedData = PolyMCSharedPackageData(uid = 'org.lwjgl', name = 'LWJGL 2')
+lwjglSharedData = PolyMCSharedPackageData(uid='org.lwjgl', name='LWJGL 2')
 lwjglSharedData.recommended = ['2.9.4-nightly-20150209']
 lwjglSharedData.write()
 
 if found_any_lwjgl3:
-    lwjglSharedData = PolyMCSharedPackageData(uid = 'org.lwjgl3', name = 'LWJGL 3')
+    lwjglSharedData = PolyMCSharedPackageData(uid='org.lwjgl3', name='LWJGL 3')
     lwjglSharedData.recommended = ['3.1.2']
     lwjglSharedData.write()
 
 with open(UPSTREAM_DIR + "/mojang/version_manifest_v2.json", 'r', encoding='utf-8') as localIndexFile:
     localVersionlist = MojangIndexWrap(json.load(localIndexFile))
 
-mcSharedData = PolyMCSharedPackageData(uid = 'net.minecraft', name = 'Minecraft')
+mcSharedData = PolyMCSharedPackageData(uid='net.minecraft', name='Minecraft')
 mcSharedData.recommended = [localVersionlist.latest['release']]
 mcSharedData.write()

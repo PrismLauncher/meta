@@ -5,6 +5,9 @@ cd "${BASEDIR}"
 BASEDIR=`pwd`
 
 source config.sh
+if [ -f config/config_local.sh ]; then
+    source config/config_local.sh
+fi
 
 set -x
 
