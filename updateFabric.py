@@ -65,17 +65,17 @@ def get_binary_file(path, url):
 
 
 def compute_jar_file(path, url):
-    headers = head_file(url)
-
-    # These should result in the same metadata, except for the timestamp which might be a few minutes off for the
-    # fallback method
+    # These two approaches should result in the same metadata, except for the timestamp which might be a few minutes
+    # off for the fallback method
     try:
         # Let's not download a Jar file if we don't need to.
+        headers = head_file(url)
         tstamp = datetime.datetime.strptime(headers["Last-Modified"], DATETIME_FORMAT_HTTP)
         sha1 = get_plaintext(url + ".sha1")
         sha256 = get_plaintext(url + ".sha256")
         size = int(headers["Content-Length"])
-    except requests.HTTPError:  # Some older versions don't have a .sha256 file :(
+    except requests.HTTPError:
+        # Some older versions don't have a .sha256 file :(
         print(f"Falling back to downloading jar for {url}")
 
         jar_path = path + ".jar"
