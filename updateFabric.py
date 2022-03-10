@@ -6,6 +6,8 @@ from cachecontrol import CacheControl
 from cachecontrol.caches import FileCache
 from fabricutil import *
 
+DATETIME_FORMAT_HTTP = "%a, %d %b %Y %H:%M:%S %Z"
+
 UPSTREAM_DIR = os.environ["UPSTREAM_DIR"]
 
 forever_cache = FileCache('caches/http_cache', forever=True)
@@ -41,6 +43,18 @@ def get_json_file(path, url):
         return version_json
 
 
+def get_plaintext(url):
+    r = sess.get(url)
+    r.raise_for_status()
+    return r.text
+
+
+def head_file(url):
+    r = sess.head(url)
+    r.raise_for_status()
+    return r.headers
+
+
 def get_binary_file(path, url):
     with open(path, 'w', encoding='utf-8') as f:
         r = sess.get(url)
@@ -51,20 +65,38 @@ def get_binary_file(path, url):
 
 
 def compute_jar_file(path, url):
-    jarPath = path + ".jar"
-    get_binary_file(jarPath, url)
-    tstamp = datetime.datetime.fromtimestamp(0)
-    with zipfile.ZipFile(jarPath, 'r') as jar:
-        allinfo = jar.infolist()
-        for info in allinfo:
-            tstampNew = datetime.datetime(*info.date_time)
-            if tstampNew > tstamp:
-                tstamp = tstampNew
+    headers = head_file(url)
+
+    # These should result in the same metadata, except for the timestamp which might be a few minutes off for the
+    # fallback method
+    try:
+        # Let's not download a Jar file if we don't need to.
+        tstamp = datetime.datetime.strptime(headers["Last-Modified"], DATETIME_FORMAT_HTTP)
+        sha1 = get_plaintext(url + ".sha1")
+        sha256 = get_plaintext(url + ".sha256")
+        size = int(headers["Content-Length"])
+    except requests.HTTPError:  # Some older versions don't have a .sha256 file :(
+        print(f"Falling back to downloading jar for {url}")
+
+        jar_path = path + ".jar"
+        get_binary_file(jar_path, url)
+        tstamp = datetime.datetime.fromtimestamp(0)
+        with zipfile.ZipFile(jar_path, 'r') as jar:
+            allinfo = jar.infolist()
+            for info in allinfo:
+                tstamp_new = datetime.datetime(*info.date_time)
+                if tstamp_new > tstamp:
+                    tstamp = tstamp_new
+
+        sha1 = filehash(jar_path, hashlib.sha1)
+        sha256 = filehash(jar_path, hashlib.sha256)
+        size = os.path.getsize(jar_path)
+
     data = FabricJarInfo()
     data.releaseTime = tstamp
-    data.sha1 = filehash(jarPath, hashlib.sha1)
-    data.sha256 = filehash(jarPath, hashlib.sha256)
-    data.size = os.path.getsize(jarPath)
+    data.sha1 = sha1
+    data.sha256 = sha256
+    data.size = size
     with open(path + ".json", 'w') as outfile:
         json.dump(data.to_json(), outfile, sort_keys=True, indent=4)
 
