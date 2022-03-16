@@ -3,6 +3,9 @@ from fabricutil import *
 PMC_DIR = os.environ["PMC_DIR"]
 UPSTREAM_DIR = os.environ["UPSTREAM_DIR"]
 
+# TODO: Switch to Quilt Mappings once the time has come
+USE_QUILT_MAPPINGS = False
+
 # turn loader versions into packages
 loaderRecommended = []
 loaderVersions = []
@@ -31,7 +34,10 @@ def processLoaderVersion(loaderVersion, it, loaderData):
     versionJarInfo = loadJarInfo(it["maven"])
     version = PolyMCVersionFile(name="Quilt Loader", uid="org.quiltmc.quilt-loader", version=loaderVersion)
     version.releaseTime = versionJarInfo.releaseTime
-    version.requires = [DependencyEntry(uid='org.quiltmc.quilt-mappings')]
+    if USE_QUILT_MAPPINGS:
+        version.requires = [DependencyEntry(uid='org.quiltmc.quilt-mappings')]
+    else:
+        version.requires = [DependencyEntry(uid='net.fabricmc.intermediary')]
     version.order = 10
     version.type = "release"
     if isinstance(loaderData.mainClass, dict):
@@ -73,10 +79,11 @@ with open(UPSTREAM_DIR + "/quilt/meta-v3/loader.json", 'r', encoding='utf-8') as
             ldata = FabricInstallerDataV1(ldata)
             processLoaderVersion(version, it, ldata)
 
-with open(UPSTREAM_DIR + "/quilt/meta-v3/quilt-mappings.json", 'r', encoding='utf-8') as intermediaryVersionIndexFile:
-    intermediaryVersionIndex = json.load(intermediaryVersionIndexFile)
-    for it in intermediaryVersionIndex:
-        processIntermediaryVersion(it)
+if USE_QUILT_MAPPINGS:
+    with open(UPSTREAM_DIR + "/quilt/meta-v3/quilt-mappings.json", 'r', encoding='utf-8') as intermediaryVersionIndexFile:
+        intermediaryVersionIndex = json.load(intermediaryVersionIndexFile)
+        for it in intermediaryVersionIndex:
+            processIntermediaryVersion(it)
 
 for version in loaderVersions:
     outFilepath = PMC_DIR + "/org.quiltmc.quilt-loader/%s.json" % version.version
@@ -90,14 +97,15 @@ sharedData.projectUrl = "https://quiltmc.org"
 sharedData.authors = ["Quilt Project"]
 sharedData.write()
 
-for version in intermediaryVersions:
-    outFilepath = PMC_DIR + "/org.quiltmc.quilt-mappings/%s.json" % version.version
-    with open(outFilepath, 'w') as outfile:
-        json.dump(version.to_json(), outfile, sort_keys=True, indent=4)
+if USE_QUILT_MAPPINGS:
+    for version in intermediaryVersions:
+        outFilepath = PMC_DIR + "/org.quiltmc.quilt-mappings/%s.json" % version.version
+        with open(outFilepath, 'w') as outfile:
+            json.dump(version.to_json(), outfile, sort_keys=True, indent=4)
 
-sharedData = PolyMCSharedPackageData(uid='org.quiltmc.quilt-mappings', name='Quilt Intermediary Mappings')
-sharedData.recommended = intermediaryRecommended
-sharedData.description = "Intermediary mappings allow using Quilt Loader with mods for Minecraft in a more compatible manner."
-sharedData.projectUrl = "https://quiltmc.org"
-sharedData.authors = ["Quilt Project"]
-sharedData.write()
+    sharedData = PolyMCSharedPackageData(uid='org.quiltmc.quilt-mappings', name='Quilt Intermediary Mappings')
+    sharedData.recommended = intermediaryRecommended
+    sharedData.description = "Intermediary mappings allow using Quilt Loader with mods for Minecraft in a more compatible manner."
+    sharedData.projectUrl = "https://quiltmc.org"
+    sharedData.authors = ["Quilt Project"]
+    sharedData.write()
