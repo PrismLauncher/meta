@@ -13,8 +13,8 @@ from pprint import pprint
 import requests
 from cachecontrol import CacheControl
 from cachecontrol.caches import FileCache
-from forgeutil import *
-from metautil import *
+from meta.forgeutil import *
+from meta.metautil import *
 
 UPSTREAM_DIR = os.environ["UPSTREAM_DIR"]
 

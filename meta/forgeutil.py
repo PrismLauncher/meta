@@ -1,6 +1,6 @@
 from collections import namedtuple
 
-from metautil import *
+from .metautil import *
 
 
 # A post-processed entry constructed from the reconstructed Forge version index

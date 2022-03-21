@@ -1,22 +1,17 @@
-from fabricutil import *
+from meta.fabricutil import *
+from meta.common import ensure_component_dir, polymc_path, upstream_path
 
-PMC_DIR = os.environ["PMC_DIR"]
-UPSTREAM_DIR = os.environ["UPSTREAM_DIR"]
+PMC_DIR = polymc_path()
+UPSTREAM_DIR = upstream_path()
+
+ensure_component_dir("net.fabricmc.fabric-loader")
+ensure_component_dir("net.fabricmc.intermediary")
 
 # turn loader versions into packages
 loaderRecommended = []
 loaderVersions = []
 intermediaryRecommended = []
 intermediaryVersions = []
-
-
-def mkdirs(path):
-    if not os.path.exists(path):
-        os.makedirs(path)
-
-
-mkdirs(PMC_DIR + "/net.fabricmc.fabric-loader")
-mkdirs(PMC_DIR + "/net.fabricmc.intermediary")
 
 
 def loadJarInfo(mavenKey):

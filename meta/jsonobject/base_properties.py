@@ -137,7 +137,7 @@ class JsonContainerProperty(JsonProperty):
             self.item_type
 
     def set_item_type(self, item_type):
-        from jsonobject.base import JsonObjectMeta
+        from meta.jsonobject.base import JsonObjectMeta
         if hasattr(item_type, '_type'):
             item_type = item_type._type
         if isinstance(item_type, tuple):

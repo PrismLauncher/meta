@@ -4,7 +4,7 @@ import zipfile
 import requests
 from cachecontrol import CacheControl
 from cachecontrol.caches import FileCache
-from fabricutil import *
+from meta.fabricutil import *
 
 DATETIME_FORMAT_HTTP = "%a, %d %b %Y %H:%M:%S %Z"
 

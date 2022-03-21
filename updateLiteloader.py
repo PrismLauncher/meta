@@ -7,7 +7,7 @@ import sys
 import requests
 from cachecontrol import CacheControl
 from cachecontrol.caches import FileCache
-from liteloaderutil import *
+from meta.liteloaderutil import *
 
 UPSTREAM_DIR = os.environ["UPSTREAM_DIR"]
 

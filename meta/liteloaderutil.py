@@ -1,4 +1,4 @@
-from metautil import *
+from .metautil import *
 
 '''
     "repo":{

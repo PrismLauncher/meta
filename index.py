@@ -1,7 +1,7 @@
 import hashlib
 from operator import itemgetter
 
-from metautil import *
+from meta.metautil import *
 
 PMC_DIR = os.environ["PMC_DIR"]
 

@@ -2,20 +2,17 @@ import re
 import sys
 from distutils.version import LooseVersion
 
-from forgeutil import *
-from metautil import *
+from meta.forgeutil import *
+from meta.metautil import *
+from meta.common import ensure_component_dir, polymc_path, upstream_path
 
-PMC_DIR = os.environ["PMC_DIR"]
-UPSTREAM_DIR = os.environ["UPSTREAM_DIR"]
+PMC_DIR = polymc_path()
+UPSTREAM_DIR = upstream_path()
 
-def mkdirs(path):
-    if not os.path.exists(path):
-        os.makedirs(path)
-
-
-mkdirs(PMC_DIR + "/net.minecraftforge")
+ensure_component_dir("net.minecraftforge")
 
 FORGEWRAPPER_MAVEN = "https://polymc.github.io/files/maven/%s"
+
 
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)

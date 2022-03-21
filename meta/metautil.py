@@ -3,7 +3,7 @@ import json
 import os
 
 import iso8601
-from jsonobject import *
+from .jsonobject import *
 
 PMC_DIR = os.environ["PMC_DIR"]
 

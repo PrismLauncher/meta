@@ -1,3 +1,5 @@
+# TODO: maybe move to pydantic in the future?
+
 from __future__ import absolute_import
 from .base import JsonObjectMeta
 from .containers import JsonArray
@@ -10,5 +12,6 @@ __all__ = [
     'StringProperty', 'BooleanProperty',
     'DateProperty', 'DateTimeProperty', 'TimeProperty',
     'ObjectProperty', 'ListProperty', 'DictProperty', 'SetProperty',
-    'JsonObject', 'JsonArray', 'AbstractDateProperty', 'JsonProperty'
+    'JsonObject', 'JsonArray', 'AbstractDateProperty', 'JsonProperty',
+    'DefaultProperty'
 ]

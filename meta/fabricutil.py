@@ -1,5 +1,4 @@
-import jsonobject
-from metautil import *
+from .metautil import *
 
 
 class FabricInstallerArguments(JsonObject):
@@ -21,7 +20,7 @@ class FabricInstallerLibraries(JsonObject):
 class FabricInstallerDataV1(JsonObject):
     version = IntegerProperty(required=True)
     libraries = ObjectProperty(FabricInstallerLibraries, required=True)
-    mainClass = jsonobject.DefaultProperty()
+    mainClass = DefaultProperty()
     arguments = ObjectProperty(FabricInstallerArguments, required=False)
     launchwrapper = ObjectProperty(FabricInstallerLaunchwrapper, required=False)
 

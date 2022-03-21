@@ -4,19 +4,16 @@ from collections import defaultdict, namedtuple
 from operator import itemgetter
 from pprint import pprint
 
-from metautil import *
+from meta.metautil import *
+from meta.common import ensure_component_dir, polymc_path, upstream_path
 
-PMC_DIR = os.environ["PMC_DIR"]
-UPSTREAM_DIR = os.environ["UPSTREAM_DIR"]
+PMC_DIR = polymc_path()
+UPSTREAM_DIR = upstream_path()
 
-def mkdirs(path):
-    if not os.path.exists(path):
-        os.makedirs(path)
+ensure_component_dir("net.minecraft")
+ensure_component_dir("org.lwjgl")
+ensure_component_dir("org.lwjgl")
 
-
-mkdirs(PMC_DIR + "/net.minecraft")
-mkdirs(PMC_DIR + "/org.lwjgl")
-mkdirs(PMC_DIR + "/org.lwjgl3")
 
 def map_log4j_artifact(version):
     if version == "2.0-beta9":
@@ -372,7 +369,7 @@ for lwjglVersionVariant in lwjglVersionVariants:
         processSingleVariant(decidedVariant.version)
     else:
         raise Exception("No variant decided for version %s out of %d possible ones and %d unknown ones." % (
-        lwjglVersionVariant, passedVariants, unknownVariants))
+            lwjglVersionVariant, passedVariants, unknownVariants))
 
 lwjglSharedData = PolyMCSharedPackageData(uid='org.lwjgl', name='LWJGL 2')
 lwjglSharedData.recommended = ['2.9.4-nightly-20150209']

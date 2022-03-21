@@ -3,7 +3,7 @@ from enum import Enum
 import requests
 from cachecontrol import CacheControl
 from cachecontrol.caches import FileCache
-from metautil import *
+from meta.metautil import *
 
 PMC_DIR = os.environ["PMC_DIR"]
 

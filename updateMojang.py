@@ -1,7 +1,7 @@
 import requests
 from cachecontrol import CacheControl
 from cachecontrol.caches import FileCache
-from metautil import *
+from meta.metautil import *
 
 UPSTREAM_DIR = os.environ["UPSTREAM_DIR"]
 

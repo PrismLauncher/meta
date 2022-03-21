@@ -1,6 +1,7 @@
 .git/
 
 caches/
+.idea/
 __pycache__/
 public/
 

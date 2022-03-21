@@ -1,14 +1,11 @@
-from liteloaderutil import *
+from meta.liteloaderutil import *
+from meta.common import ensure_component_dir, polymc_path, upstream_path
 
-PMC_DIR = os.environ["PMC_DIR"]
-UPSTREAM_DIR = os.environ["UPSTREAM_DIR"]
+PMC_DIR = polymc_path()
+UPSTREAM_DIR = upstream_path()
 
-def mkdirs(path):
-    if not os.path.exists(path):
-        os.makedirs(path)
+ensure_component_dir("com.mumfrey.liteloader")
 
-
-mkdirs(PMC_DIR + "/com.mumfrey.liteloader")
 
 # load the locally cached version list
 def loadLiteloaderJson():
