@@ -8,6 +8,13 @@ from metautil import *
 PMC_DIR = os.environ["PMC_DIR"]
 UPSTREAM_DIR = os.environ["UPSTREAM_DIR"]
 
+def mkdirs(path):
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+
+mkdirs(PMC_DIR + "/net.minecraftforge")
+
 FORGEWRAPPER_MAVEN = "https://polymc.github.io/files/maven/%s"
 
 def eprint(*args, **kwargs):

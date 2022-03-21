@@ -3,6 +3,12 @@ from liteloaderutil import *
 PMC_DIR = os.environ["PMC_DIR"]
 UPSTREAM_DIR = os.environ["UPSTREAM_DIR"]
 
+def mkdirs(path):
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+
+mkdirs(PMC_DIR + "/com.mumfrey.liteloader")
 
 # load the locally cached version list
 def loadLiteloaderJson():

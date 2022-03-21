@@ -9,6 +9,14 @@ from metautil import *
 PMC_DIR = os.environ["PMC_DIR"]
 UPSTREAM_DIR = os.environ["UPSTREAM_DIR"]
 
+def mkdirs(path):
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+
+mkdirs(PMC_DIR + "/net.minecraft")
+mkdirs(PMC_DIR + "/org.lwjgl")
+mkdirs(PMC_DIR + "/org.lwjgl3")
 
 def map_log4j_artifact(version):
     if version == "2.0-beta9":
