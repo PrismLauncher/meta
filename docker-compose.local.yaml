@@ -9,8 +9,4 @@ services:
         GID: 1000
     command: update
     volumes:
-      - "./caches:/app/caches"
-      - "./upstream:/app/upstream"
-      - "./polymc:/app/polymc"
-      - "./public:/app/public"
-      - "./config:/app/config"
+      - "./:/app"
