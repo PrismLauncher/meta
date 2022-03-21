@@ -4,8 +4,9 @@ import os
 
 import iso8601
 from .jsonobject import *
+from .common import polymc_path
 
-PMC_DIR = os.environ["PMC_DIR"]
+PMC_DIR = polymc_path()
 
 
 class ISOTimestampProperty(AbstractDateProperty):
