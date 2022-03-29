@@ -1,10 +1,13 @@
 import hashlib
 import zipfile
+import json
+import os
+from datetime import datetime
 
 import requests
 from cachecontrol import CacheControl
 from cachecontrol.caches import FileCache
-from meta.fabricutil import *
+from meta.model.fabric import FabricJarInfo
 from meta.common import DATETIME_FORMAT_HTTP, upstream_path, ensure_upstream_dir, transform_maven_key
 from meta.common.fabric import JARS_DIR, INSTALLER_INFO_DIR, META_DIR
 
@@ -68,7 +71,7 @@ def compute_jar_file(path, url):
     try:
         # Let's not download a Jar file if we don't need to.
         headers = head_file(url)
-        tstamp = datetime.datetime.strptime(headers["Last-Modified"], DATETIME_FORMAT_HTTP)
+        tstamp = datetime.strptime(headers["Last-Modified"], DATETIME_FORMAT_HTTP)
         sha1 = get_plaintext(url + ".sha1")
         sha256 = get_plaintext(url + ".sha256")
         size = int(headers["Content-Length"])
@@ -78,11 +81,11 @@ def compute_jar_file(path, url):
 
         jar_path = path + ".jar"
         get_binary_file(jar_path, url)
-        tstamp = datetime.datetime.fromtimestamp(0)
+        tstamp = datetime.fromtimestamp(0)
         with zipfile.ZipFile(jar_path, 'r') as jar:
             allinfo = jar.infolist()
             for info in allinfo:
-                tstamp_new = datetime.datetime(*info.date_time)
+                tstamp_new = datetime(*info.date_time)
                 if tstamp_new > tstamp:
                     tstamp = tstamp_new
 
@@ -90,13 +93,8 @@ def compute_jar_file(path, url):
         sha256 = filehash(jar_path, hashlib.sha256)
         size = os.path.getsize(jar_path)
 
-    data = FabricJarInfo()
-    data.releaseTime = tstamp
-    data.sha1 = sha1
-    data.sha256 = sha256
-    data.size = size
-    with open(path + ".json", 'w') as outfile:
-        json.dump(data.to_json(), outfile, sort_keys=True, indent=4)
+    data = FabricJarInfo(releaseTime=tstamp, sha1=sha1, sha256=sha256, size=size)
+    data.write(path + ".json")
 
 
 def main():

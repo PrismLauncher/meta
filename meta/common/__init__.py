@@ -1,6 +1,11 @@
 import os
+import datetime
 
 DATETIME_FORMAT_HTTP = "%a, %d %b %Y %H:%M:%S %Z"
+
+
+def serialize_datetime(dt: datetime.datetime):
+    return dt.replace(tzinfo=datetime.timezone.utc).isoformat()
 
 
 def polymc_path():
