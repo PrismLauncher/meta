@@ -20,6 +20,12 @@ def upstream_path():
     return "upstream"
 
 
+def static_path():
+    if "STATIC_DIR" in os.environ:
+        return os.environ["STATIC_DIR"]
+    return "static"
+
+
 def ensure_upstream_dir(path):
     path = os.path.join(upstream_path(), path)
     if not os.path.exists(path):

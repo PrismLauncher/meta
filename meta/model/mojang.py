@@ -1,5 +1,7 @@
 from datetime import datetime
-from typing import Optional, List
+from typing import Optional, List, Dict
+
+from pydantic import AnyHttpUrl
 
 from . import MetaBase
 
@@ -50,3 +52,19 @@ class MojangIndexWrap:
         self.index = index
         self.latest = index.latest
         self.versions = dict((x.id, x) for x in index.versions)
+
+
+class ExperimentEntry(MetaBase):
+    id: str
+    url: AnyHttpUrl
+    wiki: Optional[AnyHttpUrl]
+
+
+class ExperimentIndex(MetaBase):
+    experiments: List[ExperimentEntry]
+
+
+class ExperimentIndexWrap:
+    def __init__(self, index: ExperimentIndex):
+        self.index: ExperimentIndex = index
+        self.versions: Dict[str, ExperimentEntry] = dict((x.id, x) for x in index.experiments)
