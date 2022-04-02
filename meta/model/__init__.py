@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Dict, Any, Iterator
 
 import pydantic
 from pydantic import Field, AnyHttpUrl, validator
@@ -106,10 +106,10 @@ class MojangRule(MetaBase):
 class MojangRules(MetaBase):
     __root__: List[MojangRule]
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[MojangRule]:
         return iter(self.__root__)
 
-    def __getitem__(self, item):
+    def __getitem__(self, item) -> MojangRule:
         return self.__root__[item]
 
 
@@ -138,7 +138,7 @@ class Dependency(MetaBase):
     suggests: Optional[str]
 
 
-class MetaVersionFile(Versioned):
+class MetaVersion(Versioned):
     name: str
     version: str
     uid: str
@@ -161,7 +161,7 @@ class MetaVersionFile(Versioned):
     additional_tweakers: Optional[List[str]] = Field(alias="+tweakers")
 
 
-class MetaPackageData(Versioned):
+class MetaPackage(Versioned):
     name: str
     uid: str
     recommended: Optional[List[str]]

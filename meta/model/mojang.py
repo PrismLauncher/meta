@@ -4,7 +4,7 @@ from typing import Optional, List, Dict, Any
 from pydantic import AnyHttpUrl, validator, Field
 
 from . import MetaBase, MojangArtifactBase, MojangAssets, MojangLibrary, MojangArtifact, MojangLibraryDownloads, \
-    Library, MetaVersionFile, GradleSpecifier
+    Library, MetaVersion, GradleSpecifier
 
 SUPPORTED_LAUNCHER_VERSION = 21
 SUPPORTED_COMPLIANCE_LEVEL = 1
@@ -38,12 +38,12 @@ class MojangLatestVersion(MetaBase):
 
 class MojangIndexEntry(MetaBase):
     id: Optional[str]
-    releaseTime: Optional[datetime]
+    release_time: Optional[datetime] = Field(alias="releaseTime")
     time: Optional[datetime]
     type: Optional[str]
     url: Optional[str]
     sha1: Optional[str]
-    complianceLevel: Optional[int]
+    compliance_level: Optional[int] = Field(alias="complianceLevel")
 
 
 class MojangIndex(MetaBase):
@@ -80,7 +80,7 @@ class LegacyOverrideEntry(MetaBase):
     release_time: Optional[datetime] = Field(alias="releaseTime")
     additional_traits: Optional[List[str]] = Field(alias="+traits")
 
-    def apply_onto_meta_version(self, meta_version: MetaVersionFile, legacy: bool = True):
+    def apply_onto_meta_version(self, meta_version: MetaVersion, legacy: bool = True):
         # simply hard override classes
         meta_version.main_class = self.main_class
         meta_version.applet_class = self.applet_class
@@ -127,40 +127,40 @@ class MojangLogging(MetaBase):
 
 class JavaVersion(MetaBase):
     component: str = "jre-legacy"
-    majorVersion: int = 8
+    major_version: int = Field(8, alias="majorVersion")
 
 
-class MojangVersionFile(MetaBase):
-    @validator("minimumLauncherVersion")
+class MojangVersion(MetaBase):
+    @validator("minimum_launcher_version")
     def validate_minimum_launcher_version(cls, v):
         assert v <= SUPPORTED_LAUNCHER_VERSION
         return v
 
-    @validator("complianceLevel")
+    @validator("compliance_level")
     def validate_compliance_level(cls, v):
         assert v <= SUPPORTED_COMPLIANCE_LEVEL
         return v
 
     id: str  # TODO: optional?
     arguments: Optional[MojangArguments]
-    assetIndex: Optional[MojangAssets]
+    asset_index: Optional[MojangAssets] = Field(alias="assetIndex")
     assets: Optional[str]
     downloads: Dict[str, MojangArtifactBase]  # TODO improve this?
     libraries: Optional[List[MojangLibrary]]  # TODO: optional?
-    mainClass: Optional[str]
-    appletClass: Optional[str]
+    main_class: Optional[str] = Field(alias="mainClass")
+    applet_class: Optional[str] = Field(alias="appletClass")
     processArguments: Optional[str]
-    minecraftArguments: Optional[str]
-    minimumLauncherVersion: Optional[int]  # TODO: validate validateSupportedMojangVersion
-    releaseTime: Optional[datetime]
+    minecraft_arguments: Optional[str] = Field(alias="minecraftArguments")
+    minimum_launcher_version: Optional[int] = Field(alias="minimumLauncherVersion")  # TODO: validate validateSupportedMojangVersion
+    release_time: Optional[datetime] = Field(alias="releaseTime")
     time: Optional[datetime]
     type: Optional[str]
     inheritsFrom: Optional[str]
     logging: Optional[Dict[str, MojangLogging]]  # TODO improve this?
-    complianceLevel: Optional[int]
+    compliance_level: Optional[int] = Field(alias="complianceLevel")
     javaVersion: Optional[JavaVersion]
 
-    def to_meta_version(self, name: str, uid: str, version: str) -> MetaVersionFile:
+    def to_meta_version(self, name: str, uid: str, version: str) -> MetaVersion:
         main_jar = None
         addn_traits = None
         new_type = self.type
@@ -171,14 +171,14 @@ class MojangVersionFile(MetaBase):
             downloads = MojangLibraryDownloads(artifact=artifact)
             main_jar = Library(name=GradleSpecifier("com.mojang:minecraft:%s:client" % self.id), downloads=downloads)
 
-        if not self.complianceLevel:  # both == 0 and is None
+        if not self.compliance_level:  # both == 0 and is None
             pass
-        elif self.complianceLevel == 1:
+        elif self.compliance_level == 1:
             if not addn_traits:
                 addn_traits = []
             addn_traits.append("XR:Initial")
         else:
-            raise Exception(f"Unsupported compliance level {self.complianceLevel}")
+            raise Exception(f"Unsupported compliance level {self.compliance_level}")
 
         if self.javaVersion is not None:  # some versions don't have this. TODO: maybe maintain manual overrides
             major = self.javaVersion.major_version
@@ -189,15 +189,15 @@ class MojangVersionFile(MetaBase):
         if new_type == "pending":  # TODO: why wasn't this needed before large refactor
             new_type = "experiment"
 
-        return MetaVersionFile(
+        return MetaVersion(
             name=name,
             uid=uid,
             version=version,
-            asset_index=self.assetIndex,
+            asset_index=self.asset_index,
             libraries=self.libraries,
-            main_class=self.mainClass,
-            minecraft_arguments=self.minecraftArguments,
-            release_time=self.releaseTime,
+            main_class=self.main_class,
+            minecraft_arguments=self.minecraft_arguments,
+            release_time=self.release_time,
             type=new_type,
             compatible_java_majors=compatible_java_majors,
             additional_traits=addn_traits,

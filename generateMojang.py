@@ -9,9 +9,9 @@ from typing import Optional
 from meta.common import ensure_component_dir, polymc_path, upstream_path
 from meta.common.mojang import VERSION_MANIFEST_FILE, MINECRAFT_COMPONENT, LWJGL3_COMPONENT, LWJGL_COMPONENT, \
     STATIC_OVERRIDES_FILE, VERSIONS_DIR
-from meta.model import MetaVersionFile, Library, GradleSpecifier, MojangLibraryDownloads, MojangArtifact, Dependency, \
-    MetaPackageData, MojangRules
-from meta.model.mojang import MojangIndexWrap, MojangIndex, MojangVersionFile, LegacyOverrideIndex
+from meta.model import MetaVersion, Library, GradleSpecifier, MojangLibraryDownloads, MojangArtifact, Dependency, \
+    MetaPackage, MojangRules
+from meta.model.mojang import MojangIndexWrap, MojangIndex, MojangVersion, LegacyOverrideIndex
 from updateMojang import STATIC_DIR
 
 PMC_DIR = polymc_path()
@@ -80,7 +80,7 @@ BAD_VARIANTS = [
 ]
 
 
-def add_or_get_bucket(buckets, rules: Optional[MojangRules]) -> MetaVersionFile:
+def add_or_get_bucket(buckets, rules: Optional[MojangRules]) -> MetaVersion:
     rule_hash = None
     if rules:
         rule_hash = hash(rules.json())
@@ -88,13 +88,13 @@ def add_or_get_bucket(buckets, rules: Optional[MojangRules]) -> MetaVersionFile:
     if rule_hash in buckets:
         bucket = buckets[rule_hash]
     else:
-        bucket = MetaVersionFile(name="LWJGL", version="undetermined", uid=LWJGL_COMPONENT)
+        bucket = MetaVersion(name="LWJGL", version="undetermined", uid=LWJGL_COMPONENT)
         bucket.type = "release"
         buckets[rule_hash] = bucket
     return bucket
 
 
-def hash_lwjgl_version(lwjgl: MetaVersionFile):
+def hash_lwjgl_version(lwjgl: MetaVersion):
     lwjgl_copy = copy.deepcopy(lwjgl)
     lwjgl_copy.release_time = None
     return hashlib.sha1(lwjgl_copy.json().encode("utf-8", "strict")).hexdigest()
@@ -119,16 +119,16 @@ def add_lwjgl_version(variants, lwjgl):
     current_hash = hash_lwjgl_version(lwjgl_copy)
     found = False
     for variant in variants[version]:
-        existingHash = variant.sha1
-        if current_hash == existingHash:
+        existing_hash = variant.sha1
+        if current_hash == existing_hash:
             found = True
             break
     if not found:
-        print("!!! New variant for LWJGL version %s" % (version))
+        print("!!! New variant for LWJGL version %s" % version)
         variants[version].append(LWJGLEntry(version=lwjgl_copy, sha1=current_hash))
 
 
-def removePathsFromLib(lib):
+def remove_paths_from_lib(lib):
     if lib.downloads.artifact:
         lib.downloads.artifact.path = None
     if lib.downloads.classifiers:
@@ -136,8 +136,8 @@ def removePathsFromLib(lib):
             value.path = None
 
 
-def adaptNewStyleArguments(arguments):
-    outarr = []
+def adapt_new_style_arguments(arguments):
+    foo = []
     # we ignore the jvm arguments entirely.
     # grab the strings, log the complex stuff
     for arg in arguments.game:
@@ -150,14 +150,14 @@ def adaptNewStyleArguments(arguments):
                 continue
             if arg == '${auth_xuid}':
                 continue
-            outarr.append(arg)
+            foo.append(arg)
         else:
             print("!!! Unrecognized structure in Minecraft game arguments:")
             pprint(arg)
-    return ' '.join(outarr)
+    return ' '.join(foo)
 
 
-def is_macos_only(rules: Optional[MojangRules], specifier):
+def is_macos_only(rules: Optional[MojangRules]):
     allows_osx = False
     allows_all = False
     # print("Considering", specifier, "rules", rules)
@@ -172,50 +172,49 @@ def is_macos_only(rules: Optional[MojangRules], specifier):
     return False
 
 
-def process_single_variant(lwjgl_variant: MetaVersionFile):
-    lwjglVersion = lwjgl_variant.version
-    versionObj = copy.deepcopy(lwjgl_variant)
-    if lwjglVersion[0] == '2':
-        filename = os.path.join(PMC_DIR, LWJGL_COMPONENT, f"{lwjglVersion}.json")
-        versionObj.name = 'LWJGL 2'
-        versionObj.uid = LWJGL_COMPONENT
-        versionObj.conflicts = [Dependency(uid=LWJGL3_COMPONENT)]
-    elif lwjglVersion[0] == '3':
-        filename = os.path.join(PMC_DIR, LWJGL3_COMPONENT, f"{lwjglVersion}.json")
-        versionObj.name = 'LWJGL 3'
-        versionObj.uid = LWJGL3_COMPONENT
-        versionObj.conflicts = [Dependency(uid=LWJGL_COMPONENT)]
+def process_single_variant(lwjgl_variant: MetaVersion):
+    lwjgl_version = lwjgl_variant.version
+    v = copy.deepcopy(lwjgl_variant)
+    if lwjgl_version[0] == '2':
+        filename = os.path.join(PMC_DIR, LWJGL_COMPONENT, f"{lwjgl_version}.json")
+        v.name = 'LWJGL 2'
+        v.uid = LWJGL_COMPONENT
+        v.conflicts = [Dependency(uid=LWJGL3_COMPONENT)]
+    elif lwjgl_version[0] == '3':
+        filename = os.path.join(PMC_DIR, LWJGL3_COMPONENT, f"{lwjgl_version}.json")
+        v.name = 'LWJGL 3'
+        v.uid = LWJGL3_COMPONENT
+        v.conflicts = [Dependency(uid=LWJGL_COMPONENT)]
         # remove jutils and jinput from LWJGL 3
         # this is a dependency that Mojang kept in, but doesn't belong there anymore
-        filteredLibraries = list(
-            filter(lambda lib: not lib.name.artifact in ["jutils", "jinput"], versionObj.libraries))
-        versionObj.libraries = filteredLibraries
+        filtered_libraries = list(filter(lambda l: l.name.artifact not in ["jutils", "jinput"], v.libraries))
+        v.libraries = filtered_libraries
     else:
-        raise Exception("LWJGL version not recognized: %s" % versionObj.version)
+        raise Exception("LWJGL version not recognized: %s" % v.version)
 
-    versionObj.volatile = True
-    versionObj.order = -1
+    v.volatile = True
+    v.order = -1
     good = True
-    for lib in versionObj.libraries:
+    for lib in v.libraries:
         if not lib.natives:
             continue
-        checkedDict = {'linux', 'windows', 'osx'}
-        if not checkedDict.issubset(lib.natives.keys()):
-            print("Missing system classifier!", versionObj.version, lib.name, lib.natives.keys())
+        checked_dict = {'linux', 'windows', 'osx'}
+        if not checked_dict.issubset(lib.natives.keys()):
+            print("Missing system classifier!", v.version, lib.name, lib.natives.keys())
             good = False
             break
         if lib.downloads:
-            for entry in checkedDict:
-                bakedEntry = lib.natives[entry]
-                if not bakedEntry in lib.downloads.classifiers:
-                    print("Missing download for classifier!", versionObj.version, lib.name, bakedEntry,
+            for entry in checked_dict:
+                baked_entry = lib.natives[entry]
+                if baked_entry not in lib.downloads.classifiers:
+                    print("Missing download for classifier!", v.version, lib.name, baked_entry,
                           lib.downloads.classifiers.keys())
                     good = False
                     break
     if good:
-        versionObj.write(filename)
+        v.write(filename)
     else:
-        print("Skipped LWJGL", versionObj.version)
+        print("Skipped LWJGL", v.version)
 
 
 def main():
@@ -230,21 +229,21 @@ def main():
             # skip non JSON files
             continue
         print("Processing", filename)
-        mojangVersionFile = MojangVersionFile.parse_file(input_file)
-        versionFile = mojangVersionFile.to_meta_version("Minecraft", MINECRAFT_COMPONENT, mojangVersionFile.id)
+        mojang_version = MojangVersion.parse_file(input_file)
+        v = mojang_version.to_meta_version("Minecraft", MINECRAFT_COMPONENT, mojang_version.id)
+
         libs_minecraft = []
         is_lwjgl_3 = False
         buckets = {}
-        for pmcLib in versionFile.libraries:
-            removePathsFromLib(pmcLib)
-            specifier = pmcLib.name
-            ruleHash = None
+        for lib in v.libraries:
+            remove_paths_from_lib(lib)
+            specifier = lib.name
             if specifier.is_lwjgl():
                 rules = None
-                if pmcLib.rules:
-                    rules = pmcLib.rules
-                    pmcLib.rules = None
-                if is_macos_only(rules, specifier):
+                if lib.rules:
+                    rules = lib.rules
+                    lib.rules = None
+                if is_macos_only(rules):
                     print("Candidate library ", specifier, " is only for macOS and is therefore ignored.")
                     continue
                 bucket = add_or_get_bucket(buckets, rules)
@@ -256,141 +255,138 @@ def main():
                     bucket.version = specifier.version
                 if not bucket.libraries:
                     bucket.libraries = []
-                bucket.libraries.append(pmcLib)
-                bucket.release_time = versionFile.release_time
+                bucket.libraries.append(lib)
+                bucket.release_time = v.release_time
+            # FIXME: workaround for insane log4j nonsense from December 2021. Probably needs adjustment.
+            elif lib.name.is_log4j():
+                version_override, maven_override = map_log4j_artifact(lib.name.version)
+
+                if version_override not in LOG4J_HASHES:
+                    raise Exception("ERROR: unhandled log4j version (overriden) %s!" % version_override)
+
+                if lib.name.artifact not in LOG4J_HASHES[version_override]:
+                    raise Exception("ERROR: unhandled log4j artifact %s!" % lib.name.artifact)
+
+                replacement_name = GradleSpecifier(
+                    "org.apache.logging.log4j:%s:%s" % (lib.name.artifact, version_override))
+                artifact = MojangArtifact(
+                    url=maven_override % (replacement_name.path()),
+                    sha1=LOG4J_HASHES[version_override][lib.name.artifact]["sha1"],
+                    size=LOG4J_HASHES[version_override][lib.name.artifact]["size"]
+                )
+
+                libs_minecraft.append(Library(
+                    name=replacement_name,
+                    downloads=MojangLibraryDownloads(artifact=artifact)
+                ))
             else:
-                # FIXME: workaround for insane log4j nonsense from December 2021. Probably needs adjustment.
-                if pmcLib.name.is_log4j():
-                    versionOverride, mavenOverride = map_log4j_artifact(pmcLib.name.version)
-
-                    if versionOverride not in LOG4J_HASHES:
-                        raise Exception("ERROR: unhandled log4j version (overriden) %s!" % versionOverride)
-
-                    if pmcLib.name.artifact not in LOG4J_HASHES[versionOverride]:
-                        raise Exception("ERROR: unhandled log4j artifact %s!" % pmcLib.name.artifact)
-
-                    replacement_name = GradleSpecifier(
-                        "org.apache.logging.log4j:%s:%s" % (pmcLib.name.artifact, versionOverride))
-                    artifact = MojangArtifact(
-                        url=mavenOverride % (replacement_name.path()),
-                        sha1=LOG4J_HASHES[versionOverride][pmcLib.name.artifact]["sha1"],
-                        size=LOG4J_HASHES[versionOverride][pmcLib.name.artifact]["size"]
-                    )
-
-                    replacementLib = Library(
-                        name=replacement_name,
-                        downloads=MojangLibraryDownloads(artifact=artifact)
-                    )
-                    libs_minecraft.append(replacementLib)
-                else:
-                    libs_minecraft.append(pmcLib)
+                libs_minecraft.append(lib)
         if len(buckets) == 1:
             for key in buckets:
-                keyBucket = buckets[key]
-                keyBucket.libraries = sorted(keyBucket.libraries, key=attrgetter("name"))
-                add_lwjgl_version(lwjglVersionVariants, keyBucket)
-                print("Found only candidate LWJGL", keyBucket.version, key)
+                lwjgl = buckets[key]
+                lwjgl.libraries = sorted(lwjgl.libraries, key=attrgetter("name"))
+                add_lwjgl_version(lwjglVersionVariants, lwjgl)
+                print("Found only candidate LWJGL", lwjgl.version, key)
         else:
             # multiple buckets for LWJGL. [None] is common to all, other keys are for different sets of rules
             for key in buckets:
                 if key is None:
                     continue
-                keyBucket = buckets[key]
+                lwjgl = buckets[key]
                 if None in buckets:
-                    keyBucket.libraries = sorted(keyBucket.libraries + buckets[None].libraries, key=attrgetter("name"))
+                    lwjgl.libraries = sorted(lwjgl.libraries + buckets[None].libraries, key=attrgetter("name"))
                 else:
-                    keyBucket.libraries = sorted(keyBucket.libraries, key=attrgetter('name'))
-                add_lwjgl_version(lwjglVersionVariants, keyBucket)
-                print("Found candidate LWJGL", keyBucket.version, key)
+                    lwjgl.libraries = sorted(lwjgl.libraries, key=attrgetter('name'))
+                add_lwjgl_version(lwjglVersionVariants, lwjgl)
+                print("Found candidate LWJGL", lwjgl.version, key)
             # remove the common bucket...
             if None in buckets:
                 del buckets[None]
-        versionFile.libraries = libs_minecraft
-        depentry = None
+        v.libraries = libs_minecraft
 
         if is_lwjgl_3:
-            depentry = Dependency(uid=LWJGL3_COMPONENT)
+            lwjgl_dependency = Dependency(uid=LWJGL3_COMPONENT)
         else:
-            depentry = Dependency(uid=LWJGL_COMPONENT)
+            lwjgl_dependency = Dependency(uid=LWJGL_COMPONENT)
         if len(buckets) == 1:
-            suggestedVersion = next(iter(buckets.values())).version
+            suggested_version = next(iter(buckets.values())).version
             # HACK: forcing hard dependencies here for now...
             # the UI doesn't know how to filter by this and it looks odd, but it works
             if is_lwjgl_3:
-                depentry.suggests = suggestedVersion
-                depentry.equals = suggestedVersion
+                lwjgl_dependency.suggests = suggested_version
+                lwjgl_dependency.equals = suggested_version
             else:
-                depentry.suggests = '2.9.4-nightly-20150209'
+                lwjgl_dependency.suggests = '2.9.4-nightly-20150209'
         else:
-            badVersions1 = {'3.1.6', '3.2.1'}
-            ourVersions = set()
+            bad_versions = {'3.1.6', '3.2.1'}
+            our_versions = set()
 
             for lwjgl in iter(buckets.values()):
-                ourVersions = ourVersions.union({lwjgl.version})
+                our_versions = our_versions.union({lwjgl.version})
 
-            if ourVersions == badVersions1:
+            if our_versions == bad_versions:
                 print("Found broken 3.1.6/3.2.1 combo, forcing LWJGL to 3.2.1")
-                suggestedVersion = '3.2.1'
-                depentry.suggests = suggestedVersion
+                suggested_version = '3.2.1'
+                lwjgl_dependency.suggests = suggested_version
             else:
-                raise Exception("ERROR: cannot determine single suggested LWJGL version in %s" % mojangVersionFile.id)
+                raise Exception("ERROR: cannot determine single suggested LWJGL version in %s" % mojang_version.id)
 
         # if it uses LWJGL 3, add the trait that enables starting on first thread on macOS
         if is_lwjgl_3:
-            if not versionFile.additional_traits:
-                versionFile.additional_traits = []
-            versionFile.additional_traits.append("FirstThreadOnMacOS")
-        versionFile.requires = [depentry]
-        versionFile.order = -2
+            if not v.additional_traits:
+                v.additional_traits = []
+            v.additional_traits.append("FirstThreadOnMacOS")
+        v.requires = [lwjgl_dependency]
+        v.order = -2
         # process 1.13 arguments into previous version
-        if not mojangVersionFile.minecraftArguments and mojangVersionFile.arguments:
-            versionFile.minecraft_arguments = adaptNewStyleArguments(mojangVersionFile.arguments)
-        out_filename = os.path.join(PMC_DIR, MINECRAFT_COMPONENT, f"{versionFile.version}.json")
-        if versionFile.version in override_index.versions:
-            override = override_index.versions[versionFile.version]
-            override.apply_onto_meta_version(versionFile)
-        versionFile.write(out_filename)
+        if not mojang_version.minecraft_arguments and mojang_version.arguments:
+            v.minecraft_arguments = adapt_new_style_arguments(mojang_version.arguments)
+        out_filename = os.path.join(PMC_DIR, MINECRAFT_COMPONENT, f"{v.version}.json")
+        if v.version in override_index.versions:
+            override = override_index.versions[v.version]
+            override.apply_onto_meta_version(v)
+        v.write(out_filename)
 
     for lwjglVersionVariant in lwjglVersionVariants:
-        decidedVariant = None
-        passedVariants = 0
-        unknownVariants = 0
+        decided_variant = None
+        passed_variants = 0
+        unknown_variants = 0
         print("%d variant(s) for LWJGL %s:" % (len(lwjglVersionVariants[lwjglVersionVariant]), lwjglVersionVariant))
 
         for variant in lwjglVersionVariants[lwjglVersionVariant]:
             if variant.sha1 in BAD_VARIANTS:
-                print("Variant %s ignored because it's marked as bad." % (variant.sha1))
+                print("Variant %s ignored because it's marked as bad." % variant.sha1)
                 continue
             if variant.sha1 in PASS_VARIANTS:
-                print("Variant %s accepted." % (variant.sha1))
-                decidedVariant = variant
-                passedVariants += 1
+                print("Variant %s accepted." % variant.sha1)
+                decided_variant = variant
+                passed_variants += 1
                 continue
 
             print(f"    \"{variant.sha1}\",  # {lwjglVersionVariant} ({variant.version.release_time})")
-            unknownVariants += 1
+            unknown_variants += 1
         print("")
 
-        if decidedVariant and passedVariants == 1 and unknownVariants == 0:
-            process_single_variant(decidedVariant.version)
+        if decided_variant and passed_variants == 1 and unknown_variants == 0:
+            process_single_variant(decided_variant.version)
         else:
             raise Exception("No variant decided for version %s out of %d possible ones and %d unknown ones." % (
-                lwjglVersionVariant, passedVariants, unknownVariants))
+                lwjglVersionVariant, passed_variants, unknown_variants))
 
-    lwjglSharedData = MetaPackageData(uid=LWJGL_COMPONENT, name='LWJGL 2')
-    lwjglSharedData.recommended = ['2.9.4-nightly-20150209']
-    lwjglSharedData.write(os.path.join(PMC_DIR, LWJGL_COMPONENT, "package.json"))
+    lwjgl_package = MetaPackage(uid=LWJGL_COMPONENT, name='LWJGL 2')
+    lwjgl_package.recommended = ['2.9.4-nightly-20150209']
+    lwjgl_package.write(os.path.join(PMC_DIR, LWJGL_COMPONENT, "package.json"))
 
     if found_any_lwjgl3:
-        lwjglSharedData = MetaPackageData(uid=LWJGL3_COMPONENT, name='LWJGL 3')
-        lwjglSharedData.recommended = ['3.1.2']
-        lwjglSharedData.write(os.path.join(PMC_DIR, LWJGL3_COMPONENT, "package.json"))
+        lwjgl_package = MetaPackage(uid=LWJGL3_COMPONENT, name='LWJGL 3')
+        lwjgl_package.recommended = ['3.1.2']
+        lwjgl_package.write(os.path.join(PMC_DIR, LWJGL3_COMPONENT, "package.json"))
 
-    localVersionlist = MojangIndexWrap(MojangIndex.parse_file(os.path.join(UPSTREAM_DIR, VERSION_MANIFEST_FILE)))
+    mojang_index = MojangIndexWrap(MojangIndex.parse_file(os.path.join(UPSTREAM_DIR, VERSION_MANIFEST_FILE)))
 
-    mcSharedData = MetaPackageData(uid=MINECRAFT_COMPONENT, name='Minecraft')
-    mcSharedData.recommended = [localVersionlist.latest.release]
-    mcSharedData.write(os.path.join(PMC_DIR, MINECRAFT_COMPONENT, "package.json"))
+    minecraft_package = MetaPackage(uid=MINECRAFT_COMPONENT, name='Minecraft')
+    minecraft_package.recommended = [mojang_index.latest.release]
+    minecraft_package.write(os.path.join(PMC_DIR, MINECRAFT_COMPONENT, "package.json"))
 
 
 if __name__ == '__main__':
