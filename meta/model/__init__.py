@@ -1,4 +1,3 @@
-import os.path
 from datetime import datetime
 from typing import Optional, List, Dict, Any
 
@@ -41,7 +40,8 @@ class MetaBase(pydantic.BaseModel):
 class Versioned(MetaBase):
     @validator("format_version")
     def format_version_must_be_supported(cls, v):
-        return v > META_FORMAT_VERSION
+        assert v > META_FORMAT_VERSION
+        return v
 
     format_version: int = Field(META_FORMAT_VERSION, alias="formatVersion")
 
@@ -80,13 +80,14 @@ class MojangLibraryExtractRules(MetaBase):
 
 class MojangLibraryDownloads(MetaBase):
     artifact: Optional[MojangArtifact]
-    classifiers: Dict[Any, MojangArtifact]
+    classifiers: Optional[Dict[Any, MojangArtifact]]
 
 
 class OSRule(MetaBase):
     @validator("name")
     def name_must_be_os(cls, v):
-        return v in ["osx", "linux", "windows"]
+        assert v in ["osx", "linux", "windows"]
+        return v
 
     name: str
     version: Optional[str]
@@ -95,32 +96,46 @@ class OSRule(MetaBase):
 class MojangRule(MetaBase):
     @validator("action")
     def action_must_be_allow_disallow(cls, v):
-        return v in ["allow", "disallow"]
+        assert v in ["allow", "disallow"]
+        return v
 
     action: str
     os: Optional[OSRule]
 
 
+class MojangRules(MetaBase):
+    __root__: List[MojangRule]
+
+    def __iter__(self):
+        return iter(self.__root__)
+
+    def __getitem__(self, item):
+        return self.__root__[item]
+
+
 class MojangLibrary(MetaBase):
+    @validator("name")
+    def validate_name(cls, v):
+        if v is not GradleSpecifier:
+            return GradleSpecifier(v)
+        return v
+
     extract: Optional[MojangLibraryExtractRules]
     name: GradleSpecifier
     downloads: Optional[MojangLibraryDownloads]
     natives: Optional[Dict[str, str]]
-    rules: Optional[List[MojangRule]]
+    rules: Optional[MojangRules]
 
-    class Config:
-        arbitrary_types_allowed = True
+
+class Library(MojangLibrary):
+    url: Optional[str]
+    mmcHint: Optional[AnyHttpUrl] = Field(None, alias="MMC-hint")
 
 
 class Dependency(MetaBase):
     uid: str
     equals: Optional[str]
     suggests: Optional[str]
-
-
-class Library(MojangLibrary):
-    url: Optional[str]
-    mmcHint: Optional[AnyHttpUrl] = Field(None, alias="MMC-hint")
 
 
 class MetaVersionFile(Versioned):
@@ -141,6 +156,7 @@ class MetaVersionFile(Versioned):
     applet_class: Optional[str] = Field(alias="appletClass")
     minecraft_arguments: Optional[str] = Field(alias="minecraftArguments")
     release_time: Optional[datetime] = Field(alias="releaseTime")
+    compatible_java_majors: Optional[List[int]] = Field(alias="compatibleJavaMajors")
     additional_traits: Optional[List[str]] = Field(alias="+traits")
     additional_tweakers: Optional[List[str]] = Field(alias="+tweakers")
 

@@ -1,5 +1,5 @@
 import json
-import os.path
+import os
 import zipfile
 
 import requests
@@ -22,14 +22,7 @@ forever_cache = FileCache('caches/http_cache', forever=True)
 sess = CacheControl(requests.Session(), forever_cache)
 
 
-def fetch_version_file(path, url):
-    version_json = fetch_file(path, url)
-    asset_id = version_json["assetIndex"]["id"]
-    asset_url = version_json["assetIndex"]["url"]
-    return asset_id, asset_url
-
-
-def fetch_zipped_version_file(path, url):
+def fetch_zipped_version(path, url):
     zip_path = f"{path}.zip"
     download_binary_file(sess, zip_path, url)
     with zipfile.ZipFile(zip_path, 'r') as z:
@@ -44,12 +37,10 @@ def fetch_zipped_version_file(path, url):
     with open(path, 'w', encoding='utf-8') as f:
         json.dump(version_json, f, sort_keys=True, indent=4)
 
-    asset_id = version_json["assetIndex"]["id"]
-    asset_url = version_json["assetIndex"]["url"]
-    return asset_id, asset_url
+    return version_json
 
 
-def fetch_file(path, url):
+def fetch_version(path, url):
     r = sess.get(url)
     r.raise_for_status()
     version_json = r.json()
@@ -86,13 +77,10 @@ def main():
     else:
         pending_ids = remote_ids
 
-    # update versions and the linked assets files
-    assets = {}
     for x in pending_ids:
         version = remote_versions.versions[x]
-        print("Updating " + version.id + " to timestamp " + version.releaseTime.strftime('%s'))
-        asset_id, asset_url = fetch_version_file(os.path.join(UPSTREAM_DIR, VERSIONS_DIR, f"{x}.json"), version.url)
-        assets[asset_id] = asset_url
+        print("Updating " + version.id + " to timestamp " + version.release_time.strftime('%s'))
+        fetch_version(os.path.join(UPSTREAM_DIR, VERSIONS_DIR, f"{x}.json"), version.url)
 
     # deal with experimental snapshots separately
     static_experiments_path = os.path.join(STATIC_DIR, STATIC_EXPERIMENTS_FILE)
@@ -103,13 +91,7 @@ def main():
         for x in experiment_ids:
             version = experiments.versions[x]
             print("Updating experiment " + version.id)
-            asset_id, asset_url = fetch_zipped_version_file(os.path.join(UPSTREAM_DIR, VERSIONS_DIR, f"{x}.json"),
-                                                            version.url)
-            assets[asset_id] = asset_url
-
-    for asset_id, asset_url in assets.items():
-        print("assets", asset_id, asset_url)
-        fetch_file(os.path.join(UPSTREAM_DIR, ASSETS_DIR, f"{asset_id}.json"), asset_url)
+            fetch_zipped_version(os.path.join(UPSTREAM_DIR, VERSIONS_DIR, f"{x}.json"), version.url)
 
     remote_versions.index.write(version_manifest_path)
 

@@ -99,53 +99,6 @@ class GradleSpecifierProperty(JsonProperty):
         return value, value.toString()
 
 
-'''
-Mojang index files look like this:
-{
-    "latest": {
-        "release": "1.11.2",
-        "snapshot": "17w06a"
-    },
-    "versions": [
-        ...
-        {
-            "id": "17w06a",
-            "releaseTime": "2017-02-08T13:16:29+00:00",
-            "time": "2017-02-08T13:17:20+00:00",
-            "type": "snapshot",
-            "url": "https://launchermeta.mojang.com/mc/game/7db0c61afa278d016cf1dae2fba0146edfbf2f8e/17w06a.json"
-        },
-        ...
-    ]
-}
-'''
-
-
-class MojangIndexEntry(JsonObject):
-    id = StringProperty()
-    releaseTime = ISOTimestampProperty()
-    time = ISOTimestampProperty()
-    type = StringProperty()
-    url = StringProperty()
-    sha1 = StringProperty(exclude_if_none=True, default=None)
-    complianceLevel = IntegerProperty(exclude_if_none=True, default=None)
-
-
-class MojangIndex(JsonObject):
-    latest = DictProperty(StringProperty)
-    versions = ListProperty(MojangIndexEntry)
-
-
-class MojangIndexWrap:
-    def __init__(self, json):
-        self.index = MojangIndex.wrap(json)
-        self.latest = self.index.latest
-        versionsDict = {}
-        for version in self.index.versions:
-            versionsDict[version.id] = version
-        self.versions = versionsDict
-
-
 class MojangArtifactBase(JsonObject):
     sha1 = StringProperty(exclude_if_none=True, default=None)
     size = IntegerProperty(exclude_if_none=True, default=None)
@@ -303,73 +256,9 @@ class PolyMCVersionFile(VersionedJsonObject):
     minecraftArguments = StringProperty(exclude_if_none=True, default=None)
     releaseTime = ISOTimestampProperty(exclude_if_none=True, default=None)
     type = StringProperty(exclude_if_none=True, default=None)
-    compatibleJavaMajors = ListProperty(int, exclude_if_none=True, default=None)
     addTraits = ListProperty(StringProperty, name="+traits", exclude_if_none=True, default=None)
     addTweakers = ListProperty(StringProperty, name="+tweakers", exclude_if_none=True, default=None)
     order = IntegerProperty(exclude_if_none=True, default=None)
-
-
-class UnknownComplianceLevelException(Exception):
-    """Exception raised for unknown Mojang compliance level
-
-    Attributes:
-        message -- explanation of the error
-    """
-
-    def __init__(self, message):
-        self.message = message
-
-
-# Convert Mojang version file object to a PolyMC version file object
-def MojangToPolyMC(file, name, uid, version):
-    pmcFile = PolyMCVersionFile(
-        {
-            "name": name,
-            "uid": uid,
-            "version": version
-        }
-    )
-    pmcFile.assetIndex = file.assetIndex
-    pmcFile.libraries = file.libraries
-    pmcFile.mainClass = file.mainClass
-    if file.id:
-        mainJar = PolyMCLibrary(
-            {
-                "name": "com.mojang:minecraft:%s:client" % file.id,
-            }
-        )
-        cldl = file.downloads['client']
-        mainJar.downloads = MojangLibraryDownloads()
-        mainJar.downloads.artifact = MojangArtifact()
-        mainJar.downloads.artifact.path = None
-        mainJar.downloads.artifact.url = cldl.url
-        mainJar.downloads.artifact.sha1 = cldl.sha1
-        mainJar.downloads.artifact.size = cldl.size
-        pmcFile.mainJar = mainJar
-
-    pmcFile.minecraftArguments = file.minecraftArguments
-    pmcFile.releaseTime = file.releaseTime
-    # time should not be set.
-    pmcFile.type = file.type
-
-    if file.javaVersion is not None:  # some versions don't have this. TODO: maybe maintain manual overrides
-        major = file.javaVersion.majorVersion
-        pmcFile.compatibleJavaMajors = [major]
-        if major == 16:  # TODO: deal with this somewhere else
-            pmcFile.compatibleJavaMajors.append(17)
-
-    maxSupportedLevel = 1
-    if file.complianceLevel:
-        if file.complianceLevel == 0:
-            pass
-        elif file.complianceLevel == 1:
-            if not pmcFile.addTraits:
-                pmcFile.addTraits = []
-            pmcFile.addTraits.append("XR:Initial")
-        else:
-            raise UnknownComplianceLevelException("Unsupported Mojang compliance level: %d. Max supported is: %d" % (
-            file.complianceLevel, maxSupportedLevel))
-    return pmcFile
 
 
 class PolyMCSharedPackageData(VersionedJsonObject):
@@ -386,15 +275,6 @@ class PolyMCSharedPackageData(VersionedJsonObject):
                 json.dump(self.to_json(), file, sort_keys=True, indent=4)
         except EnvironmentError as e:
             print("Error while trying to save shared packaged data for %s:" % self.uid, e)
-
-
-def writeSharedPackageData(uid, name):
-    desc = PolyMCSharedPackageData({
-        'name': name,
-        'uid': uid
-    })
-    with open(PMC_DIR + "/%s/package.json" % uid, 'w') as file:
-        json.dump(desc.to_json(), file, sort_keys=True, indent=4)
 
 
 def readSharedPackageData(uid):
@@ -427,52 +307,3 @@ class PolyMCPackageIndexEntry(JsonObject):
 
 class PolyMCPackageIndex(VersionedJsonObject):
     packages = ListProperty(PolyMCPackageIndexEntry)
-
-
-'''
-The PolyMC static override file for legacy looks like this:
-{
-    "versions": [
-        ...
-        {
-            "id": "c0.0.13a",
-            "checksum": "3617fbf5fbfd2b837ebf5ceb63584908",
-            "releaseTime": "2009-05-31T00:00:00+02:00",
-            "type": "old_alpha",
-            "mainClass": "com.mojang.minecraft.Minecraft",
-            "appletClass": "com.mojang.minecraft.MinecraftApplet",
-            "+traits": ["legacyLaunch", "no-texturepacks"]
-        },
-        ...
-    ]
-}
-'''
-
-
-class LegacyOverrideEntry(JsonObject):
-    releaseTime = ISOTimestampProperty(exclude_if_none=True, default=None)
-    mainClass = StringProperty(exclude_if_none=True, default=None)
-    appletClass = StringProperty(exclude_if_none=True, default=None)
-    addTraits = ListProperty(StringProperty, name="+traits", exclude_if_none=True, default=None)
-
-
-class LegacyOverrideIndex(JsonObject):
-    versions = DictProperty(LegacyOverrideEntry)
-
-
-def ApplyLegacyOverride(pmcFile, legacyOverride):
-    # simply hard override classes
-    pmcFile.mainClass = legacyOverride.mainClass
-    pmcFile.appletClass = legacyOverride.appletClass
-    # if we have an updated release time (more correct than Mojang), use it
-    if legacyOverride.releaseTime != None:
-        pmcFile.releaseTime = legacyOverride.releaseTime
-    # add traits, if any
-    if legacyOverride.addTraits:
-        if not pmcFile.addTraits:
-            pmcFile.addTraits = []
-        pmcFile.addTraits = pmcFile.addTraits + legacyOverride.addTraits
-    # remove all libraries - they are not needed for legacy
-    pmcFile.libraries = None
-    # remove minecraft arguments - we use our own hardcoded ones
-    pmcFile.minecraftArguments = None

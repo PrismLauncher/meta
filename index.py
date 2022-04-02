@@ -2,8 +2,9 @@ import hashlib
 from operator import itemgetter
 
 from meta.metautil import *
+from meta.common import polymc_path
 
-PMC_DIR = os.environ["PMC_DIR"]
+PMC_DIR = polymc_path()
 
 
 # take the hash type (like hashlib.md5) and filename, return hex string of hash
