@@ -24,7 +24,7 @@ class MetaBase(pydantic.BaseModel):
             if k in kwargs:
                 del kwargs[k]
 
-        return super(MetaBase, self).json(exclude_none=True, sort_keys=True, indent=4, **kwargs)
+        return super(MetaBase, self).json(exclude_none=True, sort_keys=True, by_alias=True, indent=4, **kwargs)
 
     def write(self, file_path):
         with open(file_path, "w") as f:

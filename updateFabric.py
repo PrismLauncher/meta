@@ -93,7 +93,7 @@ def compute_jar_file(path, url):
         sha256 = filehash(jar_path, hashlib.sha256)
         size = os.path.getsize(jar_path)
 
-    data = FabricJarInfo(releaseTime=tstamp, sha1=sha1, sha256=sha256, size=size)
+    data = FabricJarInfo(release_time=tstamp, sha1=sha1, sha256=sha256, size=size)
     data.write(path + ".json")
 
 
