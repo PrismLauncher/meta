@@ -302,6 +302,7 @@ class PolyMCVersionFile(VersionedJsonObject):
     minecraftArguments = StringProperty(exclude_if_none=True, default=None)
     releaseTime = ISOTimestampProperty(exclude_if_none=True, default=None)
     type = StringProperty(exclude_if_none=True, default=None)
+    compatibleJavaMajors = ListProperty(int, exclude_if_none=True, default=None)
     addTraits = ListProperty(StringProperty, name="+traits", exclude_if_none=True, default=None)
     addTweakers = ListProperty(StringProperty, name="+tweakers", exclude_if_none=True, default=None)
     order = IntegerProperty(exclude_if_none=True, default=None)
@@ -349,6 +350,13 @@ def MojangToPolyMC(file, name, uid, version):
     pmcFile.releaseTime = file.releaseTime
     # time should not be set.
     pmcFile.type = file.type
+
+    if file.javaVersion is not None:  # some versions don't have this. TODO: maybe maintain manual overrides
+        major = file.javaVersion.majorVersion
+        pmcFile.compatibleJavaMajors = [major]
+        if major == 16:  # TODO: deal with this somewhere else
+            pmcFile.compatibleJavaMajors.append(17)
+
     maxSupportedLevel = 1
     if file.complianceLevel:
         if file.complianceLevel == 0:
