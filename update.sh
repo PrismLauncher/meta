@@ -81,11 +81,6 @@ if [ "${DEPLOY_TO_GIT}" = true ] ; then
     fi
 fi
 
-if [ "${UPDATE_FORGE_MAVEN}" = true ] ; then
-    echo "Updating the copy of Forge maven"
-    python enumerateForge.py
-fi
-
 if [ "${DEPLOY_TO_FOLDER}" = true ] ; then
     DEPLOY_FOLDER_var="DEPLOY_FOLDER_$MODE"
     DEPLOY_FOLDER="${!DEPLOY_FOLDER_var}"
