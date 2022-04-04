@@ -6,16 +6,16 @@ from operator import attrgetter
 from pprint import pprint
 from typing import Optional
 
-from meta.common import ensure_component_dir, polymc_path, upstream_path
+from meta.common import ensure_component_dir, polymc_path, upstream_path, static_path
 from meta.common.mojang import VERSION_MANIFEST_FILE, MINECRAFT_COMPONENT, LWJGL3_COMPONENT, LWJGL_COMPONENT, \
     STATIC_OVERRIDES_FILE, VERSIONS_DIR
 from meta.model import MetaVersion, Library, GradleSpecifier, MojangLibraryDownloads, MojangArtifact, Dependency, \
     MetaPackage, MojangRules
 from meta.model.mojang import MojangIndexWrap, MojangIndex, MojangVersion, LegacyOverrideIndex
-from updateMojang import STATIC_DIR
 
 PMC_DIR = polymc_path()
 UPSTREAM_DIR = upstream_path()
+STATIC_DIR = static_path()
 
 ensure_component_dir(MINECRAFT_COMPONENT)
 ensure_component_dir(LWJGL_COMPONENT)
