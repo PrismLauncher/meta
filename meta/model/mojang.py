@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional, List, Dict, Any
 
-from pydantic import AnyHttpUrl, validator, Field
+from pydantic import validator, Field
 
 from . import MetaBase, MojangArtifactBase, MojangAssets, MojangLibrary, MojangArtifact, MojangLibraryDownloads, \
     Library, MetaVersion, GradleSpecifier
@@ -60,8 +60,8 @@ class MojangIndexWrap:
 
 class ExperimentEntry(MetaBase):
     id: str
-    url: AnyHttpUrl
-    wiki: Optional[AnyHttpUrl]
+    url: str
+    wiki: Optional[str]
 
 
 class ExperimentIndex(MetaBase):
@@ -145,13 +145,14 @@ class MojangVersion(MetaBase):
     arguments: Optional[MojangArguments]
     asset_index: Optional[MojangAssets] = Field(alias="assetIndex")
     assets: Optional[str]
-    downloads: Dict[str, MojangArtifactBase]  # TODO improve this?
+    downloads: Optional[Dict[str, MojangArtifactBase]]  # TODO improve this?
     libraries: Optional[List[MojangLibrary]]  # TODO: optional?
     main_class: Optional[str] = Field(alias="mainClass")
     applet_class: Optional[str] = Field(alias="appletClass")
     processArguments: Optional[str]
     minecraft_arguments: Optional[str] = Field(alias="minecraftArguments")
-    minimum_launcher_version: Optional[int] = Field(alias="minimumLauncherVersion")  # TODO: validate validateSupportedMojangVersion
+    minimum_launcher_version: Optional[int] = Field(
+        alias="minimumLauncherVersion")  # TODO: validate validateSupportedMojangVersion
     release_time: Optional[datetime] = Field(alias="releaseTime")
     time: Optional[datetime]
     type: Optional[str]

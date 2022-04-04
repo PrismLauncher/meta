@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Optional, List, Dict, Any, Iterator
 
 import pydantic
-from pydantic import Field, AnyHttpUrl, validator
+from pydantic import Field, validator
 
 from .types import GradleSpecifier
 from ..common import serialize_datetime
@@ -40,7 +40,7 @@ class MetaBase(pydantic.BaseModel):
 class Versioned(MetaBase):
     @validator("format_version")
     def format_version_must_be_supported(cls, v):
-        assert v > META_FORMAT_VERSION
+        assert v <= META_FORMAT_VERSION
         return v
 
     format_version: int = Field(META_FORMAT_VERSION, alias="formatVersion")
@@ -49,7 +49,7 @@ class Versioned(MetaBase):
 class MojangArtifactBase(MetaBase):
     sha1: Optional[str]
     size: Optional[int]
-    url: AnyHttpUrl
+    url: str
 
 
 class MojangAssets(MojangArtifactBase):
@@ -129,7 +129,7 @@ class MojangLibrary(MetaBase):
 
 class Library(MojangLibrary):
     url: Optional[str]
-    mmcHint: Optional[AnyHttpUrl] = Field(None, alias="MMC-hint")
+    mmcHint: Optional[str] = Field(None, alias="MMC-hint")
 
 
 class Dependency(MetaBase):
@@ -167,4 +167,4 @@ class MetaPackage(Versioned):
     recommended: Optional[List[str]]
     authors: Optional[List[str]]
     description: Optional[str]
-    project_url: Optional[AnyHttpUrl] = Field(alias="projectUrl")
+    project_url: Optional[str] = Field(alias="projectUrl")
