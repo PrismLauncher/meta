@@ -1,41 +1,41 @@
 import hashlib
-from operator import itemgetter
+import os
+from operator import itemgetter, attrgetter
 
-from meta.metautil import *
 from meta.common import polymc_path
+from meta.model import MetaVersion, MetaPackage
+from meta.model.index import MetaPackageIndex, MetaVersionIndex, MetaVersionIndexEntry, MetaPackageIndexEntry
 
 PMC_DIR = polymc_path()
 
 
 # take the hash type (like hashlib.md5) and filename, return hex string of hash
-def HashFile(hash, fname):
-    hash_instance = hash()
-    with open(fname, "rb") as f:
+def hash_file(hash_fn, file_name):
+    hash_instance = hash_fn()
+    with open(file_name, "rb") as f:
         for chunk in iter(lambda: f.read(4096), b""):
             hash_instance.update(chunk)
     return hash_instance.hexdigest()
 
 
 # ignore these files when indexing versions
-ignore = set(["index.json", "package.json", ".git", ".github"])
+ignore = {"index.json", "package.json", ".git", ".github"}
 
 # initialize output structures - package list level
-packages = PolyMCPackageIndex()
+packages = MetaPackageIndex()
 
 # walk thorugh all the package folders
 for package in sorted(os.listdir(PMC_DIR)):
     if package in ignore:
         continue
 
-    sharedData = readSharedPackageData(package)
+    sharedData = MetaPackage.parse_file(os.path.join(PMC_DIR, package, "package.json"))
     recommendedVersions = set()
     if sharedData.recommended:
         recommendedVersions = set(sharedData.recommended)
 
     # initialize output structures - version list level
-    versionList = PolyMCVersionIndex()
-    versionList.uid = package
-    versionList.name = sharedData.name
+    versionList = MetaVersionIndex(uid=package, name=sharedData.name)
 
     # walk through all the versions of the package
     for filename in os.listdir(PMC_DIR + "/%s" % (package)):
@@ -44,42 +44,27 @@ for package in sorted(os.listdir(PMC_DIR)):
 
         # parse and hash the version file
         filepath = PMC_DIR + "/%s/%s" % (package, filename)
-        filehash = HashFile(hashlib.sha256, filepath)
-        versionFile = None
-        with open(filepath) as json_file:
-            versionFile = PolyMCVersionFile(json.load(json_file))
+        filehash = hash_file(hashlib.sha256, filepath)
+        versionFile = MetaVersion.parse_file(filepath)
+        is_recommended = versionFile.version in recommendedVersions
 
-        # pull information from the version file
-        versionEntry = PolyMCVersionIndexEntry()
-        if versionFile.version in recommendedVersions:
-            versionEntry.recommended = True
-        versionEntry.version = versionFile.version
-        versionEntry.type = versionFile.type
-        versionEntry.releaseTime = versionFile.releaseTime
-        versionEntry.sha256 = filehash
-        versionEntry.requires = versionFile.requires
-        versionEntry.conflicts = versionFile.conflicts
-        versionEntry.volatile = versionFile.volatile
+        versionEntry = MetaVersionIndexEntry.from_meta_version(versionFile, is_recommended, filehash)
+
         versionList.versions.append(versionEntry)
 
     # sort the versions in descending order by time of release
-    versionList.versions = sorted(versionList.versions, key=itemgetter('releaseTime'), reverse=True)
+    versionList.versions = sorted(versionList.versions, key=attrgetter('release_time'), reverse=True)
 
     # write the version index for the package
     outFilePath = PMC_DIR + "/%s/index.json" % (package)
-    with open(outFilePath, 'w') as outfile:
-        json.dump(versionList.to_json(), outfile, sort_keys=True, indent=4)
+    versionList.write(outFilePath)
 
     # insert entry into the package index
-    packageEntry = PolyMCPackageIndexEntry(
-        {
-            "uid": package,
-            "name": sharedData.name,
-            "sha256": HashFile(hashlib.sha256, outFilePath)
-        }
+    packageEntry = MetaPackageIndexEntry(
+        uid=package,
+        name=sharedData.name,
+        sha256=hash_file(hashlib.sha256, outFilePath)
     )
     packages.packages.append(packageEntry)
 
-# write the repository package index
-with open(PMC_DIR + "/index.json", 'w') as outfile:
-    json.dump(packages.to_json(), outfile, sort_keys=True, indent=4)
+packages.write(os.path.join(PMC_DIR, "index.json"))
