@@ -5,11 +5,13 @@ import requests
 from cachecontrol import CacheControl
 from cachecontrol.caches import FileCache
 
-from meta.common import upstream_path
-from meta.common.liteloader import VERSIONS_FILE
+from meta.common import upstream_path, ensure_upstream_dir
+from meta.common.liteloader import VERSIONS_FILE, BASE_DIR
 from meta.model.liteloader import LiteloaderIndex
 
 UPSTREAM_DIR = upstream_path()
+
+ensure_upstream_dir(BASE_DIR)
 
 forever_cache = FileCache('caches/http_cache', forever=True)
 sess = CacheControl(requests.Session(), forever_cache)
