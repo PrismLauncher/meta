@@ -1,7 +1,6 @@
 import os
 import re
 import sys
-from datetime import timezone
 from distutils.version import LooseVersion
 
 from meta.common import ensure_component_dir, polymc_path, upstream_path, static_path
