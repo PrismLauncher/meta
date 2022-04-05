@@ -58,6 +58,9 @@ class GradleSpecifier:
     def __gt__(self, other):
         return str(self) > str(other)
 
+    def __hash__(self):
+        return hash(str(self))
+
     @classmethod
     def __get_validators__(cls):
         yield cls.validate
