@@ -170,7 +170,7 @@ class MojangVersion(MetaBase):
             client_download = self.downloads['client']
             artifact = MojangArtifact(url=client_download.url, sha1=client_download.sha1, size=client_download.size)
             downloads = MojangLibraryDownloads(artifact=artifact)
-            main_jar = Library(name=GradleSpecifier("com.mojang:minecraft:%s:client" % self.id), downloads=downloads)
+            main_jar = Library(name=GradleSpecifier("com.mojang", "minecraft", self.id, "client"), downloads=downloads)
 
         if not self.compliance_level:  # both == 0 and is None
             pass

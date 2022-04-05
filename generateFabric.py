@@ -38,7 +38,7 @@ def process_loader_version(entry) -> MetaVersion:
     v.libraries = []
     v.libraries.extend(installer_info.libraries.common)
     v.libraries.extend(installer_info.libraries.client)
-    loader_lib = Library(name=GradleSpecifier(entry["maven"]), url="https://maven.fabricmc.net")
+    loader_lib = Library(name=GradleSpecifier.from_string(entry["maven"]), url="https://maven.fabricmc.net")
     v.libraries.append(loader_lib)
     return v
 
@@ -53,7 +53,7 @@ def process_intermediary_version(entry) -> MetaVersion:
     v.type = "release"
     v.libraries = []
     v.volatile = True
-    intermediary_lib = Library(name=GradleSpecifier(entry["maven"]), url="https://maven.fabricmc.net")
+    intermediary_lib = Library(name=GradleSpecifier.from_string(entry["maven"]), url="https://maven.fabricmc.net")
     v.libraries.append(intermediary_lib)
     return v
 

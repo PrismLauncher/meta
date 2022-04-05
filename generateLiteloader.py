@@ -41,13 +41,13 @@ def process_artefacts(mc_version: str, artefacts: Dict[str, LiteloaderArtefact],
 
         # hack to make broken liteloader versions work
         for lib in v.libraries:
-            if lib.name == GradleSpecifier("org.ow2.asm:asm-all:5.0.3"):
+            if lib.name == GradleSpecifier("org.ow2.asm", "asm-all", "5.0.3"):
                 lib.url = "https://repo.maven.apache.org/maven2/"
-            if lib.name == GradleSpecifier("org.ow2.asm:asm-all:5.2"):
+            if lib.name == GradleSpecifier("org.ow2.asm", "asm-all", "5.2"):
                 lib.url = "http://repo.liteloader.com/"
 
         liteloader_lib = Library(
-            name=GradleSpecifier("com.mumfrey:liteloader:%s" % v.version),
+            name=GradleSpecifier("com.mumfrey", "liteloader", v.version),
             url="http://dl.liteloader.com/versions/"
         )
         if is_snapshot:

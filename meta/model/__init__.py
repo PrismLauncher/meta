@@ -33,7 +33,8 @@ class MetaBase(pydantic.BaseModel):
         allow_population_by_field_name = True
 
         json_encoders = {
-            datetime: serialize_datetime
+            datetime: serialize_datetime,
+            GradleSpecifier: str
         }
 
 
@@ -114,12 +115,6 @@ class MojangRules(MetaBase):
 
 
 class MojangLibrary(MetaBase):
-    @validator("name")
-    def validate_name(cls, v):
-        if v is not GradleSpecifier:
-            return GradleSpecifier(v)
-        return v
-
     extract: Optional[MojangLibraryExtractRules]
     name: GradleSpecifier
     downloads: Optional[MojangLibraryDownloads]

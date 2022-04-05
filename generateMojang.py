@@ -267,8 +267,7 @@ def main():
                 if lib.name.artifact not in LOG4J_HASHES[version_override]:
                     raise Exception("ERROR: unhandled log4j artifact %s!" % lib.name.artifact)
 
-                replacement_name = GradleSpecifier(
-                    "org.apache.logging.log4j:%s:%s" % (lib.name.artifact, version_override))
+                replacement_name = GradleSpecifier("org.apache.logging.log4j", lib.name.artifact, version_override)
                 artifact = MojangArtifact(
                     url=maven_override % (replacement_name.path()),
                     sha1=LOG4J_HASHES[version_override][lib.name.artifact]["sha1"],

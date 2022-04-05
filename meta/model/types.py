@@ -1,4 +1,7 @@
-class GradleSpecifier(str):
+from typing import Optional
+
+
+class GradleSpecifier:
     """
         A gradle specifier - a maven coordinate. Like one of these:
         "org.lwjgl.lwjgl:lwjgl:2.9.0"
@@ -6,24 +9,24 @@ class GradleSpecifier(str):
         "net.minecraft:launchwrapper:1.5"
     """
 
-    def __init__(self, name: str):
-        ext_split = name.split('@')
+    def __init__(self, group: str, artifact: str, version: str, classifier: Optional[str] = None,
+                 extension: Optional[str] = None):
+        if extension is None:
+            extension = "jar"
+        self.group = group
+        self.artifact = artifact
+        self.version = version
+        self.classifier = classifier
+        self.extension = extension
 
-        components = ext_split[0].split(':')
-        self.group = components[0]
-        self.artifact = components[1]
-        self.version = components[2]
-
-        self.extension = 'jar'
-        if len(ext_split) == 2:
-            self.extension = ext_split[1]
-
-        self.classifier = None
-        if len(components) == 4:
-            self.classifier = components[3]
-
-    def __new__(cls, name: str):
-        return super(GradleSpecifier, cls).__new__(cls, name)
+    def __str__(self):
+        ext = ''
+        if self.extension != 'jar':
+            ext = "@%s" % self.extension
+        if self.classifier:
+            return "%s:%s:%s:%s%s" % (self.group, self.artifact, self.version, self.classifier, ext)
+        else:
+            return "%s:%s:%s%s" % (self.group, self.artifact, self.version, ext)
 
     def filename(self):
         if self.classifier:
@@ -45,3 +48,42 @@ class GradleSpecifier(str):
 
     def is_log4j(self):
         return self.group == "org.apache.logging.log4j"
+
+    def __eq__(self, other):
+        return str(self) == str(other)
+
+    def __lt__(self, other):
+        return str(self) < str(other)
+
+    def __gt__(self, other):
+        return str(self) > str(other)
+
+    @classmethod
+    def __get_validators__(cls):
+        yield cls.validate
+
+    @classmethod
+    def from_string(cls, v: str):
+        ext_split = v.split('@')
+
+        components = ext_split[0].split(':')
+        group = components[0]
+        artifact = components[1]
+        version = components[2]
+
+        extension = None
+        if len(ext_split) == 2:
+            extension = ext_split[1]
+
+        classifier = None
+        if len(components) == 4:
+            classifier = components[3]
+        return cls(group, artifact, version, classifier, extension)
+
+    @classmethod
+    def validate(cls, v):
+        if isinstance(v, cls):
+            return v
+        if isinstance(v, str):
+            return cls.from_string(v)
+        raise TypeError("Invalid type")
