@@ -6,7 +6,7 @@ DATETIME_FORMAT_HTTP = "%a, %d %b %Y %H:%M:%S %Z"
 
 def serialize_datetime(dt: datetime.datetime):
     if dt.tzinfo is None:
-        dt.replace(tzinfo=datetime.timezone.utc).isoformat()
+        return dt.replace(tzinfo=datetime.timezone.utc).isoformat()
 
     return dt.isoformat()
 
