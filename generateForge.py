@@ -389,5 +389,6 @@ def main():
         package.recommended = recommendedVersions
         package.write(os.path.join(PMC_DIR, FORGE_COMPONENT, "package.json"))
 
+
 if __name__ == '__main__':
     main()

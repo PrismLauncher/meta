@@ -3,9 +3,8 @@ import os
 
 from meta.common import ensure_component_dir, polymc_path, upstream_path, transform_maven_key
 from meta.common.fabric import JARS_DIR, INSTALLER_INFO_DIR, META_DIR, INTERMEDIARY_COMPONENT, LOADER_COMPONENT
-from meta.model import MetaVersion, Dependency, Library, MetaPackage
+from meta.model import MetaVersion, Dependency, Library, MetaPackage, GradleSpecifier
 from meta.model.fabric import FabricJarInfo, FabricInstallerDataV1, FabricMainClasses
-from meta.model.types import GradleSpecifier
 
 PMC_DIR = polymc_path()
 UPSTREAM_DIR = upstream_path()

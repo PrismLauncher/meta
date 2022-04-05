@@ -1,15 +1,16 @@
 import hashlib
-import zipfile
 import json
 import os
+import zipfile
 from datetime import datetime
 
 import requests
 from cachecontrol import CacheControl
 from cachecontrol.caches import FileCache
-from meta.model.fabric import FabricJarInfo
+
 from meta.common import DATETIME_FORMAT_HTTP, upstream_path, ensure_upstream_dir, transform_maven_key
 from meta.common.fabric import JARS_DIR, INSTALLER_INFO_DIR, META_DIR
+from meta.model.fabric import FabricJarInfo
 
 UPSTREAM_DIR = upstream_path()
 
