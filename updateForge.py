@@ -167,55 +167,55 @@ def main():
 
     print("")
     print("Processing versions:")
-    for mcversion, value in main_json.items():
-        assert type(mcversion) == str
+    for mc_version, value in main_json.items():
+        assert type(mc_version) == str
         assert type(value) == list
-        for longversion in value:
-            assert type(longversion) == str
-            match = versionExpression.match(longversion)
+        for long_version in value:
+            assert type(long_version) == str
+            match = versionExpression.match(long_version)
             if not match:
-                pprint(longversion)
+                pprint(long_version)
                 assert match
-            assert match.group('mc') == mcversion
+            assert match.group('mc') == mc_version
 
-            files = get_single_forge_files_manifest(longversion)
+            files = get_single_forge_files_manifest(long_version)
 
             build = int(match.group('build'))
             version = match.group('ver')
             branch = match.group('branch')
 
-            isRecommended = (version in recommendedSet)
+            is_recommended = (version in recommendedSet)
 
             entry = ForgeEntry(
-                longversion=longversion,
-                mcversion=mcversion,
+                long_version=long_version,
+                mc_version=mc_version,
                 version=version,
                 build=build,
                 branch=branch,
                 # NOTE: we add this later after the fact. The forge promotions file lies about these.
                 latest=False,
-                recommended=isRecommended,
+                recommended=is_recommended,
                 files=files
             )
-            newIndex.versions[longversion] = entry
-            if not newIndex.by_mcversion:
-                newIndex.by_mcversion = dict()
-            if not mcversion in newIndex.by_mcversion:
-                newIndex.by_mcversion.setdefault(mcversion, ForgeMCVersionInfo())
-            newIndex.by_mcversion[mcversion].versions.append(longversion)
+            newIndex.versions[long_version] = entry
+            if not newIndex.by_mc_version:
+                newIndex.by_mc_version = dict()
+            if mc_version not in newIndex.by_mc_version:
+                newIndex.by_mc_version.setdefault(mc_version, ForgeMCVersionInfo())
+            newIndex.by_mc_version[mc_version].versions.append(long_version)
             # NOTE: we add this later after the fact. The forge promotions file lies about these.
             # if entry.latest:
-            # newIndex.by_mcversion[mcversion].latest = longversion
+            # newIndex.by_mc_version[mc_version].latest = long_version
             if entry.recommended:
-                newIndex.by_mcversion[mcversion].recommended = longversion
+                newIndex.by_mc_version[mc_version].recommended = long_version
 
     print("")
     print("Post processing promotions and adding missing 'latest':")
-    for mcversion, info in newIndex.by_mcversion.items():
-        latestVersion = info.versions[-1]
-        info.latest = latestVersion
-        newIndex.versions[latestVersion].latest = True
-        print("Added %s as latest for %s" % (latestVersion, mcversion))
+    for mc_version, info in newIndex.by_mc_version.items():
+        latest_version = info.versions[-1]
+        info.latest = latest_version
+        newIndex.versions[latest_version].latest = True
+        print("Added %s as latest for %s" % (latest_version, mc_version))
 
     print("")
     print("Dumping index files...")
@@ -228,13 +228,13 @@ def main():
 
     newIndex.write(UPSTREAM_DIR + "/forge/derived_index.json")
 
-    legacyinfolist = ForgeLegacyInfoList()
+    legacy_info_list = ForgeLegacyInfoList()
 
     print("Grabbing installers and dumping installer profiles...")
     # get the installer jars - if needed - and get the installer profiles out of them
-    for id, entry in newIndex.versions.items():
-        eprint("Updating Forge %s" % id)
-        if entry.mcversion is None:
+    for key, entry in newIndex.versions.items():
+        eprint("Updating Forge %s" % key)
+        if entry.mc_version is None:
             eprint("Skipping %d with invalid MC version" % entry.build)
             continue
 
@@ -242,118 +242,112 @@ def main():
         if version.url() is None:
             eprint("Skipping %d with no valid files" % version.build)
             continue
-        if version.longVersion in BAD_VERSIONS:
-            eprint(f"Skipping bad version {version.longVersion}")
+        if version.long_version in BAD_VERSIONS:
+            eprint(f"Skipping bad version {version.long_version}")
             continue
 
-        jarFilepath = UPSTREAM_DIR + "/forge/jars/%s" % version.filename()
+        jar_path = os.path.join(UPSTREAM_DIR, JARS_DIR, version.filename())
 
         if version.uses_installer():
-            installerInfoFilepath = UPSTREAM_DIR + "/forge/installer_info/%s.json" % version.longVersion
-            profileFilepath = UPSTREAM_DIR + "/forge/installer_manifests/%s.json" % version.longVersion
-            versionJsonFilepath = UPSTREAM_DIR + "/forge/version_manifests/%s.json" % version.longVersion
-            installerRefreshRequired = False
-            if not os.path.isfile(profileFilepath):
-                installerRefreshRequired = True
-            if not os.path.isfile(installerInfoFilepath):
-                installerRefreshRequired = True
+            installer_info_path = UPSTREAM_DIR + "/forge/installer_info/%s.json" % version.long_version
+            profile_path = UPSTREAM_DIR + "/forge/installer_manifests/%s.json" % version.long_version
+            version_file_path = UPSTREAM_DIR + "/forge/version_manifests/%s.json" % version.long_version
 
-            if installerRefreshRequired:
+            installer_refresh_required = not os.path.isfile(profile_path) or not os.path.isfile(installer_info_path)
+
+            if installer_refresh_required:
                 # grab the installer if it's not there
-                if not os.path.isfile(jarFilepath):
+                if not os.path.isfile(jar_path):
                     eprint("Downloading %s" % version.url())
                     rfile = sess.get(version.url(), stream=True)
                     rfile.raise_for_status()
-                    with open(jarFilepath, 'wb') as f:
+                    with open(jar_path, 'wb') as f:
                         for chunk in rfile.iter_content(chunk_size=128):
                             f.write(chunk)
 
             eprint("Processing %s" % version.url())
             # harvestables from the installer
-            if not os.path.isfile(profileFilepath):
-                print(jarFilepath)
-                with zipfile.ZipFile(jarFilepath, 'r') as jar:
+            if not os.path.isfile(profile_path):
+                print(jar_path)
+                with zipfile.ZipFile(jar_path, 'r') as jar:
                     with suppress(KeyError):
-                        with jar.open('version.json', 'r') as profileZipEntry:
-                            versionJsonData = profileZipEntry.read()
-                            profileZipEntry.close()
+                        with jar.open('version.json', 'r') as profile_zip_entry:
+                            version_data = profile_zip_entry.read()
 
                             # Process: does it parse?
-                            doesItParse = MojangVersion.parse_raw(versionJsonData)
+                            MojangVersion.parse_raw(version_data)
 
-                            with open(versionJsonFilepath, 'wb') as versionJsonFile:
-                                versionJsonFile.write(versionJsonData)
+                            with open(version_file_path, 'wb') as versionJsonFile:
+                                versionJsonFile.write(version_data)
                                 versionJsonFile.close()
 
-                    with jar.open('install_profile.json', 'r') as profileZipEntry:
-                        installProfileJsonData = profileZipEntry.read()
-                        profileZipEntry.close()
+                    with jar.open('install_profile.json', 'r') as profile_zip_entry:
+                        install_profile_data = profile_zip_entry.read()
 
                         # Process: does it parse?
-                        atLeastOneFormatWorked = False
+                        is_parsable = False
                         exception = None
                         try:
-                            ForgeInstallerProfile.parse_raw(installProfileJsonData)
-                            atLeastOneFormatWorked = True
+                            ForgeInstallerProfile.parse_raw(install_profile_data)
+                            is_parsable = True
                         except ValidationError as err:
                             exception = err
                         try:
-                            ForgeInstallerProfileV2.parse_raw(installProfileJsonData)
-                            atLeastOneFormatWorked = True
+                            ForgeInstallerProfileV2.parse_raw(install_profile_data)
+                            is_parsable = True
                         except ValidationError as err:
                             exception = err
 
-                        if not atLeastOneFormatWorked:
+                        if not is_parsable:
                             if version.is_supported():
                                 raise exception
                             else:
                                 eprint(
-                                    "Version %s is not supported and won't be generated later." % version.longVersion)
+                                    "Version %s is not supported and won't be generated later." % version.long_version)
 
-                        with open(profileFilepath, 'wb') as profileFile:
-                            profileFile.write(installProfileJsonData)
+                        with open(profile_path, 'wb') as profileFile:
+                            profileFile.write(install_profile_data)
                             profileFile.close()
 
             # installer info v1
-            if not os.path.isfile(installerInfoFilepath):
-                installerInfo = InstallerInfo()
-                installerInfo.sha1hash = filehash(jarFilepath, hashlib.sha1)
-                installerInfo.sha256hash = filehash(jarFilepath, hashlib.sha256)
-                installerInfo.size = os.path.getsize(jarFilepath)
-                installerInfo.write(installerInfoFilepath)
+            if not os.path.isfile(installer_info_path):
+                installer_info = InstallerInfo()
+                installer_info.sha1hash = filehash(jar_path, hashlib.sha1)
+                installer_info.sha256hash = filehash(jar_path, hashlib.sha256)
+                installer_info.size = os.path.getsize(jar_path)
+                installer_info.write(installer_info_path)
         else:
             # ignore the two versions without install manifests and jar mod class files
             # TODO: fix those versions?
-            if version.mcversion_sane == "1.6.1":
+            if version.mc_version_sane == "1.6.1":
                 continue
 
             # only gather legacy info if it's missing
             if not os.path.isfile(LEGACYINFO_PATH):
                 # grab the jar/zip if it's not there
-                if not os.path.isfile(jarFilepath):
+                if not os.path.isfile(jar_path):
                     rfile = sess.get(version.url(), stream=True)
                     rfile.raise_for_status()
-                    with open(jarFilepath, 'wb') as f:
+                    with open(jar_path, 'wb') as f:
                         for chunk in rfile.iter_content(chunk_size=128):
                             f.write(chunk)
                 # find the latest timestamp in the zip file
                 tstamp = datetime.fromtimestamp(0)
-                with zipfile.ZipFile(jarFilepath, 'r') as jar:
-                    allinfo = jar.infolist()
-                    for info in allinfo:
-                        tstampNew = datetime(*info.date_time)
-                        if tstampNew > tstamp:
-                            tstamp = tstampNew
-                legacyInfo = ForgeLegacyInfo()
-                legacyInfo.releaseTime = tstamp
-                legacyInfo.sha1 = filehash(jarFilepath, hashlib.sha1)
-                legacyInfo.sha256 = filehash(jarFilepath, hashlib.sha256)
-                legacyInfo.size = os.path.getsize(jarFilepath)
-                legacyinfolist.number[id] = legacyInfo
+                with zipfile.ZipFile(jar_path, 'r') as jar:
+                    for info in jar.infolist():
+                        tstamp_new = datetime(*info.date_time)
+                        if tstamp_new > tstamp:
+                            tstamp = tstamp_new
+                legacy_info = ForgeLegacyInfo()
+                legacy_info.release_time = tstamp
+                legacy_info.sha1 = filehash(jar_path, hashlib.sha1)
+                legacy_info.sha256 = filehash(jar_path, hashlib.sha256)
+                legacy_info.size = os.path.getsize(jar_path)
+                legacy_info_list.number[key] = legacy_info
 
     # only write legacy info if it's missing
     if not os.path.isfile(LEGACYINFO_PATH):
-        legacyinfolist.write(LEGACYINFO_PATH)
+        legacy_info_list.write(LEGACYINFO_PATH)
 
 
 if __name__ == '__main__':

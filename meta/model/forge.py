@@ -12,17 +12,17 @@ class ForgeFile(MetaBase):
     hash: str
     extension: str
 
-    def filename(self, longversion):
-        return "%s-%s-%s.%s" % ("forge", longversion, self.classifier, self.extension)
+    def filename(self, long_version):
+        return "%s-%s-%s.%s" % ("forge", long_version, self.classifier, self.extension)
 
-    def url(self, longversion):
+    def url(self, long_version):
         return "https://files.minecraftforge.net/maven/net/minecraftforge/forge/%s/%s" % (
-            longversion, self.filename(longversion))
+            long_version, self.filename(long_version))
 
 
 class ForgeEntry(MetaBase):
-    longversion: str
-    mcversion: str
+    long_version: str = Field(alias="longversion")
+    mc_version: str = Field(alias="mcversion")
     version: str
     build: int
     branch: Optional[str]
@@ -39,7 +39,7 @@ class ForgeMCVersionInfo(MetaBase):
 
 class DerivedForgeIndex(MetaBase):
     versions: Dict[str, ForgeEntry] = Field({})
-    by_mcversion: Dict[str, ForgeMCVersionInfo] = Field({})
+    by_mc_version: Dict[str, ForgeMCVersionInfo] = Field({}, alias="by_mcversion")
 
 
 class FMLLib(MetaBase):  # old ugly stuff. Maybe merge this with Library or MojangLibrary later
@@ -74,29 +74,29 @@ class ForgeInstallerProfileInstallSection(MetaBase):
         "modList":"none"
     },
     """
-    profileName: str
+    profile_name: str = Field(alias="profileName")
     target: str
     path: GradleSpecifier
     version: str
-    filePath: str
+    file_path: str = Field(alias="filePath")
     welcome: str
     minecraft: str
     logo: str
-    mirrorList: str
-    modList: Optional[str]
+    mirror_list: str = Field(alias="mirrorList")
+    mod_list: Optional[str] = Field(alias="modList")
 
 
 class ForgeLibrary(MojangLibrary):
     url: Optional[str]
-    serverreq: Optional[bool]
-    clientreq: Optional[bool]
+    server_req: Optional[bool] = Field(alias="serverreq")
+    client_req: Optional[bool] = Field(alias="clientreq")
     checksums: Optional[List[str]]
     comment: Optional[str]
 
 
 class ForgeVersionFile(MojangVersion):
     libraries: Optional[List[ForgeLibrary]]  # overrides Mojang libraries
-    inheritsFrom: Optional[str]
+    inherits_from: Optional[str] = Field("inheritsFrom")
     jar: Optional[str]
 
 
@@ -129,12 +129,12 @@ class ForgeOptional(MetaBase):
 
 class ForgeInstallerProfile(MetaBase):
     install: ForgeInstallerProfileInstallSection
-    versionInfo: ForgeVersionFile
+    version_info: ForgeVersionFile = Field(alias="versionInfo")
     optionals: Optional[List[ForgeOptional]]
 
 
 class ForgeLegacyInfo(MetaBase):
-    releaseTime: Optional[datetime]
+    release_time: Optional[datetime] = Field(alias="releaseTime")
     size: Optional[int]
     sha256: Optional[str]
     sha1: Optional[str]
@@ -171,14 +171,84 @@ class ForgeInstallerProfileV2(MetaBase):
     data: Optional[Dict[str, DataSpec]]
     processors: Optional[List[ProcessorSpec]]
     libraries: Optional[List[MojangLibrary]]
-    mirrorList: Optional[str]
-    serverJarPath: Optional[str]
+    mirror_list: Optional[str] = Field(alias="mirrorList")
+    server_jar_path: Optional[str] = Field(alias="serverJarPath")
 
 
 class InstallerInfo(MetaBase):
     sha1hash: Optional[str]
     sha256hash: Optional[str]
     size: Optional[int]
+
+
+# A post-processed entry constructed from the reconstructed Forge version index
+class ForgeVersion:
+    def __init__(self, entry: ForgeEntry):
+        self.build = entry.build
+        self.rawVersion = entry.version
+        self.mc_version = entry.mc_version
+        self.mc_version_sane = self.mc_version.replace("_pre", "-pre", 1)
+        self.branch = entry.branch
+        self.installer_filename = None
+        self.installer_url = None
+        self.universal_filename = None
+        self.universal_url = None
+        self.changelog_url = None
+        self.long_version = "%s-%s" % (self.mc_version, self.rawVersion)
+        if self.branch is not None:
+            self.long_version = self.long_version + "-%s" % self.branch
+
+        # this comment's whole purpose is to say this: cringe
+        for classifier, file in entry.files.items():
+            extension = file.extension
+            filename = file.filename(self.long_version)
+            url = file.url(self.long_version)
+            if (classifier == "installer") and (extension == "jar"):
+                self.installer_filename = filename
+                self.installer_url = url
+            if (classifier == "universal" or classifier == "client") and (extension == "jar" or extension == "zip"):
+                self.universal_filename = filename
+                self.universal_url = url
+            if (classifier == "changelog") and (extension == "txt"):
+                self.changelog_url = url
+
+    def name(self):
+        return "Forge %d" % self.build
+
+    def uses_installer(self):
+        if self.installer_url is None:
+            return False
+        if self.mc_version == "1.5.2":
+            return False
+        return True
+
+    def filename(self):
+        if self.uses_installer():
+            return self.installer_filename
+        return self.universal_filename
+
+    def url(self):
+        if self.uses_installer():
+            return self.installer_url
+        return self.universal_url
+
+    def is_supported(self):
+        if self.url() is None:
+            return False
+
+        foo = self.rawVersion.split('.')
+        if len(foo) < 1:
+            return False
+
+        major_version = foo[0]
+        if not major_version.isnumeric():
+            return False
+
+        # majorVersion = int(majorVersionStr)
+        # if majorVersion >= 37:
+        #    return False
+
+        return True
 
 
 def fml_libs_for_version(mc_version: str) -> List[FMLLib]:
@@ -234,73 +304,3 @@ def fml_libs_for_version(mc_version: str) -> List[FMLLib]:
         return [argo_small_3_2, guava_14_0_rc3, asm_all_4_1, bcprov_jdk15on_148, deobfuscation_data_1_5_2,
                 scala_library]
     return []
-
-
-# A post-processed entry constructed from the reconstructed Forge version index
-class ForgeVersion:
-    def __init__(self, entry: ForgeEntry):
-        self.build = entry.build
-        self.rawVersion = entry.version
-        self.mcversion = entry.mcversion
-        self.mcversion_sane = self.mcversion.replace("_pre", "-pre", 1)
-        self.branch = entry.branch
-        self.installer_filename = None
-        self.installer_url = None
-        self.universal_filename = None
-        self.universal_url = None
-        self.changelog_url = None
-        self.longVersion = "%s-%s" % (self.mcversion, self.rawVersion)
-        if self.branch is not None:
-            self.longVersion = self.longVersion + "-%s" % self.branch
-
-        # this comment's whole purpose is to say this: cringe
-        for classifier, file in entry.files.items():
-            extension = file.extension
-            filename = file.filename(self.longVersion)
-            url = file.url(self.longVersion)
-            if (classifier == "installer") and (extension == "jar"):
-                self.installer_filename = filename
-                self.installer_url = url
-            if (classifier == "universal" or classifier == "client") and (extension == "jar" or extension == "zip"):
-                self.universal_filename = filename
-                self.universal_url = url
-            if (classifier == "changelog") and (extension == "txt"):
-                self.changelog_url = url
-
-    def name(self):
-        return "Forge %d" % self.build
-
-    def uses_installer(self):
-        if self.installer_url is None:
-            return False
-        if self.mcversion == "1.5.2":
-            return False
-        return True
-
-    def filename(self):
-        if self.uses_installer():
-            return self.installer_filename
-        return self.universal_filename
-
-    def url(self):
-        if self.uses_installer():
-            return self.installer_url
-        return self.universal_url
-
-    def is_supported(self):
-        if self.url() is None:
-            return False
-
-        foo = self.rawVersion.split('.')
-        if len(foo) < 1:
-            return False
-
-        major_version = foo[0]
-        if not major_version.isnumeric():
-            return False
-
-        # majorVersion = int(majorVersionStr)
-        # if majorVersion >= 37:
-        #    return False
-
-        return True

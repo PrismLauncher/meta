@@ -156,7 +156,7 @@ class MojangVersion(MetaBase):
     release_time: Optional[datetime] = Field(alias="releaseTime")
     time: Optional[datetime]
     type: Optional[str]
-    inheritsFrom: Optional[str]
+    inherits_from: Optional[str] = Field("inheritsFrom")
     logging: Optional[Dict[str, MojangLogging]]  # TODO improve this?
     compliance_level: Optional[int] = Field(alias="complianceLevel")
     javaVersion: Optional[JavaVersion]

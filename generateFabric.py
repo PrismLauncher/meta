@@ -9,8 +9,8 @@ from meta.model.fabric import FabricJarInfo, FabricInstallerDataV1, FabricMainCl
 PMC_DIR = polymc_path()
 UPSTREAM_DIR = upstream_path()
 
-ensure_component_dir("net.fabricmc.fabric-loader")
-ensure_component_dir("net.fabricmc.intermediary")
+ensure_component_dir(LOADER_COMPONENT)
+ensure_component_dir(INTERMEDIARY_COMPONENT)
 
 
 def load_jar_info(artifact_key) -> FabricJarInfo:
