@@ -55,20 +55,20 @@ def filehash(filename, hashtype, blocksize=65536):
 
 def get_single_forge_files_manifest(longversion):
     print(f"Getting Forge manifest for {longversion}")
-    pathThing = UPSTREAM_DIR + "/forge/files_manifests/%s.json" % longversion
-    files_manifest_file = Path(pathThing)
+    path_thing = UPSTREAM_DIR + "/forge/files_manifests/%s.json" % longversion
+    files_manifest_file = Path(path_thing)
     from_file = False
     if files_manifest_file.is_file():
-        with open(pathThing, 'r') as f:
+        with open(path_thing, 'r') as f:
             files_json = json.load(f)
             from_file = True
     else:
-        fileUrl = 'https://files.minecraftforge.net/net/minecraftforge/forge/%s/meta.json' % longversion
-        r = sess.get(fileUrl)
+        file_url = 'https://files.minecraftforge.net/net/minecraftforge/forge/%s/meta.json' % longversion
+        r = sess.get(file_url)
         r.raise_for_status()
         files_json = r.json()
 
-    retDict = dict()
+    ret_dict = dict()
 
     for classifier, extensionObj in files_json.get('classifiers').items():
         assert type(classifier) == str
@@ -78,8 +78,8 @@ def get_single_forge_files_manifest(longversion):
         index = 0
         count = 0
         while index < len(extensionObj.items()):
-            mutableCopy = copy.deepcopy(extensionObj)
-            extension, hash = mutableCopy.popitem()
+            mutable_copy = copy.deepcopy(extensionObj)
+            extension, hash = mutable_copy.popitem()
             if not type(classifier) == str:
                 pprint(classifier)
                 pprint(extensionObj)
@@ -90,20 +90,20 @@ def get_single_forge_files_manifest(longversion):
                 index += 1
                 continue
             assert type(classifier) == str
-            processedHash = re.sub(r"\W", "", hash)
-            if not len(processedHash) == 32:
+            processed_hash = re.sub(r"\W", "", hash)
+            if not len(processed_hash) == 32:
                 print('%s: Skipping invalid hash for extension %s:' % (longversion, extension))
                 pprint(extensionObj)
                 index += 1
                 continue
 
-            fileObj = ForgeFile(
+            file_obj = ForgeFile(
                 classifier=classifier,
-                hash=processedHash,
+                hash=processed_hash,
                 extension=extension
             )
             if count == 0:
-                retDict[classifier] = fileObj
+                ret_dict[classifier] = file_obj
                 index += 1
                 count += 1
             else:
@@ -112,10 +112,10 @@ def get_single_forge_files_manifest(longversion):
                 assert False
 
     if not from_file:
-        with open(pathThing, 'w', encoding='utf-8') as f:
+        with open(path_thing, 'w', encoding='utf-8') as f:
             json.dump(files_json, f, sort_keys=True, indent=4)
 
-    return retDict
+    return ret_dict
 
 
 def main():
@@ -130,12 +130,12 @@ def main():
     promotions_json = r.json()
     assert type(promotions_json) == dict
 
-    promotedKeyExpression = re.compile(
+    promoted_key_expression = re.compile(
         "(?P<mc>[^-]+)-(?P<promotion>(latest)|(recommended))(-(?P<branch>[a-zA-Z0-9\\.]+))?")
 
-    recommendedSet = set()
+    recommended_set = set()
 
-    newIndex = DerivedForgeIndex()
+    new_index = DerivedForgeIndex()
 
     # FIXME: does not fully validate that the file has not changed format
     # NOTE: For some insane reason, the format of the versions here is special. It having a branch at the end means it
@@ -145,7 +145,7 @@ def main():
     #           promotions (among other errors).
     print("Processing promotions:")
     for promoKey, shortversion in promotions_json.get('promos').items():
-        match = promotedKeyExpression.match(promoKey)
+        match = promoted_key_expression.match(promoKey)
         if not match:
             print('Skipping promotion %s, the key did not parse:' % promoKey)
             pprint(promoKey)
@@ -157,14 +157,14 @@ def main():
             print('Skipping promotion %s, because it on a branch only.' % promoKey)
             continue
         elif match.group('promotion') == 'recommended':
-            recommendedSet.add(shortversion)
+            recommended_set.add(shortversion)
             print('%s added to recommended set' % shortversion)
         elif match.group('promotion') == 'latest':
             pass
         else:
             assert False
 
-    versionExpression = re.compile(
+    version_expression = re.compile(
         "^(?P<mc>[0-9a-zA-Z_\\.]+)-(?P<ver>[0-9\\.]+\\.(?P<build>[0-9]+))(-(?P<branch>[a-zA-Z0-9\\.]+))?$")
 
     print("")
@@ -174,7 +174,7 @@ def main():
         assert type(value) == list
         for long_version in value:
             assert type(long_version) == str
-            match = versionExpression.match(long_version)
+            match = version_expression.match(long_version)
             if not match:
                 pprint(long_version)
                 assert match
@@ -186,7 +186,7 @@ def main():
             version = match.group('ver')
             branch = match.group('branch')
 
-            is_recommended = (version in recommendedSet)
+            is_recommended = (version in recommended_set)
 
             entry = ForgeEntry(
                 long_version=long_version,
@@ -199,24 +199,24 @@ def main():
                 recommended=is_recommended,
                 files=files
             )
-            newIndex.versions[long_version] = entry
-            if not newIndex.by_mc_version:
-                newIndex.by_mc_version = dict()
-            if mc_version not in newIndex.by_mc_version:
-                newIndex.by_mc_version.setdefault(mc_version, ForgeMCVersionInfo())
-            newIndex.by_mc_version[mc_version].versions.append(long_version)
+            new_index.versions[long_version] = entry
+            if not new_index.by_mc_version:
+                new_index.by_mc_version = dict()
+            if mc_version not in new_index.by_mc_version:
+                new_index.by_mc_version.setdefault(mc_version, ForgeMCVersionInfo())
+            new_index.by_mc_version[mc_version].versions.append(long_version)
             # NOTE: we add this later after the fact. The forge promotions file lies about these.
             # if entry.latest:
-            # newIndex.by_mc_version[mc_version].latest = long_version
+            # new_index.by_mc_version[mc_version].latest = long_version
             if entry.recommended:
-                newIndex.by_mc_version[mc_version].recommended = long_version
+                new_index.by_mc_version[mc_version].recommended = long_version
 
     print("")
     print("Post processing promotions and adding missing 'latest':")
-    for mc_version, info in newIndex.by_mc_version.items():
+    for mc_version, info in new_index.by_mc_version.items():
         latest_version = info.versions[-1]
         info.latest = latest_version
-        newIndex.versions[latest_version].latest = True
+        new_index.versions[latest_version].latest = True
         print("Added %s as latest for %s" % (latest_version, mc_version))
 
     print("")
@@ -228,13 +228,13 @@ def main():
     with open(UPSTREAM_DIR + "/forge/promotions_slim.json", 'w', encoding='utf-8') as f:
         json.dump(promotions_json, f, sort_keys=True, indent=4)
 
-    newIndex.write(UPSTREAM_DIR + "/forge/derived_index.json")
+    new_index.write(UPSTREAM_DIR + "/forge/derived_index.json")
 
     legacy_info_list = ForgeLegacyInfoList()
 
     print("Grabbing installers and dumping installer profiles...")
     # get the installer jars - if needed - and get the installer profiles out of them
-    for key, entry in newIndex.versions.items():
+    for key, entry in new_index.versions.items():
         eprint("Updating Forge %s" % key)
         if entry.mc_version is None:
             eprint("Skipping %d with invalid MC version" % entry.build)
