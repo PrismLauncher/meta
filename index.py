@@ -38,7 +38,7 @@ for package in sorted(os.listdir(PMC_DIR)):
     versionList = MetaVersionIndex(uid=package, name=sharedData.name)
 
     # walk through all the versions of the package
-    for filename in os.listdir(PMC_DIR + "/%s" % (package)):
+    for filename in os.listdir(PMC_DIR + "/%s" % package):
         if filename in ignore:
             continue
 
@@ -56,7 +56,7 @@ for package in sorted(os.listdir(PMC_DIR)):
     versionList.versions = sorted(versionList.versions, key=attrgetter('release_time'), reverse=True)
 
     # write the version index for the package
-    outFilePath = PMC_DIR + "/%s/index.json" % (package)
+    outFilePath = PMC_DIR + "/%s/index.json" % package
     versionList.write(outFilePath)
 
     # insert entry into the package index
