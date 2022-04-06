@@ -53,7 +53,6 @@ def should_ignore_artifact(libs: Collection[GradleSpecifier], match: GradleSpeci
                 # Everything is matched perfectly - this one will be ignored
                 return True
             elif LooseVersion(ver.version) > LooseVersion(match.version):
-                # eprint ("Lower version on %s:%s:%s: OLD=%s NEW=%s" % (ver.group, ver.artifact, ver.classifier, ver.version, match.version))
                 return True
             else:
                 # Otherwise it did not match - new version is higher and this is an upgrade

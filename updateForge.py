@@ -138,9 +138,11 @@ def main():
     newIndex = DerivedForgeIndex()
 
     # FIXME: does not fully validate that the file has not changed format
-    # NOTE: For some insane reason, the format of the versions here is special. It having a branch at the end means it affects that particular branch
+    # NOTE: For some insane reason, the format of the versions here is special. It having a branch at the end means it
+    #           affects that particular branch.
     #       We don't care about Forge having branches.
-    #       Therefore we only use the short version part for later identification and filter out the branch-specific promotions (among other errors).
+    #       Therefore we only use the short version part for later identification and filter out the branch-specific
+    #           promotions (among other errors).
     print("Processing promotions:")
     for promoKey, shortversion in promotions_json.get('promos').items():
         match = promotedKeyExpression.match(promoKey)
