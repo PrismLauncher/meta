@@ -12,7 +12,7 @@ from meta.common.mojang import MINECRAFT_COMPONENT
 from meta.model import MetaVersion, Dependency, Library, GradleSpecifier, MojangLibraryDownloads, MojangArtifact, \
     MetaPackage
 from meta.model.forge import ForgeVersion, ForgeInstallerProfile, ForgeLegacyInfo, fml_libs_for_version, \
-    ForgeInstallerProfileV2, InstallerInfo, DerivedForgeIndex, ForgeLegacyInfoList, ForgeLibrary
+    ForgeInstallerProfileV2, InstallerInfo, DerivedForgeIndex, ForgeLegacyInfoList
 from meta.model.mojang import MojangVersion
 
 PMC_DIR = polymc_path()

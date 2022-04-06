@@ -1,6 +1,6 @@
 import hashlib
 import os
-from operator import itemgetter, attrgetter
+from operator import attrgetter
 
 from meta.common import polymc_path
 from meta.model import MetaVersion, MetaPackage
