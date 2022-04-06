@@ -83,7 +83,7 @@ def compute_jar_file(path, url):
         jar_path = path + ".jar"
         get_binary_file(jar_path, url)
         tstamp = datetime.fromtimestamp(0)
-        with zipfile.ZipFile(jar_path, 'r') as jar:
+        with zipfile.ZipFile(jar_path) as jar:
             allinfo = jar.infolist()
             for info in allinfo:
                 tstamp_new = datetime(*info.date_time)

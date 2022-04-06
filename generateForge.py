@@ -12,7 +12,7 @@ from meta.common.mojang import MINECRAFT_COMPONENT
 from meta.model import MetaVersion, Dependency, Library, GradleSpecifier, MojangLibraryDownloads, MojangArtifact, \
     MetaPackage
 from meta.model.forge import ForgeVersion, ForgeInstallerProfile, ForgeLegacyInfo, fml_libs_for_version, \
-    ForgeInstallerProfileV2, InstallerInfo, DerivedForgeIndex, ForgeLegacyInfoList, ForgeLibrary
+    ForgeInstallerProfileV2, InstallerInfo, DerivedForgeIndex, ForgeLegacyInfoList
 from meta.model.mojang import MojangVersion
 
 PMC_DIR = polymc_path()
@@ -53,7 +53,6 @@ def should_ignore_artifact(libs: Collection[GradleSpecifier], match: GradleSpeci
                 # Everything is matched perfectly - this one will be ignored
                 return True
             elif LooseVersion(ver.version) > LooseVersion(match.version):
-                # eprint ("Lower version on %s:%s:%s: OLD=%s NEW=%s" % (ver.group, ver.artifact, ver.classifier, ver.version, match.version))
                 return True
             else:
                 # Otherwise it did not match - new version is higher and this is an upgrade
@@ -317,11 +316,6 @@ def main():
         if not major_version_str.isnumeric():
             eprint("Skipping version %s with non-numeric major version %s" % (key, major_version_str))
             continue
-
-        major_version = int(major_version_str)
-        # if major_version >= 37:
-        #    eprint ("Skipping unsupported major version %d (%s)" % (major_version, key))
-        #    continue
 
         if entry.recommended:
             recommended_versions.append(version.rawVersion)

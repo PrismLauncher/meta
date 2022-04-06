@@ -92,7 +92,7 @@ class LegacyOverrideEntry(MetaBase):
         if self.additional_traits:
             if not meta_version.additional_traits:
                 meta_version.additional_traits = []
-            meta_version.additional_traits = meta_version.additional_traits + self.additional_traits
+            meta_version.additional_traits += self.additional_traits
 
         if legacy:
             # remove all libraries - they are not needed for legacy

@@ -1,8 +1,8 @@
 #!/bin/bash
 
 BASEDIR=$(dirname "$0")
-cd "${BASEDIR}"
-BASEDIR=`pwd`
+cd "${BASEDIR}" || exit 1
+BASEDIR=$(pwd)
 
 set -x
 
@@ -36,10 +36,10 @@ function polymc_git {
 
 # make sure we *could* push to our repo
 
-currentDate=`date --iso-8601`
+currentDate=$(date --iso-8601)
 
 upstream_git reset --hard HEAD || exit 1
-upstream_git checkout ${BRANCH} || exit 1
+upstream_git checkout "${BRANCH}" || exit 1
 
 python updateMojang.py || fail_in
 python updateForge.py || fail_in
@@ -58,7 +58,7 @@ if [ "${DEPLOY_TO_GIT}" = true ] ; then
 fi
 
 polymc_git reset --hard HEAD || exit 1
-polymc_git checkout ${BRANCH} || exit 1
+polymc_git checkout "${BRANCH}" || exit 1
 
 python generateMojang.py || fail_out
 python generateForge.py || fail_out
@@ -85,7 +85,7 @@ if [ "${DEPLOY_TO_FOLDER}" = true ] ; then
     DEPLOY_FOLDER_var="DEPLOY_FOLDER_$MODE"
     DEPLOY_FOLDER="${!DEPLOY_FOLDER_var}"
     echo "Deploying to ${DEPLOY_FOLDER}"
-    rsync -rvog --chown=${DEPLOY_FOLDER_USER}:${DEPLOY_FOLDER_GROUP} --exclude=.git ${BASEDIR}/${PMC_DIR}/ ${DEPLOY_FOLDER}
+    rsync -rvog --chown="${DEPLOY_FOLDER_USER}:${DEPLOY_FOLDER_GROUP}" --exclude=.git "${BASEDIR}/${PMC_DIR}/" "${DEPLOY_FOLDER}"
 fi
 
 exit 0

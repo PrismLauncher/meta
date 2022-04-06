@@ -25,7 +25,7 @@ sess = CacheControl(requests.Session(), forever_cache)
 def fetch_zipped_version(path, url):
     zip_path = f"{path}.zip"
     download_binary_file(sess, zip_path, url)
-    with zipfile.ZipFile(zip_path, 'r') as z:
+    with zipfile.ZipFile(zip_path) as z:
         for info in z.infolist():
             if info.filename.endswith(".json"):
                 print(f"Found {info.filename} as version json")

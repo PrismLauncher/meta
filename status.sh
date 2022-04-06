@@ -1,22 +1,22 @@
 #!/bin/bash
 
 BASEDIR=$(dirname "$0")
-cd "${BASEDIR}"
-BASEDIR=`pwd`
+cd "${BASEDIR}" || exit 1
+BASEDIR=$(pwd)
 
 source config.sh
 
 echo "Upstream:"
-pushd "${UPSTREAM_DIR}"
+pushd "${UPSTREAM_DIR}" || exit 1
 git status
-popd
+popd || exit 1
 echo
 
 
 echo "PolyMC:"
-pushd "${PMC_DIR}"
+pushd "${PMC_DIR}" || exit 1
 git status
-popd
+popd || exit 1
 echo
 
 echo "Scripts:"
