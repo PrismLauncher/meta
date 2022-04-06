@@ -46,11 +46,11 @@ def eprint(*args, **kwargs):
 
 
 def filehash(filename, hashtype, blocksize=65536):
-    hash = hashtype()
+    hashtype = hashtype()
     with open(filename, "rb") as f:
         for block in iter(lambda: f.read(blocksize), b""):
-            hash.update(block)
-    return hash.hexdigest()
+            hashtype.update(block)
+    return hashtype.hexdigest()
 
 
 def get_single_forge_files_manifest(longversion):
@@ -79,18 +79,18 @@ def get_single_forge_files_manifest(longversion):
         count = 0
         while index < len(extensionObj.items()):
             mutable_copy = copy.deepcopy(extensionObj)
-            extension, hash = mutable_copy.popitem()
+            extension, hashtype = mutable_copy.popitem()
             if not type(classifier) == str:
                 pprint(classifier)
                 pprint(extensionObj)
-            if not type(hash) == str:
+            if not type(hashtype) == str:
                 pprint(classifier)
                 pprint(extensionObj)
                 print('%s: Skipping missing hash for extension %s:' % (longversion, extension))
                 index += 1
                 continue
             assert type(classifier) == str
-            processed_hash = re.sub(r"\W", "", hash)
+            processed_hash = re.sub(r"\W", "", hashtype)
             if not len(processed_hash) == 32:
                 print('%s: Skipping invalid hash for extension %s:' % (longversion, extension))
                 pprint(extensionObj)
