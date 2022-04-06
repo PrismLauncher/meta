@@ -8,6 +8,12 @@ from . import MetaBase, MojangArtifactBase, MojangAssets, MojangLibrary, MojangA
 
 SUPPORTED_LAUNCHER_VERSION = 21
 SUPPORTED_COMPLIANCE_LEVEL = 1
+DEFAULT_JAVA_MAJOR = 8  # by default we should recommend Java 8 if we don't know better
+COMPATIBLE_JAVA_MAPPINGS = {
+    16: [17, 18],
+    17: [18]
+}
+
 
 '''
 Mojang index files look like this:
@@ -152,7 +158,7 @@ class MojangVersion(MetaBase):
     processArguments: Optional[str]
     minecraft_arguments: Optional[str] = Field(alias="minecraftArguments")
     minimum_launcher_version: Optional[int] = Field(
-        alias="minimumLauncherVersion")  # TODO: validate validateSupportedMojangVersion
+        alias="minimumLauncherVersion")
     release_time: Optional[datetime] = Field(alias="releaseTime")
     time: Optional[datetime]
     type: Optional[str]
@@ -181,13 +187,15 @@ class MojangVersion(MetaBase):
         else:
             raise Exception(f"Unsupported compliance level {self.compliance_level}")
 
+        major = DEFAULT_JAVA_MAJOR
         if self.javaVersion is not None:  # some versions don't have this. TODO: maybe maintain manual overrides
             major = self.javaVersion.major_version
-            compatible_java_majors = [major]
-            if major == 16:  # TODO: deal with this somewhere else
-                compatible_java_majors.append(17)
 
-        if new_type == "pending":  # TODO: why wasn't this needed before large refactor
+        compatible_java_majors = [major]
+        if major in COMPATIBLE_JAVA_MAPPINGS:  # add more compatible Java versions, e.g. 16 and 17 both work for MC 1.17
+            compatible_java_majors += COMPATIBLE_JAVA_MAPPINGS[major]
+
+        if new_type == "pending":  # experiments from upstream are type=pending
             new_type = "experiment"
 
         return MetaVersion(
