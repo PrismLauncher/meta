@@ -1,102 +1,105 @@
-from fabricutil import *
+import json
+import os
 
-PMC_DIR = os.environ["PMC_DIR"]
-UPSTREAM_DIR = os.environ["UPSTREAM_DIR"]
+from meta.common import ensure_component_dir, polymc_path, upstream_path, transform_maven_key
+from meta.common.fabric import JARS_DIR, INSTALLER_INFO_DIR, META_DIR, INTERMEDIARY_COMPONENT, LOADER_COMPONENT
+from meta.model import MetaVersion, Dependency, Library, MetaPackage, GradleSpecifier
+from meta.model.fabric import FabricJarInfo, FabricInstallerDataV1, FabricMainClasses
 
-# turn loader versions into packages
-loaderRecommended = []
-loaderVersions = []
-intermediaryRecommended = []
-intermediaryVersions = []
+PMC_DIR = polymc_path()
+UPSTREAM_DIR = upstream_path()
 
-
-def mkdirs(path):
-    if not os.path.exists(path):
-        os.makedirs(path)
+ensure_component_dir(LOADER_COMPONENT)
+ensure_component_dir(INTERMEDIARY_COMPONENT)
 
 
-mkdirs(PMC_DIR + "/net.fabricmc.fabric-loader")
-mkdirs(PMC_DIR + "/net.fabricmc.intermediary")
+def load_jar_info(artifact_key) -> FabricJarInfo:
+    return FabricJarInfo.parse_file(os.path.join(UPSTREAM_DIR, JARS_DIR, f"{artifact_key}.json"))
 
 
-def loadJarInfo(mavenKey):
-    with open(UPSTREAM_DIR + "/fabric/jars/" + mavenKey.replace(":", ".") + ".json", 'r',
-              encoding='utf-8') as jarInfoFile:
-        return FabricJarInfo(json.load(jarInfoFile))
+def load_installer_info(version) -> FabricInstallerDataV1:
+    return FabricInstallerDataV1.parse_file(os.path.join(UPSTREAM_DIR, INSTALLER_INFO_DIR, f"{version}.json"))
 
 
-def processLoaderVersion(loaderVersion, it, loaderData):
-    verStable = it["stable"]
-    if (len(loaderRecommended) < 1) and verStable:
-        loaderRecommended.append(loaderVersion)
-    versionJarInfo = loadJarInfo(it["maven"])
-    version = PolyMCVersionFile(name="Fabric Loader", uid="net.fabricmc.fabric-loader", version=loaderVersion)
-    version.releaseTime = versionJarInfo.releaseTime
-    version.requires = [DependencyEntry(uid='net.fabricmc.intermediary')]
-    version.order = 10
-    version.type = "release"
-    if isinstance(loaderData.mainClass, dict):
-        version.mainClass = loaderData.mainClass["client"]
+def process_loader_version(entry) -> MetaVersion:
+    jar_info = load_jar_info(transform_maven_key(entry["maven"]))
+    installer_info = load_installer_info(entry["version"])
+
+    v = MetaVersion(name="Fabric Loader", uid="net.fabricmc.fabric-loader", version=entry["version"])
+    v.release_time = jar_info.release_time
+    v.requires = [Dependency(uid='net.fabricmc.intermediary')]
+    v.order = 10
+    v.type = "release"
+    if isinstance(installer_info.main_class, FabricMainClasses):
+        v.main_class = installer_info.main_class.client
     else:
-        version.mainClass = loaderData.mainClass
-    version.libraries = []
-    version.libraries.extend(loaderData.libraries.common)
-    version.libraries.extend(loaderData.libraries.client)
-    loaderLib = PolyMCLibrary(name=GradleSpecifier(it["maven"]), url="https://maven.fabricmc.net")
-    version.libraries.append(loaderLib)
-    loaderVersions.append(version)
+        v.main_class = installer_info.main_class
+    v.libraries = []
+    v.libraries.extend(installer_info.libraries.common)
+    v.libraries.extend(installer_info.libraries.client)
+    loader_lib = Library(name=GradleSpecifier.from_string(entry["maven"]), url="https://maven.fabricmc.net")
+    v.libraries.append(loader_lib)
+    return v
 
 
-def processIntermediaryVersion(it):
-    intermediaryRecommended.append(it["version"])
-    versionJarInfo = loadJarInfo(it["maven"])
-    version = PolyMCVersionFile(name="Intermediary Mappings", uid="net.fabricmc.intermediary", version=it["version"])
-    version.releaseTime = versionJarInfo.releaseTime
-    version.requires = [DependencyEntry(uid='net.minecraft', equals=it["version"])]
-    version.order = 11
-    version.type = "release"
-    version.libraries = []
-    version.volatile = True
-    mappingLib = PolyMCLibrary(name=GradleSpecifier(it["maven"]), url="https://maven.fabricmc.net")
-    version.libraries.append(mappingLib)
-    intermediaryVersions.append(version)
+def process_intermediary_version(entry) -> MetaVersion:
+    jar_info = load_jar_info(transform_maven_key(entry["maven"]))
+
+    v = MetaVersion(name="Intermediary Mappings", uid="net.fabricmc.intermediary", version=entry["version"])
+    v.release_time = jar_info.release_time
+    v.requires = [Dependency(uid='net.minecraft', equals=entry["version"])]
+    v.order = 11
+    v.type = "release"
+    v.libraries = []
+    v.volatile = True
+    intermediary_lib = Library(name=GradleSpecifier.from_string(entry["maven"]), url="https://maven.fabricmc.net")
+    v.libraries.append(intermediary_lib)
+    return v
 
 
-with open(UPSTREAM_DIR + "/fabric/meta-v2/loader.json", 'r', encoding='utf-8') as loaderVersionIndexFile:
-    loaderVersionIndex = json.load(loaderVersionIndexFile)
-    for it in loaderVersionIndex:
-        version = it["version"]
-        with open(UPSTREAM_DIR + "/fabric/loader-installer-json/" + version + ".json", 'r',
-                  encoding='utf-8') as loaderVersionFile:
-            ldata = json.load(loaderVersionFile)
-            ldata = FabricInstallerDataV1(ldata)
-            processLoaderVersion(version, it, ldata)
+def main():
+    recommended_loader_versions = []
+    recommended_intermediary_versions = []
 
-with open(UPSTREAM_DIR + "/fabric/meta-v2/intermediary.json", 'r', encoding='utf-8') as intermediaryVersionIndexFile:
-    intermediaryVersionIndex = json.load(intermediaryVersionIndexFile)
-    for it in intermediaryVersionIndex:
-        processIntermediaryVersion(it)
+    with open(os.path.join(UPSTREAM_DIR, META_DIR, "loader.json"), 'r', encoding='utf-8') as f:
+        loader_version_index = json.load(f)
+        for entry in loader_version_index:
+            version = entry["version"]
+            print(f"Processing loader {version}")
 
-for version in loaderVersions:
-    outFilepath = PMC_DIR + "/net.fabricmc.fabric-loader/%s.json" % version.version
-    with open(outFilepath, 'w') as outfile:
-        json.dump(version.to_json(), outfile, sort_keys=True, indent=4)
+            v = process_loader_version(entry)
 
-sharedData = PolyMCSharedPackageData(uid='net.fabricmc.fabric-loader', name='Fabric Loader')
-sharedData.recommended = loaderRecommended
-sharedData.description = "Fabric Loader is a tool to load Fabric-compatible mods in game environments."
-sharedData.projectUrl = "https://fabricmc.net"
-sharedData.authors = ["Fabric Developers"]
-sharedData.write()
+            if not recommended_loader_versions:  # first (newest) loader is recommended
+                recommended_loader_versions.append(version)
 
-for version in intermediaryVersions:
-    outFilepath = PMC_DIR + "/net.fabricmc.intermediary/%s.json" % version.version
-    with open(outFilepath, 'w') as outfile:
-        json.dump(version.to_json(), outfile, sort_keys=True, indent=4)
+            v.write(os.path.join(PMC_DIR, LOADER_COMPONENT, f"{v.version}.json"))
 
-sharedData = PolyMCSharedPackageData(uid='net.fabricmc.intermediary', name='Intermediary Mappings')
-sharedData.recommended = intermediaryRecommended
-sharedData.description = "Intermediary mappings allow using Fabric Loader with mods for Minecraft in a more compatible manner."
-sharedData.projectUrl = "https://fabricmc.net"
-sharedData.authors = ["Fabric Developers"]
-sharedData.write()
+    with open(os.path.join(UPSTREAM_DIR, META_DIR, "intermediary.json"), 'r', encoding='utf-8') as f:
+        intermediary_version_index = json.load(f)
+        for entry in intermediary_version_index:
+            version = entry["version"]
+            print(f"Processing intermediary {version}")
+
+            v = process_intermediary_version(entry)
+
+            recommended_intermediary_versions.append(version)  # all intermediaries are recommended
+
+            v.write(os.path.join(PMC_DIR, INTERMEDIARY_COMPONENT, f"{v.version}.json"))
+
+    package = MetaPackage(uid=LOADER_COMPONENT, name='Fabric Loader')
+    package.recommended = recommended_loader_versions
+    package.description = "Fabric Loader is a tool to load Fabric-compatible mods in game environments."
+    package.project_url = "https://fabricmc.net"
+    package.authors = ["Fabric Developers"]
+    package.write(os.path.join(PMC_DIR, LOADER_COMPONENT, "package.json"))
+
+    package = MetaPackage(uid=INTERMEDIARY_COMPONENT, name='Intermediary Mappings')
+    package.recommended = recommended_intermediary_versions
+    package.description = "Intermediary mappings allow using Fabric Loader with mods for Minecraft in a more compatible manner."
+    package.project_url = "https://fabricmc.net"
+    package.authors = ["Fabric Developers"]
+    package.write(os.path.join(PMC_DIR, INTERMEDIARY_COMPONENT, "package.json"))
+
+
+if __name__ == '__main__':
+    main()

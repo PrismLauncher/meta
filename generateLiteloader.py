@@ -1,96 +1,108 @@
-from liteloaderutil import *
+import os
+from datetime import datetime
+from typing import List, Tuple, Dict, Optional
 
-PMC_DIR = os.environ["PMC_DIR"]
-UPSTREAM_DIR = os.environ["UPSTREAM_DIR"]
+from meta.common import ensure_component_dir, polymc_path, upstream_path
+from meta.common.liteloader import LITELOADER_COMPONENT, VERSIONS_FILE
+from meta.common.mojang import MINECRAFT_COMPONENT
+from meta.model import MetaVersion, GradleSpecifier, Library, MetaPackage, Dependency
+from meta.model.liteloader import LiteloaderIndex, LiteloaderArtefact
 
-def mkdirs(path):
-    if not os.path.exists(path):
-        os.makedirs(path)
+PMC_DIR = polymc_path()
+UPSTREAM_DIR = upstream_path()
 
-
-mkdirs(PMC_DIR + "/com.mumfrey.liteloader")
-
-# load the locally cached version list
-def loadLiteloaderJson():
-    with open(UPSTREAM_DIR + "/liteloader/versions.json", 'r', encoding='utf-8') as f:
-        return LiteloaderIndex(json.load(f))
+ensure_component_dir(LITELOADER_COMPONENT)
 
 
-remoteVersionlist = loadLiteloaderJson()
-
-
-def processArtefacts(mcVersion, liteloader, notSnapshots):
-    versions = []
-    lookup = {}
-    latestVersion = None
+def process_artefacts(mc_version: str, artefacts: Dict[str, LiteloaderArtefact], is_snapshot: bool) \
+        -> Tuple[List[MetaVersion], Optional[MetaVersion]]:
+    versions: List[MetaVersion] = []
+    lookup: Dict[str, MetaVersion] = {}
+    latest_version = None
     latest = None
-    for id, artefact in liteloader.items():
-        if id == 'latest':
-            latestVersion = artefact.version
+    for x, artefact in artefacts.items():
+        if x == 'latest':
+            latest_version = artefact.version
             continue
-        version = PolyMCVersionFile(name="LiteLoader", uid="com.mumfrey.liteloader", version=artefact.version)
-        version.requires = [DependencyEntry(uid='net.minecraft', equals=mcVersion)]
-        version.releaseTime = datetime.datetime.utcfromtimestamp(int(artefact.timestamp))
-        version.addTweakers = [artefact.tweakClass]
-        version.mainClass = "net.minecraft.launchwrapper.Launch"
-        version.order = 10
-        if notSnapshots:
-            version.type = "release"
-        else:
-            version.type = "snapshot"
-        lookup[version.version] = version
-        libraries = artefact.libraries
+        v = MetaVersion(
+            name="LiteLoader",
+            uid=LITELOADER_COMPONENT,
+            version=artefact.version,
+            requires=[Dependency(uid=MINECRAFT_COMPONENT, equals=mc_version)],
+            release_time=datetime.utcfromtimestamp(int(artefact.timestamp)),
+            additional_tweakers=[artefact.tweakClass],
+            main_class="net.minecraft.launchwrapper.Launch",
+            order=10,
+            libraries=artefact.libraries,
+            type="release")
+
+        if is_snapshot:
+            v.type = "snapshot"
+
         # hack to make broken liteloader versions work
-        for lib in libraries:
-            if lib.name == GradleSpecifier("org.ow2.asm:asm-all:5.0.3"):
+        for lib in v.libraries:
+            if lib.name == GradleSpecifier("org.ow2.asm", "asm-all", "5.0.3"):
                 lib.url = "https://repo.maven.apache.org/maven2/"
-            if lib.name == GradleSpecifier("org.ow2.asm:asm-all:5.2"):
+            if lib.name == GradleSpecifier("org.ow2.asm", "asm-all", "5.2"):
                 lib.url = "http://repo.liteloader.com/"
-        liteloaderLib = PolyMCLibrary(
-            name=GradleSpecifier("com.mumfrey:liteloader:%s" % version.version),
+
+        liteloader_lib = Library(
+            name=GradleSpecifier("com.mumfrey", "liteloader", v.version),
             url="http://dl.liteloader.com/versions/"
         )
-        if not notSnapshots:
-            liteloaderLib.mmcHint = "always-stale"
-        libraries.append(liteloaderLib)
-        version.libraries = libraries
-        versions.append(version)
-    if latestVersion:
-        latest = lookup[latestVersion]
+        if is_snapshot:
+            liteloader_lib.mmcHint = "always-stale"
+        v.libraries.append(liteloader_lib)
+
+        versions.append(v)
+        lookup[v.version] = v
+
+    if latest_version:
+        latest = lookup[latest_version]
     return versions, latest
 
 
-allVersions = []
-recommended = []
-for mcVersion, versionObject in remoteVersionlist.versions.items():
-    # ignore this for now. It should be a jar mod or something.
-    if mcVersion == "1.5.2":
-        continue
-    latestSnapshot = None
-    latestRelease = None
-    version = []
-    if versionObject.artefacts:
-        versions, latestRelease = processArtefacts(mcVersion, versionObject.artefacts.liteloader, True)
-        allVersions.extend(versions)
-    if versionObject.snapshots:
-        versions, latestSnapshot = processArtefacts(mcVersion, versionObject.snapshots.liteloader, False)
-        allVersions.extend(versions)
+def process_versions(index: LiteloaderIndex) -> Tuple[List[MetaVersion], List[str]]:
+    all_versions: List[MetaVersion] = []
+    recommended: List[str] = []
+    for mcVersion, versionObject in index.versions.items():
+        # ignore this for now. It should be a jar mod or something.
+        if mcVersion == "1.5.2":
+            continue
 
-    if latestRelease:
-        recommended.append(latestRelease.version)
+        latest_release = None
+        if versionObject.artefacts:
+            versions, latest_release = process_artefacts(mcVersion, versionObject.artefacts.liteloader, False)
+            all_versions.extend(versions)
+        if versionObject.snapshots:
+            versions, latest_snapshot = process_artefacts(mcVersion, versionObject.snapshots.liteloader, True)
+            all_versions.extend(versions)
 
-recommended.sort()
+        if latest_release:
+            recommended.append(latest_release.version)
 
-allVersions.sort(key=lambda x: x.releaseTime, reverse=True)
+    recommended.sort()
 
-for version in allVersions:
-    outFilepath = PMC_DIR + "/com.mumfrey.liteloader/%s.json" % version.version
-    with open(outFilepath, 'w') as outfile:
-        json.dump(version.to_json(), outfile, sort_keys=True, indent=4)
+    all_versions.sort(key=lambda x: x.release_time, reverse=True)
+    return all_versions, recommended
 
-sharedData = PolyMCSharedPackageData(uid='com.mumfrey.liteloader', name='LiteLoader')
-sharedData.recommended = recommended
-sharedData.description = remoteVersionlist.meta.description
-sharedData.projectUrl = remoteVersionlist.meta.url
-sharedData.authors = [remoteVersionlist.meta.authors]
-sharedData.write()
+
+def main():
+    index = LiteloaderIndex.parse_file(os.path.join(UPSTREAM_DIR, VERSIONS_FILE))
+
+    all_versions, recommended = process_versions(index)
+
+    for version in all_versions:
+        version.write(os.path.join(PMC_DIR, LITELOADER_COMPONENT, f"{version.version}.json"))
+
+    package = MetaPackage(uid=LITELOADER_COMPONENT,
+                          name='LiteLoader',
+                          description=index.meta.description,
+                          project_url=index.meta.url,
+                          authors=[index.meta.authors],
+                          recommended=recommended)
+    package.write(os.path.join(PMC_DIR, LITELOADER_COMPONENT, "package.json"))
+
+
+if __name__ == '__main__':
+    main()

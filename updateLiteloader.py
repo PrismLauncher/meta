@@ -1,37 +1,42 @@
-'''
- Get the source files necessary for generating Forge versions
-'''
-import copy
-import sys
+import json
+import os
 
 import requests
 from cachecontrol import CacheControl
 from cachecontrol.caches import FileCache
-from liteloaderutil import *
 
-UPSTREAM_DIR = os.environ["UPSTREAM_DIR"]
+from meta.common import upstream_path, ensure_upstream_dir
+from meta.common.liteloader import VERSIONS_FILE, BASE_DIR
+from meta.model.liteloader import LiteloaderIndex
 
+UPSTREAM_DIR = upstream_path()
 
-def eprint(*args, **kwargs):
-    print(*args, file=sys.stderr, **kwargs)
-
+ensure_upstream_dir(BASE_DIR)
 
 forever_cache = FileCache('caches/http_cache', forever=True)
 sess = CacheControl(requests.Session(), forever_cache)
 
-# get the remote version list
-r = sess.get('http://dl.liteloader.com/versions/versions.json')
-r.raise_for_status()
 
-# make sure it's JSON
-main_json = r.json()
+def main():
+    # get the remote version list
+    r = sess.get('http://dl.liteloader.com/versions/versions.json')
+    r.raise_for_status()
 
-# make sure we understand the schema
-remoteVersionlist = LiteloaderIndex(copy.deepcopy(main_json))
-newStr = json.dumps(remoteVersionlist.to_json(), sort_keys=True)
-origStr = json.dumps(main_json, sort_keys=True)
-assert newStr == origStr
+    # make sure it's JSON
+    main_json = r.json()
 
-# save the json it to file
-with open(UPSTREAM_DIR + "/liteloader/versions.json", 'w', encoding='utf-8') as f:
-    json.dump(main_json, f, sort_keys=True, indent=4)
+    # make sure we understand the schema
+    remote_versions = LiteloaderIndex.parse_obj(main_json)
+    parsed = remote_versions.json()
+    original = json.dumps(main_json, sort_keys=True, indent=4)
+    assert parsed == original
+
+    print("Successfully parsed index")
+    print(f"Last updated {remote_versions.meta.updated}")
+
+    # save the json it to file
+    remote_versions.write(os.path.join(UPSTREAM_DIR, VERSIONS_FILE))
+
+
+if __name__ == '__main__':
+    main()

@@ -1,74 +1,100 @@
+import json
+import os
+import zipfile
+
 import requests
 from cachecontrol import CacheControl
 from cachecontrol.caches import FileCache
-from metautil import *
 
-UPSTREAM_DIR = os.environ["UPSTREAM_DIR"]
+from meta.common import upstream_path, ensure_upstream_dir, static_path
+from meta.common.http import download_binary_file
+from meta.common.mojang import BASE_DIR, VERSION_MANIFEST_FILE, VERSIONS_DIR, ASSETS_DIR, STATIC_EXPERIMENTS_FILE
+from meta.model.mojang import MojangIndexWrap, MojangIndex, ExperimentIndex, ExperimentIndexWrap
+
+UPSTREAM_DIR = upstream_path()
+STATIC_DIR = static_path()
+
+ensure_upstream_dir(BASE_DIR)
+ensure_upstream_dir(VERSIONS_DIR)
+ensure_upstream_dir(ASSETS_DIR)
 
 forever_cache = FileCache('caches/http_cache', forever=True)
 sess = CacheControl(requests.Session(), forever_cache)
 
 
-def get_version_file(path, url):
-    with open(path, 'w', encoding='utf-8') as f:
-        r = sess.get(url)
-        r.raise_for_status()
-        version_json = r.json()
-        assetId = version_json["assetIndex"]["id"]
-        assetUrl = version_json["assetIndex"]["url"]
-        json.dump(version_json, f, sort_keys=True, indent=4)
-        return assetId, assetUrl
+def fetch_zipped_version(path, url):
+    zip_path = f"{path}.zip"
+    download_binary_file(sess, zip_path, url)
+    with zipfile.ZipFile(zip_path, 'r') as z:
+        for info in z.infolist():
+            if info.filename.endswith(".json"):
+                print(f"Found {info.filename} as version json")
+                version_json = json.load(z.open(info))
+                break
 
+    assert version_json
 
-def get_file(path, url):
     with open(path, 'w', encoding='utf-8') as f:
-        r = sess.get(url)
-        r.raise_for_status()
-        version_json = r.json()
         json.dump(version_json, f, sort_keys=True, indent=4)
 
+    return version_json
 
-# get the local version list
-localVersionlist = None
-try:
-    with open(UPSTREAM_DIR + "/mojang/version_manifest_v2.json", 'r', encoding='utf-8') as localIndexFile:
-        localVersionlist = MojangIndexWrap(json.load(localIndexFile))
-except:
-    localVersionlist = MojangIndexWrap({})
-localIDs = set(localVersionlist.versions.keys())
 
-# get the remote version list
-r = sess.get('https://launchermeta.mojang.com/mc/game/version_manifest_v2.json')
-r.raise_for_status()
-main_json = r.json()
-remoteVersionlist = MojangIndexWrap(main_json)
-remoteIDs = set(remoteVersionlist.versions.keys())
+def fetch_version(path, url):
+    r = sess.get(url)
+    r.raise_for_status()
+    version_json = r.json()
 
-# versions not present locally but present remotely are new
-newIDs = remoteIDs.difference(localIDs)
+    with open(path, 'w', encoding='utf-8') as f:
+        json.dump(version_json, f, sort_keys=True, indent=4)
 
-# versions present both locally and remotely need to be checked
-checkedIDs = remoteIDs.difference(newIDs)
+    return version_json
 
-# versions that actually need to be updated have updated timestamps or are new
-updatedIDs = newIDs
-for id in checkedIDs:
-    remoteVersion = remoteVersionlist.versions[id]
-    localVersion = localVersionlist.versions[id]
-    if remoteVersion.time > localVersion.time:
-        updatedIDs.add(id)
 
-# update versions and the linked assets files
-assets = {}
-for id in updatedIDs:
-    version = remoteVersionlist.versions[id]
-    print("Updating " + version.id + " to timestamp " + version.releaseTime.strftime('%s'))
-    assetId, assetUrl = get_version_file(UPSTREAM_DIR + "/mojang/versions/" + id + '.json', version.url)
-    assets[assetId] = assetUrl
+def main():
+    # get the remote version list
+    r = sess.get('https://launchermeta.mojang.com/mc/game/version_manifest_v2.json')
+    r.raise_for_status()
 
-for assetId, assetUrl in iter(assets.items()):
-    print("assets", assetId, assetUrl)
-    get_file(UPSTREAM_DIR + "/mojang/assets/" + assetId + '.json', assetUrl)
+    remote_versions = MojangIndexWrap(MojangIndex(**r.json()))
+    remote_ids = set(remote_versions.versions.keys())
 
-with open(UPSTREAM_DIR + "/mojang/version_manifest_v2.json", 'w', encoding='utf-8') as f:
-    json.dump(main_json, f, sort_keys=True, indent=4)
+    version_manifest_path = os.path.join(UPSTREAM_DIR, VERSION_MANIFEST_FILE)
+
+    if os.path.exists(version_manifest_path):
+        # get the local version list
+        current_versions = MojangIndexWrap(MojangIndex.parse_file(version_manifest_path))
+        local_ids = set(current_versions.versions.keys())
+
+        # versions not present locally but present remotely are new
+        pending_ids = remote_ids.difference(local_ids)
+
+        for x in local_ids:
+            remote_version = remote_versions.versions[x]
+            local_version = current_versions.versions[x]
+            if remote_version.time > local_version.time:
+                pending_ids.add(x)
+    else:
+        pending_ids = remote_ids
+
+    for x in pending_ids:
+        version = remote_versions.versions[x]
+        print("Updating " + version.id + " to timestamp " + version.release_time.strftime('%s'))
+        fetch_version(os.path.join(UPSTREAM_DIR, VERSIONS_DIR, f"{x}.json"), version.url)
+
+    # deal with experimental snapshots separately
+    static_experiments_path = os.path.join(STATIC_DIR, STATIC_EXPERIMENTS_FILE)
+    if os.path.exists(static_experiments_path):
+        experiments = ExperimentIndexWrap(ExperimentIndex.parse_file(static_experiments_path))
+        experiment_ids = set(experiments.versions.keys())
+
+        for x in experiment_ids:
+            version = experiments.versions[x]
+            print("Updating experiment " + version.id)
+            fetch_zipped_version(os.path.join(UPSTREAM_DIR, VERSIONS_DIR, f"{x}.json"), version.url)
+
+    remote_versions.index.write(version_manifest_path)
+
+
+if __name__ == '__main__':
+    main()
