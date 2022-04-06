@@ -7,5 +7,5 @@ if [ "$1" == "update" ]; then
 elif [ "$1" == "cron" ]; then
     exec cron -f
 else
-    exec $@
+    exec "$@"
 fi
