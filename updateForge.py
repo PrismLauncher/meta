@@ -1,6 +1,6 @@
-'''
+"""
  Get the source files necessary for generating Forge versions
-'''
+"""
 import copy
 import hashlib
 import json
