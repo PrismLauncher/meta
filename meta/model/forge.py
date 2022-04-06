@@ -196,7 +196,7 @@ class ForgeVersion:
         self.changelog_url = None
         self.long_version = "%s-%s" % (self.mc_version, self.rawVersion)
         if self.branch is not None:
-            self.long_version = self.long_version + "-%s" % self.branch
+            self.long_version += "-%s" % self.branch
 
         # this comment's whole purpose is to say this: cringe
         for classifier, file in entry.files.items():

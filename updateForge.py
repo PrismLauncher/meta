@@ -87,14 +87,14 @@ def get_single_forge_files_manifest(longversion):
                 pprint(classifier)
                 pprint(extensionObj)
                 print('%s: Skipping missing hash for extension %s:' % (longversion, extension))
-                index = index + 1
+                index += 1
                 continue
             assert type(classifier) == str
             processedHash = re.sub(r"\W", "", hash)
             if not len(processedHash) == 32:
                 print('%s: Skipping invalid hash for extension %s:' % (longversion, extension))
                 pprint(extensionObj)
-                index = index + 1
+                index += 1
                 continue
 
             fileObj = ForgeFile(
@@ -104,8 +104,8 @@ def get_single_forge_files_manifest(longversion):
             )
             if count == 0:
                 retDict[classifier] = fileObj
-                index = index + 1
-                count = count + 1
+                index += 1
+                count += 1
             else:
                 print('%s: Multiple objects detected for classifier %s:' % (longversion, classifier))
                 pprint(extensionObj)
