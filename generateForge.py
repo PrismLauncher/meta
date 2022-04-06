@@ -317,11 +317,6 @@ def main():
             eprint("Skipping version %s with non-numeric major version %s" % (key, major_version_str))
             continue
 
-        major_version = int(major_version_str)
-        # if major_version >= 37:
-        #    eprint ("Skipping unsupported major version %d (%s)" % (major_version, key))
-        #    continue
-
         if entry.recommended:
             recommended_versions.append(version.rawVersion)
 
