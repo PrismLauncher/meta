@@ -2,7 +2,7 @@
 
 BASEDIR=$(dirname "$0")
 cd "${BASEDIR}" || exit 1
-BASEDIR=`pwd`
+BASEDIR=$(pwd)
 
 source config.sh
 

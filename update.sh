@@ -2,7 +2,7 @@
 
 BASEDIR=$(dirname "$0")
 cd "${BASEDIR}" || exit 1
-BASEDIR=`pwd`
+BASEDIR=$(pwd)
 
 set -x
 
@@ -36,7 +36,7 @@ function polymc_git {
 
 # make sure we *could* push to our repo
 
-currentDate=`date --iso-8601`
+currentDate=$(date --iso-8601)
 
 upstream_git reset --hard HEAD || exit 1
 upstream_git checkout ${BRANCH} || exit 1
