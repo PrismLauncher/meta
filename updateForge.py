@@ -271,9 +271,9 @@ def main():
             # harvestables from the installer
             if not os.path.isfile(profile_path):
                 print(jar_path)
-                with zipfile.ZipFile(jar_path, 'r') as jar:
+                with zipfile.ZipFile(jar_path) as jar:
                     with suppress(KeyError):
-                        with jar.open('version.json', 'r') as profile_zip_entry:
+                        with jar.open('version.json') as profile_zip_entry:
                             version_data = profile_zip_entry.read()
 
                             # Process: does it parse?
@@ -283,7 +283,7 @@ def main():
                                 versionJsonFile.write(version_data)
                                 versionJsonFile.close()
 
-                    with jar.open('install_profile.json', 'r') as profile_zip_entry:
+                    with jar.open('install_profile.json') as profile_zip_entry:
                         install_profile_data = profile_zip_entry.read()
 
                         # Process: does it parse?
@@ -335,7 +335,7 @@ def main():
                             f.write(chunk)
                 # find the latest timestamp in the zip file
                 tstamp = datetime.fromtimestamp(0)
-                with zipfile.ZipFile(jar_path, 'r') as jar:
+                with zipfile.ZipFile(jar_path) as jar:
                     for info in jar.infolist():
                         tstamp_new = datetime(*info.date_time)
                         if tstamp_new > tstamp:
