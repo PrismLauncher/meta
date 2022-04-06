@@ -1,5 +1,6 @@
 #!/bin/bash
-echo "Launch args: $@"
+echo -n "Launch args: "
+echo "$@"
 
 if [ "$1" == "update" ]; then
     cd /app || exit 1
