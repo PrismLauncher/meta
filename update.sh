@@ -1,7 +1,7 @@
 #!/bin/bash
 
 BASEDIR=$(dirname "$0")
-cd "${BASEDIR}"
+cd "${BASEDIR}" || exit 1
 BASEDIR=`pwd`
 
 set -x
