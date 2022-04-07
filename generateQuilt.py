@@ -1,111 +1,111 @@
-from fabricutil import *
+import json
+import os
 
-PMC_DIR = os.environ["PMC_DIR"]
-UPSTREAM_DIR = os.environ["UPSTREAM_DIR"]
+from meta.common import ensure_component_dir, polymc_path, upstream_path, transform_maven_key
+from meta.common.quilt import JARS_DIR, INSTALLER_INFO_DIR, META_DIR, INTERMEDIARY_COMPONENT, LOADER_COMPONENT, \
+    USE_QUILT_MAPPINGS
+from meta.model import MetaVersion, Dependency, Library, MetaPackage, GradleSpecifier
+from meta.model.fabric import FabricJarInfo, FabricInstallerDataV1, FabricMainClasses
 
-# TODO: Switch to Quilt Mappings once the time has come
-USE_QUILT_MAPPINGS = False
+PMC_DIR = polymc_path()
+UPSTREAM_DIR = upstream_path()
 
-# turn loader versions into packages
-loaderRecommended = []
-loaderVersions = []
-intermediaryRecommended = []
-intermediaryVersions = []
-
-
-def mkdirs(path):
-    if not os.path.exists(path):
-        os.makedirs(path)
+ensure_component_dir(LOADER_COMPONENT)
+ensure_component_dir(INTERMEDIARY_COMPONENT)
 
 
-mkdirs(PMC_DIR + "/org.quiltmc.quilt-loader")
-mkdirs(PMC_DIR + "/org.quiltmc.quilt-mappings")
+def load_jar_info(artifact_key) -> FabricJarInfo:
+    return FabricJarInfo.parse_file(os.path.join(UPSTREAM_DIR, JARS_DIR, f"{artifact_key}.json"))
 
 
-def loadJarInfo(mavenKey):
-    with open(UPSTREAM_DIR + "/quilt/jars/" + mavenKey.replace(":", ".") + ".json", 'r',
-              encoding='utf-8') as jarInfoFile:
-        return FabricJarInfo(json.load(jarInfoFile))
+def load_installer_info(version) -> FabricInstallerDataV1:
+    return FabricInstallerDataV1.parse_file(os.path.join(UPSTREAM_DIR, INSTALLER_INFO_DIR, f"{version}.json"))
 
 
-def processLoaderVersion(loaderVersion, it, loaderData):
-    if (len(loaderRecommended) < 1):  # TODO figure out actual stable version
-        loaderRecommended.append(loaderVersion)
-    versionJarInfo = loadJarInfo(it["maven"])
-    version = PolyMCVersionFile(name="Quilt Loader", uid="org.quiltmc.quilt-loader", version=loaderVersion)
-    version.releaseTime = versionJarInfo.releaseTime
+def process_loader_version(entry) -> MetaVersion:
+    jar_info = load_jar_info(transform_maven_key(entry["maven"]))
+    installer_info = load_installer_info(entry["version"])
+
+    v = MetaVersion(name="Quilt Loader", uid=LOADER_COMPONENT, version=entry["version"])
+    v.release_time = jar_info.release_time
+    v.requires = [Dependency(uid=INTERMEDIARY_COMPONENT)]
+    v.order = 10
+    v.type = "release"
+    if isinstance(installer_info.main_class, FabricMainClasses):
+        v.main_class = installer_info.main_class.client
+    else:
+        v.main_class = installer_info.main_class
+    v.libraries = []
+    v.libraries.extend(installer_info.libraries.common)
+    v.libraries.extend(installer_info.libraries.client)
+    loader_lib = Library(name=GradleSpecifier.from_string(entry["maven"]),
+                         url="https://maven.quiltmc.org/repository/release")
+    v.libraries.append(loader_lib)
+    return v
+
+
+def process_intermediary_version(entry) -> MetaVersion:
+    minecraft_version = entry["version"].split("+", 2)[0]  # version format is like 1.18.2-pre1+build.1
+
+    jar_info = load_jar_info(transform_maven_key(entry["maven"]))
+
+    v = MetaVersion(name="Quilt Intermediary Mappings", uid=INTERMEDIARY_COMPONENT, version=entry["version"])
+    v.release_time = jar_info.release_time
+    v.requires = [Dependency(uid='net.minecraft', equals=minecraft_version)]
+    v.order = 11
+    v.type = "release"
+    v.libraries = []
+    v.volatile = True
+    intermediary_lib = Library(name=GradleSpecifier.from_string(entry["maven"]),
+                               url="https://maven.quiltmc.org/repository/release")
+    v.libraries.append(intermediary_lib)
+    return v
+
+
+def main():
+    recommended_loader_versions = []
+    recommended_intermediary_versions = []
+
+    with open(os.path.join(UPSTREAM_DIR, META_DIR, "loader.json"), 'r', encoding='utf-8') as f:
+        loader_version_index = json.load(f)
+        for entry in loader_version_index:
+            version = entry["version"]
+            print(f"Processing loader {version}")
+
+            v = process_loader_version(entry)
+
+            if not recommended_loader_versions:  # first (newest) loader is recommended
+                recommended_loader_versions.append(version)
+
+            v.write(os.path.join(PMC_DIR, LOADER_COMPONENT, f"{v.version}.json"))
+
     if USE_QUILT_MAPPINGS:
-        version.requires = [DependencyEntry(uid='org.quiltmc.quilt-mappings')]
-    else:
-        version.requires = [DependencyEntry(uid='net.fabricmc.intermediary')]
-    version.order = 10
-    version.type = "release"
-    if isinstance(loaderData.mainClass, dict):
-        version.mainClass = loaderData.mainClass["client"]
-    else:
-        version.mainClass = loaderData.mainClass
-    version.libraries = []
-    version.libraries.extend(loaderData.libraries.common)
-    version.libraries.extend(loaderData.libraries.client)
-    loaderLib = PolyMCLibrary(name=GradleSpecifier(it["maven"]), url="https://maven.quiltmc.org/repository/release")
-    version.libraries.append(loaderLib)
-    loaderVersions.append(version)
+        with open(os.path.join(UPSTREAM_DIR, META_DIR, "quilt-mappings.json"), 'r', encoding='utf-8') as f:
+            intermediary_version_index = json.load(f)
+            for entry in intermediary_version_index:
+                version = entry["version"]
+                print(f"Processing intermediary {version}")
+
+                v = process_intermediary_version(entry)
+
+                recommended_intermediary_versions.append(version)  # all intermediaries are recommended
+
+                v.write(os.path.join(PMC_DIR, INTERMEDIARY_COMPONENT, f"{v.version}.json"))
+
+    package = MetaPackage(uid=LOADER_COMPONENT, name='Quilt Loader')
+    package.recommended = recommended_loader_versions
+    package.description = "The Quilt project is an open, community-driven modding toolchain designed primarily for Minecraft."
+    package.project_url = "https://quiltmc.org/"
+    package.authors = ["Quilt Project"]
+    package.write(os.path.join(PMC_DIR, LOADER_COMPONENT, "package.json"))
+
+    package = MetaPackage(uid=INTERMEDIARY_COMPONENT, name='Quilt Intermediary Mappings')
+    package.recommended = recommended_intermediary_versions
+    package.description = "Intermediary mappings allow using Quilt Loader with mods for Minecraft in a more compatible manner."
+    package.project_url = "https://quiltmc.org/"
+    package.authors = ["Quilt Project"]
+    package.write(os.path.join(PMC_DIR, INTERMEDIARY_COMPONENT, "package.json"))
 
 
-def processIntermediaryVersion(it):
-    minecraftVersion = it["version"].split("+", 2)[0]  # version format is like 1.18.2-pre1+build.1
-
-    intermediaryRecommended.append(it["version"])
-    versionJarInfo = loadJarInfo(it["maven"])
-    version = PolyMCVersionFile(name="Quilt Intermediary Mappings", uid="org.quiltmc.quilt-mappings", version=it["version"])
-    version.releaseTime = versionJarInfo.releaseTime
-    version.requires = [DependencyEntry(uid='net.minecraft', equals=minecraftVersion)]
-    version.order = 11
-    version.type = "release"
-    version.libraries = []
-    version.volatile = True
-    mappingLib = PolyMCLibrary(name=GradleSpecifier(it["maven"]), url="https://maven.quiltmc.org/repository/release")
-    version.libraries.append(mappingLib)
-    intermediaryVersions.append(version)
-
-
-with open(UPSTREAM_DIR + "/quilt/meta-v3/loader.json", 'r', encoding='utf-8') as loaderVersionIndexFile:
-    loaderVersionIndex = json.load(loaderVersionIndexFile)
-    for it in loaderVersionIndex:
-        version = it["version"]
-        with open(UPSTREAM_DIR + "/quilt/loader-installer-json/" + version + ".json", 'r',
-                  encoding='utf-8') as loaderVersionFile:
-            ldata = json.load(loaderVersionFile)
-            ldata = FabricInstallerDataV1(ldata)
-            processLoaderVersion(version, it, ldata)
-
-if USE_QUILT_MAPPINGS:
-    with open(UPSTREAM_DIR + "/quilt/meta-v3/quilt-mappings.json", 'r', encoding='utf-8') as intermediaryVersionIndexFile:
-        intermediaryVersionIndex = json.load(intermediaryVersionIndexFile)
-        for it in intermediaryVersionIndex:
-            processIntermediaryVersion(it)
-
-for version in loaderVersions:
-    outFilepath = PMC_DIR + "/org.quiltmc.quilt-loader/%s.json" % version.version
-    with open(outFilepath, 'w') as outfile:
-        json.dump(version.to_json(), outfile, sort_keys=True, indent=4)
-
-sharedData = PolyMCSharedPackageData(uid='org.quiltmc.quilt-loader', name='Quilt Loader')
-sharedData.recommended = loaderRecommended
-sharedData.description = "The Quilt project is an open, community-driven modding toolchain designed primarily for Minecraft."
-sharedData.projectUrl = "https://quiltmc.org"
-sharedData.authors = ["Quilt Project"]
-sharedData.write()
-
-if USE_QUILT_MAPPINGS:
-    for version in intermediaryVersions:
-        outFilepath = PMC_DIR + "/org.quiltmc.quilt-mappings/%s.json" % version.version
-        with open(outFilepath, 'w') as outfile:
-            json.dump(version.to_json(), outfile, sort_keys=True, indent=4)
-
-    sharedData = PolyMCSharedPackageData(uid='org.quiltmc.quilt-mappings', name='Quilt Intermediary Mappings')
-    sharedData.recommended = intermediaryRecommended
-    sharedData.description = "Intermediary mappings allow using Quilt Loader with mods for Minecraft in a more compatible manner."
-    sharedData.projectUrl = "https://quiltmc.org"
-    sharedData.authors = ["Quilt Project"]
-    sharedData.write()
+if __name__ == '__main__':
+    main()
