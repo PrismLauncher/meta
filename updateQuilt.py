@@ -101,7 +101,7 @@ def compute_jar_file(path, url):
 
 def main():
     # get the version list for each component we are interested in
-    for component in ["quilt-mappings", "loader"]:
+    for component in ["hashed", "loader"]:
         index = get_json_file(os.path.join(UPSTREAM_DIR, META_DIR, f"{component}.json"),
                               "https://meta.quiltmc.org/v3/versions/" + component)
         for it in index:

@@ -45,13 +45,11 @@ def process_loader_version(entry) -> MetaVersion:
 
 
 def process_intermediary_version(entry) -> MetaVersion:
-    minecraft_version = entry["version"].split("+", 2)[0]  # version format is like 1.18.2-pre1+build.1
-
     jar_info = load_jar_info(transform_maven_key(entry["maven"]))
 
     v = MetaVersion(name="Quilt Intermediary Mappings", uid=INTERMEDIARY_COMPONENT, version=entry["version"])
     v.release_time = jar_info.release_time
-    v.requires = [Dependency(uid='net.minecraft', equals=minecraft_version)]
+    v.requires = [Dependency(uid='net.minecraft', equals=entry["version"])]
     v.order = 11
     v.type = "release"
     v.libraries = []
@@ -80,7 +78,7 @@ def main():
             v.write(os.path.join(PMC_DIR, LOADER_COMPONENT, f"{v.version}.json"))
 
     if USE_QUILT_MAPPINGS:
-        with open(os.path.join(UPSTREAM_DIR, META_DIR, "quilt-mappings.json"), 'r', encoding='utf-8') as f:
+        with open(os.path.join(UPSTREAM_DIR, META_DIR, "hashed.json"), 'r', encoding='utf-8') as f:
             intermediary_version_index = json.load(f)
             for entry in intermediary_version_index:
                 version = entry["version"]
