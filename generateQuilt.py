@@ -97,12 +97,13 @@ def main():
     package.authors = ["Quilt Project"]
     package.write(os.path.join(PMC_DIR, LOADER_COMPONENT, "package.json"))
 
-    package = MetaPackage(uid=INTERMEDIARY_COMPONENT, name='Quilt Intermediary Mappings')
-    package.recommended = recommended_intermediary_versions
-    package.description = "Intermediary mappings allow using Quilt Loader with mods for Minecraft in a more compatible manner."
-    package.project_url = "https://quiltmc.org/"
-    package.authors = ["Quilt Project"]
-    package.write(os.path.join(PMC_DIR, INTERMEDIARY_COMPONENT, "package.json"))
+    if USE_QUILT_MAPPINGS:
+        package = MetaPackage(uid=INTERMEDIARY_COMPONENT, name='Quilt Intermediary Mappings')
+        package.recommended = recommended_intermediary_versions
+        package.description = "Intermediary mappings allow using Quilt Loader with mods for Minecraft in a more compatible manner."
+        package.project_url = "https://quiltmc.org/"
+        package.authors = ["Quilt Project"]
+        package.write(os.path.join(PMC_DIR, INTERMEDIARY_COMPONENT, "package.json"))
 
 
 if __name__ == '__main__':
