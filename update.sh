@@ -64,7 +64,7 @@ polymc_git checkout "${BRANCH}" || exit 1
 python generateMojang.py || fail_out
 python generateForge.py || fail_out
 python generateFabric.py || fail_out
-python generateQuilt.py || fail_in
+python generateQuilt.py || fail_out
 python generateLiteloader.py || fail_out
 python index.py || fail_out
 
