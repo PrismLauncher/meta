@@ -9,7 +9,7 @@ from cachecontrol import CacheControl
 from cachecontrol.caches import FileCache
 
 from meta.common import upstream_path, ensure_upstream_dir, transform_maven_key
-from meta.common.quilt import JARS_DIR, INSTALLER_INFO_DIR, META_DIR
+from meta.common.quilt import JARS_DIR, INSTALLER_INFO_DIR, META_DIR, USE_QUILT_MAPPINGS
 from meta.common.fabric import DATETIME_FORMAT_HTTP
 from meta.model.fabric import FabricJarInfo
 
@@ -101,7 +101,10 @@ def compute_jar_file(path, url):
 
 def main():
     # get the version list for each component we are interested in
-    for component in ["hashed", "loader"]:
+    components = ["loader"]
+    if USE_QUILT_MAPPINGS:
+        components.append("hashed")
+    for component in components:
         index = get_json_file(os.path.join(UPSTREAM_DIR, META_DIR, f"{component}.json"),
                               "https://meta.quiltmc.org/v3/versions/" + component)
         for it in index:
