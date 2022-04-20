@@ -90,8 +90,13 @@ def main():
 
         for x in experiment_ids:
             version = experiments.versions[x]
+            experiment_path = os.path.join(UPSTREAM_DIR, VERSIONS_DIR, f"{x}.json")
+
             print("Updating experiment " + version.id)
-            fetch_zipped_version(os.path.join(UPSTREAM_DIR, VERSIONS_DIR, f"{x}.json"), version.url)
+            if not os.path.isfile(experiment_path):
+                fetch_zipped_version(experiment_path, version.url)
+            else:
+                print("Already have experiment " + version.id)
 
     remote_versions.index.write(version_manifest_path)
 
