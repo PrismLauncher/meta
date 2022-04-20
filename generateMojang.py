@@ -175,13 +175,24 @@ def is_macos_only(rules: Optional[MojangRules]):
 def process_single_variant(lwjgl_variant: MetaVersion):
     lwjgl_version = lwjgl_variant.version
     v = copy.deepcopy(lwjgl_variant)
+
     if lwjgl_version[0] == '2':
+        static_filename = os.path.join(STATIC_DIR, LWJGL_COMPONENT, f"{lwjgl_version}.json")
         filename = os.path.join(PMC_DIR, LWJGL_COMPONENT, f"{lwjgl_version}.json")
+        if os.path.isfile(static_filename):
+            v = MetaVersion.parse_file(static_filename)
+            print("LWJGL2 is static:", v.version)
+
         v.name = 'LWJGL 2'
         v.uid = LWJGL_COMPONENT
         v.conflicts = [Dependency(uid=LWJGL3_COMPONENT)]
     elif lwjgl_version[0] == '3':
+        static_filename = os.path.join(STATIC_DIR, LWJGL3_COMPONENT, f"{lwjgl_version}.json")
         filename = os.path.join(PMC_DIR, LWJGL3_COMPONENT, f"{lwjgl_version}.json")
+        if os.path.isfile(static_filename):
+            v = MetaVersion.parse_file(static_filename)
+            print("LWJGL3 is static:", v.version)
+
         v.name = 'LWJGL 3'
         v.uid = LWJGL3_COMPONENT
         v.conflicts = [Dependency(uid=LWJGL_COMPONENT)]
