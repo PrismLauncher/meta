@@ -5,7 +5,6 @@ from collections import defaultdict, namedtuple
 from operator import attrgetter
 from pprint import pprint
 from typing import Optional
-import shutil
 
 from meta.common import ensure_component_dir, polymc_path, upstream_path, static_path
 from meta.common.mojang import VERSION_MANIFEST_FILE, MINECRAFT_COMPONENT, LWJGL3_COMPONENT, LWJGL_COMPONENT, \
