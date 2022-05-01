@@ -321,11 +321,8 @@ def main():
             lwjgl_dependency = Dependency(uid=LWJGL_COMPONENT)
         if len(buckets) == 1:
             suggested_version = next(iter(buckets.values())).version
-            # HACK: forcing hard dependencies here for now...
-            # the UI doesn't know how to filter by this and it looks odd, but it works
             if is_lwjgl_3:
                 lwjgl_dependency.suggests = suggested_version
-                lwjgl_dependency.equals = suggested_version
             else:
                 lwjgl_dependency.suggests = '2.9.4-nightly-20150209'
         else:
