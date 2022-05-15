@@ -22,7 +22,9 @@ def load_installer_info(version) -> FabricInstallerDataV1:
     return FabricInstallerDataV1.parse_file(os.path.join(UPSTREAM_DIR, INSTALLER_INFO_DIR, f"{version}.json"))
 
 
-def process_loader_version(entry) -> MetaVersion:
+def process_loader_version(entry) -> (MetaVersion, bool):
+    should_recommend = "-" not in entry["version"]  # dont recommend pre releases as per SemVer
+
     jar_info = load_jar_info(transform_maven_key(entry["maven"]))
     installer_info = load_installer_info(entry["version"])
 
@@ -41,7 +43,7 @@ def process_loader_version(entry) -> MetaVersion:
     loader_lib = Library(name=GradleSpecifier.from_string(entry["maven"]),
                          url="https://maven.quiltmc.org/repository/release")
     v.libraries.append(loader_lib)
-    return v
+    return v, should_recommend
 
 
 def process_intermediary_version(entry) -> MetaVersion:
@@ -70,9 +72,9 @@ def main():
             version = entry["version"]
             print(f"Processing loader {version}")
 
-            v = process_loader_version(entry)
+            v, should_recommend = process_loader_version(entry)
 
-            if not recommended_loader_versions:  # first (newest) loader is recommended
+            if not recommended_loader_versions and should_recommend:  # newest stable loader is recommended
                 recommended_loader_versions.append(version)
 
             v.write(os.path.join(PMC_DIR, LOADER_COMPONENT, f"{v.version}.json"))
