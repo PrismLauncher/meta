@@ -13,6 +13,8 @@ from meta.model import MetaVersion, Library, GradleSpecifier, MojangLibraryDownl
     MetaPackage, MojangRules
 from meta.model.mojang import MojangIndexWrap, MojangIndex, MojangVersion, LegacyOverrideIndex
 
+APPLY_SPLIT_NATIVES_WORKAROUND = True
+
 PMC_DIR = polymc_path()
 UPSTREAM_DIR = upstream_path()
 STATIC_DIR = static_path()
@@ -55,11 +57,11 @@ LOG4J_HASHES = {
     }
 }
 
-
 # We want versions that contain natives for all platforms. If there are multiple, pick the latest one
 # LWJGL versions we want
 PASS_VARIANTS = [
-    "fcccb40326b2edc13dffbc49bc6fbafd7ca9b0cd",  # 3.3.1 (2022-05-04 14:41:35+00:00)
+#    "beed62ec1d40ae89d808fe70b83df6bd4b3be81f",  # 3.3.1 (2022-05-18 13:51:54+00:00) split natives, without workaround
+    "8836c419f90f69a278b97d945a34af165c24ff60",  # 3.3.1 (2022-05-18 13:51:54+00:00) split natives, with workaround
     "ea4973ebc9eadf059f30f0958c89f330898bff51",  # 3.2.2 (2019-07-04 14:41:05+00:00)
     "8e1f89b96c6f583a0e494949c75115ed13412ba1",  # 3.2.1 (2019-02-13 16:12:08+00:00)
     "7ed2372097dbd635f5aef3137711141ce91c4ee9",  # 3.1.6 (2018-11-29 13:11:38+00:00)
@@ -73,6 +75,8 @@ PASS_VARIANTS = [
 
 # LWJGL versions we def. don't want!
 BAD_VARIANTS = [
+    "e1106ca765798218323b7a6d7528050260ea9d88",  # 3.3.1 (2022-05-04 14:41:35+00:00) doesn't use split natives
+    "90b3d9ca01058286c033b6b7ae7f6dc370a04015",  # 3.2.2 (2022-03-31 14:53:25+00:00) only linux, windows
     "d986df9598fa2bcf4a5baab5edf044548e66d011",  # 3.2.2 (2021-12-10 03:36:38+00:00) only linux, windows
     "4b73fccb9e5264c2068bdbc26f9651429abbf21a",  # 3.2.2 (2021-08-25 14:41:57+00:00) only linux, windows
     "ab463e9ebc6a36abf22f2aa27b219dd372ff5069",  # 3.2.2 (2019-07-19 09:25:47+00:00) only linux, windows
@@ -231,6 +235,19 @@ def process_single_variant(lwjgl_variant: MetaVersion):
         print("Skipped LWJGL", v.version)
 
 
+def lib_is_split_native(lib: Library) -> bool:
+    if lib.name.classifier and lib.name.classifier.startswith("natives-"):
+        return True
+    return False
+
+
+def version_has_split_natives(v: MojangVersion) -> bool:
+    for lib in v.libraries:
+        if lib_is_split_native(lib):
+            return True
+    return False
+
+
 def main():
     # get the local version list
     override_index = LegacyOverrideIndex.parse_file(os.path.join(STATIC_DIR, STATIC_OVERRIDES_FILE))
@@ -248,29 +265,49 @@ def main():
 
         libs_minecraft = []
         is_lwjgl_3 = False
+        has_split_natives = version_has_split_natives(v)
         buckets = {}
+
         for lib in v.libraries:
-            remove_paths_from_lib(lib)
             specifier = lib.name
+
+            # generic fixes
+            remove_paths_from_lib(lib)
+
+            if APPLY_SPLIT_NATIVES_WORKAROUND and lib_is_split_native(lib):
+                # merge classifier into artifact name to workaround bug in launcher
+                specifier.artifact += f"-{specifier.classifier}"
+                specifier.classifier = None
+
             if specifier.is_lwjgl():
-                rules = None
-                if lib.rules:
-                    rules = lib.rules
-                    lib.rules = None
-                if is_macos_only(rules):
-                    print("Candidate library ", specifier, " is only for macOS and is therefore ignored.")
-                    continue
-                bucket = add_or_get_bucket(buckets, rules)
-                if specifier.group == "org.lwjgl.lwjgl" and specifier.artifact == "lwjgl":
-                    bucket.version = specifier.version
-                if specifier.group == "org.lwjgl" and specifier.artifact == "lwjgl":
+                if has_split_natives:  # implies lwjgl3
+                    bucket = add_or_get_bucket(buckets, None)
                     is_lwjgl_3 = True
                     found_any_lwjgl3 = True
                     bucket.version = specifier.version
-                if not bucket.libraries:
-                    bucket.libraries = []
-                bucket.libraries.append(lib)
-                bucket.release_time = v.release_time
+                    if not bucket.libraries:
+                        bucket.libraries = []
+                    bucket.libraries.append(lib)
+                    bucket.release_time = v.release_time
+                else:
+                    rules = None
+                    if lib.rules:
+                        rules = lib.rules
+                        lib.rules = None
+                    if is_macos_only(rules):
+                        print("Candidate library ", specifier, " is only for macOS and is therefore ignored.")
+                        continue
+                    bucket = add_or_get_bucket(buckets, rules)
+                    if specifier.group == "org.lwjgl.lwjgl" and specifier.artifact == "lwjgl":
+                        bucket.version = specifier.version
+                    if specifier.group == "org.lwjgl" and specifier.artifact == "lwjgl":
+                        is_lwjgl_3 = True
+                        found_any_lwjgl3 = True
+                        bucket.version = specifier.version
+                    if not bucket.libraries:
+                        bucket.libraries = []
+                    bucket.libraries.append(lib)
+                    bucket.release_time = v.release_time
             # FIXME: workaround for insane log4j nonsense from December 2021. Probably needs adjustment.
             elif lib.name.is_log4j():
                 version_override, maven_override = map_log4j_artifact(lib.name.version)
