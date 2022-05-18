@@ -73,7 +73,7 @@ PASS_VARIANTS = [
 
 # LWJGL versions we def. don't want!
 BAD_VARIANTS = [
-    "d986df9598fa2bcf4a5baab5edf044548e66d011",  # 3.2.2 (2021-12-10 03:36:38+00:00)
+    "d986df9598fa2bcf4a5baab5edf044548e66d011",  # 3.2.2 (2021-12-10 03:36:38+00:00) only linux, windows
     "4b73fccb9e5264c2068bdbc26f9651429abbf21a",  # 3.2.2 (2021-08-25 14:41:57+00:00) only linux, windows
     "ab463e9ebc6a36abf22f2aa27b219dd372ff5069",  # 3.2.2 (2019-07-19 09:25:47+00:00) only linux, windows
     "8bde129ef334023c365bd7f57512a4bf5e72a378",  # 3.2.1 (2019-04-18 11:05:19+00:00) only osx, windows
