@@ -38,6 +38,3 @@ class FabricInstallerDataV1(MetaBase):
 
 class FabricJarInfo(MetaBase):
     release_time: Optional[datetime] = Field(alias="releaseTime")
-    size: Optional[int]
-    sha256: Optional[str]
-    sha1: Optional[str]

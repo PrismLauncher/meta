@@ -1,4 +1,3 @@
-import hashlib
 import json
 import os
 import zipfile
@@ -47,12 +46,6 @@ def get_json_file(path, url):
         return version_json
 
 
-def get_plaintext(url):
-    r = sess.get(url)
-    r.raise_for_status()
-    return r.text
-
-
 def head_file(url):
     r = sess.head(url)
     r.raise_for_status()
@@ -74,11 +67,8 @@ def compute_jar_file(path, url):
         # Let's not download a Jar file if we don't need to.
         headers = head_file(url)
         tstamp = datetime.strptime(headers["Last-Modified"], DATETIME_FORMAT_HTTP)
-        sha1 = get_plaintext(url + ".sha1")
-        sha256 = get_plaintext(url + ".sha256")
-        size = int(headers["Content-Length"])
     except requests.HTTPError:
-        # Some older versions don't have a .sha256 file :(
+        # Just in case something changes in the future
         print(f"Falling back to downloading jar for {url}")
 
         jar_path = path + ".jar"
@@ -91,11 +81,7 @@ def compute_jar_file(path, url):
                 if tstamp_new > tstamp:
                     tstamp = tstamp_new
 
-        sha1 = filehash(jar_path, hashlib.sha1)
-        sha256 = filehash(jar_path, hashlib.sha256)
-        size = os.path.getsize(jar_path)
-
-    data = FabricJarInfo(release_time=tstamp, sha1=sha1, sha256=sha256, size=size)
+    data = FabricJarInfo(release_time=tstamp)
     data.write(path + ".json")
 
 
@@ -116,7 +102,7 @@ def main():
     with open(os.path.join(UPSTREAM_DIR, META_DIR, "loader.json"), 'r', encoding='utf-8') as loaderVersionIndexFile:
         loader_version_index = json.load(loaderVersionIndexFile)
         for it in loader_version_index:
-            print(f"Downloading installer info for loader {it['version']} ")
+            print(f"Downloading JAR info for loader {it['version']} ")
             maven_url = get_maven_url(it["maven"], "https://maven.quiltmc.org/repository/release/", ".json")
             get_json_file(os.path.join(UPSTREAM_DIR, INSTALLER_INFO_DIR, f"{it['version']}.json"), maven_url)
 
