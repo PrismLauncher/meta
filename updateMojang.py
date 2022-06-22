@@ -53,7 +53,7 @@ def fetch_version(path, url):
 
 def main():
     # get the remote version list
-    r = sess.get('https://launchermeta.mojang.com/mc/game/version_manifest_v2.json')
+    r = sess.get('https://piston-meta.mojang.com/mc/game/version_manifest_v2.json')
     r.raise_for_status()
 
     remote_versions = MojangIndexWrap(MojangIndex(**r.json()))
