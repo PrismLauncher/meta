@@ -1,0 +1,859 @@
+[
+  {
+    "_comment": "Add additional library just for osx-arm64. No override needed",
+    "match": [
+      "ca.weblite:java-objc-bridge:1.0.0",
+      "ca.weblite:java-objc-bridge:1.1.0"
+    ],
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "369a83621e3c65496348491e533cb97fe5f2f37d",
+            "size": 91947,
+            "url": "https://github.com/MinecraftMachina/Java-Objective-C-Bridge/releases/download/1.1.0-mmachina.1/java-objc-bridge-1.1.jar"
+          }
+        },
+        "name": "ca.weblite:java-objc-bridge:1.1.0",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "osx-arm64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Add additional classifiers for jinput-platform",
+    "match": [
+      "net.java.jinput:jinput-platform:2.0.5"
+    ],
+    "override": {
+      "downloads": {
+        "classifiers": {
+          "natives-osx-arm64": {
+            "sha1": "5189eb40db3087fb11ca063b68fa4f4c20b199dd",
+            "size": 10031,
+            "url": "https://github.com/r58Playz/jinput-m1/raw/main/plugins/OSX/bin/jinput-platform-2.0.5.jar"
+          },
+          "natives-linux-arm64": {
+            "sha1": "5aa2edeb64ddfe117d5985152280b55864ce694a",
+            "size": 6266,
+            "url": "https://github.com/r58Playz/lwjgl2-m1/raw/linux-aarch64-built/jinput-platform-2.0.5.jar"
+          }
+        }
+      },
+      "natives": {
+        "linux-arm64": "natives-linux-arm64",
+        "osx-arm64": "natives-osx-arm64"
+      }
+    }
+  },
+  {
+    "_comment": "Use a newer version on osx-arm64 and linux-arm64",
+    "match": [
+      "com.mojang:text2speech:1.0.10",
+      "com.mojang:text2speech:1.5",
+      "com.mojang:text2speech:1.6",
+      "com.mojang:text2speech:1.7",
+      "com.mojang:text2speech:1.10.1",
+      "com.mojang:text2speech:1.10.3",
+      "com.mojang:text2speech:1.11.2",
+      "com.mojang:text2speech:1.12.4",
+      "com.mojang:text2speech:1.13.9"
+    ],
+    "override": {
+      "rules": [
+        {
+          "action": "allow"
+        },
+        {
+          "action": "disallow",
+          "os": {
+            "name": "osx-arm64"
+          }
+        },
+        {
+          "action": "disallow",
+          "os": {
+            "name": "linux-arm64"
+          }
+        }
+      ]
+    },
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "f378f889797edd7df8d32272c06ca80a1b6b0f58",
+            "size": 13164,
+            "url": "https://libraries.minecraft.net/com/mojang/text2speech/1.11.3/text2speech-1.11.3.jar"
+          }
+        },
+        "name": "com.mojang:text2speech:1.11.3",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "osx-arm64"
+            }
+          },
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-arm64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Use a newer version on osx-arm64 and linux-arm64",
+    "match": [
+      "org.lwjgl.lwjgl:lwjgl:2.9.4-nightly-20150209",
+      "org.lwjgl.lwjgl:lwjgl:2.9.3",
+      "org.lwjgl.lwjgl:lwjgl:2.9.1-nightly-20131120",
+      "org.lwjgl.lwjgl:lwjgl:2.9.1-nightly-20131017",
+      "org.lwjgl.lwjgl:lwjgl:2.9.1-nightly-20130708-debug3",
+      "org.lwjgl.lwjgl:lwjgl:2.9.1"
+    ],
+    "override": {
+      "rules": [
+        {
+          "action": "allow"
+        },
+        {
+          "action": "disallow",
+          "os": {
+            "name": "osx-arm64"
+          }
+        },
+        {
+          "action": "disallow",
+          "os": {
+            "name": "linux-arm64"
+          }
+        }
+      ]
+    },
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "697517568c68e78ae0b4544145af031c81082dfe",
+            "size": 1047168,
+            "url": "https://libraries.minecraft.net/org/lwjgl/lwjgl/lwjgl/2.9.4-nightly-20150209/lwjgl-2.9.4-nightly-20150209.jar"
+          }
+        },
+        "name": "org.lwjgl.lwjgl:lwjgl:2.9.4-nightly-20150209",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "osx-arm64"
+            }
+          },
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-arm64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Use a newer version on osx-arm64 and linux-arm64",
+    "match": [
+      "org.lwjgl.lwjgl:lwjgl_util:2.9.4-nightly-20150209",
+      "org.lwjgl.lwjgl:lwjgl_util:2.9.3",
+      "org.lwjgl.lwjgl:lwjgl_util:2.9.1-nightly-20131120",
+      "org.lwjgl.lwjgl:lwjgl_util:2.9.1-nightly-20131017",
+      "org.lwjgl.lwjgl:lwjgl_util:2.9.1-nightly-20130708-debug3",
+      "org.lwjgl.lwjgl:lwjgl_util:2.9.1"
+    ],
+    "override": {
+      "rules": [
+        {
+          "action": "allow"
+        },
+        {
+          "action": "disallow",
+          "os": {
+            "name": "osx-arm64"
+          }
+        },
+        {
+          "action": "disallow",
+          "os": {
+            "name": "linux-arm64"
+          }
+        }
+      ]
+    },
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "d51a7c040a721d13efdfbd34f8b257b2df882ad0",
+            "size": 173887,
+            "url": "https://libraries.minecraft.net/org/lwjgl/lwjgl/lwjgl_util/2.9.4-nightly-20150209/lwjgl_util-2.9.4-nightly-20150209.jar"
+          }
+        },
+        "name": "org.lwjgl.lwjgl:lwjgl_util:2.9.1-nightly-20131017",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "osx-arm64"
+            }
+          },
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-arm64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Use a newer patched version on osx-arm64 and linux-arm64",
+    "match": [
+      "org.lwjgl.lwjgl:lwjgl-platform:2.9.4-nightly-20150209",
+      "org.lwjgl.lwjgl:lwjgl-platform:2.9.3",
+      "org.lwjgl.lwjgl:lwjgl-platform:2.9.1-nightly-20131120",
+      "org.lwjgl.lwjgl:lwjgl-platform:2.9.1-nightly-20131017",
+      "org.lwjgl.lwjgl:lwjgl-platform:2.9.1-nightly-20130708-debug3",
+      "org.lwjgl.lwjgl:lwjgl-platform:2.9.1"
+    ],
+    "override": {
+      "downloads": {
+        "classifiers": {
+          "natives-osx-arm64": {
+            "sha1": "eff546c0b319d6ffc7a835652124c18089c67f36",
+            "size": 488316,
+            "url": "https://github.com/MinecraftMachina/lwjgl/releases/download/2.9.4-20150209-mmachina.2/lwjgl-platform-2.9.4-nightly-20150209-natives-osx.jar"
+          },
+          "natives-linux-arm64": {
+            "sha1": "ba120169db0180f4188ddf4b240668a41f11d35f",
+            "size": 480907,
+            "url": "https://github.com/r58Playz/lwjgl2-m1/raw/linux-aarch64-built/lwjgl-platform-2.9.4-nightly-20150209-natives-linux.jar"
+          }
+        }
+      },
+      "natives": {
+        "linux-arm64": "natives-linux-arm64",
+        "osx-arm64": "natives-osx-arm64"
+      }
+    }
+  },
+  {
+    "_comment": "Use a newer patched version on osx-arm64 and linux-arm64",
+    "match": [
+      "org.lwjgl:lwjgl-glfw:3.2.2",
+      "org.lwjgl:lwjgl-glfw:3.2.1",
+      "org.lwjgl:lwjgl-glfw:3.1.6",
+      "org.lwjgl:lwjgl-glfw:3.1.2"
+    ],
+    "override": {
+      "rules": [
+        {
+          "action": "allow"
+        },
+        {
+          "action": "disallow",
+          "os": {
+            "name": "linux-arm64"
+          }
+        },
+        {
+          "action": "disallow",
+          "os": {
+            "name": "osx-arm64"
+          }
+        }
+      ]
+    },
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "155d175037efc76630940c197ca6dea2b17d7e18",
+            "size": 108691,
+            "url": "https://github.com/theofficialgman/lwjgl3-binaries-arm64/raw/lwjgl-3.2.2/lwjgl-glfw.jar"
+          },
+          "classifiers": {
+            "natives-linux-arm64": {
+              "sha1": "074ad243761147df0d060fbefc814614d2ff75cc",
+              "size": 85072,
+              "url": "https://github.com/theofficialgman/lwjgl3-binaries-arm64/raw/lwjgl-3.2.2/lwjgl-glfw-natives-linux-arm64.jar"
+            }
+          }
+        },
+        "name": "org.lwjgl:lwjgl-glfw:3.2.2",
+        "natives": {
+          "linux-arm64": "natives-linux-arm64"
+        },
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-arm64"
+            }
+          }
+        ]
+      },
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "e9a101bca4fa30d26b21b526ff28e7c2d8927f1b",
+            "size": 130128,
+            "url": "https://github.com/MinecraftMachina/lwjgl3/releases/download/3.3.1-mmachina.1/lwjgl-glfw.jar"
+          },
+          "classifiers": {
+            "natives-osx-arm64": {
+              "sha1": "71d793d0a5a42e3dfe78eb882abc2523a2c6b496",
+              "size": 129076,
+              "url": "https://github.com/MinecraftMachina/lwjgl3/releases/download/3.3.1-mmachina.1/lwjgl-glfw-natives-osx-arm64.jar"
+            }
+          }
+        },
+        "name": "org.lwjgl:lwjgl-glfw:3.2.2",
+        "natives": {
+          "osx-arm64": "natives-osx-arm64"
+        },
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "osx-arm64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Use a newer patched version on osx-arm64 and linux-arm64",
+    "match": [
+      "org.lwjgl:lwjgl-jemalloc:3.2.2",
+      "org.lwjgl:lwjgl-jemalloc:3.2.1",
+      "org.lwjgl:lwjgl-jemalloc:3.1.6",
+      "org.lwjgl:lwjgl-jemalloc:3.1.2"
+    ],
+    "override": {
+      "rules": [
+        {
+          "action": "allow"
+        },
+        {
+          "action": "disallow",
+          "os": {
+            "name": "linux-arm64"
+          }
+        },
+        {
+          "action": "disallow",
+          "os": {
+            "name": "osx-arm64"
+          }
+        }
+      ]
+    },
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "cc04eec29b2fa8c298791af9800a3766d9617954",
+            "size": 33790,
+            "url": "https://github.com/theofficialgman/lwjgl3-binaries-arm64/raw/lwjgl-3.2.2/lwjgl-jemalloc.jar"
+          },
+          "classifiers": {
+            "natives-linux-arm64": {
+              "sha1": "19c7d57e1ab7fee54f35a8615babd5defc355d78",
+              "size": 156163,
+              "url": "https://github.com/theofficialgman/lwjgl3-binaries-arm64/raw/lwjgl-3.2.2/lwjgl-jemalloc-natives-linux-arm64.jar"
+            }
+          }
+        },
+        "name": "org.lwjgl:lwjgl-jemalloc:3.2.2",
+        "natives": {
+          "linux-arm64": "natives-linux-arm64"
+        },
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-arm64"
+            }
+          }
+        ]
+      },
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "4fb94224378d3588d52d2beb172f2eeafea2d546",
+            "size": 36976,
+            "url": "https://github.com/MinecraftMachina/lwjgl3/releases/download/3.3.1-mmachina.1/lwjgl-jemalloc.jar"
+          },
+          "classifiers": {
+            "natives-osx-arm64": {
+              "sha1": "b0be721188d2e7195798780b1c5fe7eafe8091c1",
+              "size": 103478,
+              "url": "https://github.com/MinecraftMachina/lwjgl3/releases/download/3.3.1-mmachina.1/lwjgl-jemalloc-natives-osx-arm64.jar"
+            }
+          }
+        },
+        "name": "org.lwjgl:lwjgl-jemalloc:3.2.2",
+        "natives": {
+          "osx-arm64": "natives-osx-arm64"
+        },
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "osx-arm64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Use a newer patched version on osx-arm64 and linux-arm64",
+    "match": [
+      "org.lwjgl:lwjgl-openal:3.2.2",
+      "org.lwjgl:lwjgl-openal:3.2.1",
+      "org.lwjgl:lwjgl-openal:3.1.6",
+      "org.lwjgl:lwjgl-openal:3.1.2"
+    ],
+    "override": {
+      "rules": [
+        {
+          "action": "allow"
+        },
+        {
+          "action": "disallow",
+          "os": {
+            "name": "linux-arm64"
+          }
+        },
+        {
+          "action": "disallow",
+          "os": {
+            "name": "osx-arm64"
+          }
+        }
+      ]
+    },
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "6dfce9dc6a9629c75b2ae01a8df7e7be80ba0261",
+            "size": 79582,
+            "url": "https://github.com/theofficialgman/lwjgl3-binaries-arm64/raw/lwjgl-3.2.2/lwjgl-openal.jar"
+          },
+          "classifiers": {
+            "natives-linux-arm64": {
+              "sha1": "948e415b5b2a2c650c25b377a4a9f443b21ce92e",
+              "size": 469432,
+              "url": "https://github.com/theofficialgman/lwjgl3-binaries-arm64/raw/lwjgl-3.2.2/lwjgl-openal-natives-linux-arm64.jar"
+            }
+          }
+        },
+        "name": "org.lwjgl:lwjgl-openal:3.2.2",
+        "natives": {
+          "linux-arm64": "natives-linux-arm64"
+        },
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-arm64"
+            }
+          }
+        ]
+      },
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "d48e753d85916fc8a200ccddc709b36e3865cc4e",
+            "size": 88880,
+            "url": "https://github.com/MinecraftMachina/lwjgl3/releases/download/3.3.1-mmachina.1/lwjgl-openal.jar"
+          },
+          "classifiers": {
+            "natives-osx-arm64": {
+              "sha1": "6b80fc0b982a0723b141e88859c42d6f71bd723f",
+              "size": 346131,
+              "url": "https://github.com/MinecraftMachina/lwjgl3/releases/download/3.3.1-mmachina.1/lwjgl-openal-natives-osx-arm64.jar"
+            }
+          }
+        },
+        "name": "org.lwjgl:lwjgl-openal:3.2.2",
+        "natives": {
+          "osx-arm64": "natives-osx-arm64"
+        },
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "osx-arm64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Use a newer patched version on osx-arm64 and linux-arm64",
+    "match": [
+      "org.lwjgl:lwjgl-opengl:3.2.2",
+      "org.lwjgl:lwjgl-opengl:3.2.1",
+      "org.lwjgl:lwjgl-opengl:3.1.6",
+      "org.lwjgl:lwjgl-opengl:3.1.2"
+    ],
+    "override": {
+      "rules": [
+        {
+          "action": "allow"
+        },
+        {
+          "action": "disallow",
+          "os": {
+            "name": "linux-arm64"
+          }
+        },
+        {
+          "action": "disallow",
+          "os": {
+            "name": "osx-arm64"
+          }
+        }
+      ]
+    },
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "198bc2f72e0b2eb401eb6f5999aea52909b31ac4",
+            "size": 937609,
+            "url": "https://github.com/theofficialgman/lwjgl3-binaries-arm64/raw/lwjgl-3.2.2/lwjgl-opengl.jar"
+          },
+          "classifiers": {
+            "natives-linux-arm64": {
+              "sha1": "bd40897077bf7d12f562da898b18ac2c68e1f9d7",
+              "size": 56109,
+              "url": "https://github.com/theofficialgman/lwjgl3-binaries-arm64/raw/lwjgl-3.2.2/lwjgl-opengl-natives-linux-arm64.jar"
+            }
+          }
+        },
+        "name": "org.lwjgl:lwjgl-opengl:3.2.2",
+        "natives": {
+          "linux-arm64": "natives-linux-arm64"
+        },
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-arm64"
+            }
+          }
+        ]
+      },
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "962c2a8d2a8cdd3b89de3d78d766ab5e2133c2f4",
+            "size": 929233,
+            "url": "https://github.com/MinecraftMachina/lwjgl3/releases/download/3.3.1-mmachina.1/lwjgl-opengl.jar"
+          },
+          "classifiers": {
+            "natives-osx-arm64": {
+              "sha1": "bb575058e0372f515587b5d2d04ff7db185f3ffe",
+              "size": 41667,
+              "url": "https://github.com/MinecraftMachina/lwjgl3/releases/download/3.3.1-mmachina.1/lwjgl-opengl-natives-osx-arm64.jar"
+            }
+          }
+        },
+        "name": "org.lwjgl:lwjgl-opengl:3.2.2",
+        "natives": {
+          "osx-arm64": "natives-osx-arm64"
+        },
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "osx-arm64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Use a newer patched version on osx-arm64 and linux-arm64",
+    "match": [
+      "org.lwjgl:lwjgl-stb:3.2.2",
+      "org.lwjgl:lwjgl-stb:3.2.1",
+      "org.lwjgl:lwjgl-stb:3.1.6",
+      "org.lwjgl:lwjgl-stb:3.1.2"
+    ],
+    "override": {
+      "rules": [
+        {
+          "action": "allow"
+        },
+        {
+          "action": "disallow",
+          "os": {
+            "name": "linux-arm64"
+          }
+        },
+        {
+          "action": "disallow",
+          "os": {
+            "name": "osx-arm64"
+          }
+        }
+      ]
+    },
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "46a5735f3eb9d17eb5dcbdd5afa194066d2a6555",
+            "size": 104075,
+            "url": "https://github.com/theofficialgman/lwjgl3-binaries-arm64/raw/lwjgl-3.2.2/lwjgl-stb.jar"
+          },
+          "classifiers": {
+            "natives-linux-arm64": {
+              "sha1": "077efa7d7ea41b32df5c6078e912e724cccd06db",
+              "size": 202038,
+              "url": "https://github.com/theofficialgman/lwjgl3-binaries-arm64/raw/lwjgl-3.2.2/lwjgl-stb-natives-linux-arm64.jar"
+            }
+          }
+        },
+        "name": "org.lwjgl:lwjgl-stb:3.2.2",
+        "natives": {
+          "linux-arm64": "natives-linux-arm64"
+        },
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-arm64"
+            }
+          }
+        ]
+      },
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "703e4b533e2542560e9f94d6d8bd148be1c1d572",
+            "size": 113273,
+            "url": "https://github.com/MinecraftMachina/lwjgl3/releases/download/3.3.1-mmachina.1/lwjgl-stb.jar"
+          },
+          "classifiers": {
+            "natives-osx-arm64": {
+              "sha1": "98f0ad956c754723ef354d50057cc30417ef376a",
+              "size": 178409,
+              "url": "https://github.com/MinecraftMachina/lwjgl3/releases/download/3.3.1-mmachina.1/lwjgl-stb-natives-osx-arm64.jar"
+            }
+          }
+        },
+        "name": "org.lwjgl:lwjgl-stb:3.2.2",
+        "natives": {
+          "osx-arm64": "natives-osx-arm64"
+        },
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "osx-arm64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Use a newer patched version on osx-arm64 and linux-arm64",
+    "match": [
+      "org.lwjgl:lwjgl-tinyfd:3.2.2",
+      "org.lwjgl:lwjgl-tinyfd:3.2.1",
+      "org.lwjgl:lwjgl-tinyfd:3.1.6",
+      "org.lwjgl:lwjgl-tinyfd:3.1.2"
+    ],
+    "override": {
+      "rules": [
+        {
+          "action": "allow"
+        },
+        {
+          "action": "disallow",
+          "os": {
+            "name": "linux-arm64"
+          }
+        },
+        {
+          "action": "disallow",
+          "os": {
+            "name": "osx-arm64"
+          }
+        }
+      ]
+    },
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "3a75b9811607633bf33c978f53964df1534a4bc1",
+            "size": 5571,
+            "url": "https://github.com/theofficialgman/lwjgl3-binaries-arm64/raw/lwjgl-3.2.2/lwjgl-tinyfd.jar"
+          },
+          "classifiers": {
+            "natives-linux-arm64": {
+              "sha1": "37c744ca289b5d7ae155d79e39029488b3254e5b",
+              "size": 37893,
+              "url": "https://github.com/theofficialgman/lwjgl3-binaries-arm64/raw/lwjgl-3.2.2/lwjgl-tinyfd-natives-linux-arm64.jar"
+            }
+          }
+        },
+        "name": "org.lwjgl:lwjgl-tinyfd:3.2.2",
+        "natives": {
+          "linux-arm64": "natives-linux-arm64"
+        },
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-arm64"
+            }
+          }
+        ]
+      },
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "1203660b3131cbb8681b17ce6437412545be95e0",
+            "size": 6802,
+            "url": "https://github.com/MinecraftMachina/lwjgl3/releases/download/3.3.1-mmachina.1/lwjgl-tinyfd.jar"
+          },
+          "classifiers": {
+            "natives-osx-arm64": {
+              "sha1": "015b931a2daba8f0c317d84c9d14e8e98ae56e0c",
+              "size": 41384,
+              "url": "https://github.com/MinecraftMachina/lwjgl3/releases/download/3.3.1-mmachina.1/lwjgl-tinyfd-natives-osx-arm64.jar"
+            }
+          }
+        },
+        "name": "org.lwjgl:lwjgl-tinyfd:3.2.2",
+        "natives": {
+          "osx-arm64": "natives-osx-arm64"
+        },
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "osx-arm64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Use a newer patched version on osx-arm64 and linux-arm64",
+    "match": [
+      "org.lwjgl:lwjgl:3.2.2",
+      "org.lwjgl:lwjgl:3.2.1",
+      "org.lwjgl:lwjgl:3.1.6",
+      "org.lwjgl:lwjgl:3.1.2"
+    ],
+    "override": {
+      "rules": [
+        {
+          "action": "allow"
+        },
+        {
+          "action": "disallow",
+          "os": {
+            "name": "linux-arm64"
+          }
+        },
+        {
+          "action": "disallow",
+          "os": {
+            "name": "osx-arm64"
+          }
+        }
+      ]
+    },
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "360899386df83d6a8407844a94478607af937f97",
+            "size": 318833,
+            "url": "https://github.com/theofficialgman/lwjgl3-binaries-arm64/raw/lwjgl-3.2.2/lwjgl-core.jar"
+          },
+          "classifiers": {
+            "natives-linux-arm64": {
+              "sha1": "612efd57d12b2e48e554858eb35e7e2eb46ebb4c",
+              "size": 87121,
+              "url": "https://github.com/theofficialgman/lwjgl3-binaries-arm64/raw/lwjgl-3.2.2/lwjgl-natives-linux-arm64.jar"
+            }
+          }
+        },
+        "name": "org.lwjgl:lwjgl:3.2.2",
+        "natives": {
+          "linux-arm64": "natives-linux-arm64"
+        },
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-arm64"
+            }
+          }
+        ]
+      },
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "8e664dd69ad7bbcf2053da23efc7848e39e498db",
+            "size": 719038,
+            "url": "https://github.com/MinecraftMachina/lwjgl3/releases/download/3.3.1-mmachina.1/lwjgl.jar"
+          },
+          "classifiers": {
+            "natives-osx-arm64": {
+              "sha1": "984df31fadaab86838877b112e5b4e4f68a00ccf",
+              "size": 42693,
+              "url": "https://github.com/MinecraftMachina/lwjgl3/releases/download/3.3.1-mmachina.1/lwjgl-natives-osx-arm64.jar"
+            }
+          }
+        },
+        "name": "org.lwjgl:lwjgl:3.2.2",
+        "natives": {
+          "osx-arm64": "natives-osx-arm64"
+        },
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "osx-arm64"
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -8,10 +8,10 @@ from typing import Optional
 
 from meta.common import ensure_component_dir, polymc_path, upstream_path, static_path
 from meta.common.mojang import VERSION_MANIFEST_FILE, MINECRAFT_COMPONENT, LWJGL3_COMPONENT, LWJGL_COMPONENT, \
-    STATIC_LWJGL322_FILE, STATIC_OVERRIDES_FILE, VERSIONS_DIR
+    STATIC_LWJGL322_FILE, STATIC_OVERRIDES_FILE, VERSIONS_DIR, LIBRARY_PATCHES_FILE
 from meta.model import MetaVersion, Library, GradleSpecifier, MojangLibraryDownloads, MojangArtifact, Dependency, \
     MetaPackage, MojangRules
-from meta.model.mojang import MojangIndexWrap, MojangIndex, MojangVersion, LegacyOverrideIndex
+from meta.model.mojang import MojangIndexWrap, MojangIndex, MojangVersion, LegacyOverrideIndex, LibraryPatches
 
 APPLY_SPLIT_NATIVES_WORKAROUND = True
 
@@ -181,9 +181,26 @@ def is_macos_only(rules: Optional[MojangRules]):
     return False
 
 
-def process_single_variant(lwjgl_variant: MetaVersion):
+def patch_library(lib: Library, patches: LibraryPatches):
+    new_libraries = []
+    for patch in patches:
+        if lib.name in patch.match:
+            if patch.override:
+                lib.merge(patch.override)
+
+            if patch.additionalLibraries:
+                new_libraries += patch.additionalLibraries
+    return new_libraries
+
+
+def process_single_variant(lwjgl_variant: MetaVersion, patches: LibraryPatches):
     lwjgl_version = lwjgl_variant.version
     v = copy.deepcopy(lwjgl_variant)
+
+    new_libraries = []
+    for lib in v.libraries:
+        new_libraries += patch_library(lib, patches)
+    v.libraries += list(new_libraries)
 
     if lwjgl_version[0] == '2':
         static_filename = os.path.join(STATIC_DIR, LWJGL_COMPONENT, f"{lwjgl_version}.json")
@@ -216,7 +233,8 @@ def process_single_variant(lwjgl_variant: MetaVersion):
     v.order = -1
     good = True
     for lib in v.libraries:
-        if not lib.natives:
+        # skip libraries without natives or that we patched
+        if not lib.natives or lib in new_libraries:
             continue
         checked_dict = {'linux', 'windows', 'osx'}
         if not checked_dict.issubset(lib.natives.keys()):
@@ -253,6 +271,7 @@ def version_has_split_natives(v: MojangVersion) -> bool:
 def main():
     # get the local version list
     override_index = LegacyOverrideIndex.parse_file(os.path.join(STATIC_DIR, STATIC_OVERRIDES_FILE))
+    library_patches = LibraryPatches.parse_file(os.path.join(STATIC_DIR, LIBRARY_PATCHES_FILE))
 
     found_any_lwjgl3 = False
 
@@ -332,6 +351,7 @@ def main():
                     downloads=MojangLibraryDownloads(artifact=artifact)
                 ))
             else:
+                libs_minecraft += patch_library(lib, library_patches)
                 libs_minecraft.append(lib)
         if len(buckets) == 1:
             for key in buckets:
@@ -424,7 +444,7 @@ def main():
         print("")
 
         if decided_variant and passed_variants == 1 and unknown_variants == 0:
-            process_single_variant(decided_variant.version)
+            process_single_variant(decided_variant.version, library_patches)
         else:
             raise Exception("No variant decided for version %s out of %d possible ones and %d unknown ones." % (
                 lwjglVersionVariant, passed_variants, unknown_variants))
