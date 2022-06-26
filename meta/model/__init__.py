@@ -210,7 +210,7 @@ class MojangRules(MetaBase):
 
 class MojangLibrary(MetaBase):
     extract: Optional[MojangLibraryExtractRules]
-    name: GradleSpecifier
+    name: Optional[GradleSpecifier]
     downloads: Optional[MojangLibraryDownloads]
     natives: Optional[Dict[str, str]]
     rules: Optional[MojangRules]
