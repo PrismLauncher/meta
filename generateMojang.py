@@ -200,7 +200,7 @@ def process_single_variant(lwjgl_variant: MetaVersion, patches: LibraryPatches):
     new_libraries = []
     for lib in v.libraries:
         new_libraries += patch_library(lib, patches)
-    v.libraries += list(new_libraries)
+    v.libraries += list(dict.fromkeys(new_libraries))
 
     if lwjgl_version[0] == '2':
         static_filename = os.path.join(STATIC_DIR, LWJGL_COMPONENT, f"{lwjgl_version}.json")
@@ -285,6 +285,7 @@ def main():
         v = mojang_version.to_meta_version("Minecraft", MINECRAFT_COMPONENT, mojang_version.id)
 
         libs_minecraft = []
+        new_libs_minecraft = []
         is_lwjgl_3 = False
         has_split_natives = version_has_split_natives(v)
         buckets = {}
@@ -351,7 +352,7 @@ def main():
                     downloads=MojangLibraryDownloads(artifact=artifact)
                 ))
             else:
-                libs_minecraft += patch_library(lib, library_patches)
+                new_libs_minecraft += patch_library(lib, library_patches)
                 libs_minecraft.append(lib)
         if len(buckets) == 1:
             for key in buckets:
@@ -374,7 +375,7 @@ def main():
             # remove the common bucket...
             if None in buckets:
                 del buckets[None]
-        v.libraries = libs_minecraft
+        v.libraries = libs_minecraft + list(dict.fromkeys(new_libs_minecraft))
 
         if is_lwjgl_3:
             lwjgl_dependency = Dependency(uid=LWJGL3_COMPONENT)
