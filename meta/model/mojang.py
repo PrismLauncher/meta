@@ -114,6 +114,10 @@ class LibraryPatch(MetaBase):
     match: List[GradleSpecifier]
     override: Optional[Library]
     additionalLibraries: Optional[List[Library]]
+    patchAdditionalLibraries: bool = Field(False)
+
+    def applies(self, target: Library) -> bool:
+        return target.name in self.match
 
 
 class LibraryPatches(MetaBase):

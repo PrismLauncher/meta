@@ -1,5 +1,56 @@
 [
   {
+    "_comment": "Add missing tinyfd to the broken LWJGL 3.2.2 variant",
+    "match": [
+      "org.lwjgl:lwjgl:3.2.2"
+    ],
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "fcbe606c8f8da6f8f9a05e2c540eb1ee8632b0e9",
+            "size": 7092,
+            "url": "https://libraries.minecraft.net/org/lwjgl/lwjgl-tinyfd/3.2.2/lwjgl-tinyfd-3.2.2.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-tinyfd:3.2.2"
+      },
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "fcbe606c8f8da6f8f9a05e2c540eb1ee8632b0e9",
+            "size": 7092,
+            "url": "https://libraries.minecraft.net/org/lwjgl/lwjgl-tinyfd/3.2.2/lwjgl-tinyfd-3.2.2.jar"
+          },
+          "classifiers": {
+            "natives-linux": {
+              "sha1": "39e35b161c130635d9c8918ce04e887a30c5b687",
+              "size": 38804,
+              "url": "https://libraries.minecraft.net/org/lwjgl/lwjgl-tinyfd/3.2.2/lwjgl-tinyfd-3.2.2-natives-linux.jar"
+            },
+            "natives-macos": {
+              "sha1": "46d0798228b8a28e857a2a0f02310fd6ba2a4eab",
+              "size": 42136,
+              "url": "https://libraries.minecraft.net/org/lwjgl/lwjgl-tinyfd/3.2.2/lwjgl-tinyfd-3.2.2-natives-macos.jar"
+            },
+            "natives-windows": {
+              "sha1": "e9115958773644e863332a6a06488d26f9e1fc9f",
+              "size": 208314,
+              "url": "https://libraries.minecraft.net/org/lwjgl/lwjgl-tinyfd/3.2.2/lwjgl-tinyfd-3.2.2-natives-windows.jar"
+            }
+          }
+        },
+        "name": "org.lwjgl:lwjgl-tinyfd:3.2.2",
+        "natives": {
+          "linux": "natives-linux",
+          "osx": "natives-macos",
+          "windows": "natives-windows"
+        }
+      }
+    ],
+    "patchAdditionalLibraries": true
+  },
+  {
     "_comment": "Add additional library just for osx-arm64. No override needed",
     "match": [
       "ca.weblite:java-objc-bridge:1.0.0",
