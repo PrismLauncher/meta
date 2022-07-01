@@ -1158,5 +1158,187 @@
         ]
       }
     ]
+  },
+  {
+    "_comment": "Add linux-arm64 support for LWJGL 3.3.1",
+    "match": [
+      "org.lwjgl:lwjgl-glfw:3.3.1"
+    ],
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "513eb39b866d0fe131a18d5c517087805433b029",
+            "size": 112350,
+            "url": "https://build.lwjgl.org/release/3.3.1/bin/lwjgl-glfw/lwjgl-glfw-natives-linux-arm64.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-glfw-natives-linux-arm64:3.3.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-arm64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Add linux-arm64 support for LWJGL 3.3.1",
+    "match": [
+      "org.lwjgl:lwjgl-jemalloc:3.3.1"
+    ],
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "c6606e57db075ad218a2e78d2416c159a53b6a0c",
+            "size": 157996,
+            "url": "https://build.lwjgl.org/release/3.3.1/bin/lwjgl-jemalloc/lwjgl-jemalloc-natives-linux-arm64.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-jemalloc-natives-linux-arm64:3.3.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-arm64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Add linux-arm64 support for LWJGL 3.3.1",
+    "match": [
+      "org.lwjgl:lwjgl-openal:3.3.1"
+    ],
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "cf4e303257e82981b8b2e31bba3d7f8f7b8f42b2",
+            "size": 470743,
+            "url": "https://build.lwjgl.org/release/3.3.1/bin/lwjgl-openal/lwjgl-openal-natives-linux-arm64.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-openal-natives-linux-arm64:3.3.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-arm64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Add linux-arm64 support for LWJGL 3.3.1",
+    "match": [
+      "org.lwjgl:lwjgl-opengl:3.3.1"
+    ],
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "1c528fb258a6e63e8fceb4482d8db0f3af10a634",
+            "size": 57908,
+            "url": "https://build.lwjgl.org/release/3.3.1/bin/lwjgl-opengl/lwjgl-opengl-natives-linux-arm64.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-opengl-natives-linux-arm64:3.3.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-arm64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Add linux-arm64 support for LWJGL 3.3.1",
+    "match": [
+      "org.lwjgl:lwjgl-stb:3.3.1"
+    ],
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "8e8348a1813aad7f30aaf75ea197151ebb7beba9",
+            "size": 205491,
+            "url": "https://build.lwjgl.org/release/3.3.1/bin/lwjgl-stb/lwjgl-stb-natives-linux-arm64.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-stb-natives-linux-arm64:3.3.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-arm64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Add linux-arm64 support for LWJGL 3.3.1",
+    "match": [
+      "org.lwjgl:lwjgl-tinyfd:3.3.1"
+    ],
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "964f628b7a82fd909def086c0dd9a4b84bb259ae",
+            "size": 42654,
+            "url": "https://build.lwjgl.org/release/3.3.1/bin/lwjgl-tinyfd/lwjgl-tinyfd-natives-linux-arm64.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-tinyfd-natives-linux-arm64:3.3.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-arm64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Add linux-arm64 support for LWJGL 3.3.1",
+    "match": [
+      "org.lwjgl:lwjgl:3.3.1"
+    ],
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "b597401014acb7196c76d97e15a6288f54f1f692",
+            "size": 86308,
+            "url": "https://build.lwjgl.org/release/3.3.1/bin/lwjgl/lwjgl-natives-linux-arm64.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-natives-linux-arm64:3.3.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-arm64"
+            }
+          }
+        ]
+      }
+    ]
   }
 ]
