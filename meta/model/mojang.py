@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Dict, Any, Iterator
 
 from pydantic import validator, Field
 
@@ -13,7 +13,6 @@ COMPATIBLE_JAVA_MAPPINGS = {
     16: [17, 18],
     17: [18]
 }
-
 
 '''
 Mojang index files look like this:
@@ -109,6 +108,26 @@ class LegacyOverrideEntry(MetaBase):
 
 class LegacyOverrideIndex(MetaBase):
     versions: Dict[str, LegacyOverrideEntry]
+
+
+class LibraryPatch(MetaBase):
+    match: List[GradleSpecifier]
+    override: Optional[Library]
+    additionalLibraries: Optional[List[Library]]
+    patchAdditionalLibraries: bool = Field(False)
+
+    def applies(self, target: Library) -> bool:
+        return target.name in self.match
+
+
+class LibraryPatches(MetaBase):
+    __root__: List[LibraryPatch]
+
+    def __iter__(self) -> Iterator[LibraryPatch]:
+        return iter(self.__root__)
+
+    def __getitem__(self, item) -> LibraryPatch:
+        return self.__root__[item]
 
 
 class MojangArguments(MetaBase):

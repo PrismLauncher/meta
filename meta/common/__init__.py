@@ -49,3 +49,22 @@ def replace_old_launchermeta_url(url):
         return o._replace(netloc="piston-meta.mojang.com").geturl()
 
     return url
+
+
+def get_all_bases(cls, bases=None):
+    bases = bases or []
+    bases.append(cls)
+    for c in cls.__bases__:
+        get_all_bases(c, bases)
+    return tuple(bases)
+
+
+def merge_dict(base: dict, overlay: dict):
+    for k, v in base.items():
+        if isinstance(v, dict):
+            merge_dict(v, overlay.setdefault(k, {}))
+        else:
+            if k not in overlay:
+                overlay[k] = v
+
+    return overlay

@@ -1,10 +1,11 @@
+import copy
 from datetime import datetime
 from typing import Optional, List, Dict, Any, Iterator
 
 import pydantic
 from pydantic import Field, validator
 
-from ..common import serialize_datetime, replace_old_launchermeta_url
+from ..common import serialize_datetime, replace_old_launchermeta_url, get_all_bases, merge_dict
 
 META_FORMAT_VERSION = 1
 
@@ -119,6 +120,40 @@ class MetaBase(pydantic.BaseModel):
         with open(file_path, "w") as f:
             f.write(self.json())
 
+    def merge(self, other):
+        """
+        Merge other object with self.
+        - Concatenates lists
+        - Combines sets
+        - Merges dictionaries (other takes priority)
+        - Recurses for all fields that are also MetaBase classes
+        - Overwrites for any other field type (int, string, ...)
+        """
+        assert type(other) is type(self)
+        for key, field in self.__fields__.items():
+            ours = getattr(self, key)
+            theirs = getattr(other, key)
+            if theirs is None:
+                continue
+            if ours is None:
+                setattr(self, key, theirs)
+                continue
+
+            if isinstance(ours, list):
+                ours += theirs
+            elif isinstance(ours, set):
+                ours |= theirs
+            elif isinstance(ours, dict):
+                result = merge_dict(ours, copy.deepcopy(theirs))
+                setattr(self, key, result)
+            elif MetaBase in get_all_bases(field.type_):
+                ours.merge(theirs)
+            else:
+                setattr(self, key, theirs)
+
+    def __hash__(self):
+        return hash(self.json())
+
     class Config:
         allow_population_by_field_name = True
 
@@ -181,7 +216,7 @@ class MojangLibraryDownloads(MetaBase):
 class OSRule(MetaBase):
     @validator("name")
     def name_must_be_os(cls, v):
-        assert v in ["osx", "linux", "windows"]
+        assert v in ["osx", "linux", "windows", "osx-arm64", "linux-arm64"]
         return v
 
     name: str
@@ -210,7 +245,7 @@ class MojangRules(MetaBase):
 
 class MojangLibrary(MetaBase):
     extract: Optional[MojangLibraryExtractRules]
-    name: GradleSpecifier
+    name: Optional[GradleSpecifier]
     downloads: Optional[MojangLibraryDownloads]
     natives: Optional[Dict[str, str]]
     rules: Optional[MojangRules]

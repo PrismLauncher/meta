@@ -4,14 +4,14 @@ import os
 from collections import defaultdict, namedtuple
 from operator import attrgetter
 from pprint import pprint
-from typing import Optional
+from typing import Optional, List
 
 from meta.common import ensure_component_dir, polymc_path, upstream_path, static_path
 from meta.common.mojang import VERSION_MANIFEST_FILE, MINECRAFT_COMPONENT, LWJGL3_COMPONENT, LWJGL_COMPONENT, \
-    STATIC_LWJGL322_FILE, STATIC_OVERRIDES_FILE, VERSIONS_DIR
+    STATIC_OVERRIDES_FILE, VERSIONS_DIR, LIBRARY_PATCHES_FILE
 from meta.model import MetaVersion, Library, GradleSpecifier, MojangLibraryDownloads, MojangArtifact, Dependency, \
     MetaPackage, MojangRules
-from meta.model.mojang import MojangIndexWrap, MojangIndex, MojangVersion, LegacyOverrideIndex
+from meta.model.mojang import MojangIndexWrap, MojangIndex, MojangVersion, LegacyOverrideIndex, LibraryPatches
 
 APPLY_SPLIT_NATIVES_WORKAROUND = True
 
@@ -62,7 +62,7 @@ LOG4J_HASHES = {
 PASS_VARIANTS = [
 #    "beed62ec1d40ae89d808fe70b83df6bd4b3be81f",  # 3.3.1 (2022-05-18 13:51:54+00:00) split natives, without workaround
     "8836c419f90f69a278b97d945a34af165c24ff60",  # 3.3.1 (2022-05-18 13:51:54+00:00) split natives, with workaround
-    "e13abfa8c5f45ae4a7e87e0b388de46066d31a67",  # 3.2.2 (2019-06-19 11:44:29+00:00) our fixed version
+    "ea4973ebc9eadf059f30f0958c89f330898bff51",  # 3.2.2 (2019-07-04 14:41:05+00:00) will be patched by us, missing tinyfd
     "8e1f89b96c6f583a0e494949c75115ed13412ba1",  # 3.2.1 (2019-02-13 16:12:08+00:00)
     "7ed2372097dbd635f5aef3137711141ce91c4ee9",  # 3.1.6 (2018-11-29 13:11:38+00:00)
     "5a006b7c72a080ac673fff02b259f3127c376655",  # 3.1.2 (2018-06-21 12:57:11+00:00)
@@ -81,7 +81,6 @@ BAD_VARIANTS = [
     "4b73fccb9e5264c2068bdbc26f9651429abbf21a",  # 3.2.2 (2021-08-25 14:41:57+00:00) only linux, windows
     "090cec3577ecfe438b890b2a9410ea07aa725e16",  # 3.2.2 (2021-04-07 14:04:09+00:00) only linux, windows
     "ab463e9ebc6a36abf22f2aa27b219dd372ff5069",  # 3.2.2 (2019-07-19 09:25:47+00:00) only linux, windows
-    "ea4973ebc9eadf059f30f0958c89f330898bff51",  # 3.2.2 (2019-07-04 14:41:05+00:00) fine but replaced by fixed version
     "8bde129ef334023c365bd7f57512a4bf5e72a378",  # 3.2.1 (2019-04-18 11:05:19+00:00) only osx, windows
     "65b2ce1f2b869bf98b8dd7ec0bc6956967d04811",  # 3.1.6 (2019-04-18 11:05:19+00:00) only linux
     "f04052162b50fa1433f67e1a90bc79466c4ab776",  # 2.9.0 (2013-10-21 16:34:47+00:00) only linux, windows
@@ -181,26 +180,44 @@ def is_macos_only(rules: Optional[MojangRules]):
     return False
 
 
-def process_single_variant(lwjgl_variant: MetaVersion):
+def patch_library(lib: Library, patches: LibraryPatches) -> List[Library]:
+    to_patch = [lib]
+
+    new_libraries = []
+    while to_patch:
+        target = to_patch.pop(0)
+
+        for patch in patches:
+            if patch.applies(target):
+                if patch.override:
+                    target.merge(patch.override)
+
+                if patch.additionalLibraries:
+                    additional_copy = copy.deepcopy(patch.additionalLibraries)
+                    new_libraries += set(additional_copy)
+                    if patch.patchAdditionalLibraries:
+                        to_patch += additional_copy
+
+    return new_libraries
+
+
+def process_single_variant(lwjgl_variant: MetaVersion, patches: LibraryPatches):
     lwjgl_version = lwjgl_variant.version
     v = copy.deepcopy(lwjgl_variant)
 
+    new_libraries = []
+    for lib in v.libraries:
+        new_libraries += patch_library(lib, patches)
+    v.libraries += list(dict.fromkeys(new_libraries))
+
     if lwjgl_version[0] == '2':
-        static_filename = os.path.join(STATIC_DIR, LWJGL_COMPONENT, f"{lwjgl_version}.json")
         filename = os.path.join(PMC_DIR, LWJGL_COMPONENT, f"{lwjgl_version}.json")
-        if os.path.isfile(static_filename):
-            v = MetaVersion.parse_file(static_filename)
-            print("LWJGL2 is static:", v.version)
 
         v.name = 'LWJGL 2'
         v.uid = LWJGL_COMPONENT
         v.conflicts = [Dependency(uid=LWJGL3_COMPONENT)]
     elif lwjgl_version[0] == '3':
-        static_filename = os.path.join(STATIC_DIR, LWJGL3_COMPONENT, f"{lwjgl_version}.json")
         filename = os.path.join(PMC_DIR, LWJGL3_COMPONENT, f"{lwjgl_version}.json")
-        if os.path.isfile(static_filename):
-            v = MetaVersion.parse_file(static_filename)
-            print("LWJGL3 is static:", v.version)
 
         v.name = 'LWJGL 3'
         v.uid = LWJGL3_COMPONENT
@@ -216,7 +233,8 @@ def process_single_variant(lwjgl_variant: MetaVersion):
     v.order = -1
     good = True
     for lib in v.libraries:
-        if not lib.natives:
+        # skip libraries without natives or that we patched
+        if not lib.natives or lib in new_libraries:
             continue
         checked_dict = {'linux', 'windows', 'osx'}
         if not checked_dict.issubset(lib.natives.keys()):
@@ -253,6 +271,7 @@ def version_has_split_natives(v: MojangVersion) -> bool:
 def main():
     # get the local version list
     override_index = LegacyOverrideIndex.parse_file(os.path.join(STATIC_DIR, STATIC_OVERRIDES_FILE))
+    library_patches = LibraryPatches.parse_file(os.path.join(STATIC_DIR, LIBRARY_PATCHES_FILE))
 
     found_any_lwjgl3 = False
 
@@ -266,6 +285,7 @@ def main():
         v = mojang_version.to_meta_version("Minecraft", MINECRAFT_COMPONENT, mojang_version.id)
 
         libs_minecraft = []
+        new_libs_minecraft = []
         is_lwjgl_3 = False
         has_split_natives = version_has_split_natives(v)
         buckets = {}
@@ -332,6 +352,7 @@ def main():
                     downloads=MojangLibraryDownloads(artifact=artifact)
                 ))
             else:
+                new_libs_minecraft += patch_library(lib, library_patches)
                 libs_minecraft.append(lib)
         if len(buckets) == 1:
             for key in buckets:
@@ -354,7 +375,7 @@ def main():
             # remove the common bucket...
             if None in buckets:
                 del buckets[None]
-        v.libraries = libs_minecraft
+        v.libraries = libs_minecraft + list(dict.fromkeys(new_libs_minecraft))
 
         if is_lwjgl_3:
             lwjgl_dependency = Dependency(uid=LWJGL3_COMPONENT)
@@ -396,10 +417,6 @@ def main():
             override.apply_onto_meta_version(v)
         v.write(out_filename)
 
-    # Add our own 3.2.2, which includes the missing tinyfd libraries
-    lwjgl322 = MetaVersion.parse_file(os.path.join(STATIC_DIR, STATIC_LWJGL322_FILE))
-    add_lwjgl_version(lwjglVersionVariants, lwjgl322)
-
     for lwjglVersionVariant in lwjglVersionVariants:
         decided_variant = None
         passed_variants = 0
@@ -424,7 +441,7 @@ def main():
         print("")
 
         if decided_variant and passed_variants == 1 and unknown_variants == 0:
-            process_single_variant(decided_variant.version)
+            process_single_variant(decided_variant.version, library_patches)
         else:
             raise Exception("No variant decided for version %s out of %d possible ones and %d unknown ones." % (
                 lwjglVersionVariant, passed_variants, unknown_variants))
