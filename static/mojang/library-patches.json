@@ -91,9 +91,9 @@
             "url": "https://github.com/r58Playz/jinput-m1/raw/main/plugins/OSX/bin/jinput-platform-2.0.5.jar"
           },
           "natives-linux-arm64": {
-            "sha1": "5aa2edeb64ddfe117d5985152280b55864ce694a",
-            "size": 6266,
-            "url": "https://github.com/r58Playz/lwjgl2-m1/raw/linux-aarch64-built/jinput-platform-2.0.5.jar"
+            "sha1": "42b388ccb7c63cec4e9f24f4dddef33325f8b212",
+            "size": 10932,
+            "url": "https://github.com/theofficialgman/lwjgl3-binaries-arm64/raw/lwjgl-2.9.4/jinput-platform-2.0.5-natives-linux.jar"
           }
         }
       },
@@ -197,10 +197,10 @@
           "artifact": {
             "sha1": "697517568c68e78ae0b4544145af031c81082dfe",
             "size": 1047168,
-            "url": "https://libraries.minecraft.net/org/lwjgl/lwjgl/lwjgl/2.9.4-nightly-20150209/lwjgl-2.9.4-nightly-20150209.jar"
+            "url": "https://github.com/theofficialgman/lwjgl3-binaries-arm64/raw/lwjgl-2.9.4/lwjgl-2.9.4-nightly-20150209.jar"
           }
         },
-        "name": "org.lwjgl.lwjgl:lwjgl:2.9.4-nightly-20150209",
+        "name": "org.lwjgl.lwjgl:lwjgl:2.9.4-nightly-20150209-gman.1",
         "rules": [
           {
             "action": "allow",
@@ -253,10 +253,10 @@
           "artifact": {
             "sha1": "d51a7c040a721d13efdfbd34f8b257b2df882ad0",
             "size": 173887,
-            "url": "https://libraries.minecraft.net/org/lwjgl/lwjgl/lwjgl_util/2.9.4-nightly-20150209/lwjgl_util-2.9.4-nightly-20150209.jar"
+            "url": "https://github.com/theofficialgman/lwjgl3-binaries-arm64/raw/lwjgl-2.9.4/lwjgl_util-2.9.4-nightly-20150209.jar"
           }
         },
-        "name": "org.lwjgl.lwjgl:lwjgl_util:2.9.1-nightly-20131017",
+        "name": "org.lwjgl.lwjgl:lwjgl_util:2.9.4-nightly-20150209-gman.1",
         "rules": [
           {
             "action": "allow",
@@ -293,9 +293,9 @@
             "url": "https://github.com/MinecraftMachina/lwjgl/releases/download/2.9.4-20150209-mmachina.2/lwjgl-platform-2.9.4-nightly-20150209-natives-osx.jar"
           },
           "natives-linux-arm64": {
-            "sha1": "ba120169db0180f4188ddf4b240668a41f11d35f",
-            "size": 480907,
-            "url": "https://github.com/r58Playz/lwjgl2-m1/raw/linux-aarch64-built/lwjgl-platform-2.9.4-nightly-20150209-natives-linux.jar"
+            "sha1": "63ac7da0f4a4785c7eadc0f8edc1e9dcc4dd08cb",
+            "size": 579979,
+            "url": "https://github.com/theofficialgman/lwjgl3-binaries-arm64/raw/lwjgl-2.9.4/lwjgl-platform-2.9.4-nightly-20150209-natives-linux.jar"
           }
         }
       },
