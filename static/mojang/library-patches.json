@@ -53,8 +53,7 @@
   {
     "_comment": "Add additional library just for osx-arm64. No override needed",
     "match": [
-      "ca.weblite:java-objc-bridge:1.0.0",
-      "ca.weblite:java-objc-bridge:1.1.0"
+      "ca.weblite:java-objc-bridge:1.0.0"
     ],
     "additionalLibraries": [
       {
@@ -1169,6 +1168,22 @@
       "org.lwjgl:lwjgl-stb-natives-macos-arm64:3.3.1",
       "org.lwjgl:lwjgl-tinyfd-natives-macos-arm64:3.3.1",
       "org.lwjgl:lwjgl-natives-macos-arm64:3.3.1"
+    ],
+    "override": {
+      "rules": [
+        {
+          "action": "allow",
+          "os": {
+            "name": "osx-arm64"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "_comment": "Only allow osx-arm64 for existing java-objc-bridge:1.1",
+    "match": [
+      "ca.weblite:java-objc-bridge:1.1"
     ],
     "override": {
       "rules": [
