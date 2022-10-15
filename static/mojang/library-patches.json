@@ -223,7 +223,7 @@
             "url": "https://github.com/theofficialgman/lwjgl3-binaries-arm64/raw/lwjgl-2.9.4/lwjgl-2.9.4-nightly-20150209.jar"
           }
         },
-        "name": "org.lwjgl.lwjgl:lwjgl:2.9.4-nightly-20150209-gman.1",
+        "name": "org.lwjgl.lwjgl:lwjgl:2.9.4-nightly-20150209-gman64.1",
         "rules": [
           {
             "action": "allow",
@@ -291,7 +291,7 @@
             "url": "https://github.com/theofficialgman/lwjgl3-binaries-arm64/raw/lwjgl-2.9.4/lwjgl_util-2.9.4-nightly-20150209.jar"
           }
         },
-        "name": "org.lwjgl.lwjgl:lwjgl_util:2.9.4-nightly-20150209-gman.1",
+        "name": "org.lwjgl.lwjgl:lwjgl_util:2.9.4-nightly-20150209-gman64.1",
         "rules": [
           {
             "action": "allow",
@@ -394,7 +394,7 @@
             "url": "https://github.com/theofficialgman/lwjgl3-binaries-arm64/raw/lwjgl-3.2.2/lwjgl-glfw.jar"
           }
         },
-        "name": "org.lwjgl:lwjgl-glfw:3.2.2-gman.1",
+        "name": "org.lwjgl:lwjgl-glfw:3.2.2-gman64.1",
         "rules": [
           {
             "action": "allow",
@@ -419,7 +419,7 @@
             }
           }
         },
-        "name": "org.lwjgl:lwjgl-glfw:3.2.2-gman.1",
+        "name": "org.lwjgl:lwjgl-glfw:3.2.2-gman64.1",
         "natives": {
           "linux-arm64": "natives-linux-arm64"
         },
@@ -440,7 +440,7 @@
             "url": "https://github.com/theofficialgman/lwjgl3-binaries-arm32/raw/lwjgl-3.2.2/lwjgl-glfw.jar"
           }
         },
-        "name": "org.lwjgl:lwjgl-glfw:3.2.2-gman.1",
+        "name": "org.lwjgl:lwjgl-glfw:3.2.2-gman32.1",
         "rules": [
           {
             "action": "allow",
@@ -465,7 +465,7 @@
             }
           }
         },
-        "name": "org.lwjgl:lwjgl-glfw:3.2.2-gman.1",
+        "name": "org.lwjgl:lwjgl-glfw:3.2.2-gman32.1",
         "natives": {
           "linux-arm32": "natives-linux-arm32"
         },
@@ -568,7 +568,7 @@
             "url": "https://github.com/theofficialgman/lwjgl3-binaries-arm64/raw/lwjgl-3.2.2/lwjgl-jemalloc.jar"
           }
         },
-        "name": "org.lwjgl:lwjgl-jemalloc:3.2.2-gman.1",
+        "name": "org.lwjgl:lwjgl-jemalloc:3.2.2-gman64.1",
         "rules": [
           {
             "action": "allow",
@@ -593,7 +593,7 @@
             }
           }
         },
-        "name": "org.lwjgl:lwjgl-jemalloc:3.2.2-gman.1",
+        "name": "org.lwjgl:lwjgl-jemalloc:3.2.2-gman64.1",
         "natives": {
           "linux-arm64": "natives-linux-arm64"
         },
@@ -614,7 +614,7 @@
             "url": "https://github.com/theofficialgman/lwjgl3-binaries-arm32/raw/lwjgl-3.2.2/lwjgl-jemalloc.jar"
           }
         },
-        "name": "org.lwjgl:lwjgl-jemalloc:3.2.2-gman.1",
+        "name": "org.lwjgl:lwjgl-jemalloc:3.2.2-gman32.1",
         "rules": [
           {
             "action": "allow",
@@ -639,7 +639,7 @@
             }
           }
         },
-        "name": "org.lwjgl:lwjgl-jemalloc:3.2.2-gman.1",
+        "name": "org.lwjgl:lwjgl-jemalloc:3.2.2-gman32.1",
         "natives": {
           "linux-arm32": "natives-linux-arm32"
         },
@@ -742,7 +742,7 @@
             "url": "https://github.com/theofficialgman/lwjgl3-binaries-arm64/raw/lwjgl-3.2.2/lwjgl-openal.jar"
           }
         },
-        "name": "org.lwjgl:lwjgl-openal:3.2.2-gman.1",
+        "name": "org.lwjgl:lwjgl-openal:3.2.2-gman64.1",
         "rules": [
           {
             "action": "allow",
@@ -767,7 +767,7 @@
             }
           }
         },
-        "name": "org.lwjgl:lwjgl-openal:3.2.2-gman.1",
+        "name": "org.lwjgl:lwjgl-openal:3.2.2-gman64.1",
         "natives": {
           "linux-arm64": "natives-linux-arm64"
         },
@@ -788,7 +788,7 @@
             "url": "https://github.com/theofficialgman/lwjgl3-binaries-arm32/raw/lwjgl-3.2.2/lwjgl-openal.jar"
           }
         },
-        "name": "org.lwjgl:lwjgl-openal:3.2.2-gman.1",
+        "name": "org.lwjgl:lwjgl-openal:3.2.2-gman32.1",
         "rules": [
           {
             "action": "allow",
@@ -813,7 +813,7 @@
             }
           }
         },
-        "name": "org.lwjgl:lwjgl-openal:3.2.2-gman.1",
+        "name": "org.lwjgl:lwjgl-openal:3.2.2-gman32.1",
         "natives": {
           "linux-arm32": "natives-linux-arm32"
         },
@@ -916,7 +916,7 @@
             "url": "https://github.com/theofficialgman/lwjgl3-binaries-arm64/raw/lwjgl-3.2.2/lwjgl-opengl.jar"
           }
         },
-        "name": "org.lwjgl:lwjgl-opengl:3.2.2-gman.1",
+        "name": "org.lwjgl:lwjgl-opengl:3.2.2-gman64.1",
         "rules": [
           {
             "action": "allow",
@@ -941,7 +941,7 @@
             }
           }
         },
-        "name": "org.lwjgl:lwjgl-opengl:3.2.2-gman.1",
+        "name": "org.lwjgl:lwjgl-opengl:3.2.2-gman64.1",
         "natives": {
           "linux-arm64": "natives-linux-arm64"
         },
@@ -962,7 +962,7 @@
             "url": "https://github.com/theofficialgman/lwjgl3-binaries-arm32/raw/lwjgl-3.2.2/lwjgl-opengl.jar"
           }
         },
-        "name": "org.lwjgl:lwjgl-opengl:3.2.2-gman.1",
+        "name": "org.lwjgl:lwjgl-opengl:3.2.2-gman32.1",
         "rules": [
           {
             "action": "allow",
@@ -987,7 +987,7 @@
             }
           }
         },
-        "name": "org.lwjgl:lwjgl-opengl:3.2.2-gman.1",
+        "name": "org.lwjgl:lwjgl-opengl:3.2.2-gman32.1",
         "natives": {
           "linux-arm32": "natives-linux-arm32"
         },
@@ -1090,7 +1090,7 @@
             "url": "https://github.com/theofficialgman/lwjgl3-binaries-arm64/raw/lwjgl-3.2.2/lwjgl-stb.jar"
           }
         },
-        "name": "org.lwjgl:lwjgl-stb:3.2.2-gman.1",
+        "name": "org.lwjgl:lwjgl-stb:3.2.2-gman64.1",
         "rules": [
           {
             "action": "allow",
@@ -1115,7 +1115,7 @@
             }
           }
         },
-        "name": "org.lwjgl:lwjgl-stb:3.2.2-gman.1",
+        "name": "org.lwjgl:lwjgl-stb:3.2.2-gman64.1",
         "natives": {
           "linux-arm64": "natives-linux-arm64"
         },
@@ -1136,7 +1136,7 @@
             "url": "https://github.com/theofficialgman/lwjgl3-binaries-arm32/raw/lwjgl-3.2.2/lwjgl-stb.jar"
           }
         },
-        "name": "org.lwjgl:lwjgl-stb:3.2.2-gman.1",
+        "name": "org.lwjgl:lwjgl-stb:3.2.2-gman32.1",
         "rules": [
           {
             "action": "allow",
@@ -1161,7 +1161,7 @@
             }
           }
         },
-        "name": "org.lwjgl:lwjgl-stb:3.2.2-gman.1",
+        "name": "org.lwjgl:lwjgl-stb:3.2.2-gman32.1",
         "natives": {
           "linux-arm32": "natives-linux-arm32"
         },
@@ -1264,7 +1264,7 @@
             "url": "https://github.com/theofficialgman/lwjgl3-binaries-arm64/raw/lwjgl-3.2.2/lwjgl-tinyfd.jar"
           }
         },
-        "name": "org.lwjgl:lwjgl-tinyfd:3.2.2-gman.1",
+        "name": "org.lwjgl:lwjgl-tinyfd:3.2.2-gman64.1",
         "rules": [
           {
             "action": "allow",
@@ -1289,7 +1289,7 @@
             }
           }
         },
-        "name": "org.lwjgl:lwjgl-tinyfd:3.2.2-gman.1",
+        "name": "org.lwjgl:lwjgl-tinyfd:3.2.2-gman64.1",
         "natives": {
           "linux-arm64": "natives-linux-arm64"
         },
@@ -1310,7 +1310,7 @@
             "url": "https://github.com/theofficialgman/lwjgl3-binaries-arm32/raw/lwjgl-3.2.2/lwjgl-tinyfd.jar"
           }
         },
-        "name": "org.lwjgl:lwjgl-tinyfd:3.2.2-gman.1",
+        "name": "org.lwjgl:lwjgl-tinyfd:3.2.2-gman32.1",
         "rules": [
           {
             "action": "allow",
@@ -1335,7 +1335,7 @@
             }
           }
         },
-        "name": "org.lwjgl:lwjgl-tinyfd:3.2.2-gman.1",
+        "name": "org.lwjgl:lwjgl-tinyfd:3.2.2-gman32.1",
         "natives": {
           "linux-arm32": "natives-linux-arm32"
         },
@@ -1438,7 +1438,7 @@
             "url": "https://github.com/theofficialgman/lwjgl3-binaries-arm64/raw/lwjgl-3.2.2/lwjgl-core.jar"
           }
         },
-        "name": "org.lwjgl:lwjgl:3.2.2-gman.1",
+        "name": "org.lwjgl:lwjgl:3.2.2-gman64.1",
         "rules": [
           {
             "action": "allow",
@@ -1463,7 +1463,7 @@
             }
           }
         },
-        "name": "org.lwjgl:lwjgl:3.2.2-gman.1",
+        "name": "org.lwjgl:lwjgl:3.2.2-gman64.1",
         "natives": {
           "linux-arm64": "natives-linux-arm64"
         },
@@ -1484,7 +1484,7 @@
             "url": "https://github.com/theofficialgman/lwjgl3-binaries-arm32/raw/lwjgl-3.2.2/lwjgl-core.jar"
           }
         },
-        "name": "org.lwjgl:lwjgl:3.2.2-gman.1",
+        "name": "org.lwjgl:lwjgl:3.2.2-gman32.1",
         "rules": [
           {
             "action": "allow",
@@ -1509,7 +1509,7 @@
             }
           }
         },
-        "name": "org.lwjgl:lwjgl:3.2.2-gman.1",
+        "name": "org.lwjgl:lwjgl:3.2.2-gman32.1",
         "natives": {
           "linux-arm32": "natives-linux-arm32"
         },
