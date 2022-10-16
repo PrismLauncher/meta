@@ -10,8 +10,8 @@ SUPPORTED_LAUNCHER_VERSION = 21
 SUPPORTED_COMPLIANCE_LEVEL = 1
 DEFAULT_JAVA_MAJOR = 8  # by default we should recommend Java 8 if we don't know better
 COMPATIBLE_JAVA_MAPPINGS = {
-    16: [17, 18],
-    17: [18]
+    16: [17, 18, 19],
+    17: [18, 19]
 }
 
 '''
