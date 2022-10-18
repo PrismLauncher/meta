@@ -10,10 +10,10 @@ def serialize_datetime(dt: datetime.datetime):
     return dt.isoformat()
 
 
-def polymc_path():
+def placeholdermc_path():
     if "PMC_DIR" in os.environ:
         return os.environ["PMC_DIR"]
-    return "polymc"
+    return "placeholdermc"
 
 
 def upstream_path():
