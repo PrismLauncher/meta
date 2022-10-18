@@ -1,5 +1,5 @@
-# PolyMC Meta
-Scripts to generate jsons and jars that PolyMC will access.
+# PlaceholderMC Meta
+Scripts to generate jsons and jars that PlaceholderMC will access.
 
 ## Deployment
 It is recommended to use Docker to deploy the environment.
