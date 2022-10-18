@@ -26,7 +26,7 @@ ensure_component_dir(LWJGL3_COMPONENT)
 
 def map_log4j_artifact(version):
     if version == "2.0-beta9":
-        return "2.0-beta9-fixed", "https://files.scrumplex.rocks/maven/%s"
+        return "2.0-beta9-fixed", "https://files.prismlauncher.org/maven/%s"
     return "2.17.1", "https://repo1.maven.org/maven2/%s"  # This is the only version that's patched (as of 2022/02/19)
 
 

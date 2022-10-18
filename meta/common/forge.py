@@ -13,5 +13,5 @@ STATIC_LEGACYINFO_FILE = join(BASE_DIR, "forge-legacyinfo.json")
 
 FORGE_COMPONENT = "net.minecraftforge"
 
-FORGEWRAPPER_MAVEN = "https://files.scrumplex.rocks/maven/%s"
+FORGEWRAPPER_MAVEN = "https://files.prismlauncher.org/maven/%s"
 BAD_VERSIONS = ["1.12.2-14.23.5.2851"]
