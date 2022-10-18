@@ -2,11 +2,11 @@ import hashlib
 import os
 from operator import attrgetter
 
-from meta.common import polymc_path
+from meta.common import placeholdermc_path
 from meta.model import MetaVersion, MetaPackage
 from meta.model.index import MetaPackageIndex, MetaVersionIndex, MetaVersionIndexEntry, MetaPackageIndexEntry
 
-PMC_DIR = polymc_path()
+PMC_DIR = placeholdermc_path()
 
 
 # take the hash type (like hashlib.md5) and filename, return hex string of hash
