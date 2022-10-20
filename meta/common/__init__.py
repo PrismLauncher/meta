@@ -10,10 +10,10 @@ def serialize_datetime(dt: datetime.datetime):
     return dt.isoformat()
 
 
-def prismlauncher_path():
-    if "PL_DIR" in os.environ:
-        return os.environ["PL_DIR"]
-    return "prismlauncher"
+def launcher_path():
+    if "LAUNCHER_DIR" in os.environ:
+        return os.environ["LAUNCHER_DIR"]
+    return "launcher"
 
 
 def upstream_path():
@@ -35,7 +35,7 @@ def ensure_upstream_dir(path):
 
 
 def ensure_component_dir(component_id):
-    path = os.path.join(prismlauncher_path(), component_id)
+    path = os.path.join(launcher_path(), component_id)
     if not os.path.exists(path):
         os.makedirs(path)
 

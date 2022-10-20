@@ -22,7 +22,7 @@ function fail_in {
 }
 
 function fail_out {
-    prismlauncher_git reset --hard HEAD
+    launcher_git reset --hard HEAD
     exit 1
 }
 
@@ -30,8 +30,8 @@ function upstream_git {
     git -C "${BASEDIR}/${UPSTREAM_DIR}" "$@"
 }
 
-function prismlauncher_git {
-    git -C "${BASEDIR}/${PL_DIR}" "$@"
+function launcher_git {
+    git -C "${BASEDIR}/${LAUNCHER_DIR}" "$@"
 }
 
 # make sure we *could* push to our repo
@@ -59,8 +59,8 @@ if [ "${DEPLOY_TO_GIT}" = true ] ; then
     fi
 fi
 
-prismlauncher_git reset --hard HEAD || exit 1
-prismlauncher_git checkout "${BRANCH}" || exit 1
+launcher_git reset --hard HEAD || exit 1
+launcher_git checkout "${BRANCH}" || exit 1
 
 python generateMojang.py || fail_out
 python generateForge.py || fail_out
@@ -70,15 +70,15 @@ python generateLiteloader.py || fail_out
 python index.py || fail_out
 
 if [ "${DEPLOY_TO_GIT}" = true ] ; then
-    prismlauncher_git add index.json org.lwjgl/* org.lwjgl3/* net.minecraft/* || fail_out
-    prismlauncher_git add net.minecraftforge/* || fail_out
-    prismlauncher_git add net.fabricmc.fabric-loader/* net.fabricmc.intermediary/* || fail_out
-    prismlauncher_git add org.quiltmc.quilt-loader/* || fail_out  # TODO: add Quilt hashed, once it is actually used
-    prismlauncher_git add com.mumfrey.liteloader/* || fail_out
+    launcher_git add index.json org.lwjgl/* org.lwjgl3/* net.minecraft/* || fail_out
+    launcher_git add net.minecraftforge/* || fail_out
+    launcher_git add net.fabricmc.fabric-loader/* net.fabricmc.intermediary/* || fail_out
+    launcher_git add org.quiltmc.quilt-loader/* || fail_out  # TODO: add Quilt hashed, once it is actually used
+    launcher_git add com.mumfrey.liteloader/* || fail_out
 
-    if ! prismlauncher_git diff --cached --exit-code ; then
-        prismlauncher_git commit -a -m "Update ${currentDate}" || fail_out
-        prismlauncher_git push || exit 1
+    if ! launcher_git diff --cached --exit-code ; then
+        launcher_git commit -a -m "Update ${currentDate}" || fail_out
+        launcher_git push || exit 1
     fi
 fi
 
@@ -86,7 +86,7 @@ if [ "${DEPLOY_TO_FOLDER}" = true ] ; then
     DEPLOY_FOLDER_var="DEPLOY_FOLDER_$MODE"
     DEPLOY_FOLDER="${!DEPLOY_FOLDER_var}"
     echo "Deploying to ${DEPLOY_FOLDER}"
-    rsync -rvog --chown="${DEPLOY_FOLDER_USER}:${DEPLOY_FOLDER_GROUP}" --exclude=.git "${BASEDIR}/${PL_DIR}/" "${DEPLOY_FOLDER}"
+    rsync -rvog --chown="${DEPLOY_FOLDER_USER}:${DEPLOY_FOLDER_GROUP}" --exclude=.git "${BASEDIR}/${LAUNCHER_DIR}/" "${DEPLOY_FOLDER}"
 fi
 
 exit 0

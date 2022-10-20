@@ -14,7 +14,7 @@ echo
 
 
 echo "PrismLauncher:"
-pushd "${PL_DIR}" || exit 1
+pushd "${LAUNCHER_DIR}" || exit 1
 git status
 popd || exit 1
 echo

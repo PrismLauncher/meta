@@ -6,5 +6,5 @@ caches/
 !caches/*/.keep
 __pycache__
 config_local.sh
-prismlauncher
+launcher
 upstream

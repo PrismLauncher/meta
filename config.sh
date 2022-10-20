@@ -1,7 +1,7 @@
 export UPSTREAM_DIR=upstream
 export UPSTREAM_REPO=git@github.com:PrismLauncher/meta-upstream.git
-export PL_DIR=prismlauncher
-export PL_REPO=git@github.com:PrismLauncher/meta-prismlauncher.git
+export LAUNCHER_DIR=launcher
+export LAUNCHER_REPO=git@github.com:PrismLauncher/meta-launcher.git
 export BRANCH_master=master
 export BRANCH_develop=develop
 export DEPLOY_TO_S3=false

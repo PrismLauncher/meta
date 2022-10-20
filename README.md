@@ -8,7 +8,7 @@ It is recommended to use Docker to deploy the environment.
 - Make sure it's writable by the container later: `chown -R 1337:1337 .`
 - Configure `config/config_local.sh`
   - The defaults should be fine (apart from committer email and name perhaps)
-- Put your SSH key (which has push access to meta-upstream and meta-prismlauncher) at `config/deploy.key`
+- Put your SSH key (which has push access to meta-upstream and meta-launcher) at `config/deploy.key`
 - Pull meta- repos: `bash clone.sh`
 - Customize docker-compose.yaml
 - Run `docker-compose up -d --build`
