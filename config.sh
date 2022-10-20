@@ -1,7 +1,7 @@
 export UPSTREAM_DIR=upstream
-export UPSTREAM_REPO=git@github.com:PolyMC/meta-upstream.git
-export PMC_DIR=polymc
-export PMC_REPO=git@github.com:PolyMC/meta-polymc.git
+export UPSTREAM_REPO=git@github.com:PrismLauncher/meta-upstream.git
+export PL_DIR=prismlauncher
+export PL_REPO=git@github.com:PrismLauncher/meta-prismlauncher.git
 export BRANCH_master=master
 export BRANCH_develop=develop
 export DEPLOY_TO_S3=false

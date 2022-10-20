@@ -2,11 +2,11 @@ import hashlib
 import os
 from operator import attrgetter
 
-from meta.common import polymc_path
+from meta.common import prismlauncher_path
 from meta.model import MetaVersion, MetaPackage
 from meta.model.index import MetaPackageIndex, MetaVersionIndex, MetaVersionIndexEntry, MetaPackageIndexEntry
 
-PMC_DIR = polymc_path()
+PL_DIR = prismlauncher_path()
 
 
 # take the hash type (like hashlib.md5) and filename, return hex string of hash
@@ -25,11 +25,11 @@ ignore = {"index.json", "package.json", ".git", ".github"}
 packages = MetaPackageIndex()
 
 # walk thorugh all the package folders
-for package in sorted(os.listdir(PMC_DIR)):
+for package in sorted(os.listdir(PL_DIR)):
     if package in ignore:
         continue
 
-    sharedData = MetaPackage.parse_file(os.path.join(PMC_DIR, package, "package.json"))
+    sharedData = MetaPackage.parse_file(os.path.join(PL_DIR, package, "package.json"))
     recommendedVersions = set()
     if sharedData.recommended:
         recommendedVersions = set(sharedData.recommended)
@@ -38,12 +38,12 @@ for package in sorted(os.listdir(PMC_DIR)):
     versionList = MetaVersionIndex(uid=package, name=sharedData.name)
 
     # walk through all the versions of the package
-    for filename in os.listdir(PMC_DIR + "/%s" % package):
+    for filename in os.listdir(PL_DIR + "/%s" % package):
         if filename in ignore:
             continue
 
         # parse and hash the version file
-        filepath = PMC_DIR + "/%s/%s" % (package, filename)
+        filepath = PL_DIR + "/%s/%s" % (package, filename)
         filehash = hash_file(hashlib.sha256, filepath)
         versionFile = MetaVersion.parse_file(filepath)
         is_recommended = versionFile.version in recommendedVersions
@@ -56,7 +56,7 @@ for package in sorted(os.listdir(PMC_DIR)):
     versionList.versions = sorted(versionList.versions, key=attrgetter('release_time'), reverse=True)
 
     # write the version index for the package
-    outFilePath = PMC_DIR + "/%s/index.json" % package
+    outFilePath = PL_DIR + "/%s/index.json" % package
     versionList.write(outFilePath)
 
     # insert entry into the package index
@@ -67,4 +67,4 @@ for package in sorted(os.listdir(PMC_DIR)):
     )
     packages.packages.append(packageEntry)
 
-packages.write(os.path.join(PMC_DIR, "index.json"))
+packages.write(os.path.join(PL_DIR, "index.json"))

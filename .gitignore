@@ -7,5 +7,5 @@ caches/
 .idea/
 __pycache__
 config_local.sh
-polymc
+prismlauncher
 upstream

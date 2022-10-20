@@ -10,10 +10,10 @@ def serialize_datetime(dt: datetime.datetime):
     return dt.isoformat()
 
 
-def polymc_path():
-    if "PMC_DIR" in os.environ:
-        return os.environ["PMC_DIR"]
-    return "polymc"
+def prismlauncher_path():
+    if "PL_DIR" in os.environ:
+        return os.environ["PL_DIR"]
+    return "prismlauncher"
 
 
 def upstream_path():
@@ -35,7 +35,7 @@ def ensure_upstream_dir(path):
 
 
 def ensure_component_dir(component_id):
-    path = os.path.join(polymc_path(), component_id)
+    path = os.path.join(prismlauncher_path(), component_id)
     if not os.path.exists(path):
         os.makedirs(path)
 
