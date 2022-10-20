@@ -24,7 +24,7 @@ ignore = {"index.json", "package.json", ".git", ".github"}
 # initialize output structures - package list level
 packages = MetaPackageIndex()
 
-# walk thorugh all the package folders
+# walk through all the package folders
 for package in sorted(os.listdir(PL_DIR)):
     if package in ignore:
         continue

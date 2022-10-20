@@ -26,7 +26,7 @@ def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
 
 
-# Contruct a set of libraries out of a Minecraft version file, for filtering.
+# Construct a set of libraries out of a Minecraft version file, for filtering.
 mc_version_cache = {}
 
 

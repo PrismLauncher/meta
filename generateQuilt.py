@@ -23,7 +23,7 @@ def load_installer_info(version) -> FabricInstallerDataV1:
 
 
 def process_loader_version(entry) -> (MetaVersion, bool):
-    should_recommend = "-" not in entry["version"]  # dont recommend pre releases as per SemVer
+    should_recommend = "-" not in entry["version"]  # Don't recommend pre releases as per SemVer
 
     jar_info = load_jar_info(transform_maven_key(entry["maven"]))
     installer_info = load_installer_info(entry["version"])

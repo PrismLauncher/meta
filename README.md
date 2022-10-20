@@ -15,5 +15,5 @@ It is recommended to use Docker to deploy the environment.
 - Observe Cron logs using `docker-compose logs -f` (Runs hourly by default)
 - (Optional) Run once to fill caches: `docker-compose run meta update`
 
-For local development you can also use `docker-compose.local.yaml`. By default it uses `UID=1000` and `GID=1000`.
+For local development you can also use `docker-compose.local.yaml`. By default, it uses `UID=1000` and `GID=1000`.
 Make sure it's the same as your host instance.
