@@ -4,6 +4,7 @@ import os
 from collections import defaultdict, namedtuple
 from operator import attrgetter
 from pprint import pprint
+from packaging import version as pversion
 from typing import Optional, List
 
 from meta.common import ensure_component_dir, polymc_path, upstream_path, static_path
@@ -25,9 +26,12 @@ ensure_component_dir(LWJGL3_COMPONENT)
 
 
 def map_log4j_artifact(version):
-    if version == "2.0-beta9":
+    x = pversion.parse(version)
+    if x <= pversion.parse("2.0"):
         return "2.0-beta9-fixed", "https://files.prismlauncher.org/maven/%s"
-    return "2.17.1", "https://repo1.maven.org/maven2/%s"  # This is the only version that's patched (as of 2022/02/19)
+    if x <= pversion.parse("2.17.1"):
+        return "2.17.1", "https://repo1.maven.org/maven2/%s"  # This is the only version that's patched (as of 2022/02/19)
+    return None, None
 
 
 LOG4J_HASHES = {
@@ -334,23 +338,26 @@ def main():
             elif lib.name.is_log4j():
                 version_override, maven_override = map_log4j_artifact(lib.name.version)
 
-                if version_override not in LOG4J_HASHES:
-                    raise Exception("ERROR: unhandled log4j version (overriden) %s!" % version_override)
+                if version_override and maven_override:
+                    if version_override not in LOG4J_HASHES:
+                        raise Exception("ERROR: unhandled log4j version (overriden) %s!" % version_override)
 
-                if lib.name.artifact not in LOG4J_HASHES[version_override]:
-                    raise Exception("ERROR: unhandled log4j artifact %s!" % lib.name.artifact)
+                    if lib.name.artifact not in LOG4J_HASHES[version_override]:
+                        raise Exception("ERROR: unhandled log4j artifact %s!" % lib.name.artifact)
 
-                replacement_name = GradleSpecifier("org.apache.logging.log4j", lib.name.artifact, version_override)
-                artifact = MojangArtifact(
-                    url=maven_override % (replacement_name.path()),
-                    sha1=LOG4J_HASHES[version_override][lib.name.artifact]["sha1"],
-                    size=LOG4J_HASHES[version_override][lib.name.artifact]["size"]
-                )
+                    replacement_name = GradleSpecifier("org.apache.logging.log4j", lib.name.artifact, version_override)
+                    artifact = MojangArtifact(
+                        url=maven_override % (replacement_name.path()),
+                        sha1=LOG4J_HASHES[version_override][lib.name.artifact]["sha1"],
+                        size=LOG4J_HASHES[version_override][lib.name.artifact]["size"]
+                    )
 
-                libs_minecraft.append(Library(
-                    name=replacement_name,
-                    downloads=MojangLibraryDownloads(artifact=artifact)
-                ))
+                    libs_minecraft.append(Library(
+                        name=replacement_name,
+                        downloads=MojangLibraryDownloads(artifact=artifact)
+                    ))
+                else:
+                    libs_minecraft.append(lib)
             else:
                 new_libs_minecraft += patch_library(lib, library_patches)
                 libs_minecraft.append(lib)
