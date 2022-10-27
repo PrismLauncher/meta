@@ -216,7 +216,7 @@ class MojangLibraryDownloads(MetaBase):
 class OSRule(MetaBase):
     @validator("name")
     def name_must_be_os(cls, v):
-        assert v in ["osx", "linux", "windows", "osx-arm64", "linux-arm64", "linux-arm32"]
+        assert v in ["osx", "linux", "windows", "windows-arm64", "osx-arm64", "linux-arm64", "linux-arm32"]
         return v
 
     name: str
