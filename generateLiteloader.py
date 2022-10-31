@@ -2,13 +2,13 @@ import os
 from datetime import datetime
 from typing import List, Tuple, Dict, Optional
 
-from meta.common import ensure_component_dir, polymc_path, upstream_path
+from meta.common import ensure_component_dir, launcher_path, upstream_path
 from meta.common.liteloader import LITELOADER_COMPONENT, VERSIONS_FILE
 from meta.common.mojang import MINECRAFT_COMPONENT
 from meta.model import MetaVersion, GradleSpecifier, Library, MetaPackage, Dependency
 from meta.model.liteloader import LiteloaderIndex, LiteloaderArtefact
 
-PMC_DIR = polymc_path()
+LAUNCHER_DIR = launcher_path()
 UPSTREAM_DIR = upstream_path()
 
 ensure_component_dir(LITELOADER_COMPONENT)
@@ -93,7 +93,7 @@ def main():
     all_versions, recommended = process_versions(index)
 
     for version in all_versions:
-        version.write(os.path.join(PMC_DIR, LITELOADER_COMPONENT, f"{version.version}.json"))
+        version.write(os.path.join(LAUNCHER_DIR, LITELOADER_COMPONENT, f"{version.version}.json"))
 
     package = MetaPackage(uid=LITELOADER_COMPONENT,
                           name='LiteLoader',
@@ -101,7 +101,7 @@ def main():
                           project_url=index.meta.url,
                           authors=[index.meta.authors],
                           recommended=recommended)
-    package.write(os.path.join(PMC_DIR, LITELOADER_COMPONENT, "package.json"))
+    package.write(os.path.join(LAUNCHER_DIR, LITELOADER_COMPONENT, "package.json"))
 
 
 if __name__ == '__main__':

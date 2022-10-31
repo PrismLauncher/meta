@@ -15,6 +15,6 @@ if [ ! -d "${UPSTREAM_DIR}" ]; then
     git clone "${UPSTREAM_REPO}" "${UPSTREAM_DIR}"
 fi
 
-if [ ! -d "${PMC_DIR}" ]; then
-    git clone "${PMC_REPO}" "${PMC_DIR}"
+if [ ! -d "${LAUNCHER_DIR}" ]; then
+    git clone "${LAUNCHER_REPO}" "${LAUNCHER_DIR}"
 fi

@@ -7,7 +7,7 @@ from pprint import pprint
 from packaging import version as pversion
 from typing import Optional, List
 
-from meta.common import ensure_component_dir, polymc_path, upstream_path, static_path
+from meta.common import ensure_component_dir, launcher_path, upstream_path, static_path
 from meta.common.mojang import VERSION_MANIFEST_FILE, MINECRAFT_COMPONENT, LWJGL3_COMPONENT, LWJGL_COMPONENT, \
     STATIC_OVERRIDES_FILE, VERSIONS_DIR, LIBRARY_PATCHES_FILE
 from meta.model import MetaVersion, Library, GradleSpecifier, MojangLibraryDownloads, MojangArtifact, Dependency, \
@@ -16,7 +16,7 @@ from meta.model.mojang import MojangIndexWrap, MojangIndex, MojangVersion, Legac
 
 APPLY_SPLIT_NATIVES_WORKAROUND = True
 
-PMC_DIR = polymc_path()
+LAUNCHER_DIR = launcher_path()
 UPSTREAM_DIR = upstream_path()
 STATIC_DIR = static_path()
 
@@ -215,13 +215,13 @@ def process_single_variant(lwjgl_variant: MetaVersion, patches: LibraryPatches):
     v.libraries += list(dict.fromkeys(new_libraries))
 
     if lwjgl_version[0] == '2':
-        filename = os.path.join(PMC_DIR, LWJGL_COMPONENT, f"{lwjgl_version}.json")
+        filename = os.path.join(LAUNCHER_DIR, LWJGL_COMPONENT, f"{lwjgl_version}.json")
 
         v.name = 'LWJGL 2'
         v.uid = LWJGL_COMPONENT
         v.conflicts = [Dependency(uid=LWJGL3_COMPONENT)]
     elif lwjgl_version[0] == '3':
-        filename = os.path.join(PMC_DIR, LWJGL3_COMPONENT, f"{lwjgl_version}.json")
+        filename = os.path.join(LAUNCHER_DIR, LWJGL3_COMPONENT, f"{lwjgl_version}.json")
 
         v.name = 'LWJGL 3'
         v.uid = LWJGL3_COMPONENT
@@ -418,7 +418,7 @@ def main():
         # process 1.13 arguments into previous version
         if not mojang_version.minecraft_arguments and mojang_version.arguments:
             v.minecraft_arguments = adapt_new_style_arguments(mojang_version.arguments)
-        out_filename = os.path.join(PMC_DIR, MINECRAFT_COMPONENT, f"{v.version}.json")
+        out_filename = os.path.join(LAUNCHER_DIR, MINECRAFT_COMPONENT, f"{v.version}.json")
         if v.version in override_index.versions:
             override = override_index.versions[v.version]
             override.apply_onto_meta_version(v)
@@ -455,18 +455,18 @@ def main():
 
     lwjgl_package = MetaPackage(uid=LWJGL_COMPONENT, name='LWJGL 2')
     lwjgl_package.recommended = ['2.9.4-nightly-20150209']
-    lwjgl_package.write(os.path.join(PMC_DIR, LWJGL_COMPONENT, "package.json"))
+    lwjgl_package.write(os.path.join(LAUNCHER_DIR, LWJGL_COMPONENT, "package.json"))
 
     if found_any_lwjgl3:
         lwjgl_package = MetaPackage(uid=LWJGL3_COMPONENT, name='LWJGL 3')
         lwjgl_package.recommended = ['3.1.2']
-        lwjgl_package.write(os.path.join(PMC_DIR, LWJGL3_COMPONENT, "package.json"))
+        lwjgl_package.write(os.path.join(LAUNCHER_DIR, LWJGL3_COMPONENT, "package.json"))
 
     mojang_index = MojangIndexWrap(MojangIndex.parse_file(os.path.join(UPSTREAM_DIR, VERSION_MANIFEST_FILE)))
 
     minecraft_package = MetaPackage(uid=MINECRAFT_COMPONENT, name='Minecraft')
     minecraft_package.recommended = [mojang_index.latest.release]
-    minecraft_package.write(os.path.join(PMC_DIR, MINECRAFT_COMPONENT, "package.json"))
+    minecraft_package.write(os.path.join(LAUNCHER_DIR, MINECRAFT_COMPONENT, "package.json"))
 
 
 if __name__ == '__main__':

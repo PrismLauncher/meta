@@ -7,7 +7,7 @@ services:
     volumes:
       - "./caches:/app/caches"
       - "./upstream:/app/upstream"
-      - "./polymc:/app/polymc"
+      - "./launcher:/app/launcher"
       - "./public:/app/public"
       - "./config:/app/config"
     restart: unless-stopped

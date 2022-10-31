@@ -1,13 +1,13 @@
 import json
 import os
 
-from meta.common import ensure_component_dir, polymc_path, upstream_path, transform_maven_key
+from meta.common import ensure_component_dir, launcher_path, upstream_path, transform_maven_key
 from meta.common.quilt import JARS_DIR, INSTALLER_INFO_DIR, META_DIR, INTERMEDIARY_COMPONENT, LOADER_COMPONENT, \
     USE_QUILT_MAPPINGS
 from meta.model import MetaVersion, Dependency, Library, MetaPackage, GradleSpecifier
 from meta.model.fabric import FabricJarInfo, FabricInstallerDataV1, FabricMainClasses
 
-PMC_DIR = polymc_path()
+LAUNCHER_DIR = launcher_path()
 UPSTREAM_DIR = upstream_path()
 
 ensure_component_dir(LOADER_COMPONENT)
@@ -23,7 +23,7 @@ def load_installer_info(version) -> FabricInstallerDataV1:
 
 
 def process_loader_version(entry) -> (MetaVersion, bool):
-    should_recommend = "-" not in entry["version"]  # dont recommend pre releases as per SemVer
+    should_recommend = "-" not in entry["version"]  # Don't recommend pre releases as per SemVer
 
     jar_info = load_jar_info(transform_maven_key(entry["maven"]))
     installer_info = load_installer_info(entry["version"])
@@ -77,7 +77,7 @@ def main():
             if not recommended_loader_versions and should_recommend:  # newest stable loader is recommended
                 recommended_loader_versions.append(version)
 
-            v.write(os.path.join(PMC_DIR, LOADER_COMPONENT, f"{v.version}.json"))
+            v.write(os.path.join(LAUNCHER_DIR, LOADER_COMPONENT, f"{v.version}.json"))
 
     if USE_QUILT_MAPPINGS:
         with open(os.path.join(UPSTREAM_DIR, META_DIR, "hashed.json"), 'r', encoding='utf-8') as f:
@@ -90,14 +90,14 @@ def main():
 
                 recommended_intermediary_versions.append(version)  # all intermediaries are recommended
 
-                v.write(os.path.join(PMC_DIR, INTERMEDIARY_COMPONENT, f"{v.version}.json"))
+                v.write(os.path.join(LAUNCHER_DIR, INTERMEDIARY_COMPONENT, f"{v.version}.json"))
 
     package = MetaPackage(uid=LOADER_COMPONENT, name='Quilt Loader')
     package.recommended = recommended_loader_versions
     package.description = "The Quilt project is an open, community-driven modding toolchain designed primarily for Minecraft."
     package.project_url = "https://quiltmc.org/"
     package.authors = ["Quilt Project"]
-    package.write(os.path.join(PMC_DIR, LOADER_COMPONENT, "package.json"))
+    package.write(os.path.join(LAUNCHER_DIR, LOADER_COMPONENT, "package.json"))
 
     if USE_QUILT_MAPPINGS:
         package = MetaPackage(uid=INTERMEDIARY_COMPONENT, name='Quilt Intermediary Mappings')
@@ -105,7 +105,7 @@ def main():
         package.description = "Intermediary mappings allow using Quilt Loader with mods for Minecraft in a more compatible manner."
         package.project_url = "https://quiltmc.org/"
         package.authors = ["Quilt Project"]
-        package.write(os.path.join(PMC_DIR, INTERMEDIARY_COMPONENT, "package.json"))
+        package.write(os.path.join(LAUNCHER_DIR, INTERMEDIARY_COMPONENT, "package.json"))
 
 
 if __name__ == '__main__':

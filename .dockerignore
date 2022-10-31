@@ -6,6 +6,6 @@ caches/
 __pycache__/
 public/
 
-polymc/
+launcher/
 upstream/
 config/

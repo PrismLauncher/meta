@@ -13,8 +13,8 @@ popd || exit 1
 echo
 
 
-echo "PolyMC:"
-pushd "${PMC_DIR}" || exit 1
+echo "PrismLauncher:"
+pushd "${LAUNCHER_DIR}" || exit 1
 git status
 popd || exit 1
 echo
