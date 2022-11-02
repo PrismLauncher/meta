@@ -8,8 +8,59 @@
             "releaseTime": "2013-03-20T12:00:00+02:00",
             "+traits": ["legacyLaunch", "texturepacks"]
         },
+        "13w12~": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
         "1.5": {
             "releaseTime": "2013-03-07T00:00:00+02:00",
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "13w10b": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "13w10a": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "13w09c": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "13w09b": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "13w09a": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "13w11a": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "13w07a": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "13w06a": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "13w05b": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "13w05a": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "13w04a": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "13w03a": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "13w02b": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "13w02a": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "13w01b": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "13w01a": {
             "+traits": ["legacyLaunch", "texturepacks"]
         },
         "1.4.7": {
@@ -18,6 +69,15 @@
         },
         "1.4.6": {
             "releaseTime": "2012-12-20T00:00:00+02:00",
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "12w50b": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "12w50a": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "12w49a": {
             "+traits": ["legacyLaunch", "texturepacks"]
         },
         "1.4.5": {
@@ -44,8 +104,53 @@
             "releaseTime": "2012-10-19T00:00:00+02:00",
             "+traits": ["legacyLaunch", "texturepacks"]
         },
+        "12w42b": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "12w42a": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "12w41b": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "12w41a": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "12w40b": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "12w40a": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "12w39b": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "12w39a": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "12w38b": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "12w38a": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "12w37a": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "12w36a": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "12w34b": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "12w34a": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
         "1.3.2": {
             "releaseTime": "2012-08-16T00:00:00+02:00",
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "12w32a": {
             "+traits": ["legacyLaunch", "texturepacks"]
         },
         "1.3.1": {
@@ -54,6 +159,60 @@
         },
         "1.3": {
             "releaseTime": "2012-07-26T00:00:00+02:00",
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "12w30e": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "12w30d": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "12w30c": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "12w30b": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "12w30a": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "12w27a": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "12w26a": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "12w25a": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "12w24a": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "12w23b": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "12w23a": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "12w22a": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "12w21b": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "12w21a": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "12w19a": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "12w18a": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "12w17a": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "12w16a": {
             "+traits": ["legacyLaunch", "texturepacks"]
         },
         "1.2.5": {
@@ -76,12 +235,72 @@
             "releaseTime": "2012-03-01T00:00:00+02:00",
             "+traits": ["legacyLaunch", "texturepacks"]
         },
+        "1.2": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "12w08a": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "12w07a": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "12w07b": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "12w06a": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "12w05b": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "12w05a": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "12w04a": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "12w03a": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
         "1.1": {
             "releaseTime": "2012-01-12T00:00:00+02:00",
             "+traits": ["legacyLaunch", "texturepacks"]
         },
+        "12w01a": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "11w50a": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "11w49a": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "11w48a": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "11w47a": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
         "1.0": {
             "releaseTime": "2011-11-18T00:00:00+02:00",
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "b1.9-pre6": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "b1.9-pre5": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "b1.9-pre4": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "b1.9-pre3": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "b1.9-pre2": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "b1.9-pre1": {
             "+traits": ["legacyLaunch", "texturepacks"]
         },
         "b1.8.1": {
@@ -90,6 +309,12 @@
         },
         "b1.8": {
             "releaseTime": "2011-09-15T00:00:00+02:00",
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "b1.8-pre2": {
+            "+traits": ["legacyLaunch", "texturepacks"]
+        },
+        "b1.8-pre1-2": {
             "+traits": ["legacyLaunch", "texturepacks"]
         },
         "b1.7.3": {
