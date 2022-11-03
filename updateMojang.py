@@ -57,6 +57,7 @@ def fetch_modified_version(path, version):
                  }
 
     version_json["downloads"] = downloads
+    version_json["type"] = "old_snapshot"
 
     with open(path, 'w', encoding='utf-8') as f:
         json.dump(version_json, f, sort_keys=True, indent=4)
@@ -134,6 +135,7 @@ def main():
             old_snapshots_path = os.path.join(UPSTREAM_DIR, VERSIONS_DIR, f"{x}.json")
 
             print("Updating old snapshot " + version.id)
+            fetch_modified_version(old_snapshots_path, version)
             if not os.path.isfile(old_snapshots_path):
                 fetch_modified_version(old_snapshots_path, version)
             else:
