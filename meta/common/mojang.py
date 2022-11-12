@@ -7,6 +7,7 @@ VERSIONS_DIR = join(BASE_DIR, "versions")
 ASSETS_DIR = join(BASE_DIR, "assets")
 
 STATIC_EXPERIMENTS_FILE = join(BASE_DIR, "minecraft-experiments.json")
+STATIC_OLD_SNAPSHOTS_FILE = join(BASE_DIR, "minecraft-old-snapshots.json")
 STATIC_OVERRIDES_FILE = join(BASE_DIR, "minecraft-legacy-override.json")
 LIBRARY_PATCHES_FILE = join(BASE_DIR, "library-patches.json")
 

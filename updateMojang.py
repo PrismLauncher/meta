@@ -8,8 +8,10 @@ from cachecontrol.caches import FileCache
 
 from meta.common import upstream_path, ensure_upstream_dir, static_path
 from meta.common.http import download_binary_file
-from meta.common.mojang import BASE_DIR, VERSION_MANIFEST_FILE, VERSIONS_DIR, ASSETS_DIR, STATIC_EXPERIMENTS_FILE
-from meta.model.mojang import MojangIndexWrap, MojangIndex, ExperimentIndex, ExperimentIndexWrap
+from meta.common.mojang import BASE_DIR, VERSION_MANIFEST_FILE, VERSIONS_DIR, ASSETS_DIR, STATIC_EXPERIMENTS_FILE, \
+    STATIC_OLD_SNAPSHOTS_FILE
+from meta.model.mojang import MojangIndexWrap, MojangIndex, ExperimentIndex, ExperimentIndexWrap, OldSnapshotIndexWrap, \
+    OldSnapshotIndex
 
 UPSTREAM_DIR = upstream_path()
 STATIC_DIR = static_path()
@@ -33,6 +35,29 @@ def fetch_zipped_version(path, url):
                 break
 
     assert version_json
+
+    with open(path, 'w', encoding='utf-8') as f:
+        json.dump(version_json, f, sort_keys=True, indent=4)
+
+    return version_json
+
+
+def fetch_modified_version(path, version):
+    r = sess.get(version.url)
+    r.raise_for_status()
+    version_json = r.json()
+
+    version_json["releaseTime"] = version_json["releaseTime"] + "T00:00:00+02:00"
+    version_json["time"] = version_json["releaseTime"]
+
+    downloads = {"client": {"url": version.jar,
+                            "sha1": version.sha1,
+                            "size": version.size
+                            }
+                 }
+
+    version_json["downloads"] = downloads
+    version_json["type"] = "old_snapshot"
 
     with open(path, 'w', encoding='utf-8') as f:
         json.dump(version_json, f, sort_keys=True, indent=4)
@@ -97,6 +122,23 @@ def main():
                 fetch_zipped_version(experiment_path, version.url)
             else:
                 print("Already have experiment " + version.id)
+
+    static_old_snapshots_path = os.path.join(STATIC_DIR, STATIC_OLD_SNAPSHOTS_FILE)
+
+    # deal with old snapshots
+    if os.path.exists(static_old_snapshots_path):
+        old_snapshots = OldSnapshotIndexWrap(OldSnapshotIndex.parse_file(static_old_snapshots_path))
+        old_snapshots_ids = set(old_snapshots.versions.keys())
+
+        for x in old_snapshots_ids:
+            version = old_snapshots.versions[x]
+            old_snapshots_path = os.path.join(UPSTREAM_DIR, VERSIONS_DIR, f"{x}.json")
+
+            print("Updating old snapshot " + version.id)
+            if not os.path.isfile(old_snapshots_path):
+                fetch_modified_version(old_snapshots_path, version)
+            else:
+                print("Already have old snapshot " + version.id)
 
     remote_versions.index.write(version_manifest_path)
 

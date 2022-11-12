@@ -1,0 +1,604 @@
+{
+  "old_snapshots": [
+    {
+      "id": "1_2",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_1.2",
+      "url": "https://archive.org/download/Minecraft-JSONs/1.2.json",
+      "sha1": "a2064011425a5e5befd9dee5eeb4f968ddf5ac77",
+      "size": 3988919,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/1_2/minecraft.jar"
+    },
+    {
+      "id": "11w47a",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_11w47a",
+      "url": "https://archive.org/download/Minecraft-JSONs/11w47a.json",
+      "sha1": "4e327918708d22e7443fbadefb9831ca04af4b90",
+      "size": 2242242,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/11w47a/minecraft.jar"
+    },
+    {
+      "id": "11w48a",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_11w48a",
+      "url": "https://archive.org/download/Minecraft-JSONs/11w48a.json",
+      "sha1": "fede770abe88a19e844d99dda611a7d18184155a",
+      "size": 2242604,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/11w48a/minecraft.jar"
+    },
+    {
+      "id": "11w49a",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_11w49a",
+      "url": "https://archive.org/download/Minecraft-JSONs/11w49a.json",
+      "sha1": "6f92a726e6b8b64f66c7e4d236f983c278d5af54",
+      "size": 3510866,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/11w49a/minecraft.jar"
+    },
+    {
+      "id": "11w50a",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_11w50a",
+      "url": "https://archive.org/download/Minecraft-JSONs/11w50a.json",
+      "sha1": "f4981ba0fee00a16d8dc9ec87bf2c4fdb51e4b7c",
+      "size": 3509701,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/11w50a/minecraft.jar"
+    },
+    {
+      "id": "12w01a",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_12w01a",
+      "url": "https://archive.org/download/Minecraft-JSONs/12w01a.json",
+      "sha1": "653a9cf55884b6bc4dcf3c574331e04bd5ad1032",
+      "size": 3839447,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/12w01a/minecraft.jar"
+    },
+    {
+      "id": "12w03a",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_12w03a",
+      "url": "https://archive.org/download/Minecraft-JSONs/12w03a.json",
+      "sha1": "e581c7c9dd57cbf73f72b833be5eff6109187df0",
+      "size": 3875210,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/12w03a/minecraft.jar"
+    },
+    {
+      "id": "12w04a",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_12w04a",
+      "url": "https://archive.org/download/Minecraft-JSONs/12w04a.json",
+      "sha1": "4911c473e856ec8102b8419eb36d0f54dad029a0",
+      "size": 3911974,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/12w04a/minecraft.jar"
+    },
+    {
+      "id": "12w05a",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_12w05a",
+      "url": "https://archive.org/download/Minecraft-JSONs/12w05a.json",
+      "sha1": "28328e67b82564335aa8280095a0716a2eb790de",
+      "size": 3931639,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/12w05a/minecraft.jar"
+    },
+    {
+      "id": "12w05b",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_12w05b",
+      "url": "https://archive.org/download/Minecraft-JSONs/12w05b.json",
+      "sha1": "75fbc4a39a244d0f1eb842ff8385e992e2b47dd5",
+      "size": 3931694,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/12w05b/minecraft.jar"
+    },
+    {
+      "id": "12w06a",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_12w06a",
+      "url": "https://archive.org/download/Minecraft-JSONs/12w06a.json",
+      "sha1": "a8403c0d4c0cdb65722d864d9cf42663b8aab08b",
+      "size": 3934973,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/12w06a/minecraft.jar"
+    },
+    {
+      "id": "12w07a",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_12w07a",
+      "url": "https://archive.org/download/Minecraft-JSONs/12w07a.json",
+      "sha1": "e7ad115b29612b893972f0817030d993bc56fb7e",
+      "size": 3956252,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/12w07a/minecraft.jar"
+    },
+    {
+      "id": "12w07b",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_12w07b",
+      "url": "https://archive.org/download/Minecraft-JSONs/12w07b.json",
+      "sha1": "0eea35d588fc2cee5d397472aa3565f48c220217",
+      "size": 3956323,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/12w07b/minecraft.jar"
+    },
+    {
+      "id": "12w08a",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_12w08a",
+      "url": "https://archive.org/download/Minecraft-JSONs/12w08a.json",
+      "sha1": "db2fcfdd23526b0f381ef2f3f2fd049d36227230",
+      "size": 3981486,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/12w08a/minecraft.jar"
+    },
+    {
+      "id": "12w16a",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_12w16a",
+      "url": "https://archive.org/download/Minecraft-JSONs/12w16a.json",
+      "sha1": "6b0a9fe3ac275f79ac6d259f4279752274ec05f8",
+      "size": 4080437,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/12w16a/minecraft.jar"
+    },
+    {
+      "id": "12w17a",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_12w17a",
+      "url": "https://archive.org/download/Minecraft-JSONs/12w17a.json",
+      "sha1": "17d41f8a07e054040ba34e523593bdea7f0fb6ba",
+      "size": 4114768,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/12w17a/minecraft.jar"
+    },
+    {
+      "id": "12w18a",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_12w18a",
+      "url": "https://archive.org/download/Minecraft-JSONs/12w18a.json",
+      "sha1": "9e9ab992317048bee9158ad9d1e2bc758db2b4af",
+      "size": 4317820,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/12w18a/minecraft.zip/bin/minecraft.jar"
+    },
+    {
+      "id": "12w19a",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_12w19a",
+      "url": "https://archive.org/download/Minecraft-JSONs/12w19a.json",
+      "sha1": "474aaac9a8b1dcbf312a5c09c7eae4a6aa401225",
+      "size": 4343792,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/12w19a/minecraft.zip/bin/minecraft.jar"
+    },
+    {
+      "id": "12w21a",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_12w21a",
+      "url": "https://archive.org/download/Minecraft-JSONs/12w21a.json",
+      "sha1": "e755423a04b0efde01e035a9d651acadeba0aef9",
+      "size": 4409586,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/12w21a/minecraft.jar"
+    },
+    {
+      "id": "12w21b",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_12w21b",
+      "url": "https://archive.org/download/Minecraft-JSONs/12w21b.json",
+      "sha1": "84437ded4839b29d34f83e9f3bab07cc48980faf",
+      "size": 4499708,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/12w21b/minecraft.jar"
+    },
+    {
+      "id": "12w22a",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_12w22a",
+      "url": "https://archive.org/download/Minecraft-JSONs/12w22a.json",
+      "sha1": "3631a714cb465d39f5cb5c18aa23abf38031b359",
+      "size": 4542344,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/12w22a/minecraft.jar"
+    },
+    {
+      "id": "12w23a",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_12w23a",
+      "url": "https://archive.org/download/Minecraft-JSONs/12w23a.json",
+      "sha1": "4a5a8e3349ea2e9d67fa4dde6ec68d385bff46f0",
+      "size": 4543912,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/12w23a/minecraft.jar"
+    },
+    {
+      "id": "12w23b",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_12w23b",
+      "url": "https://archive.org/download/Minecraft-JSONs/12w23b.json",
+      "sha1": "e107667bcbb4443afc160a7eeb8f347acc9826f8",
+      "size": 4543928,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/12w23b/minecraft.jar"
+    },
+    {
+      "id": "12w24a",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_12w24a",
+      "url": "https://archive.org/download/Minecraft-JSONs/12w24a.json",
+      "sha1": "e479c425ffe6ca3512d97ad0e02a8cd85356bf83",
+      "size": 4540049,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/12w24a/minecraft.jar"
+    },
+    {
+      "id": "12w25a",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_12w25a",
+      "url": "https://archive.org/download/Minecraft-JSONs/12w25a.json",
+      "sha1": "eddf53994e40ecc44f582d4b47b9a441844909b6",
+      "size": 4556548,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/12w25a/minecraft.jar"
+    },
+    {
+      "id": "12w26a",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_12w26a",
+      "url": "https://archive.org/download/Minecraft-JSONs/12w26a.json",
+      "sha1": "2d1e782a4c4435fe921027ae464a272945cca925",
+      "size": 4573075,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/12w26a/minecraft.jar"
+    },
+    {
+      "id": "12w27a",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_12w27a",
+      "url": "https://archive.org/download/Minecraft-JSONs/12w27a.json",
+      "sha1": "5e69b80f9c757bdc8275c1f6ce7e71820fe6d79a",
+      "size": 4584956,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/12w27a/minecraft.jar"
+    },
+    {
+      "id": "12w30a",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_12w30a",
+      "url": "https://archive.org/download/Minecraft-JSONs/12w30a.json",
+      "sha1": "368215d7fd38ee3e829725e11b3f193d45801128",
+      "size": 4584574,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/12w30a/minecraft.jar"
+    },
+    {
+      "id": "12w30b",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_12w30b",
+      "url": "https://archive.org/download/Minecraft-JSONs/12w30b.json",
+      "sha1": "9d1e450cdb300ec426b50762e031796a8349aa1c",
+      "size": 4584593,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/12w30b/minecraft.jar"
+    },
+    {
+      "id": "12w30c",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_12w30c",
+      "url": "https://archive.org/download/Minecraft-JSONs/12w30c.json",
+      "sha1": "92817a0c3f3c913ad68bdb082ac1f147db986282",
+      "size": 4584617,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/12w30c/minecraft.jar"
+    },
+    {
+      "id": "12w30d",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_12w30d",
+      "url": "https://archive.org/download/Minecraft-JSONs/12w30d.json",
+      "sha1": "a5e7508de2d3993cb5222d8e4f8415226745d6ff",
+      "size": 4585459,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/12w30d/minecraft.jar"
+    },
+    {
+      "id": "12w30e",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_12w30e",
+      "url": "https://archive.org/download/Minecraft-JSONs/12w30e.json",
+      "sha1": "1a37562cda14028dae15b331bfd36108e617a477",
+      "size": 4585506,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/12w30e/minecraft.jar"
+    },
+    {
+      "id": "12w32a",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_12w32a",
+      "url": "https://archive.org/download/Minecraft-JSONs/12w32a.json",
+      "sha1": "13183e023c8918ed08c302c2fe1438f61b53d094",
+      "size": 4628354,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/12w32a/minecraft.jar"
+    },
+    {
+      "id": "12w34a",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_12w34a",
+      "url": "https://archive.org/download/Minecraft-JSONs/12w34a.json",
+      "sha1": "41769085c020f4651b5b5dd50a6f83be2b000b29",
+      "size": 4676139,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/12w34a/minecraft.jar"
+    },
+    {
+      "id": "12w34b",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_12w34b",
+      "url": "https://archive.org/download/Minecraft-JSONs/12w34b.json",
+      "sha1": "5fb51efc8f07ea57ffc2a02a7dac8a2835651b61",
+      "size": 4682004,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/12w34b/minecraft.jar"
+    },
+    {
+      "id": "12w36a",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_12w36a",
+      "url": "https://archive.org/download/Minecraft-JSONs/12w36a.json",
+      "sha1": "914bd89686c4621da327d50375a1edbdd9c177da",
+      "size": 4705667,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/12w36a/minecraft.jar"
+    },
+    {
+      "id": "12w37a",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_12w37a",
+      "url": "https://archive.org/download/Minecraft-JSONs/12w37a.json",
+      "sha1": "50ea0bac2c91b13c0881bbf99aad66a046533781",
+      "size": 4727781,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/12w37a/minecraft.jar"
+    },
+    {
+      "id": "12w38a",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_12w38a",
+      "url": "https://archive.org/download/Minecraft-JSONs/12w38a.json",
+      "sha1": "69e5a531fa615eb870345feb25f26126fe95586b",
+      "size": 4752649,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/12w38a/minecraft.jar"
+    },
+    {
+      "id": "12w38b",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_12w38b",
+      "url": "https://archive.org/download/Minecraft-JSONs/12w38b.json",
+      "sha1": "867505cb4934016bf46cb8c7833ef0eaef8d39d9",
+      "size": 4767044,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/12w38b/minecraft.jar"
+    },
+    {
+      "id": "12w39a",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_12w39a",
+      "url": "https://archive.org/download/Minecraft-JSONs/12w39a.json",
+      "sha1": "65247c02036156b9f34c17f7d8bb053641afd0e7",
+      "size": 4768937,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/12w39a/minecraft.jar"
+    },
+    {
+      "id": "12w39b",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_12w39b",
+      "url": "https://archive.org/download/Minecraft-JSONs/12w39b.json",
+      "sha1": "620d02bfd74204462a810874f83929d0b8b0b936",
+      "size": 4766448,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/12w39b/minecraft.jar"
+    },
+    {
+      "id": "12w40a",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_12w40a",
+      "url": "https://archive.org/download/Minecraft-JSONs/12w40a.json",
+      "sha1": "434652551e93fdfb4de30cbe64310037777f7eff",
+      "size": 4884173,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/12w40a/minecraft.jar"
+    },
+    {
+      "id": "12w40b",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_12w40b",
+      "url": "https://archive.org/download/Minecraft-JSONs/12w40b.json",
+      "sha1": "1612e0fa6062f764844c5a71ff89660c311f38ae",
+      "size": 4884732,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/12w40b/minecraft.jar"
+    },
+    {
+      "id": "12w41a",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_12w41a",
+      "url": "https://archive.org/download/Minecraft-JSONs/12w41a.json",
+      "sha1": "7327bcd4da0d194565d6ee732b1fa48e8b14b347",
+      "size": 4900512,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/12w41a/minecraft.jar"
+    },
+    {
+      "id": "12w41b",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_12w41b",
+      "url": "https://archive.org/download/Minecraft-JSONs/12w41b.json",
+      "sha1": "d73a5b6919d10689811c11d1c3debcd817050039",
+      "size": 4900976,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/12w41b/minecraft.jar"
+    },
+    {
+      "id": "12w42a",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_12w42a",
+      "url": "https://archive.org/download/Minecraft-JSONs/12w42a.json",
+      "sha1": "0b10f7afbd54392b387a23c34547cb0f30d48998",
+      "size": 4919860,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/12w42a/minecraft.jar"
+    },
+    {
+      "id": "12w42b",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_12w42b",
+      "url": "https://archive.org/download/Minecraft-JSONs/12w42b.json",
+      "sha1": "74024eab7588bd33dd53baa756fd4deb92557b0a",
+      "size": 4921744,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/12w42b/minecraft.jar"
+    },
+    {
+      "id": "12w49a",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_12w49a",
+      "url": "https://archive.org/download/Minecraft-JSONs/12w49a.json",
+      "sha1": "a5a4cf65cf89207eb6ad7371c9237973865eba81",
+      "size": 4990865,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/12w49a/minecraft.jar"
+    },
+    {
+      "id": "12w50a",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_12w50a",
+      "url": "https://archive.org/download/Minecraft-JSONs/12w50a.json",
+      "sha1": "96a6427720aef608a594ed1e0291e77cba398155",
+      "size": 5004175,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/12w50a/minecraft.jar"
+    },
+    {
+      "id": "12w50b",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_12w50b",
+      "url": "https://archive.org/download/Minecraft-JSONs/12w50b.json",
+      "sha1": "73dc6efe46fef478cc5ed123e711872450e193fd",
+      "size": 5005360,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/12w50b/minecraft.jar"
+    },
+    {
+      "id": "13w01a",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_13w01a",
+      "url": "https://archive.org/download/Minecraft-JSONs/13w01a.json",
+      "sha1": "e3256fe44cd7c6a1bf45570337e634b030589878",
+      "size": 5033591,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/13w01a/minecraft.jar"
+    },
+    {
+      "id": "13w01b",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_13w01b",
+      "url": "https://archive.org/download/Minecraft-JSONs/13w01b.json",
+      "sha1": "87f9f88eb3dcc80dcf818e44af774ab7ff63eb66",
+      "size": 5035543,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/13w01b/minecraft.jar"
+    },
+    {
+      "id": "13w02a",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_13w02a",
+      "url": "https://archive.org/download/Minecraft-JSONs/13w02a.json",
+      "sha1": "e9a57e8d5dcddcc9d919054c19b10eb71fcc304e",
+      "size": 5499864,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/13w02a/minecraft.jar"
+    },
+    {
+      "id": "13w02b",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_13w02b",
+      "url": "https://archive.org/download/Minecraft-JSONs/13w02b.json",
+      "sha1": "9289953c82ce69ec3d2e59a6044a9c900a99478f",
+      "size": 5363159,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/13w02b/minecraft.jar"
+    },
+    {
+      "id": "13w03a",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_13w03a",
+      "url": "https://archive.org/download/Minecraft-JSONs/13w03a.json",
+      "sha1": "6a2d3ffa88b7f5e0949f041193c6525d1c4cc22e",
+      "size": 6401672,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/13w03a/minecraft.jar"
+    },
+    {
+      "id": "13w04a",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_13w04a",
+      "url": "https://archive.org/download/Minecraft-JSONs/13w04a.json",
+      "sha1": "dff06285694aab7771682f949d51bca98ce52359",
+      "size": 6426112,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/13w04a/minecraft.jar"
+    },
+    {
+      "id": "13w05a",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_13w05a",
+      "url": "https://archive.org/download/Minecraft-JSONs/13w05a.json",
+      "sha1": "7808f090cb92afc8084545dd2ea305773bbd5e6e",
+      "size": 6442319,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/13w05a/minecraft.jar"
+    },
+    {
+      "id": "13w05b",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_13w05b",
+      "url": "https://archive.org/download/Minecraft-JSONs/13w05b.json",
+      "sha1": "72074d7cb843229292f71ae917dcefbc0f01461d",
+      "size": 6442459,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/13w05b/minecraft.jar"
+    },
+    {
+      "id": "13w06a",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_13w06a",
+      "url": "https://archive.org/download/Minecraft-JSONs/13w06a.json",
+      "sha1": "da409ce9f9c910c08cc729aadc6f592b8ff813cb",
+      "size": 6445893,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/13w06a/minecraft.jar"
+    },
+    {
+      "id": "13w07a",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_13w07a",
+      "url": "https://archive.org/download/Minecraft-JSONs/13w07a.json",
+      "sha1": "61f7dad52c34838be7a1e7d37a2370ac847ab87a",
+      "size": 6510193,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/13w07a/minecraft.jar"
+    },
+    {
+      "id": "13w09a",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_13w09a",
+      "url": "https://archive.org/download/Minecraft-JSONs/13w09a.json",
+      "sha1": "9ac49c55ca76eedfc985fa245dd0682e08b34982",
+      "size": 5574252,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/13w09a/minecraft.jar"
+    },
+    {
+      "id": "13w09b",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_13w09b",
+      "url": "https://archive.org/download/Minecraft-JSONs/13w09b.json",
+      "sha1": "635161d84725b1988f814c890fe5841ad99121e1",
+      "size": 5578604,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/13w09b/minecraft.jar"
+    },
+    {
+      "id": "13w09c",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_13w09c",
+      "url": "https://archive.org/download/Minecraft-JSONs/13w09c.json",
+      "sha1": "1367ef1410c2ce7ac0f1c58727aa4883c8677469",
+      "size": 5533426,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/13w09c/minecraft.jar"
+    },
+    {
+      "id": "13w10a",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_13w10a",
+      "url": "https://archive.org/download/Minecraft-JSONs/13w10a.json",
+      "sha1": "9162bca3ba8a77da2cd26cda1e46ca89a44bac4a",
+      "size": 5534991,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/13w10a/minecraft.jar"
+    },
+    {
+      "id": "13w10b",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_13w10b",
+      "url": "https://archive.org/download/Minecraft-JSONs/13w10b.json",
+      "sha1": "21e35ffe1772d1cf89aea653c7a883acb54b13a3",
+      "size": 5555235,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/13w10b/minecraft.jar"
+    },
+    {
+      "id": "13w11a",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_13w11a",
+      "url": "https://archive.org/download/Minecraft-JSONs/13w11a.json",
+      "sha1": "bec6c96bc4413ea3092428aba93d7425fe6a4ea9",
+      "size": 5556608,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/13w11a/minecraft.jar"
+    },
+    {
+      "id": "13w12~",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_13w12~",
+      "url": "https://archive.org/download/Minecraft-JSONs/13w12~.json",
+      "sha1": "66d6c6b5205ae1e8f0ad3eb78ccf66500f39c0c7",
+      "size": 5561634,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/13w12_/minecraft.jar"
+    },
+    {
+      "id": "b1_8-pre1",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_b1.8-pre1-2",
+      "url": "https://archive.org/download/Minecraft-JSONs/b1.8-pre1-2.json",
+      "sha1": "6789c69ede3aedf83b800c76bea56855d38a0afc",
+      "size": 1893151,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/1_8-pre/minecraft.jar"
+    },
+    {
+      "id": "b1_8-pre2",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_b1.8-pre2",
+      "url": "https://archive.org/download/Minecraft-JSONs/b1.8-pre2.json",
+      "sha1": "44191f2895bf1e064269c9279778f2e3e9c3c9c7",
+      "size": 1897780,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/1_8-pre2/minecraft.jar"
+    },
+    {
+      "id": "b1_9-pre1",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_b1.9-pre1",
+      "url": "https://archive.org/download/Minecraft-JSONs/b1.9-pre1.json",
+      "sha1": "fdeef0129af130aa00702e53c37c5c4029b7d50e",
+      "size": 1966908,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/1_9-pre/minecraft.jar"
+    },
+    {
+      "id": "b1_9-pre2",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_b1.9-pre2",
+      "url": "https://archive.org/download/Minecraft-JSONs/b1.9-pre2.json",
+      "sha1": "b0d40cf43b625631af65e2a645c34b533251da0e",
+      "size": 1988123,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/1_9-pre2/minecraft.jar"
+    },
+    {
+      "id": "b1_9-pre3",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_b1.9-pre3",
+      "url": "https://archive.org/download/Minecraft-JSONs/b1.9-pre3.json",
+      "sha1": "5b7fe76a602b7511c97740e36dc25040ccb6e76b",
+      "size": 2087104,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/1_9-pre3/minecraft.jar"
+    },
+    {
+      "id": "b1_9-pre4",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_b1.9-pre4",
+      "url": "https://archive.org/download/Minecraft-JSONs/b1.9-pre4.json",
+      "sha1": "5c4831d9705f2e00e3cd993e89b822636492932a",
+      "size": 2147107,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/1_9-pre4/minecraft.jar"
+    },
+    {
+      "id": "b1_9-pre5",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_b1.9-pre5",
+      "url": "https://archive.org/download/Minecraft-JSONs/b1.9-pre5.json",
+      "sha1": "e109b297d2c4ee7a0bd6aed72f38f7e3185654cf",
+      "size": 2211261,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/1_9-pre5/minecraft.jar"
+    },
+    {
+      "id": "b1_9-pre6",
+      "wiki": "https://minecraft.fandom.com/wiki/Java_Edition_b1.9-pre6",
+      "url": "https://archive.org/download/Minecraft-JSONs/b1.9-pre6.json",
+      "sha1": "f0983e65cd1c0768b0d1fec471ce4f69173b8126",
+      "size": 2239270,
+      "jar": "https://archive.org/download/assets.minecraft.net-2013-11-13/assets.minecraft.net/1_9-pre6/minecraft.jar"
+    }
+  ]
+}
