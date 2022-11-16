@@ -471,55 +471,67 @@
         },
         "a1.1.2_01": {
             "releaseTime": "2010-09-23T00:00:00+02:00",
-            "+traits": ["legacyLaunch", "no-texturepacks"]
+            "+traits": ["legacyLaunch", "no-texturepacks"],
+            "+jvmArgs": ["-Djava.util.Arrays.useLegacyMergeSort=true"]
         },
         "a1.1.2": {
             "releaseTime": "2010-09-20T00:00:00+02:00",
-            "+traits": ["legacyLaunch", "no-texturepacks"]
+            "+traits": ["legacyLaunch", "no-texturepacks"],
+            "+jvmArgs": ["-Djava.util.Arrays.useLegacyMergeSort=true"]
         },
         "a1.1.0": {
             "releaseTime": "2010-09-13T00:00:00+02:00",
-            "+traits": ["legacyLaunch", "no-texturepacks"]
+            "+traits": ["legacyLaunch", "no-texturepacks"],
+            "+jvmArgs": ["-Djava.util.Arrays.useLegacyMergeSort=true"]
         },
         "a1.0.17_04": {
             "releaseTime": "2010-08-23T00:00:00+02:00",
-            "+traits": ["legacyLaunch", "no-texturepacks"]
+            "+traits": ["legacyLaunch", "no-texturepacks"],
+            "+jvmArgs": ["-Djava.util.Arrays.useLegacyMergeSort=true"]
         },
         "a1.0.17_02": {
             "releaseTime": "2010-08-20T00:00:00+02:00",
-            "+traits": ["legacyLaunch", "no-texturepacks"]
+            "+traits": ["legacyLaunch", "no-texturepacks"],
+            "+jvmArgs": ["-Djava.util.Arrays.useLegacyMergeSort=true"]
         },
         "a1.0.16": {
             "releaseTime": "2010-08-12T00:00:00+02:00",
-            "+traits": ["legacyLaunch", "no-texturepacks"]
+            "+traits": ["legacyLaunch", "no-texturepacks"],
+            "+jvmArgs": ["-Djava.util.Arrays.useLegacyMergeSort=true"]
         },
         "a1.0.15": {
             "releaseTime": "2010-08-04T00:00:00+02:00",
-            "+traits": ["legacyLaunch", "no-texturepacks"]
+            "+traits": ["legacyLaunch", "no-texturepacks"],
+            "+jvmArgs": ["-Djava.util.Arrays.useLegacyMergeSort=true"]
         },
         "a1.0.14": {
             "releaseTime": "2010-07-30T00:00:00+02:00",
-            "+traits": ["legacyLaunch", "no-texturepacks"]
+            "+traits": ["legacyLaunch", "no-texturepacks"],
+            "+jvmArgs": ["-Djava.util.Arrays.useLegacyMergeSort=true"]
         },
         "a1.0.11": {
             "releaseTime": "2010-07-23T00:00:00+02:00",
-            "+traits": ["legacyLaunch", "no-texturepacks"]
+            "+traits": ["legacyLaunch", "no-texturepacks"],
+            "+jvmArgs": ["-Djava.util.Arrays.useLegacyMergeSort=true"]
         },
         "a1.0.5_01": {
             "releaseTime": "2010-07-13T00:00:00+02:00",
             "mainClass": "y",
-            "+traits": ["legacyLaunch", "no-texturepacks"]
+            "+traits": ["legacyLaunch", "no-texturepacks"],
+            "+jvmArgs": ["-Djava.util.Arrays.useLegacyMergeSort=true"]
         },
         "a1.0.4": {
             "releaseTime": "2010-07-09T00:00:00+02:00",
             "mainClass": "ax",
-            "+traits": ["legacyLaunch", "no-texturepacks"]
+            "+traits": ["legacyLaunch", "no-texturepacks"],
+            "+jvmArgs": ["-Djava.util.Arrays.useLegacyMergeSort=true"]
         },
         "inf-20100618": {
             "releaseTime": "2010-06-16T00:00:00+02:00",
             "mainClass": "net.minecraft.client.d",
             "appletClass": "net.minecraft.client.MinecraftApplet",
-            "+traits": ["legacyLaunch", "no-texturepacks"]
+            "+traits": ["legacyLaunch", "no-texturepacks"],
+            "+jvmArgs": ["-Djava.util.Arrays.useLegacyMergeSort=true"]
         },
         "c0.30_01c": {
             "releaseTime": "2009-12-22T00:00:00+02:00",
