@@ -283,6 +283,7 @@ class MetaVersion(Versioned):
     compatible_java_majors: Optional[List[int]] = Field(alias="compatibleJavaMajors")
     additional_traits: Optional[List[str]] = Field(alias="+traits")
     additional_tweakers: Optional[List[str]] = Field(alias="+tweakers")
+    additional_jvm_args: Optional[List[str]] = Field(alias="+jvmArgs")
 
 
 class MetaPackage(Versioned):

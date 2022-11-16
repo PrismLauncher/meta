@@ -103,6 +103,7 @@ class LegacyOverrideEntry(MetaBase):
     applet_class: Optional[str] = Field(alias="appletClass")
     release_time: Optional[datetime] = Field(alias="releaseTime")
     additional_traits: Optional[List[str]] = Field(alias="+traits")
+    additional_jvm_args: Optional[List[str]] = Field(alias="+jvmArgs")
 
     def apply_onto_meta_version(self, meta_version: MetaVersion, legacy: bool = True):
         # simply hard override classes
@@ -117,6 +118,11 @@ class LegacyOverrideEntry(MetaBase):
             if not meta_version.additional_traits:
                 meta_version.additional_traits = []
             meta_version.additional_traits += self.additional_traits
+
+        if self.additional_jvm_args:
+            if not meta_version.additional_jvm_args:
+                meta_version.additional_jvm_args = []
+            meta_version.additional_jvm_args += self.additional_jvm_args
 
         if legacy:
             # remove all libraries - they are not needed for legacy
