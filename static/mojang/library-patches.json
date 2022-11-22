@@ -109,7 +109,7 @@
     }
   },
   {
-    "_comment": "Use a newer version on osx-arm64, linux-arm64, and linux-arm32",
+    "_comment": "Use a newer version on osx-arm64",
     "match": [
       "com.mojang:text2speech:1.0.10",
       "com.mojang:text2speech:1.5",
@@ -131,18 +131,6 @@
           "os": {
             "name": "osx-arm64"
           }
-        },
-        {
-          "action": "disallow",
-          "os": {
-            "name": "linux-arm64"
-          }
-        },
-        {
-          "action": "disallow",
-          "os": {
-            "name": "linux-arm32"
-          }
         }
       ]
     },
@@ -162,18 +150,6 @@
             "os": {
               "name": "osx-arm64"
             }
-          },
-          {
-            "action": "allow",
-            "os": {
-              "name": "linux-arm64"
-            }
-          },
-          {
-            "action": "allow",
-            "os": {
-              "name": "linux-arm32"
-            }
           }
         ]
       }
@@ -182,7 +158,6 @@
   {
     "_comment": "Use a newer version on osx-arm64, linux-arm64, and linux-arm32",
     "match": [
-      "org.lwjgl.lwjgl:lwjgl:2.9.4-nightly-20150209",
       "org.lwjgl.lwjgl:lwjgl:2.9.3",
       "org.lwjgl.lwjgl:lwjgl:2.9.1-nightly-20131120",
       "org.lwjgl.lwjgl:lwjgl:2.9.1-nightly-20131017",
@@ -220,10 +195,10 @@
           "artifact": {
             "sha1": "697517568c68e78ae0b4544145af031c81082dfe",
             "size": 1047168,
-            "url": "https://github.com/theofficialgman/lwjgl3-binaries-arm64/raw/lwjgl-2.9.4/lwjgl-2.9.4-nightly-20150209.jar"
+            "url": "https://libraries.minecraft.net/org/lwjgl/lwjgl/lwjgl/2.9.4-nightly-20150209/lwjgl-2.9.4-nightly-20150209.jar"
           }
         },
-        "name": "org.lwjgl.lwjgl:lwjgl:2.9.4-nightly-20150209-gman64.1",
+        "name": "org.lwjgl.lwjgl:lwjgl:2.9.4-nightly-20150209",
         "rules": [
           {
             "action": "allow",
@@ -250,7 +225,6 @@
   {
     "_comment": "Use a newer version on osx-arm64, linux-arm64, and linux-arm32",
     "match": [
-      "org.lwjgl.lwjgl:lwjgl_util:2.9.4-nightly-20150209",
       "org.lwjgl.lwjgl:lwjgl_util:2.9.3",
       "org.lwjgl.lwjgl:lwjgl_util:2.9.1-nightly-20131120",
       "org.lwjgl.lwjgl:lwjgl_util:2.9.1-nightly-20131017",
@@ -288,10 +262,10 @@
           "artifact": {
             "sha1": "d51a7c040a721d13efdfbd34f8b257b2df882ad0",
             "size": 173887,
-            "url": "https://github.com/theofficialgman/lwjgl3-binaries-arm64/raw/lwjgl-2.9.4/lwjgl_util-2.9.4-nightly-20150209.jar"
+            "url": "https://libraries.minecraft.net/org/lwjgl/lwjgl/lwjgl_util/2.9.4-nightly-20150209/lwjgl_util-2.9.4-nightly-20150209.jar"
           }
         },
-        "name": "org.lwjgl.lwjgl:lwjgl_util:2.9.4-nightly-20150209-gman64.1",
+        "name": "org.lwjgl.lwjgl:lwjgl_util:2.9.4-nightly-20150209",
         "rules": [
           {
             "action": "allow",
