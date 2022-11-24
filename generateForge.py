@@ -98,7 +98,7 @@ def version_from_profile(profile: ForgeInstallerProfile, version: ForgeVersion) 
                 overridden_name.classifier = "universal"
 
         overridden_lib = Library(name=overridden_name)
-        if forge_lib.url == "http://files.minecraftforge.net/maven/":
+        if forge_lib.url == "http://maven.minecraftforge.net/":
             overridden_lib.url = "https://maven.minecraftforge.net/"
         else:
             overridden_lib.url = forge_lib.url
@@ -143,7 +143,7 @@ def version_from_modernized_installer(installer: MojangVersion, version: ForgeVe
                 overridden_name = forge_lib.name
                 overridden_name.classifier = "universal"
                 forge_lib.downloads.artifact.path = overridden_name.path()
-                forge_lib.downloads.artifact.url = "https://files.minecraftforge.net/maven/%s" % overridden_name.path()
+                forge_lib.downloads.artifact.url = "https://maven.minecraftforge.net/%s" % overridden_name.path()
                 forge_lib.name = overridden_name
 
             elif forge_lib.name.artifact == "minecraftforge":
@@ -152,7 +152,7 @@ def version_from_modernized_installer(installer: MojangVersion, version: ForgeVe
                 overridden_name.classifier = "universal"
                 overridden_name.version = "%s-%s" % (mc_version, overridden_name.version)
                 forge_lib.downloads.artifact.path = overridden_name.path()
-                forge_lib.downloads.artifact.url = "https://files.minecraftforge.net/maven/%s" % overridden_name.path()
+                forge_lib.downloads.artifact.url = "https://maven.minecraftforge.net/%s" % overridden_name.path()
                 forge_lib.name = overridden_name
 
         v.libraries.append(forge_lib)
@@ -198,7 +198,7 @@ def version_from_build_system_installer(installer: MojangVersion, profile: Forge
         name=GradleSpecifier("net.minecraftforge", "forge", version.long_version, "installer"))
     installer_lib.downloads = MojangLibraryDownloads()
     installer_lib.downloads.artifact = MojangArtifact(
-        url="https://files.minecraftforge.net/maven/%s" % (installer_lib.name.path()),
+        url="https://maven.minecraftforge.net/%s" % (installer_lib.name.path()),
         sha1=info.sha1hash,
         size=info.size)
     v.maven_files.append(installer_lib)
@@ -210,7 +210,7 @@ def version_from_build_system_installer(installer: MojangVersion, profile: Forge
 
         if forge_lib.name.group == "net.minecraftforge" and forge_lib.name.artifact == "forge" \
                 and forge_lib.name.classifier == "universal":
-            forge_lib.downloads.artifact.url = "https://files.minecraftforge.net/maven/%s" % forge_lib.name.path()
+            forge_lib.downloads.artifact.url = "https://maven.minecraftforge.net/%s" % forge_lib.name.path()
         v.maven_files.append(forge_lib)
 
     v.libraries = []
@@ -231,7 +231,7 @@ def version_from_build_system_installer(installer: MojangVersion, profile: Forge
             if forge_lib.name.artifact == "forge":
                 forge_lib.name.classifier = "launcher"
                 forge_lib.downloads.artifact.path = forge_lib.name.path()
-                forge_lib.downloads.artifact.url = "https://files.minecraftforge.net/maven/%s" % forge_lib.name.path()
+                forge_lib.downloads.artifact.url = "https://maven.minecraftforge.net/%s" % forge_lib.name.path()
                 forge_lib.name = forge_lib.name
         v.libraries.append(forge_lib)
 

@@ -16,7 +16,7 @@ class ForgeFile(MetaBase):
         return "%s-%s-%s.%s" % ("forge", long_version, self.classifier, self.extension)
 
     def url(self, long_version):
-        return "https://files.minecraftforge.net/maven/net/minecraftforge/forge/%s/%s" % (
+        return "https://maven.minecraftforge.net/net/minecraftforge/forge/%s/%s" % (
             long_version, self.filename(long_version))
 
 
@@ -112,7 +112,7 @@ class ForgeOptional(MetaBase):
             "desc": "A mod that collects statistics about Minecraft and your system.<br>Useful for Forge to understand how Minecraft/Forge are used.",
             "url": "http://www.minecraftforge.net/forum/index.php?topic=43278.0",
             "artifact": "net.minecraftforge:MercuriusUpdater:1.11.2",
-            "maven": "http://files.minecraftforge.net/maven/"
+            "maven": "http://maven.minecraftforge.net/"
         }
     ]
     """
