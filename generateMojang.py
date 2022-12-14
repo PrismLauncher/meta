@@ -446,12 +446,10 @@ def main():
                 lwjglVersionVariant, passed_variants, unknown_variants))
 
     lwjgl_package = MetaPackage(uid=LWJGL_COMPONENT, name='LWJGL 2')
-    lwjgl_package.recommended = ['2.9.4-nightly-20150209']
     lwjgl_package.write(os.path.join(LAUNCHER_DIR, LWJGL_COMPONENT, "package.json"))
 
     if found_any_lwjgl3:
         lwjgl_package = MetaPackage(uid=LWJGL3_COMPONENT, name='LWJGL 3')
-        lwjgl_package.recommended = ['3.1.2']
         lwjgl_package.write(os.path.join(LAUNCHER_DIR, LWJGL3_COMPONENT, "package.json"))
 
     mojang_index = MojangIndexWrap(MojangIndex.parse_file(os.path.join(UPSTREAM_DIR, VERSION_MANIFEST_FILE)))
