@@ -14,8 +14,6 @@ from meta.model import MetaVersion, Library, GradleSpecifier, MojangLibraryDownl
     MetaPackage, MojangRules
 from meta.model.mojang import MojangIndexWrap, MojangIndex, MojangVersion, LegacyOverrideIndex, LibraryPatches
 
-APPLY_SPLIT_NATIVES_WORKAROUND = True
-
 LAUNCHER_DIR = launcher_path()
 UPSTREAM_DIR = upstream_path()
 STATIC_DIR = static_path()
@@ -64,8 +62,7 @@ LOG4J_HASHES = {
 # We want versions that contain natives for all platforms. If there are multiple, pick the latest one
 # LWJGL versions we want
 PASS_VARIANTS = [
-    # "beed62ec1d40ae89d808fe70b83df6bd4b3be81f",  # 3.3.1 (2022-05-18 13:51:54+00:00) split natives, without workaround
-    "8836c419f90f69a278b97d945a34af165c24ff60",  # 3.3.1 (2022-05-18 13:51:54+00:00) split natives, with workaround
+    "beed62ec1d40ae89d808fe70b83df6bd4b3be81f",  # 3.3.1 (2022-05-18 13:51:54+00:00) split natives, without workaround
     "ea4973ebc9eadf059f30f0958c89f330898bff51",  # 3.2.2 (2019-07-04 14:41:05+00:00) will be patched, missing tinyfd
     "8e1f89b96c6f583a0e494949c75115ed13412ba1",  # 3.2.1 (2019-02-13 16:12:08+00:00)
     "7ed2372097dbd635f5aef3137711141ce91c4ee9",  # 3.1.6 (2018-11-29 13:11:38+00:00)
@@ -299,11 +296,6 @@ def main():
 
             # generic fixes
             remove_paths_from_lib(lib)
-
-            if APPLY_SPLIT_NATIVES_WORKAROUND and lib_is_split_native(lib):
-                # merge classifier into artifact name to workaround bug in launcher
-                specifier.artifact += f"-{specifier.classifier}"
-                specifier.classifier = None
 
             if specifier.is_lwjgl():
                 if has_split_natives:  # implies lwjgl3
