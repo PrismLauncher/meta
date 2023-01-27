@@ -36,7 +36,7 @@ function launcher_git {
 
 # make sure we *could* push to our repo
 
-currentDate=$(date --iso-8601)
+currentDate=$(date -I)
 
 upstream_git reset --hard HEAD || exit 1
 upstream_git checkout "${BRANCH}" || exit 1
