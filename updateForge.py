@@ -13,12 +13,9 @@ from datetime import datetime
 from pathlib import Path
 from pprint import pprint
 
-import requests
-from cachecontrol import CacheControl
-from cachecontrol.caches import FileCache
 from pydantic import ValidationError
 
-from meta.common import upstream_path, ensure_upstream_dir, static_path
+from meta.common import upstream_path, ensure_upstream_dir, static_path, default_session
 from meta.common.forge import JARS_DIR, INSTALLER_INFO_DIR, INSTALLER_MANIFEST_DIR, VERSION_MANIFEST_DIR, \
     FILE_MANIFEST_DIR, BAD_VERSIONS, STATIC_LEGACYINFO_FILE
 from meta.model.forge import ForgeFile, ForgeEntry, ForgeMCVersionInfo, ForgeLegacyInfoList, DerivedForgeIndex, \
@@ -37,8 +34,7 @@ ensure_upstream_dir(FILE_MANIFEST_DIR)
 
 LEGACYINFO_PATH = os.path.join(STATIC_DIR, STATIC_LEGACYINFO_FILE)
 
-forever_cache = FileCache('caches/http_cache', forever=True)
-sess = CacheControl(requests.Session(), forever_cache)
+sess = default_session()
 
 
 def eprint(*args, **kwargs):

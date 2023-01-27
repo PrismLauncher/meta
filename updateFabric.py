@@ -3,11 +3,7 @@ import os
 import zipfile
 from datetime import datetime
 
-import requests
-from cachecontrol import CacheControl
-from cachecontrol.caches import FileCache
-
-from meta.common import upstream_path, ensure_upstream_dir, transform_maven_key
+from meta.common import upstream_path, ensure_upstream_dir, transform_maven_key, default_session
 from meta.common.fabric import JARS_DIR, INSTALLER_INFO_DIR, META_DIR, DATETIME_FORMAT_HTTP
 from meta.model.fabric import FabricJarInfo
 
@@ -17,8 +13,7 @@ ensure_upstream_dir(JARS_DIR)
 ensure_upstream_dir(INSTALLER_INFO_DIR)
 ensure_upstream_dir(META_DIR)
 
-forever_cache = FileCache('caches/http_cache', forever=True)
-sess = CacheControl(requests.Session(), forever_cache)
+sess = default_session()
 
 
 def filehash(filename, hashtype, blocksize=65536):

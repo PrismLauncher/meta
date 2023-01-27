@@ -2,11 +2,7 @@ import json
 import os
 import zipfile
 
-import requests
-from cachecontrol import CacheControl
-from cachecontrol.caches import FileCache
-
-from meta.common import upstream_path, ensure_upstream_dir, static_path
+from meta.common import upstream_path, ensure_upstream_dir, static_path, default_session
 from meta.common.http import download_binary_file
 from meta.common.mojang import BASE_DIR, VERSION_MANIFEST_FILE, VERSIONS_DIR, ASSETS_DIR, STATIC_EXPERIMENTS_FILE, \
     STATIC_OLD_SNAPSHOTS_FILE
@@ -20,8 +16,7 @@ ensure_upstream_dir(BASE_DIR)
 ensure_upstream_dir(VERSIONS_DIR)
 ensure_upstream_dir(ASSETS_DIR)
 
-forever_cache = FileCache('caches/http_cache', forever=True)
-sess = CacheControl(requests.Session(), forever_cache)
+sess = default_session()
 
 
 def fetch_zipped_version(path, url):

@@ -2,6 +2,10 @@ import os
 import datetime
 from urllib.parse import urlparse
 
+import requests
+from cachecontrol import CacheControl
+from cachecontrol.caches import FileCache
+
 
 def serialize_datetime(dt: datetime.datetime):
     if dt.tzinfo is None:
@@ -69,3 +73,13 @@ def merge_dict(base: dict, overlay: dict):
                 overlay[k] = v
 
     return overlay
+
+
+def default_session():
+    forever_cache = FileCache('caches/http_cache', forever=True)
+    sess = CacheControl(requests.Session(), forever_cache)
+
+    sess.headers.update({"User-Agent": "PrismLauncherMeta/1.0"})
+
+    return sess
+

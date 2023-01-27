@@ -1,11 +1,7 @@
 import json
 import os
 
-import requests
-from cachecontrol import CacheControl
-from cachecontrol.caches import FileCache
-
-from meta.common import upstream_path, ensure_upstream_dir
+from meta.common import upstream_path, ensure_upstream_dir, default_session
 from meta.common.liteloader import VERSIONS_FILE, BASE_DIR
 from meta.model.liteloader import LiteloaderIndex
 
@@ -13,8 +9,7 @@ UPSTREAM_DIR = upstream_path()
 
 ensure_upstream_dir(BASE_DIR)
 
-forever_cache = FileCache('caches/http_cache', forever=True)
-sess = CacheControl(requests.Session(), forever_cache)
+sess = default_session()
 
 
 def main():
