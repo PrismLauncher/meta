@@ -1,4 +1,4 @@
-FROM python:3.10.2-bullseye
+FROM python:3.11.1-bullseye
 ARG UID=1337
 ARG GID=1337
 
