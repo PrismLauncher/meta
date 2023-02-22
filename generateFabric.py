@@ -69,7 +69,8 @@ def main():
 
             v = process_loader_version(entry)
 
-            if not recommended_loader_versions:  # first (newest) loader is recommended
+            # Fabric Meta has a separate "stable" field, let's use that
+            if not recommended_loader_versions and entry["stable"]:
                 recommended_loader_versions.append(version)
 
             v.write(os.path.join(LAUNCHER_DIR, LOADER_COMPONENT, f"{v.version}.json"))
