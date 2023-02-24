@@ -4,10 +4,22 @@ import zipfile
 
 from meta.common import upstream_path, ensure_upstream_dir, static_path, default_session
 from meta.common.http import download_binary_file
-from meta.common.mojang import BASE_DIR, VERSION_MANIFEST_FILE, VERSIONS_DIR, ASSETS_DIR, STATIC_EXPERIMENTS_FILE, \
-    STATIC_OLD_SNAPSHOTS_FILE
-from meta.model.mojang import MojangIndexWrap, MojangIndex, ExperimentIndex, ExperimentIndexWrap, OldSnapshotIndexWrap, \
-    OldSnapshotIndex
+from meta.common.mojang import (
+    BASE_DIR,
+    VERSION_MANIFEST_FILE,
+    VERSIONS_DIR,
+    ASSETS_DIR,
+    STATIC_EXPERIMENTS_FILE,
+    STATIC_OLD_SNAPSHOTS_FILE,
+)
+from meta.model.mojang import (
+    MojangIndexWrap,
+    MojangIndex,
+    ExperimentIndex,
+    ExperimentIndexWrap,
+    OldSnapshotIndexWrap,
+    OldSnapshotIndex,
+)
 
 UPSTREAM_DIR = upstream_path()
 STATIC_DIR = static_path()
@@ -31,7 +43,7 @@ def fetch_zipped_version(path, url):
 
     assert version_json
 
-    with open(path, 'w', encoding='utf-8') as f:
+    with open(path, "w", encoding="utf-8") as f:
         json.dump(version_json, f, sort_keys=True, indent=4)
 
     return version_json
@@ -45,16 +57,14 @@ def fetch_modified_version(path, version):
     version_json["releaseTime"] = version_json["releaseTime"] + "T00:00:00+02:00"
     version_json["time"] = version_json["releaseTime"]
 
-    downloads = {"client": {"url": version.jar,
-                            "sha1": version.sha1,
-                            "size": version.size
-                            }
-                 }
+    downloads = {
+        "client": {"url": version.jar, "sha1": version.sha1, "size": version.size}
+    }
 
     version_json["downloads"] = downloads
     version_json["type"] = "old_snapshot"
 
-    with open(path, 'w', encoding='utf-8') as f:
+    with open(path, "w", encoding="utf-8") as f:
         json.dump(version_json, f, sort_keys=True, indent=4)
 
     return version_json
@@ -65,7 +75,7 @@ def fetch_version(path, url):
     r.raise_for_status()
     version_json = r.json()
 
-    with open(path, 'w', encoding='utf-8') as f:
+    with open(path, "w", encoding="utf-8") as f:
         json.dump(version_json, f, sort_keys=True, indent=4)
 
     return version_json
@@ -73,7 +83,7 @@ def fetch_version(path, url):
 
 def main():
     # get the remote version list
-    r = sess.get('https://piston-meta.mojang.com/mc/game/version_manifest_v2.json')
+    r = sess.get("https://piston-meta.mojang.com/mc/game/version_manifest_v2.json")
     r.raise_for_status()
 
     remote_versions = MojangIndexWrap(MojangIndex(**r.json()))
@@ -83,7 +93,9 @@ def main():
 
     if os.path.exists(version_manifest_path):
         # get the local version list
-        current_versions = MojangIndexWrap(MojangIndex.parse_file(version_manifest_path))
+        current_versions = MojangIndexWrap(
+            MojangIndex.parse_file(version_manifest_path)
+        )
         local_ids = set(current_versions.versions.keys())
 
         # versions not present locally but present remotely are new
@@ -99,13 +111,22 @@ def main():
 
     for x in pending_ids:
         version = remote_versions.versions[x]
-        print("Updating " + version.id + " to timestamp " + version.release_time.strftime('%s'))
-        fetch_version(os.path.join(UPSTREAM_DIR, VERSIONS_DIR, f"{x}.json"), version.url)
+        print(
+            "Updating "
+            + version.id
+            + " to timestamp "
+            + version.release_time.strftime("%s")
+        )
+        fetch_version(
+            os.path.join(UPSTREAM_DIR, VERSIONS_DIR, f"{x}.json"), version.url
+        )
 
     # deal with experimental snapshots separately
     static_experiments_path = os.path.join(STATIC_DIR, STATIC_EXPERIMENTS_FILE)
     if os.path.exists(static_experiments_path):
-        experiments = ExperimentIndexWrap(ExperimentIndex.parse_file(static_experiments_path))
+        experiments = ExperimentIndexWrap(
+            ExperimentIndex.parse_file(static_experiments_path)
+        )
         experiment_ids = set(experiments.versions.keys())
 
         for x in experiment_ids:
@@ -122,7 +143,9 @@ def main():
 
     # deal with old snapshots
     if os.path.exists(static_old_snapshots_path):
-        old_snapshots = OldSnapshotIndexWrap(OldSnapshotIndex.parse_file(static_old_snapshots_path))
+        old_snapshots = OldSnapshotIndexWrap(
+            OldSnapshotIndex.parse_file(static_old_snapshots_path)
+        )
         old_snapshots_ids = set(old_snapshots.versions.keys())
 
         for x in old_snapshots_ids:
@@ -138,5 +161,5 @@ def main():
     remote_versions.index.write(version_manifest_path)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

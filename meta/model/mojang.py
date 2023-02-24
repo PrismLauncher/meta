@@ -3,17 +3,24 @@ from typing import Optional, List, Dict, Any, Iterator
 
 from pydantic import validator, Field
 
-from . import MetaBase, MojangArtifactBase, MojangAssets, MojangLibrary, MojangArtifact, MojangLibraryDownloads, \
-    Library, MetaVersion, GradleSpecifier
+from . import (
+    MetaBase,
+    MojangArtifactBase,
+    MojangAssets,
+    MojangLibrary,
+    MojangArtifact,
+    MojangLibraryDownloads,
+    Library,
+    MetaVersion,
+    GradleSpecifier,
+)
 
 SUPPORTED_LAUNCHER_VERSION = 21
 SUPPORTED_COMPLIANCE_LEVEL = 1
 DEFAULT_JAVA_MAJOR = 8  # By default, we should recommend Java 8 if we don't know better
-COMPATIBLE_JAVA_MAPPINGS = {
-    16: [17]
-}
+COMPATIBLE_JAVA_MAPPINGS = {16: [17]}
 
-'''
+"""
 Mojang index files look like this:
 {
     "latest": {
@@ -32,7 +39,7 @@ Mojang index files look like this:
         ...
     ]
 }
-'''
+"""
 
 
 class MojangLatestVersion(MetaBase):
@@ -75,7 +82,9 @@ class ExperimentIndex(MetaBase):
 class ExperimentIndexWrap:
     def __init__(self, index: ExperimentIndex):
         self.index: ExperimentIndex = index
-        self.versions: Dict[str, ExperimentEntry] = dict((x.id, x) for x in index.experiments)
+        self.versions: Dict[str, ExperimentEntry] = dict(
+            (x.id, x) for x in index.experiments
+        )
 
 
 class OldSnapshotEntry(MetaBase):
@@ -94,7 +103,9 @@ class OldSnapshotIndex(MetaBase):
 class OldSnapshotIndexWrap:
     def __init__(self, index: OldSnapshotIndex):
         self.index: OldSnapshotIndex = index
-        self.versions: Dict[str, OldSnapshotEntry] = dict((x.id, x) for x in index.old_snapshots)
+        self.versions: Dict[str, OldSnapshotEntry] = dict(
+            (x.id, x) for x in index.old_snapshots
+        )
 
 
 class LegacyOverrideEntry(MetaBase):
@@ -200,8 +211,7 @@ class MojangVersion(MetaBase):
     applet_class: Optional[str] = Field(alias="appletClass")
     processArguments: Optional[str]
     minecraft_arguments: Optional[str] = Field(alias="minecraftArguments")
-    minimum_launcher_version: Optional[int] = Field(
-        alias="minimumLauncherVersion")
+    minimum_launcher_version: Optional[int] = Field(alias="minimumLauncherVersion")
     release_time: Optional[datetime] = Field(alias="releaseTime")
     time: Optional[datetime]
     type: Optional[str]
@@ -216,10 +226,17 @@ class MojangVersion(MetaBase):
         new_type = self.type
         compatible_java_majors = None
         if self.id:
-            client_download = self.downloads['client']
-            artifact = MojangArtifact(url=client_download.url, sha1=client_download.sha1, size=client_download.size)
+            client_download = self.downloads["client"]
+            artifact = MojangArtifact(
+                url=client_download.url,
+                sha1=client_download.sha1,
+                size=client_download.size,
+            )
             downloads = MojangLibraryDownloads(artifact=artifact)
-            main_jar = Library(name=GradleSpecifier("com.mojang", "minecraft", self.id, "client"), downloads=downloads)
+            main_jar = Library(
+                name=GradleSpecifier("com.mojang", "minecraft", self.id, "client"),
+                downloads=downloads,
+            )
 
         if not self.compliance_level:  # both == 0 and is None
             pass
@@ -231,11 +248,15 @@ class MojangVersion(MetaBase):
             raise Exception(f"Unsupported compliance level {self.compliance_level}")
 
         major = DEFAULT_JAVA_MAJOR
-        if self.javaVersion is not None:  # some versions don't have this. TODO: maybe maintain manual overrides
+        if (
+            self.javaVersion is not None
+        ):  # some versions don't have this. TODO: maybe maintain manual overrides
             major = self.javaVersion.major_version
 
         compatible_java_majors = [major]
-        if major in COMPATIBLE_JAVA_MAPPINGS:  # add more compatible Java versions, e.g. 16 and 17 both work for MC 1.17
+        if (
+            major in COMPATIBLE_JAVA_MAPPINGS
+        ):  # add more compatible Java versions, e.g. 16 and 17 both work for MC 1.17
             compatible_java_majors += COMPATIBLE_JAVA_MAPPINGS[major]
 
         if new_type == "pending":  # experiments from upstream are type=pending
@@ -253,4 +274,5 @@ class MojangVersion(MetaBase):
             type=new_type,
             compatible_java_majors=compatible_java_majors,
             additional_traits=addn_traits,
-            main_jar=main_jar)
+            main_jar=main_jar,
+        )

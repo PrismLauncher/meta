@@ -6,13 +6,36 @@ from operator import attrgetter
 from typing import Collection
 
 from meta.common import ensure_component_dir, launcher_path, upstream_path, static_path
-from meta.common.forge import FORGE_COMPONENT, INSTALLER_MANIFEST_DIR, VERSION_MANIFEST_DIR, DERIVED_INDEX_FILE, \
-    STATIC_LEGACYINFO_FILE, INSTALLER_INFO_DIR, BAD_VERSIONS, FORGEWRAPPER_MAVEN
+from meta.common.forge import (
+    FORGE_COMPONENT,
+    INSTALLER_MANIFEST_DIR,
+    VERSION_MANIFEST_DIR,
+    DERIVED_INDEX_FILE,
+    STATIC_LEGACYINFO_FILE,
+    INSTALLER_INFO_DIR,
+    BAD_VERSIONS,
+    FORGEWRAPPER_MAVEN,
+)
 from meta.common.mojang import MINECRAFT_COMPONENT
-from meta.model import MetaVersion, Dependency, Library, GradleSpecifier, MojangLibraryDownloads, MojangArtifact, \
-    MetaPackage
-from meta.model.forge import ForgeVersion, ForgeInstallerProfile, ForgeLegacyInfo, fml_libs_for_version, \
-    ForgeInstallerProfileV2, InstallerInfo, DerivedForgeIndex, ForgeLegacyInfoList
+from meta.model import (
+    MetaVersion,
+    Dependency,
+    Library,
+    GradleSpecifier,
+    MojangLibraryDownloads,
+    MojangArtifact,
+    MetaPackage,
+)
+from meta.model.forge import (
+    ForgeVersion,
+    ForgeInstallerProfile,
+    ForgeLegacyInfo,
+    fml_libs_for_version,
+    ForgeInstallerProfileV2,
+    InstallerInfo,
+    DerivedForgeIndex,
+    ForgeLegacyInfoList,
+)
 from meta.model.mojang import MojangVersion
 
 LAUNCHER_DIR = launcher_path()
@@ -33,22 +56,28 @@ mc_version_cache = {}
 def load_mc_version_filter(version: str):
     if version in mc_version_cache:
         return mc_version_cache[version]
-    v = MetaVersion.parse_file(os.path.join(LAUNCHER_DIR, MINECRAFT_COMPONENT, f"{version}.json"))
+    v = MetaVersion.parse_file(
+        os.path.join(LAUNCHER_DIR, MINECRAFT_COMPONENT, f"{version}.json")
+    )
     libs = set(map(attrgetter("name"), v.libraries))
     mc_version_cache[version] = libs
     return libs
 
 
-'''
+"""
 Match a library coordinate to a set of library coordinates.
  * Block those that pass completely.
  * For others, block those with lower versions than in the set.
-'''
+"""
 
 
 def should_ignore_artifact(libs: Collection[GradleSpecifier], match: GradleSpecifier):
     for ver in libs:
-        if ver.group == match.group and ver.artifact == match.artifact and ver.classifier == match.classifier:
+        if (
+            ver.group == match.group
+            and ver.artifact == match.artifact
+            and ver.classifier == match.classifier
+        ):
             if ver.version == match.version:
                 # Everything is matched perfectly - this one will be ignored
                 return True
@@ -61,7 +90,9 @@ def should_ignore_artifact(libs: Collection[GradleSpecifier], match: GradleSpeci
     return False
 
 
-def version_from_profile(profile: ForgeInstallerProfile, version: ForgeVersion) -> MetaVersion:
+def version_from_profile(
+    profile: ForgeInstallerProfile, version: ForgeVersion
+) -> MetaVersion:
     v = MetaVersion(name="Forge", version=version.rawVersion, uid=FORGE_COMPONENT)
     mc_version = profile.install.minecraft
     v.requires = [Dependency(uid=MINECRAFT_COMPONENT, equals=mc_version)]
@@ -74,7 +105,7 @@ def version_from_profile(profile: ForgeInstallerProfile, version: ForgeVersion) 
     match = expression.search(args)
     while match is not None:
         tweakers.append(match.group(1))
-        args = args[:match.start()] + args[match.end():]
+        args = args[: match.start()] + args[match.end() :]
         match = expression.search(args)
     if len(tweakers) > 0:
         args = args.strip()
@@ -84,14 +115,21 @@ def version_from_profile(profile: ForgeInstallerProfile, version: ForgeVersion) 
     v.libraries = []
     mc_filter = load_mc_version_filter(mc_version)
     for forge_lib in profile.version_info.libraries:
-        if forge_lib.name.is_lwjgl() or forge_lib.name.is_log4j() or should_ignore_artifact(mc_filter, forge_lib.name):
+        if (
+            forge_lib.name.is_lwjgl()
+            or forge_lib.name.is_log4j()
+            or should_ignore_artifact(mc_filter, forge_lib.name)
+        ):
             continue
 
         overridden_name = forge_lib.name
         if overridden_name.group == "net.minecraftforge":
             if overridden_name.artifact == "minecraftforge":
                 overridden_name.artifact = "forge"
-                overridden_name.version = "%s-%s" % (mc_version, overridden_name.version)
+                overridden_name.version = "%s-%s" % (
+                    mc_version,
+                    overridden_name.version,
+                )
 
                 overridden_name.classifier = "universal"
             elif overridden_name.artifact == "forge":
@@ -110,7 +148,9 @@ def version_from_profile(profile: ForgeInstallerProfile, version: ForgeVersion) 
     return v
 
 
-def version_from_modernized_installer(installer: MojangVersion, version: ForgeVersion) -> MetaVersion:
+def version_from_modernized_installer(
+    installer: MojangVersion, version: ForgeVersion
+) -> MetaVersion:
     v = MetaVersion(name="Forge", version=version.rawVersion, uid=FORGE_COMPONENT)
     mc_version = version.mc_version
     v.requires = [Dependency(uid=MINECRAFT_COMPONENT, equals=mc_version)]
@@ -123,7 +163,7 @@ def version_from_modernized_installer(installer: MojangVersion, version: ForgeVe
     match = expression.search(args)
     while match is not None:
         tweakers.append(match.group(1))
-        args = args[:match.start()] + args[match.end():]
+        args = args[: match.start()] + args[match.end() :]
         match = expression.search(args)
     if len(tweakers) > 0:
         args = args.strip()
@@ -134,8 +174,14 @@ def version_from_modernized_installer(installer: MojangVersion, version: ForgeVe
 
     mc_filter = load_mc_version_filter(mc_version)
     for upstream_lib in installer.libraries:
-        forge_lib = Library.parse_obj(upstream_lib.dict())  # "cast" MojangLibrary to Library
-        if forge_lib.name.is_lwjgl() or forge_lib.name.is_log4j() or should_ignore_artifact(mc_filter, forge_lib.name):
+        forge_lib = Library.parse_obj(
+            upstream_lib.dict()
+        )  # "cast" MojangLibrary to Library
+        if (
+            forge_lib.name.is_lwjgl()
+            or forge_lib.name.is_log4j()
+            or should_ignore_artifact(mc_filter, forge_lib.name)
+        ):
             continue
 
         if forge_lib.name.group == "net.minecraftforge":
@@ -143,16 +189,23 @@ def version_from_modernized_installer(installer: MojangVersion, version: ForgeVe
                 overridden_name = forge_lib.name
                 overridden_name.classifier = "universal"
                 forge_lib.downloads.artifact.path = overridden_name.path()
-                forge_lib.downloads.artifact.url = "https://maven.minecraftforge.net/%s" % overridden_name.path()
+                forge_lib.downloads.artifact.url = (
+                    "https://maven.minecraftforge.net/%s" % overridden_name.path()
+                )
                 forge_lib.name = overridden_name
 
             elif forge_lib.name.artifact == "minecraftforge":
                 overridden_name = forge_lib.name
                 overridden_name.artifact = "forge"
                 overridden_name.classifier = "universal"
-                overridden_name.version = "%s-%s" % (mc_version, overridden_name.version)
+                overridden_name.version = "%s-%s" % (
+                    mc_version,
+                    overridden_name.version,
+                )
                 forge_lib.downloads.artifact.path = overridden_name.path()
-                forge_lib.downloads.artifact.url = "https://maven.minecraftforge.net/%s" % overridden_name.path()
+                forge_lib.downloads.artifact.url = (
+                    "https://maven.minecraftforge.net/%s" % overridden_name.path()
+                )
                 forge_lib.name = overridden_name
 
         v.libraries.append(forge_lib)
@@ -167,23 +220,32 @@ def version_from_legacy(info: ForgeLegacyInfo, version: ForgeVersion) -> MetaVer
     v.requires = [Dependency(uid=MINECRAFT_COMPONENT, equals=mc_version)]
     v.release_time = info.release_time
     v.order = 5
-    if fml_libs_for_version(mc_version):  # WHY, WHY DID I WASTE MY TIME REWRITING FMLLIBSMAPPING
+    if fml_libs_for_version(
+        mc_version
+    ):  # WHY, WHY DID I WASTE MY TIME REWRITING FMLLIBSMAPPING
         v.additional_traits = ["legacyFML"]
 
     classifier = "client"
     if "universal" in version.url():
         classifier = "universal"
 
-    main_mod = Library(name=GradleSpecifier("net.minecraftforge", "forge", version.long_version, classifier))
+    main_mod = Library(
+        name=GradleSpecifier(
+            "net.minecraftforge", "forge", version.long_version, classifier
+        )
+    )
     main_mod.downloads = MojangLibraryDownloads()
-    main_mod.downloads.artifact = MojangArtifact(url=version.url(), sha1=info.sha1, size=info.size)
+    main_mod.downloads.artifact = MojangArtifact(
+        url=version.url(), sha1=info.sha1, size=info.size
+    )
     main_mod.downloads.artifact.path = None
     v.jar_mods = [main_mod]
     return v
 
 
-def version_from_build_system_installer(installer: MojangVersion, profile: ForgeInstallerProfileV2,
-                                        version: ForgeVersion) -> MetaVersion:
+def version_from_build_system_installer(
+    installer: MojangVersion, profile: ForgeInstallerProfileV2, version: ForgeVersion
+) -> MetaVersion:
     v = MetaVersion(name="Forge", version=version.rawVersion, uid=FORGE_COMPONENT)
     v.requires = [Dependency(uid=MINECRAFT_COMPONENT, equals=version.mc_version_sane)]
     v.main_class = "io.github.zekerzhayard.forgewrapper.installer.Main"
@@ -193,14 +255,19 @@ def version_from_build_system_installer(installer: MojangVersion, profile: Forge
 
     # load the locally cached installer file info and use it to add the installer entry in the json
     info = InstallerInfo.parse_file(
-        os.path.join(UPSTREAM_DIR, INSTALLER_INFO_DIR, f"{version.long_version}.json"))
+        os.path.join(UPSTREAM_DIR, INSTALLER_INFO_DIR, f"{version.long_version}.json")
+    )
     installer_lib = Library(
-        name=GradleSpecifier("net.minecraftforge", "forge", version.long_version, "installer"))
+        name=GradleSpecifier(
+            "net.minecraftforge", "forge", version.long_version, "installer"
+        )
+    )
     installer_lib.downloads = MojangLibraryDownloads()
     installer_lib.downloads.artifact = MojangArtifact(
         url="https://maven.minecraftforge.net/%s" % (installer_lib.name.path()),
         sha1=info.sha1hash,
-        size=info.size)
+        size=info.size,
+    )
     v.maven_files.append(installer_lib)
 
     for upstream_lib in profile.libraries:
@@ -208,18 +275,27 @@ def version_from_build_system_installer(installer: MojangVersion, profile: Forge
         if forge_lib.name.is_log4j():
             continue
 
-        if forge_lib.name.group == "net.minecraftforge" and forge_lib.name.artifact == "forge" \
-                and forge_lib.name.classifier == "universal":
-            forge_lib.downloads.artifact.url = "https://maven.minecraftforge.net/%s" % forge_lib.name.path()
+        if (
+            forge_lib.name.group == "net.minecraftforge"
+            and forge_lib.name.artifact == "forge"
+            and forge_lib.name.classifier == "universal"
+        ):
+            forge_lib.downloads.artifact.url = (
+                "https://maven.minecraftforge.net/%s" % forge_lib.name.path()
+            )
         v.maven_files.append(forge_lib)
 
     v.libraries = []
 
-    wrapper_lib = Library(name=GradleSpecifier("io.github.zekerzhayard", "ForgeWrapper", "mmc2"))
+    wrapper_lib = Library(
+        name=GradleSpecifier("io.github.zekerzhayard", "ForgeWrapper", "mmc2")
+    )
     wrapper_lib.downloads = MojangLibraryDownloads()
-    wrapper_lib.downloads.artifact = MojangArtifact(url=FORGEWRAPPER_MAVEN % (wrapper_lib.name.path()),
-                                                    sha1="4ee5f25cc9c7efbf54aff4c695da1054c1a1d7a3",
-                                                    size=34444)
+    wrapper_lib.downloads.artifact = MojangArtifact(
+        url=FORGEWRAPPER_MAVEN % (wrapper_lib.name.path()),
+        sha1="4ee5f25cc9c7efbf54aff4c695da1054c1a1d7a3",
+        size=34444,
+    )
     v.libraries.append(wrapper_lib)
 
     for upstream_lib in installer.libraries:
@@ -231,15 +307,19 @@ def version_from_build_system_installer(installer: MojangVersion, profile: Forge
             if forge_lib.name.artifact == "forge":
                 forge_lib.name.classifier = "launcher"
                 forge_lib.downloads.artifact.path = forge_lib.name.path()
-                forge_lib.downloads.artifact.url = "https://maven.minecraftforge.net/%s" % forge_lib.name.path()
+                forge_lib.downloads.artifact.url = (
+                    "https://maven.minecraftforge.net/%s" % forge_lib.name.path()
+                )
                 forge_lib.name = forge_lib.name
         v.libraries.append(forge_lib)
 
     v.release_time = installer.release_time
     v.order = 5
-    mc_args = "--username ${auth_player_name} --version ${version_name} --gameDir ${game_directory} " \
-              "--assetsDir ${assets_root} --assetIndex ${assets_index_name} --uuid ${auth_uuid} " \
-              "--accessToken ${auth_access_token} --userType ${user_type} --versionType ${version_type}"
+    mc_args = (
+        "--username ${auth_player_name} --version ${version_name} --gameDir ${game_directory} "
+        "--assetsDir ${assets_root} --assetIndex ${assets_index_name} --uuid ${auth_uuid} "
+        "--accessToken ${auth_access_token} --userType ${user_type} --versionType ${version_type}"
+    )
     for arg in installer.arguments.game:
         mc_args += f" {arg}"
     v.minecraft_arguments = mc_args
@@ -248,10 +328,14 @@ def version_from_build_system_installer(installer: MojangVersion, profile: Forge
 
 def main():
     # load the locally cached version list
-    remote_versions = DerivedForgeIndex.parse_file(os.path.join(UPSTREAM_DIR, DERIVED_INDEX_FILE))
+    remote_versions = DerivedForgeIndex.parse_file(
+        os.path.join(UPSTREAM_DIR, DERIVED_INDEX_FILE)
+    )
     recommended_versions = []
 
-    legacy_info_list = ForgeLegacyInfoList.parse_file(os.path.join(STATIC_DIR, STATIC_LEGACYINFO_FILE))
+    legacy_info_list = ForgeLegacyInfoList.parse_file(
+        os.path.join(STATIC_DIR, STATIC_LEGACYINFO_FILE)
+    )
     legacy_versions = [
         "1.1",
         "1.2.3",
@@ -307,27 +391,41 @@ def main():
             eprint("Skipping %s with no valid files" % key)
             continue
         eprint("Processing Forge %s" % version.rawVersion)
-        version_elements = version.rawVersion.split('.')
+        version_elements = version.rawVersion.split(".")
         if len(version_elements) < 1:
             eprint("Skipping version %s with not enough version elements" % key)
             continue
 
         major_version_str = version_elements[0]
         if not major_version_str.isnumeric():
-            eprint("Skipping version %s with non-numeric major version %s" % (key, major_version_str))
+            eprint(
+                "Skipping version %s with non-numeric major version %s"
+                % (key, major_version_str)
+            )
             continue
 
         if entry.recommended:
             recommended_versions.append(version.rawVersion)
 
         # If we do not have the corresponding Minecraft version, we ignore it
-        if not os.path.isfile(os.path.join(LAUNCHER_DIR, MINECRAFT_COMPONENT, f"{version.mc_version_sane}.json")):
-            eprint("Skipping %s with no corresponding Minecraft version %s" % (key, version.mc_version_sane))
+        if not os.path.isfile(
+            os.path.join(
+                LAUNCHER_DIR, MINECRAFT_COMPONENT, f"{version.mc_version_sane}.json"
+            )
+        ):
+            eprint(
+                "Skipping %s with no corresponding Minecraft version %s"
+                % (key, version.mc_version_sane)
+            )
             continue
 
         # Path for new-style build system based installers
-        installer_version_filepath = os.path.join(UPSTREAM_DIR, VERSION_MANIFEST_DIR, f"{version.long_version}.json")
-        profile_filepath = os.path.join(UPSTREAM_DIR, INSTALLER_MANIFEST_DIR, f"{version.long_version}.json")
+        installer_version_filepath = os.path.join(
+            UPSTREAM_DIR, VERSION_MANIFEST_DIR, f"{version.long_version}.json"
+        )
+        profile_filepath = os.path.join(
+            UPSTREAM_DIR, INSTALLER_MANIFEST_DIR, f"{version.long_version}.json"
+        )
 
         eprint(installer_version_filepath)
         if os.path.isfile(installer_version_filepath):
@@ -351,8 +449,13 @@ def main():
                 if version.mc_version_sane == "1.6.1":
                     continue
                 build = version.build
-                if not str(build).encode('utf-8').decode('utf8') in legacy_info_list.number:
-                    eprint("Legacy build %d is missing in legacy info. Ignoring." % build)
+                if (
+                    str(build).encode("utf-8").decode("utf8")
+                    not in legacy_info_list.number
+                ):
+                    eprint(
+                        "Legacy build %d is missing in legacy info. Ignoring." % build
+                    )
                     continue
 
                 v = version_from_legacy(legacy_info_list.number[str(build)], version)
@@ -361,12 +464,16 @@ def main():
 
         recommended_versions.sort()
 
-        print('Recommended versions:', recommended_versions)
+        print("Recommended versions:", recommended_versions)
 
-        package = MetaPackage(uid=FORGE_COMPONENT, name="Forge", project_url="https://www.minecraftforge.net/forum/")
+        package = MetaPackage(
+            uid=FORGE_COMPONENT,
+            name="Forge",
+            project_url="https://www.minecraftforge.net/forum/",
+        )
         package.recommended = recommended_versions
         package.write(os.path.join(LAUNCHER_DIR, FORGE_COMPONENT, "package.json"))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

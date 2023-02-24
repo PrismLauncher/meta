@@ -14,7 +14,7 @@ sess = default_session()
 
 def main():
     # get the remote version list
-    r = sess.get('http://dl.liteloader.com/versions/versions.json')
+    r = sess.get("http://dl.liteloader.com/versions/versions.json")
     r.raise_for_status()
 
     # make sure it's JSON
@@ -33,5 +33,5 @@ def main():
     remote_versions.write(os.path.join(UPSTREAM_DIR, VERSIONS_FILE))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -26,7 +26,7 @@ class MetaVersionIndexEntry(MetaBase):
             conflicts=v.conflicts,
             recommended=recommended,
             volatile=v.volatile,
-            sha256=sha256
+            sha256=sha256,
         )
 
 

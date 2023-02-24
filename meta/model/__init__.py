@@ -5,21 +5,32 @@ from typing import Optional, List, Dict, Any, Iterator
 import pydantic
 from pydantic import Field, validator
 
-from ..common import serialize_datetime, replace_old_launchermeta_url, get_all_bases, merge_dict
+from ..common import (
+    serialize_datetime,
+    replace_old_launchermeta_url,
+    get_all_bases,
+    merge_dict,
+)
 
 META_FORMAT_VERSION = 1
 
 
 class GradleSpecifier:
     """
-        A gradle specifier - a maven coordinate. Like one of these:
-        "org.lwjgl.lwjgl:lwjgl:2.9.0"
-        "net.java.jinput:jinput:2.0.5"
-        "net.minecraft:launchwrapper:1.5"
+    A gradle specifier - a maven coordinate. Like one of these:
+    "org.lwjgl.lwjgl:lwjgl:2.9.0"
+    "net.java.jinput:jinput:2.0.5"
+    "net.minecraft:launchwrapper:1.5"
     """
 
-    def __init__(self, group: str, artifact: str, version: str, classifier: Optional[str] = None,
-                 extension: Optional[str] = None):
+    def __init__(
+        self,
+        group: str,
+        artifact: str,
+        version: str,
+        classifier: Optional[str] = None,
+        extension: Optional[str] = None,
+    ):
         if extension is None:
             extension = "jar"
         self.group = group
@@ -29,22 +40,33 @@ class GradleSpecifier:
         self.extension = extension
 
     def __str__(self):
-        ext = ''
-        if self.extension != 'jar':
+        ext = ""
+        if self.extension != "jar":
             ext = "@%s" % self.extension
         if self.classifier:
-            return "%s:%s:%s:%s%s" % (self.group, self.artifact, self.version, self.classifier, ext)
+            return "%s:%s:%s:%s%s" % (
+                self.group,
+                self.artifact,
+                self.version,
+                self.classifier,
+                ext,
+            )
         else:
             return "%s:%s:%s%s" % (self.group, self.artifact, self.version, ext)
 
     def filename(self):
         if self.classifier:
-            return "%s-%s-%s.%s" % (self.artifact, self.version, self.classifier, self.extension)
+            return "%s-%s-%s.%s" % (
+                self.artifact,
+                self.version,
+                self.classifier,
+                self.extension,
+            )
         else:
             return "%s-%s.%s" % (self.artifact, self.version, self.extension)
 
     def base(self):
-        return "%s/%s/%s/" % (self.group.replace('.', '/'), self.artifact, self.version)
+        return "%s/%s/%s/" % (self.group.replace(".", "/"), self.artifact, self.version)
 
     def path(self):
         return self.base() + self.filename()
@@ -53,7 +75,12 @@ class GradleSpecifier:
         return f"GradleSpecifier('{self}')"
 
     def is_lwjgl(self):
-        return self.group in ("org.lwjgl", "org.lwjgl.lwjgl", "net.java.jinput", "net.java.jutils")
+        return self.group in (
+            "org.lwjgl",
+            "org.lwjgl.lwjgl",
+            "net.java.jinput",
+            "net.java.jutils",
+        )
 
     def is_log4j(self):
         return self.group == "org.apache.logging.log4j"
@@ -76,9 +103,9 @@ class GradleSpecifier:
 
     @classmethod
     def from_string(cls, v: str):
-        ext_split = v.split('@')
+        ext_split = v.split("@")
 
-        components = ext_split[0].split(':')
+        components = ext_split[0].split(":")
         group = components[0]
         artifact = components[1]
         version = components[2]
@@ -114,7 +141,9 @@ class MetaBase(pydantic.BaseModel):
             if k in kwargs:
                 del kwargs[k]
 
-        return super(MetaBase, self).json(exclude_none=True, sort_keys=True, by_alias=True, indent=4, **kwargs)
+        return super(MetaBase, self).json(
+            exclude_none=True, sort_keys=True, by_alias=True, indent=4, **kwargs
+        )
 
     def write(self, file_path):
         with open(file_path, "w") as f:
@@ -157,10 +186,7 @@ class MetaBase(pydantic.BaseModel):
     class Config:
         allow_population_by_field_name = True
 
-        json_encoders = {
-            datetime: serialize_datetime,
-            GradleSpecifier: str
-        }
+        json_encoders = {datetime: serialize_datetime, GradleSpecifier: str}
 
 
 class Versioned(MetaBase):
@@ -193,18 +219,19 @@ class MojangArtifact(MojangArtifactBase):
 
 class MojangLibraryExtractRules(MetaBase):
     """
-            "rules": [
-                {
-                    "action": "allow"
-                },
-                {
-                    "action": "disallow",
-                    "os": {
-                        "name": "osx"
-                    }
-                }
-            ]
+    "rules": [
+        {
+            "action": "allow"
+        },
+        {
+            "action": "disallow",
+            "os": {
+                "name": "osx"
+            }
+        }
+    ]
     """
+
     exclude: List[str]  # TODO maybe drop this completely?
 
 
@@ -216,7 +243,15 @@ class MojangLibraryDownloads(MetaBase):
 class OSRule(MetaBase):
     @validator("name")
     def name_must_be_os(cls, v):
-        assert v in ["osx", "linux", "windows", "windows-arm64", "osx-arm64", "linux-arm64", "linux-arm32"]
+        assert v in [
+            "osx",
+            "linux",
+            "windows",
+            "windows-arm64",
+            "osx-arm64",
+            "linux-arm64",
+            "linux-arm32",
+        ]
         return v
 
     name: str

@@ -76,10 +76,9 @@ def merge_dict(base: dict, overlay: dict):
 
 
 def default_session():
-    forever_cache = FileCache('caches/http_cache', forever=True)
+    forever_cache = FileCache("caches/http_cache", forever=True)
     sess = CacheControl(requests.Session(), forever_cache)
 
     sess.headers.update({"User-Agent": "PrismLauncherMeta/1.0"})
 
     return sess
-

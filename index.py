@@ -4,7 +4,12 @@ from operator import attrgetter
 
 from meta.common import launcher_path
 from meta.model import MetaVersion, MetaPackage
-from meta.model.index import MetaPackageIndex, MetaVersionIndex, MetaVersionIndexEntry, MetaPackageIndexEntry
+from meta.model.index import (
+    MetaPackageIndex,
+    MetaVersionIndex,
+    MetaVersionIndexEntry,
+    MetaPackageIndexEntry,
+)
 
 LAUNCHER_DIR = launcher_path()
 
@@ -29,7 +34,9 @@ for package in sorted(os.listdir(LAUNCHER_DIR)):
     if package in ignore:
         continue
 
-    sharedData = MetaPackage.parse_file(os.path.join(LAUNCHER_DIR, package, "package.json"))
+    sharedData = MetaPackage.parse_file(
+        os.path.join(LAUNCHER_DIR, package, "package.json")
+    )
     recommendedVersions = set()
     if sharedData.recommended:
         recommendedVersions = set(sharedData.recommended)
@@ -48,12 +55,16 @@ for package in sorted(os.listdir(LAUNCHER_DIR)):
         versionFile = MetaVersion.parse_file(filepath)
         is_recommended = versionFile.version in recommendedVersions
 
-        versionEntry = MetaVersionIndexEntry.from_meta_version(versionFile, is_recommended, filehash)
+        versionEntry = MetaVersionIndexEntry.from_meta_version(
+            versionFile, is_recommended, filehash
+        )
 
         versionList.versions.append(versionEntry)
 
     # sort the versions in descending order by time of release
-    versionList.versions = sorted(versionList.versions, key=attrgetter('release_time'), reverse=True)
+    versionList.versions = sorted(
+        versionList.versions, key=attrgetter("release_time"), reverse=True
+    )
 
     # write the version index for the package
     outFilePath = LAUNCHER_DIR + "/%s/index.json" % package
@@ -61,9 +72,7 @@ for package in sorted(os.listdir(LAUNCHER_DIR)):
 
     # insert entry into the package index
     packageEntry = MetaPackageIndexEntry(
-        uid=package,
-        name=sharedData.name,
-        sha256=hash_file(hashlib.sha256, outFilePath)
+        uid=package, name=sharedData.name, sha256=hash_file(hashlib.sha256, outFilePath)
     )
     packages.packages.append(packageEntry)
 

@@ -17,7 +17,9 @@ class ForgeFile(MetaBase):
 
     def url(self, long_version):
         return "https://maven.minecraftforge.net/net/minecraftforge/forge/%s/%s" % (
-            long_version, self.filename(long_version))
+            long_version,
+            self.filename(long_version),
+        )
 
 
 class ForgeEntry(MetaBase):
@@ -42,7 +44,9 @@ class DerivedForgeIndex(MetaBase):
     by_mc_version: Dict[str, ForgeMCVersionInfo] = Field({}, alias="by_mcversion")
 
 
-class FMLLib(MetaBase):  # old ugly stuff. Maybe merge this with Library or MojangLibrary later
+class FMLLib(
+    MetaBase
+):  # old ugly stuff. Maybe merge this with Library or MojangLibrary later
     filename: str
     checksum: str
     ours: bool
@@ -74,6 +78,7 @@ class ForgeInstallerProfileInstallSection(MetaBase):
         "modList":"none"
     },
     """
+
     profile_name: str = Field(alias="profileName")
     target: str
     path: GradleSpecifier
@@ -116,6 +121,7 @@ class ForgeOptional(MetaBase):
         }
     ]
     """
+
     name: Optional[str]
     client: Optional[bool]
     server: Optional[bool]
@@ -206,7 +212,9 @@ class ForgeVersion:
             if (classifier == "installer") and (extension == "jar"):
                 self.installer_filename = filename
                 self.installer_url = url
-            if (classifier == "universal" or classifier == "client") and (extension == "jar" or extension == "zip"):
+            if (classifier == "universal" or classifier == "client") and (
+                extension == "jar" or extension == "zip"
+            ):
                 self.universal_filename = filename
                 self.universal_url = url
             if (classifier == "changelog") and (extension == "txt"):
@@ -236,7 +244,7 @@ class ForgeVersion:
         if self.url() is None:
             return False
 
-        foo = self.rawVersion.split('.')
+        foo = self.rawVersion.split(".")
         if len(foo) < 1:
             return False
 
@@ -252,55 +260,106 @@ class ForgeVersion:
 
 
 def fml_libs_for_version(mc_version: str) -> List[FMLLib]:
-    argo_2_25 = FMLLib(filename="argo-2.25.jar",
-                       checksum="bb672829fde76cb163004752b86b0484bd0a7f4b",
-                       ours=False)
-    argo_small_3_2 = FMLLib(filename="argo-small-3.2.jar",
-                            checksum="58912ea2858d168c50781f956fa5b59f0f7c6b51",
-                            ours=False)
-    guava_12_0_1 = FMLLib(filename="guava-12.0.1.jar",
-                          checksum="b8e78b9af7bf45900e14c6f958486b6ca682195f",
-                          ours=False)
-    guava_14_0_rc3 = FMLLib(filename="guava-14.0-rc3.jar",
-                            checksum="931ae21fa8014c3ce686aaa621eae565fefb1a6a",
-                            ours=False)
-    asm_all_4_0 = FMLLib(filename="asm-all-4.0.jar",
-                         checksum="98308890597acb64047f7e896638e0d98753ae82",
-                         ours=False)
-    asm_all_4_1 = FMLLib(filename="asm-all-4.1.jar",
-                         checksum="054986e962b88d8660ae4566475658469595ef58",
-                         ours=False)
-    bcprov_jdk15on_147 = FMLLib(filename="bcprov-jdk15on-147.jar",
-                                checksum="b6f5d9926b0afbde9f4dbe3db88c5247be7794bb",
-                                ours=False)
-    bcprov_jdk15on_148 = FMLLib(filename="bcprov-jdk15on-148.jar",
-                                checksum="960dea7c9181ba0b17e8bab0c06a43f0a5f04e65",
-                                ours=True)
-    scala_library = FMLLib(filename="scala-library.jar",
-                           checksum="458d046151ad179c85429ed7420ffb1eaf6ddf85",
-                           ours=True)
+    argo_2_25 = FMLLib(
+        filename="argo-2.25.jar",
+        checksum="bb672829fde76cb163004752b86b0484bd0a7f4b",
+        ours=False,
+    )
+    argo_small_3_2 = FMLLib(
+        filename="argo-small-3.2.jar",
+        checksum="58912ea2858d168c50781f956fa5b59f0f7c6b51",
+        ours=False,
+    )
+    guava_12_0_1 = FMLLib(
+        filename="guava-12.0.1.jar",
+        checksum="b8e78b9af7bf45900e14c6f958486b6ca682195f",
+        ours=False,
+    )
+    guava_14_0_rc3 = FMLLib(
+        filename="guava-14.0-rc3.jar",
+        checksum="931ae21fa8014c3ce686aaa621eae565fefb1a6a",
+        ours=False,
+    )
+    asm_all_4_0 = FMLLib(
+        filename="asm-all-4.0.jar",
+        checksum="98308890597acb64047f7e896638e0d98753ae82",
+        ours=False,
+    )
+    asm_all_4_1 = FMLLib(
+        filename="asm-all-4.1.jar",
+        checksum="054986e962b88d8660ae4566475658469595ef58",
+        ours=False,
+    )
+    bcprov_jdk15on_147 = FMLLib(
+        filename="bcprov-jdk15on-147.jar",
+        checksum="b6f5d9926b0afbde9f4dbe3db88c5247be7794bb",
+        ours=False,
+    )
+    bcprov_jdk15on_148 = FMLLib(
+        filename="bcprov-jdk15on-148.jar",
+        checksum="960dea7c9181ba0b17e8bab0c06a43f0a5f04e65",
+        ours=True,
+    )
+    scala_library = FMLLib(
+        filename="scala-library.jar",
+        checksum="458d046151ad179c85429ed7420ffb1eaf6ddf85",
+        ours=True,
+    )
 
-    deobfuscation_data_1_5 = FMLLib(filename="deobfuscation_data_1.5.zip",
-                                    checksum="5f7c142d53776f16304c0bbe10542014abad6af8",
-                                    ours=False)
+    deobfuscation_data_1_5 = FMLLib(
+        filename="deobfuscation_data_1.5.zip",
+        checksum="5f7c142d53776f16304c0bbe10542014abad6af8",
+        ours=False,
+    )
 
-    deobfuscation_data_1_5_1 = FMLLib(filename="deobfuscation_data_1.5.1.zip",
-                                      checksum="22e221a0d89516c1f721d6cab056a7e37471d0a6",
-                                      ours=False)
-    deobfuscation_data_1_5_2 = FMLLib(filename="deobfuscation_data_1.5.2.zip",
-                                      checksum="446e55cd986582c70fcf12cb27bc00114c5adfd9",
-                                      ours=False)
+    deobfuscation_data_1_5_1 = FMLLib(
+        filename="deobfuscation_data_1.5.1.zip",
+        checksum="22e221a0d89516c1f721d6cab056a7e37471d0a6",
+        ours=False,
+    )
+    deobfuscation_data_1_5_2 = FMLLib(
+        filename="deobfuscation_data_1.5.2.zip",
+        checksum="446e55cd986582c70fcf12cb27bc00114c5adfd9",
+        ours=False,
+    )
     if mc_version == "1.3.2":
         return [argo_2_25, guava_12_0_1, asm_all_4_0]
-    elif mc_version in ["1.4", "1.4.1", "1.4.2", "1.4.3", "1.4.4", "1.4.5", "1.4.6", "1.4.7"]:
+    elif mc_version in [
+        "1.4",
+        "1.4.1",
+        "1.4.2",
+        "1.4.3",
+        "1.4.4",
+        "1.4.5",
+        "1.4.6",
+        "1.4.7",
+    ]:
         return [argo_2_25, guava_12_0_1, asm_all_4_0, bcprov_jdk15on_147]
     elif mc_version == "1.5":
-        return [argo_small_3_2, guava_14_0_rc3, asm_all_4_1, bcprov_jdk15on_148, deobfuscation_data_1_5,
-                scala_library]
+        return [
+            argo_small_3_2,
+            guava_14_0_rc3,
+            asm_all_4_1,
+            bcprov_jdk15on_148,
+            deobfuscation_data_1_5,
+            scala_library,
+        ]
     elif mc_version == "1.5.1":
-        return [argo_small_3_2, guava_14_0_rc3, asm_all_4_1, bcprov_jdk15on_148, deobfuscation_data_1_5_1,
-                scala_library]
+        return [
+            argo_small_3_2,
+            guava_14_0_rc3,
+            asm_all_4_1,
+            bcprov_jdk15on_148,
+            deobfuscation_data_1_5_1,
+            scala_library,
+        ]
     elif mc_version == "1.5.2":
-        return [argo_small_3_2, guava_14_0_rc3, asm_all_4_1, bcprov_jdk15on_148, deobfuscation_data_1_5_2,
-                scala_library]
+        return [
+            argo_small_3_2,
+            guava_14_0_rc3,
+            asm_all_4_1,
+            bcprov_jdk15on_148,
+            deobfuscation_data_1_5_2,
+            scala_library,
+        ]
     return []

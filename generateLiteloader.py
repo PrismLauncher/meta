@@ -14,14 +14,15 @@ UPSTREAM_DIR = upstream_path()
 ensure_component_dir(LITELOADER_COMPONENT)
 
 
-def process_artefacts(mc_version: str, artefacts: Dict[str, LiteloaderArtefact], is_snapshot: bool) \
-        -> Tuple[List[MetaVersion], Optional[MetaVersion]]:
+def process_artefacts(
+    mc_version: str, artefacts: Dict[str, LiteloaderArtefact], is_snapshot: bool
+) -> Tuple[List[MetaVersion], Optional[MetaVersion]]:
     versions: List[MetaVersion] = []
     lookup: Dict[str, MetaVersion] = {}
     latest_version = None
     latest = None
     for x, artefact in artefacts.items():
-        if x == 'latest':
+        if x == "latest":
             latest_version = artefact.version
             continue
         v = MetaVersion(
@@ -34,7 +35,8 @@ def process_artefacts(mc_version: str, artefacts: Dict[str, LiteloaderArtefact],
             main_class="net.minecraft.launchwrapper.Launch",
             order=10,
             libraries=artefact.libraries,
-            type="release")
+            type="release",
+        )
 
         if is_snapshot:
             v.type = "snapshot"
@@ -48,7 +50,7 @@ def process_artefacts(mc_version: str, artefacts: Dict[str, LiteloaderArtefact],
 
         liteloader_lib = Library(
             name=GradleSpecifier("com.mumfrey", "liteloader", v.version),
-            url="http://dl.liteloader.com/versions/"
+            url="http://dl.liteloader.com/versions/",
         )
         if is_snapshot:
             liteloader_lib.mmcHint = "always-stale"
@@ -72,10 +74,14 @@ def process_versions(index: LiteloaderIndex) -> Tuple[List[MetaVersion], List[st
 
         latest_release = None
         if versionObject.artefacts:
-            versions, latest_release = process_artefacts(mcVersion, versionObject.artefacts.liteloader, False)
+            versions, latest_release = process_artefacts(
+                mcVersion, versionObject.artefacts.liteloader, False
+            )
             all_versions.extend(versions)
         if versionObject.snapshots:
-            versions, latest_snapshot = process_artefacts(mcVersion, versionObject.snapshots.liteloader, True)
+            versions, latest_snapshot = process_artefacts(
+                mcVersion, versionObject.snapshots.liteloader, True
+            )
             all_versions.extend(versions)
 
         if latest_release:
@@ -93,16 +99,20 @@ def main():
     all_versions, recommended = process_versions(index)
 
     for version in all_versions:
-        version.write(os.path.join(LAUNCHER_DIR, LITELOADER_COMPONENT, f"{version.version}.json"))
+        version.write(
+            os.path.join(LAUNCHER_DIR, LITELOADER_COMPONENT, f"{version.version}.json")
+        )
 
-    package = MetaPackage(uid=LITELOADER_COMPONENT,
-                          name='LiteLoader',
-                          description=index.meta.description,
-                          project_url=index.meta.url,
-                          authors=[index.meta.authors],
-                          recommended=recommended)
+    package = MetaPackage(
+        uid=LITELOADER_COMPONENT,
+        name="LiteLoader",
+        description=index.meta.description,
+        project_url=index.meta.url,
+        authors=[index.meta.authors],
+        recommended=recommended,
+    )
     package.write(os.path.join(LAUNCHER_DIR, LITELOADER_COMPONENT, "package.json"))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
