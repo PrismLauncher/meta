@@ -1,5 +1,9 @@
 .idea/
 
+# direnv / Nix
+.direnv/
+.pre-commit-config.yaml
+
 public/*/
 
 caches/
