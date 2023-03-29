@@ -117,9 +117,7 @@
       "com.mojang:text2speech:1.7",
       "com.mojang:text2speech:1.10.1",
       "com.mojang:text2speech:1.10.3",
-      "com.mojang:text2speech:1.11.2",
-      "com.mojang:text2speech:1.12.4",
-      "com.mojang:text2speech:1.13.9"
+      "com.mojang:text2speech:1.11.2"
     ],
     "override": {
       "rules": [
