@@ -1581,6 +1581,28 @@
     }
   },
   {
+    "_comment": "Only allow windows-arm64 for existing LWJGL 3.3.1",
+    "match": [
+      "org.lwjgl:lwjgl-glfw-natives-windows-arm64:3.3.1",
+      "org.lwjgl:lwjgl-jemalloc-natives-windows-arm64:3.3.1",
+      "org.lwjgl:lwjgl-openal-natives-windows-arm64:3.3.1",
+      "org.lwjgl:lwjgl-opengl-natives-windows-arm64:3.3.1",
+      "org.lwjgl:lwjgl-stb-natives-windows-arm64:3.3.1",
+      "org.lwjgl:lwjgl-tinyfd-natives-windows-arm64:3.3.1",
+      "org.lwjgl:lwjgl-natives-windows-arm64:3.3.1"
+    ],
+    "override": {
+      "rules": [
+        {
+          "action": "allow",
+          "os": {
+            "name": "windows-arm64"
+          }
+        }
+      ]
+    }
+  },
+  {
     "_comment": "Add linux-arm64 support for LWJGL 3.3.1",
     "match": [
       "org.lwjgl:lwjgl-glfw:3.3.1"
