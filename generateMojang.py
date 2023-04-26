@@ -103,6 +103,7 @@ PASS_VARIANTS = [
 # LWJGL versions we def. don't want!
 BAD_VARIANTS = [
     "8836c419f90f69a278b97d945a34af165c24ff60",  # 3.3.1 (2022-05-18 13:51:54+00:00) split natives, with workaround, replaced by 23w26a
+    "3c624b94c06dbc4abae08fe6156d74abe4a2cca5",  # 3.3.1 (2022-05-04 14:41:35+00:00) we already have a nice 3.3.1
     "e1106ca765798218323b7a6d7528050260ea9d88",  # 3.3.1 (2022-05-04 14:41:35+00:00) doesn't use split natives
     "90b3d9ca01058286c033b6b7ae7f6dc370a04015",  # 3.2.2 (2022-03-31 14:53:25+00:00) only linux, windows
     "d986df9598fa2bcf4a5baab5edf044548e66d011",  # 3.2.2 (2021-12-10 03:36:38+00:00) only linux, windows
