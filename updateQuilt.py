@@ -65,25 +65,17 @@ def get_binary_file(path, url):
 
 
 def compute_jar_file(path, url):
-    # These two approaches should result in the same metadata, except for the timestamp which might be a few minutes
-    # off for the fallback method
-    try:
-        # Let's not download a Jar file if we don't need to.
-        headers = head_file(url)
-        tstamp = datetime.strptime(headers["Last-Modified"], DATETIME_FORMAT_HTTP)
-    except requests.HTTPError:
-        # Just in case something changes in the future
-        print(f"Falling back to downloading jar for {url}")
-
-        jar_path = path + ".jar"
-        get_binary_file(jar_path, url)
-        tstamp = datetime.fromtimestamp(0)
-        with zipfile.ZipFile(jar_path) as jar:
-            allinfo = jar.infolist()
-            for info in allinfo:
-                tstamp_new = datetime(*info.date_time)
-                if tstamp_new > tstamp:
-                    tstamp = tstamp_new
+    # NOTE: Quilt Meta does not make any guarantees about Last-Modified.
+    # Always download the JAR file instead
+    jar_path = path + ".jar"
+    get_binary_file(jar_path, url)
+    tstamp = datetime.fromtimestamp(0)
+    with zipfile.ZipFile(jar_path) as jar:
+        allinfo = jar.infolist()
+        for info in allinfo:
+            tstamp_new = datetime(*info.date_time)
+            if tstamp_new > tstamp:
+                tstamp = tstamp_new
 
     data = FabricJarInfo(release_time=tstamp)
     data.write(path + ".json")
