@@ -129,7 +129,7 @@ class GradleSpecifier:
 
 
 class MetaBase(pydantic.BaseModel):
-    def dict(self, **kwargs) -> Dict[str, Any]:
+    def dict(self, **kwargs: Any) -> Dict[str, Any]:
         for k in ["by_alias"]:
             if k in kwargs:
                 del kwargs[k]
@@ -145,7 +145,7 @@ class MetaBase(pydantic.BaseModel):
             exclude_none=True, sort_keys=True, by_alias=True, indent=4, **kwargs
         )
 
-    def write(self, file_path):
+    def write(self, file_path: str):
         with open(file_path, "w") as f:
             f.write(self.json())
 

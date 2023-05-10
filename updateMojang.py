@@ -11,6 +11,7 @@ from meta.common.mojang import (
     ASSETS_DIR,
     STATIC_EXPERIMENTS_FILE,
     STATIC_OLD_SNAPSHOTS_FILE,
+    JAVA_MANIFEST_FILE,
 )
 from meta.model.mojang import (
     MojangIndexWrap,
@@ -19,6 +20,7 @@ from meta.model.mojang import (
     ExperimentIndexWrap,
     OldSnapshotIndexWrap,
     OldSnapshotIndex,
+    JavaIndex,
 )
 
 UPSTREAM_DIR = upstream_path()
@@ -79,6 +81,19 @@ def fetch_version(path, url):
         json.dump(version_json, f, sort_keys=True, indent=4)
 
     return version_json
+
+
+MOJANG_JAVA_URL = "https://piston-meta.mojang.com/v1/products/java-runtime/2ec0cc96c44e5a76b9c8b7c39df7210883d12871/all.json"
+
+def update_javas():
+    r = sess.get(MOJANG_JAVA_URL)
+    r.raise_for_status()
+
+    remote_javas = JavaIndex(**r.json())
+    
+    java_manifest_path = os.path.join(UPSTREAM_DIR, JAVA_MANIFEST_FILE)
+
+    remote_javas.write(java_manifest_path)
 
 
 def main():
@@ -160,6 +175,8 @@ def main():
 
     remote_versions.index.write(version_manifest_path)
 
+    print("Getting Mojang Java runtime manfest")
+    update_javas()
 
 if __name__ == "__main__":
     main()

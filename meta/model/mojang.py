@@ -190,6 +190,48 @@ class JavaVersion(MetaBase):
     major_version: int = Field(8, alias="majorVersion")
 
 
+class JavaIndexAvailability(MetaBase):
+    group: int
+    progress: int
+
+
+class JavaIndexManifest(MetaBase):
+    sha1: str
+    size: int
+    url: str
+
+
+class JavaIndexVersion(MetaBase):
+    name: str
+    released: datetime
+
+
+class JavaRuntime(MetaBase):
+    availability: JavaIndexAvailability
+    manifest: JavaIndexManifest
+    version: JavaIndexVersion
+
+
+class JavaIndexEntry(MetaBase):
+    java_runtime_alpha: list[JavaRuntime] = Field(alias="java-runtime-alpha")
+    java_runtime_beta: list[JavaRuntime] = Field(alias="java-runtime-beta")
+    java_runtime_gamma: list[JavaRuntime] = Field(alias="java-runtime-gamma")
+    jre_legacy: list[JavaRuntime] = Field(alias="jre-legacy")
+    minecraft_java_exe: list[JavaRuntime] = Field(alias="minecraft-java-exe")
+
+
+class JavaIndex(MetaBase):
+    gamecore: JavaIndexEntry
+    linux: JavaIndexEntry
+    linux_i386: JavaIndexEntry = Field(alias="linux-i386")
+    mac_os: JavaIndexEntry = Field(alias="mac-os")
+    mac_os_arm64: JavaIndexEntry = Field(alias="mac-os-arm64")
+    windows_arm64: JavaIndexEntry = Field(alias="windows-arm64")
+    windows_x64: JavaIndexEntry = Field(alias="windows-x64")
+    windows_x86: JavaIndexEntry = Field(alias="windows-x86")
+
+
+
 class MojangVersion(MetaBase):
     @validator("minimum_launcher_version")
     def validate_minimum_launcher_version(cls, v):
