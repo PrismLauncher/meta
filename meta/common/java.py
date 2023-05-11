@@ -8,3 +8,5 @@ AZUL_DIR = join(BASE_DIR, "azul")
 
 ADOPTIUM_VERSIONS_DIR = join(ADOPTIUM_DIR, "versions")
 AZUL_VERSIONS_DIR = join(AZUL_DIR, "versions")
+
+JAVA_COMPONENT = "net.minecraft.java"

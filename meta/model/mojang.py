@@ -1,5 +1,6 @@
 from datetime import datetime
 from typing import Optional, List, Dict, Any, Iterator
+from .enum import StrEnum
 
 from pydantic import validator, Field
 
@@ -185,51 +186,70 @@ class MojangLogging(MetaBase):
     type: str
 
 
+class MojangJavaComponent(StrEnum):
+    JreLegacy = "jre-legacy"
+    Alpha = "java-runtime-alpha"
+    Beta = "java-runtime-beta"
+    Gamma = "java-runtime-gamma"
+    Exe = "minecraft-java-exe"
+
+
 class JavaVersion(MetaBase):
-    component: str = "jre-legacy"
+    component: MojangJavaComponent = MojangJavaComponent.JreLegacy
     major_version: int = Field(8, alias="majorVersion")
 
 
-class JavaIndexAvailability(MetaBase):
+class MojangJavaIndexAvailability(MetaBase):
     group: int
     progress: int
 
 
-class JavaIndexManifest(MetaBase):
+class MojangJavaIndexManifest(MetaBase):
     sha1: str
     size: int
     url: str
 
 
-class JavaIndexVersion(MetaBase):
+class MojangJavaIndexVersion(MetaBase):
     name: str
     released: datetime
 
 
-class JavaRuntime(MetaBase):
-    availability: JavaIndexAvailability
-    manifest: JavaIndexManifest
-    version: JavaIndexVersion
+class MojangJavaRuntime(MetaBase):
+    availability: MojangJavaIndexAvailability
+    manifest: MojangJavaIndexManifest
+    version: MojangJavaIndexVersion
 
 
-class JavaIndexEntry(MetaBase):
-    java_runtime_alpha: list[JavaRuntime] = Field(alias="java-runtime-alpha")
-    java_runtime_beta: list[JavaRuntime] = Field(alias="java-runtime-beta")
-    java_runtime_gamma: list[JavaRuntime] = Field(alias="java-runtime-gamma")
-    jre_legacy: list[JavaRuntime] = Field(alias="jre-legacy")
-    minecraft_java_exe: list[JavaRuntime] = Field(alias="minecraft-java-exe")
+class MojangJavaIndexEntry(MetaBase):
+    __root__: dict[MojangJavaComponent, list[MojangJavaRuntime]]
+
+    def __iter__(self) -> Iterator[MojangJavaComponent]:
+        return iter(self.__root__)
+
+    def __getitem__(self, item) -> list[MojangJavaRuntime]:
+        return self.__root__[item]
+
+
+class MojangJavaOsName(StrEnum):
+    Gamecore = "gamecore"
+    Linux = "linux"
+    Linuxi386 = "linux-i386"
+    MacOs = "mac-os"
+    MacOSArm64 = "mac-os-arm64"
+    WindowsArm64 = "windows-arm64"
+    WindowsX64 = "windows-x64"
+    WindowsX86 = "windows-x86"
 
 
 class JavaIndex(MetaBase):
-    gamecore: JavaIndexEntry
-    linux: JavaIndexEntry
-    linux_i386: JavaIndexEntry = Field(alias="linux-i386")
-    mac_os: JavaIndexEntry = Field(alias="mac-os")
-    mac_os_arm64: JavaIndexEntry = Field(alias="mac-os-arm64")
-    windows_arm64: JavaIndexEntry = Field(alias="windows-arm64")
-    windows_x64: JavaIndexEntry = Field(alias="windows-x64")
-    windows_x86: JavaIndexEntry = Field(alias="windows-x86")
+    __root__: dict[MojangJavaOsName, MojangJavaIndexEntry]
 
+    def __iter__(self) -> Iterator[MojangJavaOsName]:
+        return iter(self.__root__)
+
+    def __getitem__(self, item) -> MojangJavaIndexEntry:
+        return self.__root__[item]
 
 
 class MojangVersion(MetaBase):

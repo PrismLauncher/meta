@@ -12,23 +12,23 @@ from meta.common.java import (
 )
 from meta.model.java import (
     ADOPTIUM_API_AVAILABLE_RELEASES,
-    adoptiumAPIFeatureReleases,
+    adoptiumAPIFeatureReleasesUrl,
     AdoptiumImageType,
     AdoptiumAPIFeatureReleasesQuery,
     AdoptiumAvailableReleases,
     AdoptiumRelease,
-    AdoptiumReleasesWrap,
-    azulApiPackages,
+    AdoptiumReleases,
+    azulApiPackagesUrl,
     AzulApiPackagesQuery,
     ZuluPackageList,
-    ZuluPackagesListWrap,
+    ZuluPackages,
     AzulArchiveType,
     AzulReleaseStatus,
     AzulAvailabilityType,
     AzulJavaPackageType,
-    azulApiPackageDetail,
+    azulApiPackageDetailUrl,
     ZuluPackageDetail,
-    ZuluPackagesDetailListWrap,
+    ZuluPackagesDetail,
 )
 
 UPSTREAM_DIR = upstream_path()
@@ -65,7 +65,7 @@ def main():
         while True:
             query = AdoptiumAPIFeatureReleasesQuery(
                 image_type=AdoptiumImageType.Jre, page_size=page_size, page=page)
-            api_call = adoptiumAPIFeatureReleases(feature, query=query)
+            api_call = adoptiumAPIFeatureReleasesUrl(feature, query=query)
             print("Fetching Page:", page, api_call)
             r_rls = sess.get(api_call)
             if r_rls.status_code == 404:
@@ -81,9 +81,9 @@ def main():
             page += 1
 
         print("Total Adoptium releases for feature:", len(releases_for_feature))
-        releases = AdoptiumReleasesWrap(releases=releases_for_feature)
+        releases = AdoptiumReleases(__root__=releases_for_feature)
         feature_file = os.path.join(
-            UPSTREAM_DIR, ADOPTIUM_VERSIONS_DIR, "{}.json".format(feature))
+            UPSTREAM_DIR, ADOPTIUM_VERSIONS_DIR, f"java{feature}.json")
         releases.write(feature_file)
 
     print("Getting Azul Release Manifests")
@@ -100,7 +100,7 @@ def main():
             javafx_bundled=False,
             page=page,
             page_size=page_size)
-        api_call = azulApiPackages(query=query)
+        api_call = azulApiPackagesUrl(query=query)
 
         print("Processing Page:", page, api_call)
 
@@ -117,38 +117,39 @@ def main():
         page += 1
 
     print("Total Azul Packages:", len(zulu_packages))
-    packages = ZuluPackagesListWrap(packages=zulu_packages)
+    packages = ZuluPackages(__root__=zulu_packages)
     azul_manifest_file = os.path.join(UPSTREAM_DIR, AZUL_DIR, "packages.json")
     packages.write(azul_manifest_file)
 
-    azul_major_versions: dict[int, ZuluPackagesListWrap] = {}
+    azul_major_versions: dict[int, ZuluPackages] = {}
 
-    for pkg in packages.packages:
+    for pkg in packages:
 
         major_version = pkg.java_version[0]
         if major_version not in azul_major_versions:
-            azul_major_versions[major_version] = ZuluPackagesListWrap(
-                packages=[])
+            azul_major_versions[major_version] = ZuluPackagesDetail(__root__=[])
 
-        azul_major_versions[major_version].packages.append(pkg)
+        
 
         pkg_file = os.path.join(
-            UPSTREAM_DIR, AZUL_VERSIONS_DIR, "{}.json".format(pkg.package_uuid))
+            UPSTREAM_DIR, AZUL_VERSIONS_DIR, f"{pkg.package_uuid}.json")
         if os.path.exists(pkg_file) and os.path.isfile(pkg_file):
-            pass
+            pkg_detail = ZuluPackageDetail.parse_file(pkg_file)
+            azul_major_versions[major_version].append(pkg_detail)
         else:
 
-            api_call = azulApiPackageDetail(pkg.package_uuid)
+            api_call = azulApiPackageDetailUrl(pkg.package_uuid)
             print("Fetching Azul package manifest:", pkg.package_uuid)
             r_pkg = sess.get(api_call)
             r_pkg.raise_for_status()
 
             pkg_detail = ZuluPackageDetail(**r_pkg.json())
             pkg_detail.write(pkg_file)
+            azul_major_versions[major_version].append(pkg_detail)
 
     for major in azul_major_versions:
         major_file = os.path.join(
-            UPSTREAM_DIR, AZUL_VERSIONS_DIR, "{}.json".format(major))
+            UPSTREAM_DIR, AZUL_VERSIONS_DIR, f"java{major}.json")
         azul_major_versions[major].write(major_file)
 
 

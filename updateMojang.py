@@ -89,7 +89,7 @@ def update_javas():
     r = sess.get(MOJANG_JAVA_URL)
     r.raise_for_status()
 
-    remote_javas = JavaIndex(**r.json())
+    remote_javas = JavaIndex(__root__=r.json())
     
     java_manifest_path = os.path.join(UPSTREAM_DIR, JAVA_MANIFEST_FILE)
 

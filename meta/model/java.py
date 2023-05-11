@@ -3,12 +3,82 @@ from . import (
 )
 from pydantic import Field
 from datetime import datetime
-from enum import Enum
+from enum import IntEnum, Enum
+from .enum import StrEnum
 from typing import Optional, List, Dict, Any, Iterator, Iterable, NamedTuple
 from collections import namedtuple
 from urllib.parse import urljoin, urlencode, urlparse, urlunparse
 
 # namedtuple to match the internal signature of urlunparse
+
+
+class JavaRuntimeOS(StrEnum):
+    MacOsX64 = "mac-os-x64"
+    MacOsX86 = "mac-os-x86" # rare
+    MacOsArm64 = "mac-os-arm64"
+    # MacOsArm32 = "mac-os-arm32" # doesn't exsist
+    LinuxX64 = "linux-x64"
+    LinuxX86 = "linux-x86"
+    LinuxArm64 = "linux-arm64"
+    LinuxArm32 = "linux-arm32"
+    WindowsX64 = "windows-x64"
+    WindowsX86 = "windows-x86"
+    WindowsArm64 = "windows-arm64"
+    WindowsArm32 = "windows-arm32"
+    Unknown = "unknown"
+
+
+class JavaRuntimeDownloadType(StrEnum):
+    Manifest = "manifest"
+    Archive = "archive"
+
+
+class JavaVersionMeta(MetaBase):
+    major: int
+    minor: int
+    security: int
+    build: Optional[int]
+
+    def __str__(self):
+        ver = f"{self.major}.{self.minor}.{self.security}"
+        if self.build is not None:
+            ver = f"{ver}+{self.build}"
+        return ver
+
+
+class JavaChecksumType(StrEnum):
+    Sha1 = "sha1"
+    Sha256 = "sha256"
+
+
+class JavaChecksumMeta(MetaBase):
+    type: JavaChecksumType
+    hash: str
+
+
+class JavaRuntimeMeta(MetaBase):
+    name: str
+    vender: str
+    url: str
+    release_time: datetime = Field(alias="releaseTime")
+    checksum: Optional[JavaChecksumMeta]
+    recomended: bool
+    download_type: JavaRuntimeDownloadType = Field(alias="downloadType")
+
+
+class JavaRuntimeMap(MetaBase):
+    __root__: dict[JavaRuntimeOS, list[JavaRuntimeMeta]] = {
+        os: [] for os in JavaRuntimeOS if os != JavaRuntimeOS.Unknown
+    }
+
+    def __iter__(self) -> Iterator[JavaRuntimeOS]:
+        return iter(self.__root__)
+
+    def __getitem__(self, item) -> list[JavaRuntimeMeta]:
+        return self.__root__[item]
+
+    def __len__(self):
+        return len(self.__root__)
 
 
 class URLComponents(NamedTuple):
@@ -21,7 +91,6 @@ class URLComponents(NamedTuple):
 
 
 class APIQuery(MetaBase):
-
     def to_query(self):
         set_parts: dict[str, Any] = {}
         for key, value in self.dict().items():
@@ -38,15 +107,15 @@ class APIQuery(MetaBase):
         return urlencode(set_parts, doseq=True)
 
 
-class AdoptiumJvmImpl(Enum):
+class AdoptiumJvmImpl(StrEnum):
     Hostspot = "hotspot"
 
 
-class AdoptiumVendor(Enum):
+class AdoptiumVendor(StrEnum):
     Eclipse = "eclipse"
 
 
-class AdoptiumArchitecture(Enum):
+class AdoptiumArchitecture(StrEnum):
     X64 = "x64"
     X86 = "x86"
     X32 = "x32"
@@ -59,22 +128,22 @@ class AdoptiumArchitecture(Enum):
     Riscv64 = "riscv64"
 
 
-class AdoptiumReleaseType(Enum):
+class AdoptiumReleaseType(StrEnum):
     GenralAccess = "ga"
     EarlyAccess = "ea"
 
 
-class AdoptiumSortMethod(Enum):
+class AdoptiumSortMethod(StrEnum):
     Default = "DEFAULT"
     Date = "DATE"
 
 
-class AdoptiumSortOrder(Enum):
+class AdoptiumSortOrder(StrEnum):
     Asc = "ASC"
     Desc = "DESC"
 
 
-class AdoptiumImageType(Enum):
+class AdoptiumImageType(StrEnum):
     Jdk = "jdk"
     Jre = "jre"
     Testimage = "testimage"
@@ -84,12 +153,12 @@ class AdoptiumImageType(Enum):
     Sbom = "sbom"
 
 
-class AdoptiumHeapSize(Enum):
+class AdoptiumHeapSize(StrEnum):
     Normal = "normal"
     Large = "large"
 
 
-class AdoptiumProject(Enum):
+class AdoptiumProject(StrEnum):
     Jdk = "jdk"
     Valhalla = "valhalla"
     Metropolis = "metropolis"
@@ -97,12 +166,12 @@ class AdoptiumProject(Enum):
     Shenandoah = "shenandoah"
 
 
-class AdoptiumCLib(Enum):
+class AdoptiumCLib(StrEnum):
     Musl = "musl"
-    Glibc = "Glibc"
+    Glibc = "glibc"
 
 
-class AdoptiumOs(Enum):
+class AdoptiumOs(StrEnum):
     Linux = "linux"
     Windows = "windows"
     Mac = "mac"
@@ -128,20 +197,22 @@ class AdoptiumAPIFeatureReleasesQuery(APIQuery):
     page_size: int = 10
     page: int = 0
     project: Optional[AdoptiumProject] = AdoptiumProject.Jdk
-    sort_method:  Optional[AdoptiumSortMethod] = AdoptiumSortMethod.Default
-    sort_order:  Optional[AdoptiumSortOrder] = AdoptiumSortOrder.Desc
-    vender:  Optional[AdoptiumVendor] = AdoptiumVendor.Eclipse
+    sort_method: Optional[AdoptiumSortMethod] = AdoptiumSortMethod.Default
+    sort_order: Optional[AdoptiumSortOrder] = AdoptiumSortOrder.Desc
+    vender: Optional[AdoptiumVendor] = AdoptiumVendor.Eclipse
 
 
-def adoptiumAPIFeatureReleases(
-        feature: int,
-        release_type: AdoptiumReleaseType = AdoptiumReleaseType.GenralAccess,
-        query: AdoptiumAPIFeatureReleasesQuery = AdoptiumAPIFeatureReleasesQuery()
+def adoptiumAPIFeatureReleasesUrl(
+    feature: int,
+    release_type: AdoptiumReleaseType = AdoptiumReleaseType.GenralAccess,
+    query: AdoptiumAPIFeatureReleasesQuery = AdoptiumAPIFeatureReleasesQuery(),
 ):
-    url = urlparse(ADOPTIUM_API_FEATURE_RELEASES.format(
-        feature_version=feature,
-        release_type=release_type.value,
-    ))
+    url = urlparse(
+        ADOPTIUM_API_FEATURE_RELEASES.format(
+            feature_version=feature,
+            release_type=release_type.value,
+        )
+    )
     return urlunparse(url._replace(query=query.to_query()))
 
 
@@ -211,33 +282,42 @@ class AdoptiumRelease(MetaBase):
     release_notes: Optional[AdoptiumFile]
 
 
-class AdoptiumReleasesWrap(MetaBase):
-    releases: list[AdoptiumRelease]
+class AdoptiumReleases(MetaBase):
+    __root__: list[AdoptiumRelease]
+
+    def __iter__(self) -> Iterator[AdoptiumRelease]:
+        return iter(self.__root__)
+
+    def __getitem__(self, item) -> AdoptiumRelease:
+        return self.__root__[item]
+
+    def append(self, rls: AdoptiumRelease):
+        self.__root__.append(rls)
 
 
-class AzulProduct(Enum):
+class AzulProduct(StrEnum):
     Zulu = "zulu"
 
 
-class AzulAvailabilityType(Enum):
+class AzulAvailabilityType(StrEnum):
     SA = "SA"
     CA = "CA"
     NV = "NV"
     _LA = "LA"
 
 
-class AzulJavaPackageType(Enum):
+class AzulJavaPackageType(StrEnum):
     Jdk = "jdk"
     Jre = "jre"
 
 
-class AzulReleaseType(Enum):
+class AzulReleaseType(StrEnum):
     CPU = "CPU"
     PSU = "PSU"
     LU = "LU"
 
 
-class AzulOs(Enum):
+class AzulOs(StrEnum):
     Linux = "linux"
     Macos = "macos"
     Qnx = "qnx"
@@ -245,13 +325,13 @@ class AzulOs(Enum):
     Solaris = "solaris"
 
 
-class AzulLibCType(Enum):
+class AzulLibCType(StrEnum):
     Glibc = "glibc"
     Uclibc = "uclibc"
     Musl = "musl"
 
 
-class AzulCPUGen(Enum):
+class AzulCPUGen(StrEnum):
     V5 = "v5"
     V6kV6kz = "v6k_v6kz"
     V6t2 = "v6t2"
@@ -259,7 +339,7 @@ class AzulCPUGen(Enum):
     V8 = "v8"
 
 
-class AzulArch(Enum):
+class AzulArch(StrEnum):
     Arm = "arm"
     X86 = "x86"
     Mips = "mips"
@@ -268,19 +348,19 @@ class AzulArch(Enum):
     Sparc = "sparc"
 
 
-class AzulHwBitness(Enum):
+class AzulHwBitness(IntEnum):
     X32 = 32
     X64 = 64
 
 
-class AzulAbi(Enum):
+class AzulAbi(StrEnum):
     HardFloat = "hard_float"
     SoftFloat = "soft_float"
     Spe = "spe"
     Any = "any"
 
 
-class AzulArchiveType(Enum):
+class AzulArchiveType(StrEnum):
     Deb = "deb"
     Rpm = "rpm"
     Dmg = "dmg"
@@ -290,30 +370,30 @@ class AzulArchiveType(Enum):
     Msi = "msi"
 
 
-class AzulReleaseStatus(Enum):
+class AzulReleaseStatus(StrEnum):
     Eval = "eval"
     Ea = "ea"
     Ga = "ga"
     Both = "both"
 
 
-class AzulSupportTerm(Enum):
+class AzulSupportTerm(StrEnum):
     Sts = "sts"
     Mts = "mts"
     Lts = "lts"
 
 
-class AzulCertifications(Enum):
+class AzulCertifications(StrEnum):
     Tck = "tck"
     _Aqavit = "aqavit"
     none = "none"
 
 
-class AzulSignatureType(Enum):
+class AzulSignatureType(StrEnum):
     Openpgp = "openpgp"
 
 
-class AzulOsQueryParam(Enum):
+class AzulOsQueryParam(StrEnum):
     Macos = "macos"
     Windows = "windows"
     Linux = "linux"
@@ -323,7 +403,7 @@ class AzulOsQueryParam(Enum):
     Solaris = "solaris"
 
 
-class AzulArchQueryParam(Enum):
+class AzulArchQueryParam(StrEnum):
     X86 = "x86"
     X64 = "x64"
     Amd64 = "amd64"
@@ -371,12 +451,12 @@ class AzulApiPackagesQuery(APIQuery):
     page_size: int = 100
 
 
-def azulApiPackages(query: AzulApiPackagesQuery = AzulApiPackagesQuery()):
+def azulApiPackagesUrl(query: AzulApiPackagesQuery = AzulApiPackagesQuery()):
     url = urlparse(AZUL_API_PACKAGES)
     return urlunparse(url._replace(query=query.to_query()))
 
 
-def azulApiPackageDetail(package_uuid: str):
+def azulApiPackageDetailUrl(package_uuid: str):
     return AZUL_API_PACKAGE_DETAIL.format(package_uuid=package_uuid)
 
 
@@ -431,9 +511,36 @@ class ZuluPackageList(MetaBase):
     availability_type: Optional[AzulAvailabilityType]
 
 
-class ZuluPackagesListWrap(MetaBase):
-    packages: list[ZuluPackageList]
+class ZuluPackages(MetaBase):
+    __root__: list[ZuluPackageList]
+
+    def __iter__(self) -> Iterator[ZuluPackageList]:
+        return iter(self.__root__)
+
+    def __getitem__(self, item) -> ZuluPackageList:
+        return self.__root__[item]
+
+    def append(self, pkg: ZuluPackageList):
+        self.__root__.append(pkg)
 
 
-class ZuluPackagesDetailListWrap(MetaBase):
-    packages: list[ZuluPackageDetail]
+class ZuluPackagesDetail(MetaBase):
+    __root__: list[ZuluPackageDetail]
+
+    def __iter__(self) -> Iterator[ZuluPackageDetail]:
+        return iter(self.__root__)
+
+    def __getitem__(self, item) -> ZuluPackageDetail:
+        return self.__root__[item]
+
+    def append(self, pkg: ZuluPackageDetail):
+        self.__root__.append(pkg)
+
+
+MOJANG_OS_NAMES = ["mac-os", "linux", "windows"]
+
+MOJANG_OS_ARCHITECTURES = [
+    "x64" "x86",
+    "arm64",
+    "arm32",
+]
