@@ -217,9 +217,9 @@ def azul_package_to_java_runtime(pkg: ZuluPackageDetail) -> JavaRuntimeMeta:
     )
 
 
-PREFERED_vendor_ORDER = ["mojang", "eclipse", "azul"]
+PREFERED_VENDOR_ORDER = ["mojang", "eclipse", "azul"]
 
-__PREFERED_vendor_ORDER = list(reversed(PREFERED_vendor_ORDER))
+__PREFERED_VENDOR_ORDER = list(reversed(PREFERED_VENDOR_ORDER))
 
 
 def vendor_priority(vendor: str) -> int:
@@ -231,9 +231,9 @@ def vendor_priority(vendor: str) -> int:
     Returns:
         int: how preferable the vendor is, the higher the better
     """
-    if vendor not in PREFERED_vendor_ORDER:
+    if vendor not in PREFERED_VENDOR_ORDER:
         return -1
-    return __PREFERED_vendor_ORDER.index(vendor)
+    return __PREFERED_VENDOR_ORDER.index(vendor)
 
 
 def ensure_one_recommended(runtimes: list[JavaRuntimeMeta]):
