@@ -14,7 +14,7 @@ from meta.common.java import (
     ADOPTIUM_DIR,
     ADOPTIUM_VERSIONS_DIR,
     AZUL_DIR,
-    AZUL_VERSIONS_DIR
+    AZUL_VERSIONS_DIR,
 )
 from meta.model.java import (
     JavaRuntimeOS,
@@ -34,7 +34,6 @@ from meta.model.java import (
 )
 
 from meta.common.mojang import (
-
     JAVA_MANIFEST_FILE,
 )
 
@@ -64,7 +63,7 @@ MOJANG_JAVA_OS_NAMES = [
 
 MOJANG_OS_ARCHITECTURES = [
     "x64",
-    "x86",  
+    "x86",
     "arm64",
     "arm32",
 ]
@@ -76,7 +75,7 @@ MOJANG_OS_ARCHITECTURE_TRANSLATIONS = {
     "i386": "x86",
     "aarch64": "arm64",
     "x86_64": "x64",
-    "arm": "arm32"
+    "arm": "arm32",
 }
 
 
@@ -90,6 +89,7 @@ def translate_arch(arch: str | int):
     else:
         return None
 
+
 MOJANG_OS_NAMES = [
     "mac-os",
     "linux",
@@ -101,6 +101,7 @@ MOJANG_OS_TRANSLATIONS = {
     "mac": "mac-os",
     "macos": "mac-os",
 }
+
 
 def translate_os(os: str):
     os = os.lower()
@@ -131,24 +132,49 @@ def mojang_os_to_java_os(mojang_os: MojangJavaOsName) -> JavaRuntimeOS:
         return JavaRuntimeOS.Unknown
 
 
-def mojang_runtime_to_java_runtime(mojang_runtime: MojangJavaRuntime) -> JavaRuntimeMeta:
+def mojang_runtime_to_java_runtime(
+    mojang_runtime: MojangJavaRuntime,
+) -> JavaRuntimeMeta:
+    major, _, security = mojang_runtime.version.name.partition("u")
+    if major and security:
+        version_parts = [int(major), 0, int(security)]
+    else:
+        version_parts = [int(part) for part in mojang_runtime.version.name.split(".")]
+
+    while len(version_parts) < 3:
+        version_parts.append(0)
+    if len(version_parts) < 4:
+        version_parts.append(None)
+
+    version = JavaVersionMeta(
+        major=version_parts[0],
+        minor=version_parts[1],
+        security=version_parts[2],
+        build=version_parts[3],
+        name=mojang_runtime.version.name,
+    )
     return JavaRuntimeMeta(
         name=f"mojang_jre_{mojang_runtime.version.name}",
         vender="mojang",
         url=mojang_runtime.manifest.url,
         release_time=mojang_runtime.version.released,
         checksum=JavaChecksumMeta(
-            type=JavaChecksumType.Sha1,
-            hash=mojang_runtime.manifest.sha1),
+            type=JavaChecksumType.Sha1, hash=mojang_runtime.manifest.sha1
+        ),
         recomended=True,
-        download_type=JavaRuntimeDownloadType.Manifest)
+        download_type=JavaRuntimeDownloadType.Manifest,
+        version=version,
+    )
 
-def adoptium_release_binary_to_java_runtime(rls: AdoptiumRelease, binary: AdoptiumBinary) -> JavaRuntimeMeta:
+
+def adoptium_release_binary_to_java_runtime(
+    rls: AdoptiumRelease, binary: AdoptiumBinary
+) -> JavaRuntimeMeta:
     version = JavaVersionMeta(
         major=rls.version_data.major,
         minor=rls.version_data.minor,
         security=rls.version_data.security,
-        build=rls.version_data.build
+        build=rls.version_data.build,
     )
     rls_name = f"{rls.vendor}_temurin_{binary.image_type}{version}"
     return JavaRuntimeMeta(
@@ -157,69 +183,131 @@ def adoptium_release_binary_to_java_runtime(rls: AdoptiumRelease, binary: Adopti
         url=binary.package.link,
         release_time=rls.timestamp,
         checksum=JavaChecksumMeta(
-            type=JavaChecksumType.Sha256,
-            hash=binary.package.checksum),
+            type=JavaChecksumType.Sha256, hash=binary.package.checksum
+        ),
         recomended=False,
-        download_type=JavaRuntimeDownloadType.Archive
+        download_type=JavaRuntimeDownloadType.Archive,
+        version=version,
     )
+
 
 def azul_package_to_java_runtime(pkg: ZuluPackageDetail) -> JavaRuntimeMeta:
     version_parts = copy.copy(pkg.java_version)
     while len(version_parts) < 4:
         version_parts.append(None)
-    
+
     version = JavaVersionMeta(
         major=version_parts[0],
         minor=version_parts[1],
         security=version_parts[2],
-        build=version_parts[3]
+        build=version_parts[3],
     )
-    
+
     rls_name = f"azul_{pkg.product}_{pkg.java_package_type}{version}"
-    
+
     return JavaRuntimeMeta(
         name=rls_name,
         vender="azul",
         url=pkg.download_url,
         release_time=pkg.build_date,
-        checksum=JavaChecksumMeta(
-            type=JavaChecksumType.Sha256,
-            hash=pkg.sha256_hash),
+        checksum=JavaChecksumMeta(type=JavaChecksumType.Sha256, hash=pkg.sha256_hash),
         recomended=False,
-        download_type=JavaRuntimeDownloadType.Archive
+        download_type=JavaRuntimeDownloadType.Archive,
+        version=version,
     )
 
+
+PREFERED_VENDER_ORDER = ["mojang", "eclipse", "azul"]
+
+__PREFERED_VENDER_ORDER = list(reversed(PREFERED_VENDER_ORDER))
+
+
+def vender_priority(vender: str) -> int:
+    """Get a numeric priority for a given vendor
+
+    Args:
+        vendor (str): the vender to check
+
+    Returns:
+        int: how preferable the vender is, the higher the better
+    """
+    if vender not in PREFERED_VENDER_ORDER:
+        return -1
+    return __PREFERED_VENDER_ORDER.index(vender)
+
+
+def ensure_one_recomended(runtimes: list[JavaRuntimeMeta]):
+    if len(runtimes) < 1:
+        return  # can't do anything
+
+    recomended: Optional[JavaRuntimeMeta] = None
+    found_first = False
+    need_resort = False
+    for runtime in runtimes:
+        if runtime.recomended:
+            if not found_first:
+                recomended = runtime
+            else:
+                runtime.recomended = False
+                need_resort = True
+
+    if recomended and not need_resort:
+        print("Recomending", recomended.name)
+        return  # we have one recomended already
+
+    if recomended is None:
+        recomended = runtimes[0]
+
+    def better_java_runtime(runtime: JavaRuntimeMeta):
+        if vender_priority(runtime.vender) < vender_priority(recomended.vender):
+            return False
+        if runtime.version < recomended.version:
+            return False
+        if runtime.release_time < recomended.release_time:
+            return False
+        return True
+
+    for runtime in runtimes:
+        if better_java_runtime(runtime):
+            recomended.recomended = False
+            recomended = runtime
+            recomended.recomended = True
+
+    print("Recomending", recomended.name)
+
+
 def main():
-    
     javas: dict[int, JavaRuntimeMap] = {}
-    
+
     def ensure_javamap(major: int):
         if major not in javas:
             javas[major] = JavaRuntimeMap()
-            
+
     def add_java_runtime(runtime: JavaRuntimeMeta, major: int, java_os: JavaRuntimeOS):
         ensure_javamap(major)
         print(f"Regestering runtime: {runtime.name} for Java {major} {java_os}")
         javas[major][java_os].append(runtime)
-    
+
     print("Processing Mojang Javas")
     mojang_java_manifest = JavaIndex.parse_file(
         os.path.join(UPSTREAM_DIR, JAVA_MANIFEST_FILE)
     )
     for mojang_os_name in mojang_java_manifest:
         if mojang_os_name == MojangJavaOsName.Gamecore:
-            continue
+            continue  # empty
         java_os = mojang_os_to_java_os(mojang_os_name)
         for comp in mojang_java_manifest[mojang_os_name]:
+            if comp == MojangJavaComponent.Exe:
+                continue  # doesn't appear to be used and not marked with a full verison so I don't trust it
             mojang_runtimes = mojang_java_manifest[mojang_os_name][comp]
             for mojang_runtime in mojang_runtimes:
                 if comp == MojangJavaComponent.JreLegacy:
                     major = 8
                 else:
-                    major = int(mojang_runtime.version.name.partition('.')[0])
+                    major = int(mojang_runtime.version.name.partition(".")[0])
                 runtime = mojang_runtime_to_java_runtime(mojang_runtime)
                 add_java_runtime(runtime, major, java_os)
-                
+
     print("Processing Adoptium Releases")
     adoptium_available_releases = AdoptiumAvailableReleases.parse_file(
         os.path.join(UPSTREAM_DIR, ADOPTIUM_DIR, "available_releases.json")
@@ -237,11 +325,11 @@ def main():
                 if binary_arch is None or binary_os is None:
                     print(f"Ignoring release for {binary.os} {binary.architecture}")
                     continue
-                    
+
                 java_os = JavaRuntimeOS(f"{binary_os}-{binary_arch}")
                 runtime = adoptium_release_binary_to_java_runtime(rls, binary)
                 add_java_runtime(runtime, major, java_os)
-    
+
     print("Processing Azul Packages")
     azul_packages = ZuluPackages.parse_file(
         os.path.join(UPSTREAM_DIR, AZUL_DIR, "packages.json")
@@ -250,28 +338,32 @@ def main():
         pkg_detail = ZuluPackageDetail.parse_file(
             os.path.join(UPSTREAM_DIR, AZUL_VERSIONS_DIR, f"{pkg.package_uuid}.json")
         )
-        major =  pkg_detail.java_version[0]
+        major = pkg_detail.java_version[0]
         pkg_os = translate_os(str(pkg_detail.os))
-        if pkg_detail.arch == AzulArch.Arm:   
+        if pkg_detail.arch == AzulArch.Arm:
             pkg_arch = translate_arch(f"{pkg_detail.arch}{pkg_detail.hw_bitness}")
-        elif  pkg_detail.arch == AzulArch.X86:
+        elif pkg_detail.arch == AzulArch.X86:
             pkg_arch = translate_arch(int(pkg_detail.hw_bitness))
         else:
             pkg_arch = None
         if pkg_arch is None or pkg_os is None:
-            print(f"Ignoring release for {pkg_detail.os} {pkg_detail.arch}_{pkg_detail.hw_bitness}")
+            print(
+                f"Ignoring release for {pkg_detail.os} {pkg_detail.arch}_{pkg_detail.hw_bitness}"
+            )
             continue
-        
+
         java_os = JavaRuntimeOS(f"{pkg_os}-{pkg_arch}")
         runtime = azul_package_to_java_runtime(pkg_detail)
         add_java_runtime(runtime, major, java_os)
-    
+
     for major, runtimes in javas.items():
         for java_os in runtimes:
             print(f"Total runtimes for Java {major} {java_os}:", len(runtimes[java_os]))
+            ensure_one_recomended(runtimes[java_os])
+
         runtimes_file = os.path.join(LAUNCHER_DIR, JAVA_COMPONENT, f"java{major}.json")
         runtimes.write(runtimes_file)
-        
+
 
 if __name__ == "__main__":
     main()

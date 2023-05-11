@@ -8,7 +8,7 @@ from .enum import StrEnum
 from typing import Optional, List, Dict, Any, Iterator, Iterable, NamedTuple
 from collections import namedtuple
 from urllib.parse import urljoin, urlencode, urlparse, urlunparse
-
+from functools import total_ordering
 # namedtuple to match the internal signature of urlunparse
 
 
@@ -32,18 +32,31 @@ class JavaRuntimeDownloadType(StrEnum):
     Manifest = "manifest"
     Archive = "archive"
 
-
+@total_ordering
 class JavaVersionMeta(MetaBase):
     major: int
     minor: int
     security: int
-    build: Optional[int]
+    build: Optional[int] = None
+    name: Optional[str] = None
 
     def __str__(self):
         ver = f"{self.major}.{self.minor}.{self.security}"
         if self.build is not None:
             ver = f"{ver}+{self.build}"
         return ver
+    
+    def to_tuple(self):
+        build = 0
+        if self.build is not None:
+            build = self.build
+        return (self.major, self.minor, self.security, build)
+    
+    def __eq__(self, other: 'JavaVersionMeta'):
+        return (self.to_tuple() == other.to_tuple())
+    
+    def __lt__(self, other: 'JavaVersionMeta'):
+        return (self.to_tuple() < other.to_tuple())
 
 
 class JavaChecksumType(StrEnum):
@@ -64,6 +77,7 @@ class JavaRuntimeMeta(MetaBase):
     checksum: Optional[JavaChecksumMeta]
     recomended: bool
     download_type: JavaRuntimeDownloadType = Field(alias="downloadType")
+    version: JavaVersionMeta
 
 
 class JavaRuntimeMap(MetaBase):
