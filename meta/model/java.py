@@ -71,11 +71,11 @@ class JavaChecksumMeta(MetaBase):
 
 class JavaRuntimeMeta(MetaBase):
     name: str
-    vender: str
+    vendor: str
     url: str
     release_time: datetime = Field(alias="releaseTime")
     checksum: Optional[JavaChecksumMeta]
-    recomended: bool
+    recommended: bool
     download_type: JavaRuntimeDownloadType = Field(alias="downloadType")
     version: JavaVersionMeta
 
@@ -196,7 +196,7 @@ class AdoptiumOs(StrEnum):
 
 ADOPTIUM_API_BASE = " https://api.adoptium.net"
 ADOPTIUM_API_FEATURE_RELEASES = f"{ADOPTIUM_API_BASE}/v3/assets/feature_releases/{{feature_version}}/{{release_type}}"
-# ?image_type={{image_type}}&heap_size={{heap_size}}&project={{project}}&vender={{vender}}&page_size={{page_size}}&page={{page}}&sort_method={{sort_method}}&sort_order={{sort_order}}
+# ?image_type={{image_type}}&heap_size={{heap_size}}&project={{project}}&vendor={{vendor}}&page_size={{page_size}}&page={{page}}&sort_method={{sort_method}}&sort_order={{sort_order}}
 ADOPTIUM_API_AVAILABLE_RELEASES = f"{ADOPTIUM_API_BASE}/v3/info/available_releases"
 
 
@@ -213,7 +213,7 @@ class AdoptiumAPIFeatureReleasesQuery(APIQuery):
     project: Optional[AdoptiumProject] = AdoptiumProject.Jdk
     sort_method: Optional[AdoptiumSortMethod] = AdoptiumSortMethod.Default
     sort_order: Optional[AdoptiumSortOrder] = AdoptiumSortOrder.Desc
-    vender: Optional[AdoptiumVendor] = AdoptiumVendor.Eclipse
+    vendor: Optional[AdoptiumVendor] = AdoptiumVendor.Eclipse
 
 
 def adoptiumAPIFeatureReleasesUrl(

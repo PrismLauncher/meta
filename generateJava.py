@@ -155,13 +155,13 @@ def mojang_runtime_to_java_runtime(
     )
     return JavaRuntimeMeta(
         name=f"mojang_jre_{mojang_runtime.version.name}",
-        vender="mojang",
+        vendor="mojang",
         url=mojang_runtime.manifest.url,
         release_time=mojang_runtime.version.released,
         checksum=JavaChecksumMeta(
             type=JavaChecksumType.Sha1, hash=mojang_runtime.manifest.sha1
         ),
-        recomended=True,
+        recommended=True,
         download_type=JavaRuntimeDownloadType.Manifest,
         version=version,
     )
@@ -179,13 +179,13 @@ def adoptium_release_binary_to_java_runtime(
     rls_name = f"{rls.vendor}_temurin_{binary.image_type}{version}"
     return JavaRuntimeMeta(
         name=rls_name,
-        vender=rls.vendor,
+        vendor=rls.vendor,
         url=binary.package.link,
         release_time=rls.timestamp,
         checksum=JavaChecksumMeta(
             type=JavaChecksumType.Sha256, hash=binary.package.checksum
         ),
-        recomended=False,
+        recommended=False,
         download_type=JavaRuntimeDownloadType.Archive,
         version=version,
     )
@@ -207,73 +207,73 @@ def azul_package_to_java_runtime(pkg: ZuluPackageDetail) -> JavaRuntimeMeta:
 
     return JavaRuntimeMeta(
         name=rls_name,
-        vender="azul",
+        vendor="azul",
         url=pkg.download_url,
         release_time=pkg.build_date,
         checksum=JavaChecksumMeta(type=JavaChecksumType.Sha256, hash=pkg.sha256_hash),
-        recomended=False,
+        recommended=False,
         download_type=JavaRuntimeDownloadType.Archive,
         version=version,
     )
 
 
-PREFERED_VENDER_ORDER = ["mojang", "eclipse", "azul"]
+PREFERED_vendor_ORDER = ["mojang", "eclipse", "azul"]
 
-__PREFERED_VENDER_ORDER = list(reversed(PREFERED_VENDER_ORDER))
+__PREFERED_vendor_ORDER = list(reversed(PREFERED_vendor_ORDER))
 
 
-def vender_priority(vender: str) -> int:
+def vendor_priority(vendor: str) -> int:
     """Get a numeric priority for a given vendor
 
     Args:
-        vendor (str): the vender to check
+        vendor (str): the vendor to check
 
     Returns:
-        int: how preferable the vender is, the higher the better
+        int: how preferable the vendor is, the higher the better
     """
-    if vender not in PREFERED_VENDER_ORDER:
+    if vendor not in PREFERED_vendor_ORDER:
         return -1
-    return __PREFERED_VENDER_ORDER.index(vender)
+    return __PREFERED_vendor_ORDER.index(vendor)
 
 
-def ensure_one_recomended(runtimes: list[JavaRuntimeMeta]):
+def ensure_one_recommended(runtimes: list[JavaRuntimeMeta]):
     if len(runtimes) < 1:
         return  # can't do anything
 
-    recomended: Optional[JavaRuntimeMeta] = None
+    recommended: Optional[JavaRuntimeMeta] = None
     found_first = False
     need_resort = False
     for runtime in runtimes:
-        if runtime.recomended:
+        if runtime.recommended:
             if not found_first:
-                recomended = runtime
+                recommended = runtime
             else:
-                runtime.recomended = False
+                runtime.recommended = False
                 need_resort = True
 
-    if recomended and not need_resort:
-        print("Recomending", recomended.name)
-        return  # we have one recomended already
+    if recommended and not need_resort:
+        print("Recommending", recommended.name)
+        return  # we have one recommended already
 
-    if recomended is None:
-        recomended = runtimes[0]
+    if recommended is None:
+        recommended = runtimes[0]
 
     def better_java_runtime(runtime: JavaRuntimeMeta):
-        if vender_priority(runtime.vender) < vender_priority(recomended.vender):
+        if vendor_priority(runtime.vendor) < vendor_priority(recommended.vendor):
             return False
-        if runtime.version < recomended.version:
+        if runtime.version < recommended.version:
             return False
-        if runtime.release_time < recomended.release_time:
+        if runtime.release_time < recommended.release_time:
             return False
         return True
 
     for runtime in runtimes:
         if better_java_runtime(runtime):
-            recomended.recomended = False
-            recomended = runtime
-            recomended.recomended = True
+            recommended.recommended = False
+            recommended = runtime
+            recommended.recommended = True
 
-    print("Recomending", recomended.name)
+    print("Recommending", recommended.name)
 
 
 def main():
@@ -359,7 +359,7 @@ def main():
     for major, runtimes in javas.items():
         for java_os in runtimes:
             print(f"Total runtimes for Java {major} {java_os}:", len(runtimes[java_os]))
-            ensure_one_recomended(runtimes[java_os])
+            ensure_one_recommended(runtimes[java_os])
 
         runtimes_file = os.path.join(LAUNCHER_DIR, JAVA_COMPONENT, f"java{major}.json")
         runtimes.write(runtimes_file)
