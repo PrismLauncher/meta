@@ -32,13 +32,13 @@ def static_path():
     return "static"
 
 
-def ensure_upstream_dir(path):
+def ensure_upstream_dir(path: str):
     path = os.path.join(upstream_path(), path)
     if not os.path.exists(path):
         os.makedirs(path)
 
 
-def ensure_component_dir(component_id):
+def ensure_component_dir(component_id: str):
     path = os.path.join(launcher_path(), component_id)
     if not os.path.exists(path):
         os.makedirs(path)
@@ -48,7 +48,7 @@ def transform_maven_key(maven_key: str):
     return maven_key.replace(":", ".")
 
 
-def replace_old_launchermeta_url(url):
+def replace_old_launchermeta_url(url: str):
     o = urlparse(url)
     if o.netloc == "launchermeta.mojang.com":
         return o._replace(netloc="piston-meta.mojang.com").geturl()

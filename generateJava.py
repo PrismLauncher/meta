@@ -1,11 +1,6 @@
 import copy
-import hashlib
 import os
-from collections import defaultdict, namedtuple
-from operator import attrgetter
-from pprint import pprint
-from packaging import version as pversion
-from typing import Optional, List
+from typing import Optional
 
 from meta.common import ensure_component_dir, launcher_path, upstream_path, static_path
 
@@ -21,6 +16,7 @@ from meta.model.java import (
     JavaRuntimeMap,
     JavaRuntimeMeta,
     JavaVersionMeta,
+    JavaPackageType,
     JavaChecksumMeta,
     JavaChecksumType,
     JavaRuntimeDownloadType,
@@ -143,26 +139,29 @@ def mojang_runtime_to_java_runtime(
 
     while len(version_parts) < 3:
         version_parts.append(0)
-    if len(version_parts) < 4:
-        version_parts.append(None)
+
+    build = None
+    if len(version_parts) >= 4:
+        build = version_parts[3]
 
     version = JavaVersionMeta(
         major=version_parts[0],
         minor=version_parts[1],
         security=version_parts[2],
-        build=version_parts[3],
+        build=build,
         name=mojang_runtime.version.name,
     )
     return JavaRuntimeMeta(
         name=f"mojang_jre_{mojang_runtime.version.name}",
         vendor="mojang",
         url=mojang_runtime.manifest.url,
-        release_time=mojang_runtime.version.released,
+        releaseTime=mojang_runtime.version.released,
         checksum=JavaChecksumMeta(
             type=JavaChecksumType.Sha1, hash=mojang_runtime.manifest.sha1
         ),
         recommended=True,
-        download_type=JavaRuntimeDownloadType.Manifest,
+        downloadType=JavaRuntimeDownloadType.Manifest,
+        packageType=JavaPackageType.Jre,
         version=version,
     )
 
@@ -170,10 +169,20 @@ def mojang_runtime_to_java_runtime(
 def adoptium_release_binary_to_java_runtime(
     rls: AdoptiumRelease, binary: AdoptiumBinary
 ) -> JavaRuntimeMeta:
+    assert binary.package is not None
+    
+    checksum = None
+    if binary.package.checksum is not None:
+        checksum = JavaChecksumMeta(
+            type=JavaChecksumType.Sha256, hash=binary.package.checksum
+        )
+
+    pkg_type = JavaPackageType(str(binary.image_type))
+     
     version = JavaVersionMeta(
-        major=rls.version_data.major,
-        minor=rls.version_data.minor,
-        security=rls.version_data.security,
+        major=rls.version_data.major if rls.version_data.major is not None else 0,
+        minor=rls.version_data.minor if rls.version_data.minor is not None else 0,
+        security=rls.version_data.security if rls.version_data.security is not None else 0,
         build=rls.version_data.build,
     )
     rls_name = f"{rls.vendor}_temurin_{binary.image_type}{version}"
@@ -181,38 +190,51 @@ def adoptium_release_binary_to_java_runtime(
         name=rls_name,
         vendor=rls.vendor,
         url=binary.package.link,
-        release_time=rls.timestamp,
-        checksum=JavaChecksumMeta(
-            type=JavaChecksumType.Sha256, hash=binary.package.checksum
-        ),
+        releaseTime=rls.timestamp,
+        checksum=checksum,
         recommended=False,
-        download_type=JavaRuntimeDownloadType.Archive,
+        downloadType=JavaRuntimeDownloadType.Archive,
+        packageType=pkg_type,
         version=version,
     )
 
 
 def azul_package_to_java_runtime(pkg: ZuluPackageDetail) -> JavaRuntimeMeta:
     version_parts = copy.copy(pkg.java_version)
-    while len(version_parts) < 4:
-        version_parts.append(None)
+
+    build = None
+    while len(version_parts) < 3:
+        version_parts.append(0)
+    
+    if len(version_parts) >= 4:
+        build = version_parts[3]
 
     version = JavaVersionMeta(
         major=version_parts[0],
         minor=version_parts[1],
         security=version_parts[2],
-        build=version_parts[3],
+        build=build,
     )
 
+    pkg_type = JavaPackageType(str(pkg.java_package_type))
+
     rls_name = f"azul_{pkg.product}_{pkg.java_package_type}{version}"
+
+    checksum = None
+    if pkg.sha256_hash is not None:
+        checksum = JavaChecksumMeta(
+            type=JavaChecksumType.Sha256, hash=pkg.sha256_hash
+        )
 
     return JavaRuntimeMeta(
         name=rls_name,
         vendor="azul",
         url=pkg.download_url,
-        release_time=pkg.build_date,
-        checksum=JavaChecksumMeta(type=JavaChecksumType.Sha256, hash=pkg.sha256_hash),
+        releaseTime=pkg.build_date,
+        checksum=checksum,
         recommended=False,
-        download_type=JavaRuntimeDownloadType.Archive,
+        downloadType=JavaRuntimeDownloadType.Archive,
+        packageType=pkg_type,
         version=version,
     )
 
@@ -236,9 +258,17 @@ def vendor_priority(vendor: str) -> int:
     return __PREFERED_VENDOR_ORDER.index(vendor)
 
 
-def ensure_one_recommended(runtimes: list[JavaRuntimeMeta]):
+def pkg_type_priority(pkg_type: JavaPackageType) -> int:
+    if pkg_type == JavaPackageType.Jre:
+        return 2
+    elif pkg_type == JavaPackageType.Jdk:
+        return 1
+    else:
+        return -1
+
+def ensure_one_recommended(runtimes: list[JavaRuntimeMeta]) -> Optional[JavaRuntimeMeta]:
     if len(runtimes) < 1:
-        return  # can't do anything
+        return  None# can't do anything
 
     recommended: Optional[JavaRuntimeMeta] = None
     found_first = False
@@ -252,14 +282,17 @@ def ensure_one_recommended(runtimes: list[JavaRuntimeMeta]):
                 need_resort = True
 
     if recommended and not need_resort:
-        print("Recommending", recommended.name)
-        return  # we have one recommended already
+        return recommended # we have one recommended already
 
     if recommended is None:
         recommended = runtimes[0]
 
+
     def better_java_runtime(runtime: JavaRuntimeMeta):
+        assert recommended is not None
         if vendor_priority(runtime.vendor) < vendor_priority(recommended.vendor):
+            return False
+        if pkg_type_priority(runtime.package_type) < pkg_type_priority(recommended.package_type):
             return False
         if runtime.version < recommended.version:
             return False
@@ -273,7 +306,7 @@ def ensure_one_recommended(runtimes: list[JavaRuntimeMeta]):
             recommended = runtime
             recommended.recommended = True
 
-    print("Recommending", recommended.name)
+    return recommended
 
 
 def main():
@@ -316,7 +349,7 @@ def main():
         adoptium_releases = AdoptiumReleases.parse_file(
             os.path.join(UPSTREAM_DIR, ADOPTIUM_VERSIONS_DIR, f"java{major}.json")
         )
-        for rls in adoptium_releases:
+        for _, rls in adoptium_releases:
             for binary in rls.binaries:
                 if binary.package is None:
                     continue
@@ -334,7 +367,7 @@ def main():
     azul_packages = ZuluPackages.parse_file(
         os.path.join(UPSTREAM_DIR, AZUL_DIR, "packages.json")
     )
-    for pkg in azul_packages:
+    for _, pkg in azul_packages:
         pkg_detail = ZuluPackageDetail.parse_file(
             os.path.join(UPSTREAM_DIR, AZUL_VERSIONS_DIR, f"{pkg.package_uuid}.json")
         )
@@ -357,9 +390,11 @@ def main():
         add_java_runtime(runtime, major, java_os)
 
     for major, runtimes in javas.items():
-        for java_os in runtimes:
-            print(f"Total runtimes for Java {major} {java_os}:", len(runtimes[java_os]))
-            ensure_one_recommended(runtimes[java_os])
+        for java_os, runtime_list in runtimes:
+            print(f"Total runtimes for Java {major} {java_os}:", len(runtime_list))
+            rec = ensure_one_recommended(runtime_list)
+            if rec is not None:
+                print(f"Recomending {rec.name} for Java {major} {java_os}")
 
         runtimes_file = os.path.join(LAUNCHER_DIR, JAVA_COMPONENT, f"java{major}.json")
         runtimes.write(runtimes_file)

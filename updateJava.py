@@ -1,6 +1,4 @@
-import json
 import os
-import zipfile
 
 from meta.common import upstream_path, ensure_upstream_dir, static_path, default_session
 from meta.common.java import (
@@ -25,7 +23,6 @@ from meta.model.java import (
     AzulArchiveType,
     AzulReleaseStatus,
     AzulAvailabilityType,
-    AzulJavaPackageType,
     azulApiPackageDetailUrl,
     ZuluPackageDetail,
     ZuluPackagesDetail,
@@ -57,16 +54,35 @@ def main():
 
     for feature in available.available_releases:
         print("Getting Manifests for Adoptium feature release:", feature)
-        page = 0
+        
         page_size = 10
 
         releases_for_feature: list[AdoptiumRelease] = []
-
+        page = 0
         while True:
             query = AdoptiumAPIFeatureReleasesQuery(
                 image_type=AdoptiumImageType.Jre, page_size=page_size, page=page)
             api_call = adoptiumAPIFeatureReleasesUrl(feature, query=query)
-            print("Fetching Page:", page, api_call)
+            print("Fetching JRE Page:", page, api_call)
+            r_rls = sess.get(api_call)
+            if r_rls.status_code == 404:
+                break
+            else:
+                r_rls.raise_for_status()
+
+            releases = list(AdoptiumRelease(**rls) for rls in r_rls.json())
+            releases_for_feature.extend(releases)
+
+            if len(r_rls.json()) < page_size:
+                break
+            page += 1
+        
+        page = 0
+        while True:
+            query = AdoptiumAPIFeatureReleasesQuery(
+                image_type=AdoptiumImageType.Jdk, page_size=page_size, page=page)
+            api_call = adoptiumAPIFeatureReleasesUrl(feature, query=query)
+            print("Fetching JDK Page:", page, api_call)
             r_rls = sess.get(api_call)
             if r_rls.status_code == 404:
                 break
@@ -96,7 +112,6 @@ def main():
             archive_type=AzulArchiveType.Zip,
             release_status=AzulReleaseStatus.Ga,
             availability_types=[AzulAvailabilityType.CA],
-            java_package_type=AzulJavaPackageType.Jre,
             javafx_bundled=False,
             page=page,
             page_size=page_size)
@@ -121,9 +136,9 @@ def main():
     azul_manifest_file = os.path.join(UPSTREAM_DIR, AZUL_DIR, "packages.json")
     packages.write(azul_manifest_file)
 
-    azul_major_versions: dict[int, ZuluPackages] = {}
+    azul_major_versions: dict[int, ZuluPackagesDetail] = {}
 
-    for pkg in packages:
+    for _, pkg in packages:
 
         major_version = pkg.java_version[0]
         if major_version not in azul_major_versions:

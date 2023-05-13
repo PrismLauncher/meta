@@ -5,9 +5,8 @@ from pydantic import Field
 from datetime import datetime
 from enum import IntEnum, Enum
 from .enum import StrEnum
-from typing import Optional, List, Dict, Any, Iterator, Iterable, NamedTuple
-from collections import namedtuple
-from urllib.parse import urljoin, urlencode, urlparse, urlunparse
+from typing import Optional, Any, NamedTuple, Generator
+from urllib.parse import urlencode, urlparse, urlunparse
 from functools import total_ordering
 # namedtuple to match the internal signature of urlunparse
 
@@ -52,7 +51,7 @@ class JavaVersionMeta(MetaBase):
             build = self.build
         return (self.major, self.minor, self.security, build)
     
-    def __eq__(self, other: 'JavaVersionMeta'):
+    def __eq__(self, other: Any):
         return (self.to_tuple() == other.to_tuple())
     
     def __lt__(self, other: 'JavaVersionMeta'):
@@ -69,6 +68,10 @@ class JavaChecksumMeta(MetaBase):
     hash: str
 
 
+class JavaPackageType(StrEnum):
+    Jre = "jre"
+    Jdk = "jdk"
+
 class JavaRuntimeMeta(MetaBase):
     name: str
     vendor: str
@@ -77,6 +80,7 @@ class JavaRuntimeMeta(MetaBase):
     checksum: Optional[JavaChecksumMeta]
     recommended: bool
     download_type: JavaRuntimeDownloadType = Field(alias="downloadType")
+    package_type: JavaPackageType = Field(alias="packageType")
     version: JavaVersionMeta
 
 
@@ -85,10 +89,10 @@ class JavaRuntimeMap(MetaBase):
         os: [] for os in JavaRuntimeOS if os != JavaRuntimeOS.Unknown
     }
 
-    def __iter__(self) -> Iterator[JavaRuntimeOS]:
-        return iter(self.__root__)
+    def __iter__(self) -> Generator[tuple[str, list[JavaRuntimeMeta]], None, None]:
+        yield from ((str(os), runtime) for os, runtime in self.__root__.items())
 
-    def __getitem__(self, item) -> list[JavaRuntimeMeta]:
+    def __getitem__(self, item:JavaRuntimeOS) -> list[JavaRuntimeMeta]:
         return self.__root__[item]
 
     def __len__(self):
@@ -299,10 +303,11 @@ class AdoptiumRelease(MetaBase):
 class AdoptiumReleases(MetaBase):
     __root__: list[AdoptiumRelease]
 
-    def __iter__(self) -> Iterator[AdoptiumRelease]:
-        return iter(self.__root__)
+    def __iter__(self) ->  Generator[tuple[str, AdoptiumRelease], None, None]:
+        yield from ((str(i), val) for i, val in enumerate(self.__root__))
+    
 
-    def __getitem__(self, item) -> AdoptiumRelease:
+    def __getitem__(self, item: int) -> AdoptiumRelease:
         return self.__root__[item]
 
     def append(self, rls: AdoptiumRelease):
@@ -458,8 +463,8 @@ class AzulApiPackagesQuery(APIQuery):
     distro_version: Optional[str] = None
     java_package_features: list[str] = []
     release_status: Optional[AzulReleaseStatus] = None
-    availability_types: list[AzulAvailabilityType] = None
-    certifications: list[AzulCertifications] = None
+    availability_types: list[AzulAvailabilityType] = []
+    certifications: list[AzulCertifications] = []
     include_fields: list[str] = []
     page: int = 0
     page_size: int = 100
@@ -528,10 +533,10 @@ class ZuluPackageList(MetaBase):
 class ZuluPackages(MetaBase):
     __root__: list[ZuluPackageList]
 
-    def __iter__(self) -> Iterator[ZuluPackageList]:
-        return iter(self.__root__)
+    def __iter__(self) ->  Generator[tuple[str, ZuluPackageList], None, None]:
+        yield from ((str(i), val) for i, val in enumerate(self.__root__))
 
-    def __getitem__(self, item) -> ZuluPackageList:
+    def __getitem__(self, item: int) -> ZuluPackageList:
         return self.__root__[item]
 
     def append(self, pkg: ZuluPackageList):
@@ -541,10 +546,10 @@ class ZuluPackages(MetaBase):
 class ZuluPackagesDetail(MetaBase):
     __root__: list[ZuluPackageDetail]
 
-    def __iter__(self) -> Iterator[ZuluPackageDetail]:
-        return iter(self.__root__)
+    def __iter__(self) ->  Generator[tuple[str, ZuluPackageDetail], None, None]:
+        yield from ((str(i), val) for i, val in enumerate(self.__root__))
 
-    def __getitem__(self, item) -> ZuluPackageDetail:
+    def __getitem__(self, item: int) -> ZuluPackageDetail:
         return self.__root__[item]
 
     def append(self, pkg: ZuluPackageDetail):
