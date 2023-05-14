@@ -1,10 +1,11 @@
 import os
 import datetime
 from urllib.parse import urlparse
+from typing import Any, Optional
 
 import requests
-from cachecontrol import CacheControl
-from cachecontrol.caches import FileCache
+from cachecontrol import CacheControl  # type: ignore
+from cachecontrol.caches import FileCache  # type: ignore
 
 
 def serialize_datetime(dt: datetime.datetime):
@@ -56,7 +57,7 @@ def replace_old_launchermeta_url(url: str):
     return url
 
 
-def get_all_bases(cls, bases=None):
+def get_all_bases(cls: type, bases: Optional[list[type]] = None):
     bases = bases or []
     bases.append(cls)
     for c in cls.__bases__:
@@ -64,10 +65,10 @@ def get_all_bases(cls, bases=None):
     return tuple(bases)
 
 
-def merge_dict(base: dict, overlay: dict):
+def merge_dict(base: dict[Any, Any], overlay: dict[Any, Any]):
     for k, v in base.items():
         if isinstance(v, dict):
-            merge_dict(v, overlay.setdefault(k, {}))
+            merge_dict(v, overlay.setdefault(k, {}))  # type: ignore
         else:
             if k not in overlay:
                 overlay[k] = v

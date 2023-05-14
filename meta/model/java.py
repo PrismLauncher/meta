@@ -118,7 +118,7 @@ class APIQuery(MetaBase):
                 if isinstance(value, Enum):
                     set_parts[key] = value.value
                 elif isinstance(value, list):
-                    if len(value) > 0:
+                    if len(value) > 0:  #type: ignore
                         set_parts[key] = value
                 elif isinstance(value, datetime):
                     set_parts[key] = value.isoformat()

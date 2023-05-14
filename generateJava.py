@@ -46,17 +46,6 @@ STATIC_DIR = static_path()
 
 ensure_component_dir(JAVA_COMPONENT)
 
-MOJANG_JAVA_OS_NAMES = [
-    "gamecore",
-    "linux",
-    "linux-i386",
-    "mac-os",
-    "mac-os-arm64",
-    "windows-arm64",
-    "windows-x64",
-    "windows-x86",
-]
-
 MOJANG_OS_ARCHITECTURES = [
     "x64",
     "x86",
@@ -110,22 +99,23 @@ def translate_os(os: str):
 
 
 def mojang_os_to_java_os(mojang_os: MojangJavaOsName) -> JavaRuntimeOS:
-    if mojang_os == MojangJavaOsName.Linux:
-        return JavaRuntimeOS.LinuxX64
-    elif mojang_os == MojangJavaOsName.Linuxi386:
-        return JavaRuntimeOS.LinuxX86
-    elif mojang_os == MojangJavaOsName.MacOs:
-        return JavaRuntimeOS.MacOsX64
-    elif mojang_os == MojangJavaOsName.MacOSArm64:
-        return JavaRuntimeOS.MacOsArm64
-    elif mojang_os == MojangJavaOsName.WindowsArm64:
-        return JavaRuntimeOS.WindowsArm64
-    elif mojang_os == MojangJavaOsName.WindowsX64:
-        return JavaRuntimeOS.WindowsX64
-    elif mojang_os == MojangJavaOsName.WindowsX86:
-        return JavaRuntimeOS.WindowsX86
-    else:
-        return JavaRuntimeOS.Unknown
+    match mojang_os:
+        case MojangJavaOsName.Linux:
+            return JavaRuntimeOS.LinuxX64
+        case MojangJavaOsName.Linuxi386:
+            return JavaRuntimeOS.LinuxX86
+        case MojangJavaOsName.MacOs:
+            return JavaRuntimeOS.MacOsX64
+        case MojangJavaOsName.MacOSArm64:
+            return JavaRuntimeOS.MacOsArm64
+        case MojangJavaOsName.WindowsArm64:
+            return JavaRuntimeOS.WindowsArm64
+        case MojangJavaOsName.WindowsX64:
+            return JavaRuntimeOS.WindowsX64
+        case MojangJavaOsName.WindowsX86:
+            return JavaRuntimeOS.WindowsX86
+        case _:
+            return JavaRuntimeOS.Unknown
 
 
 def mojang_runtime_to_java_runtime(
@@ -260,12 +250,12 @@ def vendor_priority(vendor: str) -> int:
 
 
 def pkg_type_priority(pkg_type: JavaPackageType) -> int:
-    if pkg_type == JavaPackageType.Jre:
-        return 2
-    elif pkg_type == JavaPackageType.Jdk:
-        return 1
-    else:
-        return -1
+    match pkg_type:
+        case JavaPackageType.Jre:
+            return 2
+        case JavaPackageType.Jdk:
+            return 1
+    return -1
 
 
 def ensure_one_recommended(runtimes: list[JavaRuntimeMeta]) -> Optional[JavaRuntimeMeta]:

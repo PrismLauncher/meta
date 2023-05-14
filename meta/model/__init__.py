@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import Optional, List, Dict, Any, Iterator
 
 import pydantic
-from pydantic import Field, validator
+from pydantic import Field, validator  # type: ignore
 
 from ..common import (
     serialize_datetime,
@@ -85,13 +85,16 @@ class GradleSpecifier:
     def is_log4j(self):
         return self.group == "org.apache.logging.log4j"
 
-    def __eq__(self, other):
-        return str(self) == str(other)
+    def __eq__(self, other: Any):
+        if isinstance(other, GradleSpecifier):
+            return str(self) == str(other)
+        else:
+            return False
 
-    def __lt__(self, other):
+    def __lt__(self, other: 'GradleSpecifier'):
         return str(self) < str(other)
 
-    def __gt__(self, other):
+    def __gt__(self, other: 'GradleSpecifier'):
         return str(self) > str(other)
 
     def __hash__(self):
@@ -120,7 +123,7 @@ class GradleSpecifier:
         return cls(group, artifact, version, classifier, extension)
 
     @classmethod
-    def validate(cls, v):
+    def validate(cls, v: 'str | GradleSpecifier'):
         if isinstance(v, cls):
             return v
         if isinstance(v, str):
@@ -149,7 +152,7 @@ class MetaBase(pydantic.BaseModel):
         with open(file_path, "w") as f:
             f.write(self.json())
 
-    def merge(self, other):
+    def merge(self, other: 'MetaBase'):
         """
         Merge other object with self.
         - Concatenates lists
@@ -173,14 +176,14 @@ class MetaBase(pydantic.BaseModel):
             elif isinstance(ours, set):
                 ours |= theirs
             elif isinstance(ours, dict):
-                result = merge_dict(ours, copy.deepcopy(theirs))
+                result = merge_dict(ours, copy.deepcopy(theirs)) # type: ignore
                 setattr(self, key, result)
             elif MetaBase in get_all_bases(field.type_):
                 ours.merge(theirs)
             else:
                 setattr(self, key, theirs)
 
-    def __hash__(self):
+    def __hash__(self): #type: ignore
         return hash(self.json())
 
     class Config:
@@ -191,7 +194,7 @@ class MetaBase(pydantic.BaseModel):
 
 class Versioned(MetaBase):
     @validator("format_version")
-    def format_version_must_be_supported(cls, v):
+    def format_version_must_be_supported(cls, v: int):
         assert v <= META_FORMAT_VERSION
         return v
 
@@ -206,7 +209,7 @@ class MojangArtifactBase(MetaBase):
 
 class MojangAssets(MojangArtifactBase):
     @validator("url")
-    def validate_url(cls, v):
+    def validate_url(cls, v: str):
         return replace_old_launchermeta_url(v)
 
     id: str
@@ -242,7 +245,7 @@ class MojangLibraryDownloads(MetaBase):
 
 class OSRule(MetaBase):
     @validator("name")
-    def name_must_be_os(cls, v):
+    def name_must_be_os(cls, v: str):
         assert v in [
             "osx",
             "linux",
@@ -260,7 +263,7 @@ class OSRule(MetaBase):
 
 class MojangRule(MetaBase):
     @validator("action")
-    def action_must_be_allow_disallow(cls, v):
+    def action_must_be_allow_disallow(cls, v: str):
         assert v in ["allow", "disallow"]
         return v
 
@@ -271,10 +274,10 @@ class MojangRule(MetaBase):
 class MojangRules(MetaBase):
     __root__: List[MojangRule]
 
-    def __iter__(self) -> Iterator[MojangRule]:
+    def __iter__(self) -> Iterator[MojangRule]:  #type: ignore
         return iter(self.__root__)
 
-    def __getitem__(self, item) -> MojangRule:
+    def __getitem__(self, item: int) -> MojangRule:
         return self.__root__[item]
 
 
