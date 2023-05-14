@@ -18,8 +18,8 @@ from meta.model.java import (
     AdoptiumReleases,
     azulApiPackagesUrl,
     AzulApiPackagesQuery,
+    ZuluPackage,
     ZuluPackageList,
-    ZuluPackages,
     AzulArchiveType,
     AzulReleaseStatus,
     AzulAvailabilityType,
@@ -54,7 +54,7 @@ def main():
 
     for feature in available.available_releases:
         print("Getting Manifests for Adoptium feature release:", feature)
-        
+
         page_size = 10
 
         releases_for_feature: list[AdoptiumRelease] = []
@@ -76,7 +76,7 @@ def main():
             if len(r_rls.json()) < page_size:
                 break
             page += 1
-        
+
         page = 0
         while True:
             query = AdoptiumAPIFeatureReleasesQuery(
@@ -103,7 +103,7 @@ def main():
         releases.write(feature_file)
 
     print("Getting Azul Release Manifests")
-    zulu_packages: list[ZuluPackageList] = []
+    zulu_packages: list[ZuluPackage] = []
     page = 1
     page_size = 100
     while True:
@@ -125,14 +125,14 @@ def main():
         else:
             r.raise_for_status()
 
-        packages = list(ZuluPackageList(**pkg) for pkg in r.json())
+        packages = list(ZuluPackage(**pkg) for pkg in r.json())
         zulu_packages.extend(packages)
         if len(packages) < page_size:
             break
         page += 1
 
     print("Total Azul Packages:", len(zulu_packages))
-    packages = ZuluPackages(__root__=zulu_packages)
+    packages = ZuluPackageList(__root__=zulu_packages)
     azul_manifest_file = os.path.join(UPSTREAM_DIR, AZUL_DIR, "packages.json")
     packages.write(azul_manifest_file)
 
@@ -142,9 +142,8 @@ def main():
 
         major_version = pkg.java_version[0]
         if major_version not in azul_major_versions:
-            azul_major_versions[major_version] = ZuluPackagesDetail(__root__=[])
-
-        
+            azul_major_versions[major_version] = ZuluPackagesDetail(
+                __root__=[])
 
         pkg_file = os.path.join(
             UPSTREAM_DIR, AZUL_VERSIONS_DIR, f"{pkg.package_uuid}.json")

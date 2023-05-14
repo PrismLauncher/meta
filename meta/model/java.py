@@ -13,7 +13,7 @@ from functools import total_ordering
 
 class JavaRuntimeOS(StrEnum):
     MacOsX64 = "mac-os-x64"
-    MacOsX86 = "mac-os-x86" # rare
+    MacOsX86 = "mac-os-x86"  # rare
     MacOsArm64 = "mac-os-arm64"
     # MacOsArm32 = "mac-os-arm32" # doesn't exsist
     LinuxX64 = "linux-x64"
@@ -31,6 +31,7 @@ class JavaRuntimeDownloadType(StrEnum):
     Manifest = "manifest"
     Archive = "archive"
 
+
 @total_ordering
 class JavaVersionMeta(MetaBase):
     major: int
@@ -44,16 +45,16 @@ class JavaVersionMeta(MetaBase):
         if self.build is not None:
             ver = f"{ver}+{self.build}"
         return ver
-    
+
     def to_tuple(self):
         build = 0
         if self.build is not None:
             build = self.build
         return (self.major, self.minor, self.security, build)
-    
+
     def __eq__(self, other: Any):
         return (self.to_tuple() == other.to_tuple())
-    
+
     def __lt__(self, other: 'JavaVersionMeta'):
         return (self.to_tuple() < other.to_tuple())
 
@@ -71,6 +72,7 @@ class JavaChecksumMeta(MetaBase):
 class JavaPackageType(StrEnum):
     Jre = "jre"
     Jdk = "jdk"
+
 
 class JavaRuntimeMeta(MetaBase):
     name: str
@@ -92,7 +94,7 @@ class JavaRuntimeMap(MetaBase):
     def __iter__(self) -> Generator[tuple[str, list[JavaRuntimeMeta]], None, None]:
         yield from ((str(os), runtime) for os, runtime in self.__root__.items())
 
-    def __getitem__(self, item:JavaRuntimeOS) -> list[JavaRuntimeMeta]:
+    def __getitem__(self, item: JavaRuntimeOS) -> list[JavaRuntimeMeta]:
         return self.__root__[item]
 
     def __len__(self):
@@ -303,9 +305,8 @@ class AdoptiumRelease(MetaBase):
 class AdoptiumReleases(MetaBase):
     __root__: list[AdoptiumRelease]
 
-    def __iter__(self) ->  Generator[tuple[str, AdoptiumRelease], None, None]:
+    def __iter__(self) -> Generator[tuple[str, AdoptiumRelease], None, None]:
         yield from ((str(i), val) for i, val in enumerate(self.__root__))
-    
 
     def __getitem__(self, item: int) -> AdoptiumRelease:
         return self.__root__[item]
@@ -518,7 +519,7 @@ class ZuluPackageDetail(MetaBase):
     signatures: list[ZuluSignatureDetail]
 
 
-class ZuluPackageList(MetaBase):
+class ZuluPackage(MetaBase):
     package_uuid: str
     name: Optional[str]
     java_version: list[int]
@@ -530,23 +531,23 @@ class ZuluPackageList(MetaBase):
     availability_type: Optional[AzulAvailabilityType]
 
 
-class ZuluPackages(MetaBase):
-    __root__: list[ZuluPackageList]
+class ZuluPackageList(MetaBase):
+    __root__: list[ZuluPackage]
 
-    def __iter__(self) ->  Generator[tuple[str, ZuluPackageList], None, None]:
+    def __iter__(self) -> Generator[tuple[str, ZuluPackage], None, None]:
         yield from ((str(i), val) for i, val in enumerate(self.__root__))
 
-    def __getitem__(self, item: int) -> ZuluPackageList:
+    def __getitem__(self, item: int) -> ZuluPackage:
         return self.__root__[item]
 
-    def append(self, pkg: ZuluPackageList):
+    def append(self, pkg: ZuluPackage):
         self.__root__.append(pkg)
 
 
 class ZuluPackagesDetail(MetaBase):
     __root__: list[ZuluPackageDetail]
 
-    def __iter__(self) ->  Generator[tuple[str, ZuluPackageDetail], None, None]:
+    def __iter__(self) -> Generator[tuple[str, ZuluPackageDetail], None, None]:
         yield from ((str(i), val) for i, val in enumerate(self.__root__))
 
     def __getitem__(self, item: int) -> ZuluPackageDetail:

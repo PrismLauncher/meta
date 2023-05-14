@@ -24,7 +24,7 @@ from meta.model.java import (
     AdoptiumReleases,
     AdoptiumRelease,
     AdoptiumBinary,
-    ZuluPackages,
+    ZuluPackageList,
     ZuluPackageDetail,
     AzulArch,
 )
@@ -135,7 +135,8 @@ def mojang_runtime_to_java_runtime(
     if major and security:
         version_parts = [int(major), 0, int(security)]
     else:
-        version_parts = [int(part) for part in mojang_runtime.version.name.split(".")]
+        version_parts = [int(part)
+                         for part in mojang_runtime.version.name.split(".")]
 
     while len(version_parts) < 3:
         version_parts.append(0)
@@ -170,7 +171,7 @@ def adoptium_release_binary_to_java_runtime(
     rls: AdoptiumRelease, binary: AdoptiumBinary
 ) -> JavaRuntimeMeta:
     assert binary.package is not None
-    
+
     checksum = None
     if binary.package.checksum is not None:
         checksum = JavaChecksumMeta(
@@ -178,7 +179,7 @@ def adoptium_release_binary_to_java_runtime(
         )
 
     pkg_type = JavaPackageType(str(binary.image_type))
-     
+
     version = JavaVersionMeta(
         major=rls.version_data.major if rls.version_data.major is not None else 0,
         minor=rls.version_data.minor if rls.version_data.minor is not None else 0,
@@ -205,7 +206,7 @@ def azul_package_to_java_runtime(pkg: ZuluPackageDetail) -> JavaRuntimeMeta:
     build = None
     while len(version_parts) < 3:
         version_parts.append(0)
-    
+
     if len(version_parts) >= 4:
         build = version_parts[3]
 
@@ -266,9 +267,10 @@ def pkg_type_priority(pkg_type: JavaPackageType) -> int:
     else:
         return -1
 
+
 def ensure_one_recommended(runtimes: list[JavaRuntimeMeta]) -> Optional[JavaRuntimeMeta]:
     if len(runtimes) < 1:
-        return  None# can't do anything
+        return None  # can't do anything
 
     recommended: Optional[JavaRuntimeMeta] = None
     found_first = False
@@ -282,11 +284,10 @@ def ensure_one_recommended(runtimes: list[JavaRuntimeMeta]) -> Optional[JavaRunt
                 need_resort = True
 
     if recommended and not need_resort:
-        return recommended # we have one recommended already
+        return recommended  # we have one recommended already
 
     if recommended is None:
         recommended = runtimes[0]
-
 
     def better_java_runtime(runtime: JavaRuntimeMeta):
         assert recommended is not None
@@ -318,7 +319,8 @@ def main():
 
     def add_java_runtime(runtime: JavaRuntimeMeta, major: int, java_os: JavaRuntimeOS):
         ensure_javamap(major)
-        print(f"Regestering runtime: {runtime.name} for Java {major} {java_os}")
+        print(
+            f"Regestering runtime: {runtime.name} for Java {major} {java_os}")
         javas[major][java_os].append(runtime)
 
     print("Processing Mojang Javas")
@@ -347,7 +349,8 @@ def main():
     )
     for major in adoptium_available_releases.available_releases:
         adoptium_releases = AdoptiumReleases.parse_file(
-            os.path.join(UPSTREAM_DIR, ADOPTIUM_VERSIONS_DIR, f"java{major}.json")
+            os.path.join(UPSTREAM_DIR, ADOPTIUM_VERSIONS_DIR,
+                         f"java{major}.json")
         )
         for _, rls in adoptium_releases:
             for binary in rls.binaries:
@@ -356,7 +359,8 @@ def main():
                 binary_arch = translate_arch(str(binary.architecture))
                 binary_os = translate_os(str(binary.os))
                 if binary_arch is None or binary_os is None:
-                    print(f"Ignoring release for {binary.os} {binary.architecture}")
+                    print(
+                        f"Ignoring release for {binary.os} {binary.architecture}")
                     continue
 
                 java_os = JavaRuntimeOS(f"{binary_os}-{binary_arch}")
@@ -364,17 +368,22 @@ def main():
                 add_java_runtime(runtime, major, java_os)
 
     print("Processing Azul Packages")
-    azul_packages = ZuluPackages.parse_file(
+    azul_packages = ZuluPackageList.parse_file(
         os.path.join(UPSTREAM_DIR, AZUL_DIR, "packages.json")
     )
     for _, pkg in azul_packages:
         pkg_detail = ZuluPackageDetail.parse_file(
-            os.path.join(UPSTREAM_DIR, AZUL_VERSIONS_DIR, f"{pkg.package_uuid}.json")
+            os.path.join(UPSTREAM_DIR, AZUL_VERSIONS_DIR,
+                         f"{pkg.package_uuid}.json")
         )
         major = pkg_detail.java_version[0]
+        if major < 8:
+            continue  # we will never need java versions less than 8
+
         pkg_os = translate_os(str(pkg_detail.os))
         if pkg_detail.arch == AzulArch.Arm:
-            pkg_arch = translate_arch(f"{pkg_detail.arch}{pkg_detail.hw_bitness}")
+            pkg_arch = translate_arch(
+                f"{pkg_detail.arch}{pkg_detail.hw_bitness}")
         elif pkg_detail.arch == AzulArch.X86:
             pkg_arch = translate_arch(int(pkg_detail.hw_bitness))
         else:
@@ -391,12 +400,14 @@ def main():
 
     for major, runtimes in javas.items():
         for java_os, runtime_list in runtimes:
-            print(f"Total runtimes for Java {major} {java_os}:", len(runtime_list))
+            print(f"Total runtimes for Java {major} {java_os}:", len(
+                runtime_list))
             rec = ensure_one_recommended(runtime_list)
             if rec is not None:
                 print(f"Recomending {rec.name} for Java {major} {java_os}")
 
-        runtimes_file = os.path.join(LAUNCHER_DIR, JAVA_COMPONENT, f"java{major}.json")
+        runtimes_file = os.path.join(
+            LAUNCHER_DIR, JAVA_COMPONENT, f"java{major}.json")
         runtimes.write(runtimes_file)
 
 
