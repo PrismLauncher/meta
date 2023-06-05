@@ -45,6 +45,7 @@ def get_json_file(path, url):
     with open(path, "w", encoding="utf-8") as f:
         r = sess.get(url)
         r.raise_for_status()
+        print(f"QUILT DEBUG {r.headers}")
         version_json = r.json()
         json.dump(version_json, f, sort_keys=True, indent=4)
         return version_json
