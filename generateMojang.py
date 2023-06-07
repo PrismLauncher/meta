@@ -89,7 +89,7 @@ LOG4J_HASHES = {
 # LWJGL versions we want
 PASS_VARIANTS = [
     "54c4fb1d6a96ac3007c947bf310c8bcf94a862be",  # 3.3.1 (2023-04-20 11:55:19+00:00) split natives, with WoA natives
-    "ea4973ebc9eadf059f30f0958c89f330898bff51",  # 3.2.2 (2019-07-04 14:41:05+00:00) will be patched, missing tinyfd
+    "51d8ff5a7efc949b4ad2088930e151d6b88ba616",  # 3.2.2 (2019-10-16 15:30:39+00:00) will be patched, missing tinyfd
     "8e1f89b96c6f583a0e494949c75115ed13412ba1",  # 3.2.1 (2019-02-13 16:12:08+00:00)
     "deb1a436d806413207350735a00e04b54d113916",  # 3.1.6 (2018-10-18 14:46:12+00:00)
     "5a006b7c72a080ac673fff02b259f3127c376655",  # 3.1.2 (2018-06-21 12:57:11+00:00)
