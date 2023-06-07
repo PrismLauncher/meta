@@ -89,10 +89,10 @@ LOG4J_HASHES = {
 # LWJGL versions we want
 PASS_VARIANTS = [
     "54c4fb1d6a96ac3007c947bf310c8bcf94a862be",  # 3.3.1 (2023-04-20 11:55:19+00:00) split natives, with WoA natives
-    "51d8ff5a7efc949b4ad2088930e151d6b88ba616",  # 3.2.2 (2019-10-16 15:30:39+00:00) will be patched, missing tinyfd
-    "8e1f89b96c6f583a0e494949c75115ed13412ba1",  # 3.2.1 (2019-02-13 16:12:08+00:00)
+    "ea4973ebc9eadf059f30f0958c89f330898bff51",  # 3.2.2 (2019-07-04 14:41:05+00:00) will be patched, missing tinyfd
+    "235fc413bc4c76b269c207f7bca6464f1e1f1d80",  # 3.2.1 (2019-02-13 16:12:08+00:00)
     "deb1a436d806413207350735a00e04b54d113916",  # 3.1.6 (2018-10-18 14:46:12+00:00)
-    "5a006b7c72a080ac673fff02b259f3127c376655",  # 3.1.2 (2018-06-21 12:57:11+00:00)
+    "3e47f0f742fb759401754769fa59c508fd8fda75",  # 3.1.2 (2018-06-21 12:57:11+00:00)
     "a3f254df5a63a0a1635755733022029e8cfae1b3",  # 2.9.4-nightly-20150209 (2016-12-20 14:05:34+00:00)
     "879be09c0bd0d4bafc2ea4ea3d2ab8607a0d976c",  # 2.9.3 (2015-01-30 11:58:24+00:00)
     "8d4951d00253dfaa36a0faf1c8be541431861c30",  # 2.9.1 (2014-05-22 14:44:33+00:00)
@@ -109,8 +109,9 @@ BAD_VARIANTS = [
     "d986df9598fa2bcf4a5baab5edf044548e66d011",  # 3.2.2 (2021-12-10 03:36:38+00:00) only linux, windows
     "4b73fccb9e5264c2068bdbc26f9651429abbf21a",  # 3.2.2 (2021-08-25 14:41:57+00:00) only linux, windows
     "090cec3577ecfe438b890b2a9410ea07aa725e16",  # 3.2.2 (2021-04-07 14:04:09+00:00) only linux, windows
-    "ab463e9ebc6a36abf22f2aa27b219dd372ff5069",  # 3.2.2 (2019-07-19 09:25:47+00:00) only linux, windows
-    "8bde129ef334023c365bd7f57512a4bf5e72a378",  # 3.2.1 (2019-04-18 11:05:19+00:00) only osx, windows
+    "ab463e9ebc6a36abf22f2aa27b219dd372ff5069",  # 3.2.2 (2019-08-13 07:33:42+00:00) only linux, windows
+    "51d8ff5a7efc949b4ad2088930e151d6b88ba616",  # 3.2.2 (2019-07-19 09:25:47+00:00) only linux, windows
+    "854649a5bd1455b89117593ae82ff90c8132cacf",  # 3.2.1 (2019-04-18 11:05:19+00:00) only osx, windows
     "89fcb489261b05f622e8052fe0b588b0cfe49c24",  # 3.1.6 (2019-04-18 11:05:19+00:00) only linux
     "f04052162b50fa1433f67e1a90bc79466c4ab776",  # 2.9.0 (2013-10-21 16:34:47+00:00) only linux, windows
     "6442fc475f501fbd0fc4244fd1c38c02d9ebaf7e",  # 2.9.0 (2011-03-30 22:00:00+00:00) fine but newer variant available
