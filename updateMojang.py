@@ -130,7 +130,7 @@ def main():
             "Updating "
             + version.id
             + " to timestamp "
-            + version.release_time.strftime("%s")
+            + version.release_time.isoformat()
         )
         fetch_version(
             os.path.join(UPSTREAM_DIR, VERSIONS_DIR, f"{x}.json"), version.url

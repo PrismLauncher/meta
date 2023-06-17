@@ -1,6 +1,8 @@
 import copy
+import datetime
 import os
 from typing import Optional
+from functools import reduce
 
 from meta.common import ensure_component_dir, launcher_path, upstream_path, static_path
 
@@ -398,9 +400,26 @@ def main():
             if rec is not None:
                 print(f"Recomending {rec.name} for Java {major} {java_os}")
 
+        def newest_timestamp(a: datetime.datetime | None, b: datetime.datetime):
+            if a is None or a < b:
+                return b
+            return a
+
         version_file = os.path.join(
             LAUNCHER_DIR, JAVA_COMPONENT, f"java{major}.json")
-        java_version = JavaRuntimeVersion(name = f"Java {major}", uid = JAVA_COMPONENT, version = f"java{major}", runtimes = runtimes)
+        java_version = JavaRuntimeVersion(
+            name = f"Java {major}",
+            uid = JAVA_COMPONENT,
+            version = f"java{major}",
+            releaseTime=reduce(
+                    newest_timestamp, 
+                    (runtime.release_time 
+                        for _, runtime_list in runtimes
+                        for runtime in runtime_list 
+                    ), 
+                    None
+                ),
+            runtimes = runtimes)
         java_version.write(version_file)
 
     package = MetaPackage(
@@ -408,7 +427,7 @@ def main():
         name = "Java Runtimes",
         recommended = ["java8", "java17"]
     )
-    package.write(os.path.josn(LAUNCHER_DIR, JAVA_COMPONENT, "package.json"))
+    package.write(os.path.join(LAUNCHER_DIR, JAVA_COMPONENT, "package.json"))
 
 
 if __name__ == "__main__":
