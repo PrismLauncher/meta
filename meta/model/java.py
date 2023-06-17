@@ -1,5 +1,7 @@
 from . import (
     MetaBase,
+    MetaVersion,
+    Versioned,
 )
 from pydantic import Field
 from datetime import datetime
@@ -100,6 +102,8 @@ class JavaRuntimeMap(MetaBase):
     def __len__(self):
         return len(self.__root__)
 
+class JavaRuntimeVersion(MetaVersion):
+    runtimes: JavaRuntimeMap
 
 class URLComponents(NamedTuple):
     scheme: str

@@ -11,9 +11,11 @@ from meta.common.java import (
     AZUL_DIR,
     AZUL_VERSIONS_DIR,
 )
+from meta.model import MetaPackage
 from meta.model.java import (
     JavaRuntimeOS,
     JavaRuntimeMap,
+    JavaRuntimeVersion,
     JavaRuntimeMeta,
     JavaVersionMeta,
     JavaPackageType,
@@ -396,9 +398,17 @@ def main():
             if rec is not None:
                 print(f"Recomending {rec.name} for Java {major} {java_os}")
 
-        runtimes_file = os.path.join(
+        version_file = os.path.join(
             LAUNCHER_DIR, JAVA_COMPONENT, f"java{major}.json")
-        runtimes.write(runtimes_file)
+        java_version = JavaRuntimeVersion(name = f"Java {major}", uid = JAVA_COMPONENT, version = f"java{major}", runtimes = runtimes)
+        java_version.write(version_file)
+
+    package = MetaPackage(
+        uid = JAVA_COMPONENT,
+        name = "Java Runtimes",
+        recommended = ["java8", "java17"]
+    )
+    package.write(os.path.josn(LAUNCHER_DIR, JAVA_COMPONENT, "package.json"))
 
 
 if __name__ == "__main__":
