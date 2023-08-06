@@ -43,6 +43,7 @@ upstream_git checkout "${BRANCH}" || exit 1
 
 python updateMojang.py || fail_in
 python updateForge.py || fail_in
+python updateNeoForge.py || fail_in
 python updateFabric.py || fail_in
 python updateQuilt.py || fail_in
 python updateLiteloader.py || fail_in
@@ -64,6 +65,7 @@ launcher_git checkout "${BRANCH}" || exit 1
 
 python generateMojang.py || fail_out
 python generateForge.py || fail_out
+python generateNeoForge.py || fail_out
 python generateFabric.py || fail_out
 python generateQuilt.py || fail_out
 python generateLiteloader.py || fail_out

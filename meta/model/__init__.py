@@ -1,5 +1,6 @@
 import copy
 from datetime import datetime
+from pathlib import Path
 from typing import Optional, List, Dict, Any, Iterator
 
 import pydantic
@@ -146,6 +147,7 @@ class MetaBase(pydantic.BaseModel):
         )
 
     def write(self, file_path):
+        Path(file_path).parent.mkdir(parents=True, exist_ok=True)
         with open(file_path, "w") as f:
             f.write(self.json())
 
