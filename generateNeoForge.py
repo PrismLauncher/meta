@@ -293,13 +293,13 @@ def version_from_build_system_installer(
     v.libraries = []
 
     wrapper_lib = Library(
-        name=GradleSpecifier("io.github.zekerzhayard", "ForgeWrapper", "1.5.6")
+        name=GradleSpecifier("io.github.zekerzhayard", "ForgeWrapper", "1.5.6-prism")
     )
     wrapper_lib.downloads = MojangLibraryDownloads()
     wrapper_lib.downloads.artifact = MojangArtifact(
-        url=FORGEWRAPPER_MAVEN,
-        sha1="b38d28e8b7fde13b1bc0db946a2da6760fecf98d",
-        size=34715,
+        url=FORGEWRAPPER_MAVEN % (wrapper_lib.name.path()),
+        sha1="b059aa8c4d2508055c6ed2a2561923a5e670a5eb",
+        size=34860,
     )
     v.libraries.append(wrapper_lib)
 
