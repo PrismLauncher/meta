@@ -9,9 +9,6 @@ VERSION_MANIFEST_DIR = join(BASE_DIR, "version_manifests")
 FILE_MANIFEST_DIR = join(BASE_DIR, "files_manifests")
 DERIVED_INDEX_FILE = join(BASE_DIR, "derived_index.json")
 
-STATIC_LEGACYINFO_FILE = join(BASE_DIR, "neoforge-legacyinfo.json")
-
 NEOFORGE_COMPONENT = "net.neoforged"
 
 FORGEWRAPPER_MAVEN = "https://files.prismlauncher.org/maven/%s"
-BAD_VERSIONS = [""]
