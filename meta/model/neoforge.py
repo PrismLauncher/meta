@@ -138,17 +138,6 @@ class NeoForgeInstallerProfile(MetaBase):
     optionals: Optional[List[NeoForgeOptional]]
 
 
-class NeoForgeLegacyInfo(MetaBase):
-    release_time: Optional[datetime] = Field(alias="releaseTime")
-    size: Optional[int]
-    sha256: Optional[str]
-    sha1: Optional[str]
-
-
-class NeoForgeLegacyInfoList(MetaBase):
-    number: Dict[str, NeoForgeLegacyInfo] = Field({})
-
-
 class DataSpec(MetaBase):
     client: Optional[str]
     server: Optional[str]
@@ -258,7 +247,3 @@ class NeoForgeVersion:
         #    return False
 
         return True
-
-
-def fml_libs_for_version(mc_version: str) -> List[FMLLib]:
-    return []

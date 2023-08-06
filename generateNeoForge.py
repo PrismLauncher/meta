@@ -11,9 +11,7 @@ from meta.common.neoforge import (
     INSTALLER_MANIFEST_DIR,
     VERSION_MANIFEST_DIR,
     DERIVED_INDEX_FILE,
-    STATIC_LEGACYINFO_FILE,
     INSTALLER_INFO_DIR,
-    BAD_VERSIONS,
     FORGEWRAPPER_MAVEN,
 )
 from meta.common.forge import FORGE_COMPONENT
@@ -30,12 +28,9 @@ from meta.model import (
 from meta.model.neoforge import (
     NeoForgeVersion,
     NeoForgeInstallerProfile,
-    NeoForgeLegacyInfo,
-    fml_libs_for_version,
     NeoForgeInstallerProfileV2,
     InstallerInfo,
     DerivedNeoForgeIndex,
-    NeoForgeLegacyInfoList,
 )
 from meta.model.mojang import MojangVersion
 
@@ -149,103 +144,6 @@ def version_from_profile(
     return v
 
 
-def version_from_modernized_installer(
-    installer: MojangVersion, version: NeoForgeVersion
-) -> MetaVersion:
-    v = MetaVersion(name="NeoForge", version=version.rawVersion, uid=NEOFORGE_COMPONENT)
-    mc_version = version.mc_version
-    v.requires = [Dependency(uid=MINECRAFT_COMPONENT, equals=mc_version)]
-    v.main_class = installer.main_class
-    v.release_time = installer.release_time
-
-    args = installer.minecraft_arguments
-    tweakers = []
-    expression = re.compile("--tweakClass ([a-zA-Z0-9.]+)")
-    match = expression.search(args)
-    while match is not None:
-        tweakers.append(match.group(1))
-        args = args[: match.start()] + args[match.end() :]
-        match = expression.search(args)
-    if len(tweakers) > 0:
-        args = args.strip()
-        v.additional_tweakers = tweakers
-    # v.minecraftArguments = args
-
-    v.libraries = []
-
-    mc_filter = load_mc_version_filter(mc_version)
-    for upstream_lib in installer.libraries:
-        forge_lib = Library.parse_obj(
-            upstream_lib.dict()
-        )  # "cast" MojangLibrary to Library
-        if (
-            forge_lib.name.is_lwjgl()
-            or forge_lib.name.is_log4j()
-            or should_ignore_artifact(mc_filter, forge_lib.name)
-        ):
-            continue
-
-        if forge_lib.name.group == "net.minecraftforge":
-            if forge_lib.name.artifact == "forge":
-                overridden_name = forge_lib.name
-                overridden_name.classifier = "universal"
-                forge_lib.downloads.artifact.path = overridden_name.path()
-                forge_lib.downloads.artifact.url = (
-                    "https://maven.minecraftforge.net/%s" % overridden_name.path()
-                )
-                forge_lib.name = overridden_name
-
-            elif forge_lib.name.artifact == "minecraftforge":
-                overridden_name = forge_lib.name
-                overridden_name.artifact = "forge"
-                overridden_name.classifier = "universal"
-                overridden_name.version = "%s-%s" % (
-                    mc_version,
-                    overridden_name.version,
-                )
-                forge_lib.downloads.artifact.path = overridden_name.path()
-                forge_lib.downloads.artifact.url = (
-                    "https://maven.minecraftforge.net/%s" % overridden_name.path()
-                )
-                forge_lib.name = overridden_name
-
-        v.libraries.append(forge_lib)
-
-    v.order = 5
-    return v
-
-
-def version_from_legacy(
-    info: NeoForgeLegacyInfo, version: NeoForgeVersion
-) -> MetaVersion:
-    v = MetaVersion(name="NeoForge", version=version.rawVersion, uid=NEOFORGE_COMPONENT)
-    mc_version = version.mc_version_sane
-    v.requires = [Dependency(uid=MINECRAFT_COMPONENT, equals=mc_version)]
-    v.release_time = info.release_time
-    v.order = 5
-    if fml_libs_for_version(
-        mc_version
-    ):  # WHY, WHY DID I WASTE MY TIME REWRITING FMLLIBSMAPPING
-        v.additional_traits = ["legacyFML"]
-
-    classifier = "client"
-    if "universal" in version.url():
-        classifier = "universal"
-
-    main_mod = Library(
-        name=GradleSpecifier(
-            "net.minecraftforge", "forge", version.long_version, classifier
-        )
-    )
-    main_mod.downloads = MojangLibraryDownloads()
-    main_mod.downloads.artifact = MojangArtifact(
-        url=version.url(), sha1=info.sha1, size=info.size
-    )
-    main_mod.downloads.artifact.path = None
-    v.jar_mods = [main_mod]
-    return v
-
-
 def version_from_build_system_installer(
     installer: MojangVersion,
     profile: NeoForgeInstallerProfileV2,
@@ -344,13 +242,6 @@ def main():
             continue
 
         version = NeoForgeVersion(entry)
-
-        if version.long_version in BAD_VERSIONS:
-            # Version 1.12.2-14.23.5.2851 is ultra cringe, I can't imagine why you would even spend one second on
-            # actually adding support for this version.
-            # It is cringe, because it's installer info is broken af
-            eprint(f"Skipping bad version {version.long_version}")
-            continue
 
         if version.url() is None:
             eprint("Skipping %s with no valid files" % key)
