@@ -65,12 +65,14 @@ def filehash(filename, hashtype, blocksize=65536):
             hashtype.update(block)
     return hashtype.hexdigest()
 
+
 def find_nth(haystack, needle, n):
     start = haystack.find(needle)
     while start >= 0 and n > 1:
-        start = haystack.find(needle, start+len(needle))
+        start = haystack.find(needle, start + len(needle))
         n -= 1
     return start
+
 
 def get_single_forge_files_manifest(longversion):
     print(f"Getting NeoForge manifest for {longversion}")
@@ -83,7 +85,8 @@ def get_single_forge_files_manifest(longversion):
             from_file = True
     else:
         file_url = (
-            "https://maven.neoforged.net/api/maven/details/releases/net%2Fneoforged%2Fforge%2F" + urllib.parse.quote(longversion)
+            "https://maven.neoforged.net/api/maven/details/releases/net%2Fneoforged%2Fforge%2F"
+            + urllib.parse.quote(longversion)
         )
         r = sess.get(file_url)
         r.raise_for_status()
@@ -98,14 +101,12 @@ def get_single_forge_files_manifest(longversion):
         if file_ext in [".md5", ".sha1", ".sha256", ".sha512"]:
             continue
 
-        classifier = file["name"][find_nth(name, "-", 3)+1:len(file_name)]
+        classifier = file["name"][find_nth(name, "-", 3) + 1 : len(file_name)]
 
         # assert len(extensionObj.items()) == 1
         index = 0
         count = 0
-        file_obj = NeoForgeFile(
-                classifier=classifier, extension=file_ext[1:]
-        )
+        file_obj = NeoForgeFile(classifier=classifier, extension=file_ext[1:])
         if count == 0:
             ret_dict[classifier] = file_obj
             index += 1
@@ -116,8 +117,6 @@ def get_single_forge_files_manifest(longversion):
                 % (longversion, classifier)
             )
             assert False
-
-            
 
     if not from_file:
         Path(path_thing).parent.mkdir(parents=True, exist_ok=True)
@@ -188,7 +187,9 @@ def main():
     print("")
     print("Dumping index files...")
 
-    with open(UPSTREAM_DIR + "/neoforge/maven-metadata.json", "w", encoding="utf-8") as f:
+    with open(
+        UPSTREAM_DIR + "/neoforge/maven-metadata.json", "w", encoding="utf-8"
+    ) as f:
         json.dump(main_json, f, sort_keys=True, indent=4)
 
     new_index.write(UPSTREAM_DIR + "/neoforge/derived_index.json")
@@ -222,7 +223,8 @@ def main():
                 + "/neoforge/installer_manifests/%s.json" % version.long_version
             )
             version_file_path = (
-                UPSTREAM_DIR + "/neoforge/version_manifests/%s.json" % version.long_version
+                UPSTREAM_DIR
+                + "/neoforge/version_manifests/%s.json" % version.long_version
             )
 
             installer_refresh_required = not os.path.isfile(
@@ -257,7 +259,9 @@ def main():
                             # Process: does it parse?
                             MojangVersion.parse_raw(version_data)
 
-                            Path(version_file_path).parent.mkdir(parents=True, exist_ok=True)
+                            Path(version_file_path).parent.mkdir(
+                                parents=True, exist_ok=True
+                            )
                             with open(version_file_path, "wb") as versionJsonFile:
                                 versionJsonFile.write(version_data)
                                 versionJsonFile.close()

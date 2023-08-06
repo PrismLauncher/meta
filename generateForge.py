@@ -437,7 +437,6 @@ def main():
                 v = version_from_build_system_installer(installer, profile, version)
         else:
             if version.uses_installer():
-
                 # If we do not have the Forge json, we ignore this version
                 if not os.path.isfile(profile_filepath):
                     eprint("Skipping %s with missing profile json" % key)

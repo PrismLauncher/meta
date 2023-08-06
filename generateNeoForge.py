@@ -16,7 +16,7 @@ from meta.common.neoforge import (
     BAD_VERSIONS,
     FORGEWRAPPER_MAVEN,
 )
-from meta.common.forge import (FORGE_COMPONENT)
+from meta.common.forge import FORGE_COMPONENT
 from meta.common.mojang import MINECRAFT_COMPONENT
 from meta.model import (
     MetaVersion,
@@ -215,7 +215,9 @@ def version_from_modernized_installer(
     return v
 
 
-def version_from_legacy(info: NeoForgeLegacyInfo, version: NeoForgeVersion) -> MetaVersion:
+def version_from_legacy(
+    info: NeoForgeLegacyInfo, version: NeoForgeVersion
+) -> MetaVersion:
     v = MetaVersion(name="NeoForge", version=version.rawVersion, uid=NEOFORGE_COMPONENT)
     mc_version = version.mc_version_sane
     v.requires = [Dependency(uid=MINECRAFT_COMPONENT, equals=mc_version)]
@@ -245,7 +247,9 @@ def version_from_legacy(info: NeoForgeLegacyInfo, version: NeoForgeVersion) -> M
 
 
 def version_from_build_system_installer(
-    installer: MojangVersion, profile: NeoForgeInstallerProfileV2, version: NeoForgeVersion
+    installer: MojangVersion,
+    profile: NeoForgeInstallerProfileV2,
+    version: NeoForgeVersion,
 ) -> MetaVersion:
     v = MetaVersion(name="NeoForge", version=version.rawVersion, uid=NEOFORGE_COMPONENT)
     v.requires = [Dependency(uid=MINECRAFT_COMPONENT, equals=version.mc_version_sane)]
@@ -289,7 +293,8 @@ def version_from_build_system_installer(
     v.libraries = []
 
     wrapper_lib = Library(
-        name=GradleSpecifier("io.github.zekerzhayard", "ForgeWrapper", "1.5.6"))
+        name=GradleSpecifier("io.github.zekerzhayard", "ForgeWrapper", "1.5.6")
+    )
     wrapper_lib.downloads = MojangLibraryDownloads()
     wrapper_lib.downloads.artifact = MojangArtifact(
         url=FORGEWRAPPER_MAVEN,
@@ -332,7 +337,6 @@ def main():
         os.path.join(UPSTREAM_DIR, DERIVED_INDEX_FILE)
     )
     recommended_versions = []
-
 
     for key, entry in remote_versions.versions.items():
         if entry.mc_version is None:
@@ -395,7 +399,6 @@ def main():
             v = version_from_build_system_installer(installer, profile, version)
         else:
             if version.uses_installer():
-
                 # If we do not have the Forge json, we ignore this version
                 if not os.path.isfile(profile_filepath):
                     eprint("Skipping %s with missing profile json" % key)
@@ -404,7 +407,7 @@ def main():
                 v = version_from_profile(profile, version)
 
         v.write(os.path.join(LAUNCHER_DIR, NEOFORGE_COMPONENT, f"{v.version}.json"))
-        v.version = "NEO-"+v.version
+        v.version = "NEO-" + v.version
         v.write(os.path.join(LAUNCHER_DIR, FORGE_COMPONENT, f"{v.version}.json"))
 
         recommended_versions.sort()

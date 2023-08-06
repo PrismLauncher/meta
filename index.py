@@ -57,7 +57,7 @@ for package in sorted(os.listdir(LAUNCHER_DIR)):
         versionEntry = MetaVersionIndexEntry.from_meta_version(
             versionFile, is_recommended, filehash
         )
-        
+
         versionList.versions.append(versionEntry)
 
     # sort the versions in descending order by time of release
