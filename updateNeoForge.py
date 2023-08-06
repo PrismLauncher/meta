@@ -17,7 +17,7 @@ import urllib.parse
 from pydantic import ValidationError
 
 from meta.common import upstream_path, ensure_upstream_dir, static_path, default_session
-from meta.common.forge import (
+from meta.common.neoforge import (
     JARS_DIR,
     INSTALLER_INFO_DIR,
     INSTALLER_MANIFEST_DIR,
@@ -30,7 +30,6 @@ from meta.model.neoforge import (
     NeoForgeMCVersionInfo,
     DerivedNeoForgeIndex,
     NeoForgeVersion,
-    NeoForgeInstallerProfile,
     NeoForgeInstallerProfileV2,
     InstallerInfo,
 )
@@ -98,19 +97,8 @@ def get_single_forge_files_manifest(longversion):
         classifier = file["name"][find_nth(name, "-", 3) + 1 : len(file_name)]
 
         # assert len(extensionObj.items()) == 1
-        index = 0
-        count = 0
         file_obj = NeoForgeFile(classifier=classifier, extension=file_ext[1:])
-        if count == 0:
-            ret_dict[classifier] = file_obj
-            index += 1
-            count += 1
-        else:
-            print(
-                "%s: Multiple objects detected for classifier %s:"
-                % (longversion, classifier)
-            )
-            assert False
+        ret_dict[classifier] = file_obj
 
     if not from_file:
         Path(path_thing).parent.mkdir(parents=True, exist_ok=True)
@@ -141,9 +129,7 @@ def main():
         assert type(long_version) == str
         mc_version = long_version.split("-")[0]
         match = version_expression.match(long_version)
-        if not match:
-            pprint(long_version)
-            assert match
+        assert match, f"{long_version} doesn't match version regex"
         assert match.group("mc") == mc_version
         try:
             files = get_single_forge_files_manifest(long_version)
@@ -153,6 +139,7 @@ def main():
         version = match.group("ver")
         branch = match.group("branch")
 
+        # TODO: what *is* recommended?
         is_recommended = False
 
         entry = NeoForgeEntry(
@@ -262,11 +249,6 @@ def main():
                     # Process: does it parse?
                     is_parsable = False
                     exception = None
-                    try:
-                        NeoForgeInstallerProfile.parse_raw(install_profile_data)
-                        is_parsable = True
-                    except ValidationError as err:
-                        exception = err
                     try:
                         NeoForgeInstallerProfileV2.parse_raw(install_profile_data)
                         is_parsable = True

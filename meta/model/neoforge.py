@@ -132,12 +132,6 @@ class NeoForgeOptional(MetaBase):
     maven: Optional[str]
 
 
-class NeoForgeInstallerProfile(MetaBase):
-    install: NeoForgeInstallerProfileInstallSection
-    version_info: NeoForgeVersionFile = Field(alias="versionInfo")
-    optionals: Optional[List[NeoForgeOptional]]
-
-
 class DataSpec(MetaBase):
     client: Optional[str]
     server: Optional[str]
@@ -211,14 +205,10 @@ class NeoForgeVersion:
                 self.changelog_url = url
 
     def name(self):
-        return "forge %d" % self.build
+        return "neoforge %d" % self.build
 
     def uses_installer(self):
-        if self.installer_url is None:
-            return False
-        if self.mc_version == "1.5.2":
-            return False
-        return True
+        return self.installer_url is not None
 
     def filename(self):
         if self.uses_installer():

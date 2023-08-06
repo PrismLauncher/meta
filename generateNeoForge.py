@@ -14,7 +14,6 @@ from meta.common.neoforge import (
     INSTALLER_INFO_DIR,
     FORGEWRAPPER_MAVEN,
 )
-from meta.common.forge import FORGE_COMPONENT
 from meta.common.mojang import MINECRAFT_COMPONENT
 from meta.model import (
     MetaVersion,
@@ -27,7 +26,6 @@ from meta.model import (
 )
 from meta.model.neoforge import (
     NeoForgeVersion,
-    NeoForgeInstallerProfile,
     NeoForgeInstallerProfileV2,
     InstallerInfo,
     DerivedNeoForgeIndex,
@@ -43,105 +41,6 @@ ensure_component_dir(NEOFORGE_COMPONENT)
 
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
-
-
-# Construct a set of libraries out of a Minecraft version file, for filtering.
-mc_version_cache = {}
-
-
-def load_mc_version_filter(version: str):
-    if version in mc_version_cache:
-        return mc_version_cache[version]
-    v = MetaVersion.parse_file(
-        os.path.join(LAUNCHER_DIR, MINECRAFT_COMPONENT, f"{version}.json")
-    )
-    libs = set(map(attrgetter("name"), v.libraries))
-    mc_version_cache[version] = libs
-    return libs
-
-
-"""
-Match a library coordinate to a set of library coordinates.
- * Block those that pass completely.
- * For others, block those with lower versions than in the set.
-"""
-
-
-def should_ignore_artifact(libs: Collection[GradleSpecifier], match: GradleSpecifier):
-    for ver in libs:
-        if (
-            ver.group == match.group
-            and ver.artifact == match.artifact
-            and ver.classifier == match.classifier
-        ):
-            if ver.version == match.version:
-                # Everything is matched perfectly - this one will be ignored
-                return True
-            elif LooseVersion(ver.version) > LooseVersion(match.version):
-                return True
-            else:
-                # Otherwise it did not match - new version is higher and this is an upgrade
-                return False
-    # No match found in the set - we need to keep this
-    return False
-
-
-def version_from_profile(
-    profile: NeoForgeInstallerProfile, version: NeoForgeVersion
-) -> MetaVersion:
-    v = MetaVersion(name="NeoForge", version=version.rawVersion, uid=NEOFORGE_COMPONENT)
-    mc_version = profile.install.minecraft
-    v.requires = [Dependency(uid=MINECRAFT_COMPONENT, equals=mc_version)]
-    v.main_class = profile.version_info.main_class
-    v.release_time = profile.version_info.time
-
-    args = profile.version_info.minecraft_arguments
-    tweakers = []
-    expression = re.compile(r"--tweakClass ([a-zA-Z0-9.]+)")
-    match = expression.search(args)
-    while match is not None:
-        tweakers.append(match.group(1))
-        args = args[: match.start()] + args[match.end() :]
-        match = expression.search(args)
-    if len(tweakers) > 0:
-        args = args.strip()
-        v.additional_tweakers = tweakers
-    # v.minecraftArguments = args
-
-    v.libraries = []
-    mc_filter = load_mc_version_filter(mc_version)
-    for forge_lib in profile.version_info.libraries:
-        if (
-            forge_lib.name.is_lwjgl()
-            or forge_lib.name.is_log4j()
-            or should_ignore_artifact(mc_filter, forge_lib.name)
-        ):
-            continue
-
-        overridden_name = forge_lib.name
-        if overridden_name.group == "net.minecraftforge":
-            if overridden_name.artifact == "minecraftforge":
-                overridden_name.artifact = "forge"
-                overridden_name.version = "%s-%s" % (
-                    mc_version,
-                    overridden_name.version,
-                )
-
-                overridden_name.classifier = "universal"
-            elif overridden_name.artifact == "forge":
-                overridden_name.classifier = "universal"
-
-        overridden_lib = Library(name=overridden_name)
-        if forge_lib.url == "http://maven.minecraftforge.net/":
-            overridden_lib.url = "https://maven.minecraftforge.net/"
-        else:
-            overridden_lib.url = forge_lib.url
-        # if forge_lib.checksums and len(forge_lib.checksums) == 2:
-        #    overridden_lib.mmcHint = "forge-pack-xz"
-        v.libraries.append(overridden_lib)
-
-    v.order = 5
-    return v
 
 
 def version_from_build_system_installer(
@@ -284,22 +183,14 @@ def main():
         )
 
         eprint(installer_version_filepath)
-        if os.path.isfile(installer_version_filepath):
-            installer = MojangVersion.parse_file(installer_version_filepath)
-            profile = NeoForgeInstallerProfileV2.parse_file(profile_filepath)
-            v = version_from_build_system_installer(installer, profile, version)
-        else:
-            if version.uses_installer():
-                # If we do not have the Forge json, we ignore this version
-                if not os.path.isfile(profile_filepath):
-                    eprint("Skipping %s with missing profile json" % key)
-                    continue
-                profile = NeoForgeInstallerProfile.parse_file(profile_filepath)
-                v = version_from_profile(profile, version)
+        assert os.path.isfile(
+            installer_version_filepath
+        ), f"version {installer_version_filepath} does not have installer version manifest"
+        installer = MojangVersion.parse_file(installer_version_filepath)
+        profile = NeoForgeInstallerProfileV2.parse_file(profile_filepath)
+        v = version_from_build_system_installer(installer, profile, version)
 
         v.write(os.path.join(LAUNCHER_DIR, NEOFORGE_COMPONENT, f"{v.version}.json"))
-        v.version = "NEO-" + v.version
-        v.write(os.path.join(LAUNCHER_DIR, FORGE_COMPONENT, f"{v.version}.json"))
 
         recommended_versions.sort()
 
