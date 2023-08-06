@@ -34,6 +34,8 @@
             requests
             packaging
             pydantic
+
+            coverage
           ]))
       ];
     };
