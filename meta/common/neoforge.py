@@ -13,5 +13,5 @@ STATIC_LEGACYINFO_FILE = join(BASE_DIR, "neoforge-legacyinfo.json")
 
 NEOFORGE_COMPONENT = "net.neoforged"
 
-FORGEWRAPPER_MAVEN = "https://github.com/ZekerZhayard/ForgeWrapper/releases/download/1.5.6/ForgeWrapper-1.5.6.jar"
+FORGEWRAPPER_MAVEN = "https://files.prismlauncher.org/maven/%s"
 BAD_VERSIONS = [""]
