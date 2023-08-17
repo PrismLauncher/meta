@@ -14,7 +14,7 @@ from meta.common.forge import (
     STATIC_LEGACYINFO_FILE,
     INSTALLER_INFO_DIR,
     BAD_VERSIONS,
-    FORGEWRAPPER_MAVEN,
+    FORGEWRAPPER_LIBRARY,
 )
 from meta.common.mojang import MINECRAFT_COMPONENT
 from meta.model import (
@@ -287,16 +287,7 @@ def version_from_build_system_installer(
 
     v.libraries = []
 
-    wrapper_lib = Library(
-        name=GradleSpecifier("io.github.zekerzhayard", "ForgeWrapper", "mmc2")
-    )
-    wrapper_lib.downloads = MojangLibraryDownloads()
-    wrapper_lib.downloads.artifact = MojangArtifact(
-        url=FORGEWRAPPER_MAVEN % (wrapper_lib.name.path()),
-        sha1="4ee5f25cc9c7efbf54aff4c695da1054c1a1d7a3",
-        size=34444,
-    )
-    v.libraries.append(wrapper_lib)
+    v.libraries.append(FORGEWRAPPER_LIBRARY)
 
     for upstream_lib in installer.libraries:
         forge_lib = Library.parse_obj(upstream_lib.dict())

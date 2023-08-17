@@ -12,7 +12,7 @@ from meta.common.neoforge import (
     VERSION_MANIFEST_DIR,
     DERIVED_INDEX_FILE,
     INSTALLER_INFO_DIR,
-    FORGEWRAPPER_MAVEN,
+    FORGEWRAPPER_LIBRARY,
 )
 from meta.common.mojang import MINECRAFT_COMPONENT
 from meta.model import (
@@ -89,16 +89,7 @@ def version_from_build_system_installer(
 
     v.libraries = []
 
-    wrapper_lib = Library(
-        name=GradleSpecifier("io.github.zekerzhayard", "ForgeWrapper", "1.5.6-prism")
-    )
-    wrapper_lib.downloads = MojangLibraryDownloads()
-    wrapper_lib.downloads.artifact = MojangArtifact(
-        url=FORGEWRAPPER_MAVEN % (wrapper_lib.name.path()),
-        sha1="b059aa8c4d2508055c6ed2a2561923a5e670a5eb",
-        size=34860,
-    )
-    v.libraries.append(wrapper_lib)
+    v.libraries.append(FORGEWRAPPER_LIBRARY)
 
     for upstream_lib in installer.libraries:
         forge_lib = Library.parse_obj(upstream_lib.dict())

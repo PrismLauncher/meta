@@ -1,5 +1,7 @@
 from os.path import join
 
+from ..model import GradleSpecifier, make_launcher_library
+
 BASE_DIR = "forge"
 
 JARS_DIR = join(BASE_DIR, "jars")
@@ -13,5 +15,9 @@ STATIC_LEGACYINFO_FILE = join(BASE_DIR, "forge-legacyinfo.json")
 
 FORGE_COMPONENT = "net.minecraftforge"
 
-FORGEWRAPPER_MAVEN = "https://files.prismlauncher.org/maven/%s"
+FORGEWRAPPER_LIBRARY = make_launcher_library(
+    GradleSpecifier("io.github.zekerzhayard", "ForgeWrapper", "mmc2"),
+    "4ee5f25cc9c7efbf54aff4c695da1054c1a1d7a3",
+    34444,
+)
 BAD_VERSIONS = ["1.12.2-14.23.5.2851"]
