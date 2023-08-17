@@ -1,7 +1,6 @@
 import os
 import re
 import sys
-from distutils.version import LooseVersion
 from operator import attrgetter
 from typing import Collection
 

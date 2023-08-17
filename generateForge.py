@@ -1,7 +1,7 @@
 import os
 import re
 import sys
-from distutils.version import LooseVersion
+from packaging import version as pversion
 from operator import attrgetter
 from typing import Collection
 
@@ -81,7 +81,7 @@ def should_ignore_artifact(libs: Collection[GradleSpecifier], match: GradleSpeci
             if ver.version == match.version:
                 # Everything is matched perfectly - this one will be ignored
                 return True
-            elif LooseVersion(ver.version) > LooseVersion(match.version):
+            elif pversion.parse(ver.version) > pversion.parse(match.version):
                 return True
             else:
                 # Otherwise it did not match - new version is higher and this is an upgrade
