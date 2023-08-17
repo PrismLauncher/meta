@@ -11,8 +11,8 @@ from meta.common.neoforge import (
     VERSION_MANIFEST_DIR,
     DERIVED_INDEX_FILE,
     INSTALLER_INFO_DIR,
-    FORGEWRAPPER_LIBRARY,
 )
+from meta.common.forge import FORGEWRAPPER_LIBRARY
 from meta.common.mojang import MINECRAFT_COMPONENT
 from meta.model import (
     MetaVersion,
