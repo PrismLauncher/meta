@@ -1,7 +1,7 @@
 import os
 import re
 import sys
-from distutils.version import LooseVersion
+from packaging import version as pversion
 from operator import attrgetter
 from typing import Collection
 
@@ -14,7 +14,7 @@ from meta.common.forge import (
     STATIC_LEGACYINFO_FILE,
     INSTALLER_INFO_DIR,
     BAD_VERSIONS,
-    FORGEWRAPPER_MAVEN,
+    FORGEWRAPPER_LIBRARY,
 )
 from meta.common.mojang import MINECRAFT_COMPONENT
 from meta.model import (
@@ -81,7 +81,7 @@ def should_ignore_artifact(libs: Collection[GradleSpecifier], match: GradleSpeci
             if ver.version == match.version:
                 # Everything is matched perfectly - this one will be ignored
                 return True
-            elif LooseVersion(ver.version) > LooseVersion(match.version):
+            elif pversion.parse(ver.version) > pversion.parse(match.version):
                 return True
             else:
                 # Otherwise it did not match - new version is higher and this is an upgrade
@@ -287,16 +287,7 @@ def version_from_build_system_installer(
 
     v.libraries = []
 
-    wrapper_lib = Library(
-        name=GradleSpecifier("io.github.zekerzhayard", "ForgeWrapper", "mmc2")
-    )
-    wrapper_lib.downloads = MojangLibraryDownloads()
-    wrapper_lib.downloads.artifact = MojangArtifact(
-        url=FORGEWRAPPER_MAVEN % (wrapper_lib.name.path()),
-        sha1="4ee5f25cc9c7efbf54aff4c695da1054c1a1d7a3",
-        size=34444,
-    )
-    v.libraries.append(wrapper_lib)
+    v.libraries.append(FORGEWRAPPER_LIBRARY)
 
     for upstream_lib in installer.libraries:
         forge_lib = Library.parse_obj(upstream_lib.dict())
@@ -437,7 +428,6 @@ def main():
                 v = version_from_build_system_installer(installer, profile, version)
         else:
             if version.uses_installer():
-
                 # If we do not have the Forge json, we ignore this version
                 if not os.path.isfile(profile_filepath):
                     eprint("Skipping %s with missing profile json" % key)

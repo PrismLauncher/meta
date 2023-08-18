@@ -43,6 +43,7 @@ upstream_git checkout "${BRANCH}" || exit 1
 
 python updateMojang.py || fail_in
 python updateForge.py || fail_in
+python updateNeoForge.py || fail_in
 python updateFabric.py || fail_in
 python updateQuilt.py || fail_in
 python updateLiteloader.py || fail_in
@@ -50,6 +51,7 @@ python updateLiteloader.py || fail_in
 if [ "${DEPLOY_TO_GIT}" = true ] ; then
     upstream_git add mojang/version_manifest_v2.json mojang/versions/* || fail_in
     upstream_git add forge/*.json forge/version_manifests/*.json forge/installer_manifests/*.json forge/files_manifests/*.json forge/installer_info/*.json || fail_in
+    upstream_git add neoforge/*.json neoforge/version_manifests/*.json neoforge/installer_manifests/*.json neoforge/files_manifests/*.json neoforge/installer_info/*.json || fail_in
     upstream_git add fabric/loader-installer-json/*.json fabric/meta-v2/*.json fabric/jars/*.json || fail_in
     upstream_git add quilt/loader-installer-json/*.json quilt/meta-v3/*.json quilt/jars/*.json || fail_in
     upstream_git add liteloader/*.json || fail_in
@@ -64,6 +66,7 @@ launcher_git checkout "${BRANCH}" || exit 1
 
 python generateMojang.py || fail_out
 python generateForge.py || fail_out
+python generateNeoForge.py || fail_out
 python generateFabric.py || fail_out
 python generateQuilt.py || fail_out
 python generateLiteloader.py || fail_out
@@ -72,6 +75,7 @@ python index.py || fail_out
 if [ "${DEPLOY_TO_GIT}" = true ] ; then
     launcher_git add index.json org.lwjgl/* org.lwjgl3/* net.minecraft/* || fail_out
     launcher_git add net.minecraftforge/* || fail_out
+    launcher_git add net.neoforged/* || fail_out
     launcher_git add net.fabricmc.fabric-loader/* net.fabricmc.intermediary/* || fail_out
     launcher_git add org.quiltmc.quilt-loader/* || fail_out  # TODO: add Quilt hashed, once it is actually used
     launcher_git add com.mumfrey.liteloader/* || fail_out

@@ -48,7 +48,6 @@ for package in sorted(os.listdir(LAUNCHER_DIR)):
     for filename in os.listdir(LAUNCHER_DIR + "/%s" % package):
         if filename in ignore:
             continue
-
         # parse and hash the version file
         filepath = LAUNCHER_DIR + "/%s/%s" % (package, filename)
         filehash = hash_file(hashlib.sha256, filepath)

@@ -6,6 +6,8 @@ import requests
 from cachecontrol import CacheControl
 from cachecontrol.caches import FileCache
 
+LAUNCHER_MAVEN = "https://files.prismlauncher.org/maven/%s"
+
 
 def serialize_datetime(dt: datetime.datetime):
     if dt.tzinfo is None:
