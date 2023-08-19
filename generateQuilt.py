@@ -14,6 +14,8 @@ from meta.common.quilt import (
     INTERMEDIARY_COMPONENT,
     LOADER_COMPONENT,
     USE_QUILT_MAPPINGS,
+    DISABLE_BEACON_ARG,
+    DISABLE_BEACON_VERSIONS,
 )
 from meta.model import MetaVersion, Dependency, Library, MetaPackage, GradleSpecifier
 from meta.model.fabric import FabricJarInfo, FabricInstallerDataV1, FabricMainClasses
@@ -62,6 +64,12 @@ def process_loader_version(entry) -> (MetaVersion, bool):
         url="https://maven.quiltmc.org/repository/release",
     )
     v.libraries.append(loader_lib)
+
+    if entry["version"] in DISABLE_BEACON_VERSIONS:
+        if not v.additional_jvm_args:
+            v.additional_jvm_args = []
+        v.additional_jvm_args.append(DISABLE_BEACON_ARG)
+
     return v, should_recommend
 
 
