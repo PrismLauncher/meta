@@ -88,6 +88,7 @@ LOG4J_HASHES = {
 # We want versions that contain natives for all platforms. If there are multiple, pick the latest one
 # LWJGL versions we want
 PASS_VARIANTS = [
+    "79bde9e46e9ad9accebda11e8293ed08d80dbdc3",  # 3.3.2 (2023-08-30 11:24:35+00:00)
     "54c4fb1d6a96ac3007c947bf310c8bcf94a862be",  # 3.3.1 (2023-04-20 11:55:19+00:00) split natives, with WoA natives
     "ea4973ebc9eadf059f30f0958c89f330898bff51",  # 3.2.2 (2019-07-04 14:41:05+00:00) will be patched, missing tinyfd
     "235fc413bc4c76b269c207f7bca6464f1e1f1d80",  # 3.2.1 (2019-02-13 16:12:08+00:00)
