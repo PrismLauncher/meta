@@ -1,5 +1,49 @@
 [
   {
+    "_comment": "Only allow osx-arm64 for existing LWJGL 3.3.2",
+    "match": [
+      "org.lwjgl:lwjgl-glfw-natives-macos-arm64:3.3.2",
+      "org.lwjgl:lwjgl-jemalloc-natives-macos-arm64:3.3.2",
+      "org.lwjgl:lwjgl-openal-natives-macos-arm64:3.3.2",
+      "org.lwjgl:lwjgl-opengl-natives-macos-arm64:3.3.2",
+      "org.lwjgl:lwjgl-stb-natives-macos-arm64:3.3.2",
+      "org.lwjgl:lwjgl-tinyfd-natives-macos-arm64:3.3.2",
+      "org.lwjgl:lwjgl-natives-macos-arm64:3.3.2"
+    ],
+    "override": {
+      "rules": [
+        {
+          "action": "allow",
+          "os": {
+            "name": "osx-arm64"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "_comment": "Only allow windows-arm64 for existing LWJGL 3.3.2",
+    "match": [
+      "org.lwjgl:lwjgl-glfw-natives-windows-arm64:3.3.2",
+      "org.lwjgl:lwjgl-jemalloc-natives-windows-arm64:3.3.2",
+      "org.lwjgl:lwjgl-openal-natives-windows-arm64:3.3.2",
+      "org.lwjgl:lwjgl-opengl-natives-windows-arm64:3.3.2",
+      "org.lwjgl:lwjgl-stb-natives-windows-arm64:3.3.2",
+      "org.lwjgl:lwjgl-tinyfd-natives-windows-arm64:3.3.2",
+      "org.lwjgl:lwjgl-natives-windows-arm64:3.3.2"
+    ],
+    "override": {
+      "rules": [
+        {
+          "action": "allow",
+          "os": {
+            "name": "windows-arm64"
+          }
+        }
+      ]
+    }
+  },
+  {
     "_comment": "Add missing tinyfd to the broken LWJGL 3.2.2 variant",
     "match": [
       "org.lwjgl:lwjgl:3.2.2"
