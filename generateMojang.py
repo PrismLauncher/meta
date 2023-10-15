@@ -9,6 +9,7 @@ from typing import Optional, List
 
 from meta.common import ensure_component_dir, launcher_path, upstream_path, static_path
 from meta.common.mojang import (
+    STATIC_LEGACY_SERVICES_FILE,
     VERSION_MANIFEST_FILE,
     MINECRAFT_COMPONENT,
     LWJGL3_COMPONENT,
@@ -28,6 +29,7 @@ from meta.model import (
     MojangRules,
 )
 from meta.model.mojang import (
+    LegacyServices,
     MojangIndexWrap,
     MojangIndex,
     MojangVersion,
@@ -311,6 +313,9 @@ def main():
     override_index = LegacyOverrideIndex.parse_file(
         os.path.join(STATIC_DIR, STATIC_OVERRIDES_FILE)
     )
+    legacy_services = LegacyServices.parse_file(
+        os.path.join(STATIC_DIR, STATIC_LEGACY_SERVICES_FILE)
+    )
     library_patches = LibraryPatches.parse_file(
         os.path.join(STATIC_DIR, LIBRARY_PATCHES_FILE)
     )
@@ -486,6 +491,10 @@ def main():
         if v.version in override_index.versions:
             override = override_index.versions[v.version]
             override.apply_onto_meta_version(v)
+        if v.version in legacy_services:
+            if v.additional_traits == None:
+                v.additional_traits = []
+            v.additional_traits.append("legacyServices");
         v.write(out_filename)
 
     for lwjglVersionVariant in lwjglVersionVariants:
