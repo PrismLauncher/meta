@@ -134,7 +134,7 @@ class LegacyOverrideEntry(MetaBase):
                 meta_version.additional_jvm_args = []
             meta_version.additional_jvm_args += self.additional_jvm_args
 
-        if "legacyLaunch" in self.additional_traits:
+        if legacy:
             # remove all libraries - they are not needed for legacy
             meta_version.libraries = None
             # remove minecraft arguments - we use our own hardcoded ones
