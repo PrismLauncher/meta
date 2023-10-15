@@ -165,6 +165,16 @@ class LibraryPatches(MetaBase):
         return self.__root__[item]
 
 
+class LegacyServices(MetaBase):
+    __root__: List[str]
+
+    def __iter__(self) -> Iterator[str]:
+        return iter(self.__root__)
+
+    def __getitem__(self, item) -> str:
+        return self.__root__[item]
+
+
 class MojangArguments(MetaBase):
     game: Optional[List[Any]]  # mixture of strings and objects
     jvm: Optional[List[Any]]
