@@ -117,10 +117,8 @@ class LegacyOverrideEntry(MetaBase):
 
     def apply_onto_meta_version(self, meta_version: MetaVersion, legacy: bool = True):
         # simply hard override classes
-        if self.main_class:
-            meta_version.main_class = self.main_class
-        if self.applet_class:
-            meta_version.applet_class = self.applet_class
+        meta_version.main_class = self.main_class
+        meta_version.applet_class = self.applet_class
         # if we have an updated release time (more correct than Mojang), use it
         if self.release_time:
             meta_version.release_time = self.release_time
