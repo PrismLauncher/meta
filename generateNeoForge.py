@@ -82,6 +82,7 @@ def version_from_build_system_installer(
             and forge_lib.name.classifier == "universal"
         ):
             # WORKAROUND: Early NeoForge 20.2 versions have an invalid version for universal jars. Instead of 1.20.2-20.2.20-beta it should just be 20.2.20-beta
+            # See https://github.com/neoforged/NeoForge/issues/228
             if version.artifact == "neoforge":
                 forge_lib.name.version = version.long_version
             forge_lib.downloads.artifact.url = (
