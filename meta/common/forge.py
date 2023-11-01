@@ -16,8 +16,8 @@ STATIC_LEGACYINFO_FILE = join(BASE_DIR, "forge-legacyinfo.json")
 FORGE_COMPONENT = "net.minecraftforge"
 
 FORGEWRAPPER_LIBRARY = make_launcher_library(
-    GradleSpecifier("io.github.zekerzhayard", "ForgeWrapper", "1.5.6-prism"),
-    "b059aa8c4d2508055c6ed2a2561923a5e670a5eb",
-    34860,
+    GradleSpecifier("io.github.zekerzhayard", "ForgeWrapper", "1.5.7-prism"),
+    "29139276224c3b8eac414607ade28b90ba9113ba",
+    35062,
 )
 BAD_VERSIONS = ["1.12.2-14.23.5.2851"]
