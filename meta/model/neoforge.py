@@ -180,9 +180,10 @@ class InstallerInfo(MetaBase):
 # A post-processed entry constructed from the reconstructed NeoForge version index
 class NeoForgeVersion:
     def __init__(self, entry: NeoForgeEntry):
+        self.artifact = entry.artifact
         self.build = entry.build
         self.rawVersion = entry.version
-        if entry.artifact == "neoforge":
+        if self.artifact == "neoforge":
             self.rawVersion = entry.long_version
 
         self.mc_version = entry.mc_version
