@@ -1,3 +1,4 @@
+from copy import deepcopy
 import os
 import re
 import sys
@@ -60,7 +61,7 @@ def version_from_build_system_installer(
     )
     installer_lib = Library(
         name=GradleSpecifier(
-            "net.neoforged", "forge", version.long_version, "installer"
+            "net.neoforged", version.artifact, version.long_version, "installer"
         )
     )
     installer_lib.downloads = MojangLibraryDownloads()
@@ -78,11 +79,17 @@ def version_from_build_system_installer(
 
         if (
             forge_lib.name.group == "net.neoforged"
-            and forge_lib.name.artifact == "forge"
+            and forge_lib.name.artifact == version.artifact
             and forge_lib.name.classifier == "universal"
         ):
+            # WORKAROUND: Early NeoForge 20.2 versions have an invalid version for universal jars. Instead of 1.20.2-20.2.20-beta it should just be 20.2.20-beta
+            # See https://github.com/neoforged/NeoGradle/issues/23
+            download_name = forge_lib.name
+            if version.artifact == "neoforge":
+                download_name = deepcopy(forge_lib.name)
+                download_name.version = version.long_version
             forge_lib.downloads.artifact.url = (
-                "https://maven.neoforged.net/%s" % forge_lib.name.path()
+                "https://maven.neoforged.net/%s" % download_name.path()
             )
         v.maven_files.append(forge_lib)
 
@@ -96,7 +103,7 @@ def version_from_build_system_installer(
             continue
 
         if forge_lib.name.group == "net.neoforged":
-            if forge_lib.name.artifact == "forge":
+            if forge_lib.name.artifact == version.artifact:
                 forge_lib.name.classifier = "launcher"
                 forge_lib.downloads.artifact.path = forge_lib.name.path()
                 forge_lib.downloads.artifact.url = (

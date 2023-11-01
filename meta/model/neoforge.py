@@ -8,20 +8,28 @@ from .mojang import MojangVersion
 
 
 class NeoForgeFile(MetaBase):
+    artifact: str
     classifier: str
     extension: str
 
     def filename(self, long_version):
-        return "%s-%s-%s.%s" % ("forge", long_version, self.classifier, self.extension)
+        return "%s-%s-%s.%s" % (
+            self.artifact,
+            long_version,
+            self.classifier,
+            self.extension,
+        )
 
     def url(self, long_version):
-        return "https://maven.neoforged.net/net/neoforged/forge/%s/%s" % (
+        return "https://maven.neoforged.net/net/neoforged/%s/%s/%s" % (
+            self.artifact,
             long_version,
             self.filename(long_version),
         )
 
 
 class NeoForgeEntry(MetaBase):
+    artifact: str
     long_version: str = Field(alias="longversion")
     mc_version: str = Field(alias="mcversion")
     version: str
@@ -172,8 +180,12 @@ class InstallerInfo(MetaBase):
 # A post-processed entry constructed from the reconstructed NeoForge version index
 class NeoForgeVersion:
     def __init__(self, entry: NeoForgeEntry):
+        self.artifact = entry.artifact
         self.build = entry.build
         self.rawVersion = entry.version
+        if self.artifact == "neoforge":
+            self.rawVersion = entry.long_version
+
         self.mc_version = entry.mc_version
         self.mc_version_sane = self.mc_version.replace("_pre", "-pre", 1)
         self.branch = entry.branch
@@ -182,9 +194,7 @@ class NeoForgeVersion:
         self.universal_filename = None
         self.universal_url = None
         self.changelog_url = None
-        self.long_version = "%s-%s" % (self.mc_version, self.rawVersion)
-        if self.branch is not None:
-            self.long_version += "-%s" % self.branch
+        self.long_version = entry.long_version
 
         # this comment's whole purpose is to say this: cringe
         for classifier, file in entry.files.items():

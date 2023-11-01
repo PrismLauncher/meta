@@ -67,7 +67,7 @@ def find_nth(haystack, needle, n):
     return start
 
 
-def get_single_forge_files_manifest(longversion):
+def get_single_forge_files_manifest(longversion, artifact: str):
     print(f"Getting NeoForge manifest for {longversion}")
     path_thing = UPSTREAM_DIR + "/neoforge/files_manifests/%s.json" % longversion
     files_manifest_file = Path(path_thing)
@@ -78,7 +78,7 @@ def get_single_forge_files_manifest(longversion):
             from_file = True
     else:
         file_url = (
-            "https://maven.neoforged.net/api/maven/details/releases/net%2Fneoforged%2Fforge%2F"
+            f"https://maven.neoforged.net/api/maven/details/releases/net%2Fneoforged%2F{artifact}%2F"
             + urllib.parse.quote(longversion)
         )
         r = sess.get(file_url)
@@ -90,14 +90,25 @@ def get_single_forge_files_manifest(longversion):
     for file in files_json.get("files"):
         assert type(file) == dict
         name = file["name"]
-        file_name, file_ext = os.path.splitext(name)
-        if file_ext in [".md5", ".sha1", ".sha256", ".sha512"]:
+        prefix = f"{artifact}-{longversion}"
+        assert name.startswith(
+            prefix
+        ), f"{longversion} classifier {name} doesn't start with {prefix}"
+        file_name = name[len(prefix) :]
+        if file_name.startswith("-"):
+            file_name = file_name[1:]
+        if file_name.startswith("."):
             continue
 
-        classifier = file["name"][find_nth(name, "-", 3) + 1 : len(file_name)]
+        classifier, ext = os.path.splitext(file_name)
+
+        if ext in [".md5", ".sha1", ".sha256", ".sha512"]:
+            continue
 
         # assert len(extensionObj.items()) == 1
-        file_obj = NeoForgeFile(classifier=classifier, extension=file_ext[1:])
+        file_obj = NeoForgeFile(
+            artifact=artifact, classifier=classifier, extension=ext[1:]
+        )
         ret_dict[classifier] = file_obj
 
     if not from_file:
@@ -117,32 +128,58 @@ def main():
     main_json = r.json()["versions"]
     assert type(main_json) == list
 
+    # get the new remote version list fragments
+    r = sess.get(
+        "https://maven.neoforged.net/api/maven/versions/releases/net%2Fneoforged%2Fneoforge"
+    )
+    r.raise_for_status()
+    new_main_json = r.json()["versions"]
+    assert type(new_main_json) == list
+
+    main_json += new_main_json
+
     new_index = DerivedNeoForgeIndex()
 
     version_expression = re.compile(
-        "^(?P<mc>[0-9a-zA-Z_\\.]+)-(?P<ver>[0-9\\.]+\\.(?P<build>[0-9]+))(-(?P<branch>[a-zA-Z0-9\\.]+))?$"
+        r"^(?P<mc>[0-9a-zA-Z_\.]+)-(?P<ver>[0-9\.]+\.(?P<build>[0-9]+))(-(?P<branch>[a-zA-Z0-9\.]+))?$"
+    )
+    neoforge_version_re = re.compile(
+        r"^(?P<mcminor>\d+).(?P<mcpatch>\d+).(?P<number>\d+)(?:-(?P<tag>\w+))?$"
     )
 
     print("")
     print("Processing versions:")
     for long_version in main_json:
         assert type(long_version) == str
-        mc_version = long_version.split("-")[0]
+
         match = version_expression.match(long_version)
+        if match:
+            mc_version = match.group("mc")
+            build = int(match.group("build"))
+            version = match.group("ver")
+            branch = match.group("branch")
+            artifact = "forge"
+
+        match_nf = neoforge_version_re.match(long_version)
+        if match_nf:
+            mc_version = f"1.{match_nf.group('mcminor')}.{match_nf.group('mcpatch')}"
+            build = int(match_nf.group("number"))
+            version = match_nf.group("number")
+            branch = match_nf.group("tag")
+            match = match_nf
+            artifact = "neoforge"
+
         assert match, f"{long_version} doesn't match version regex"
-        assert match.group("mc") == mc_version
         try:
-            files = get_single_forge_files_manifest(long_version)
+            files = get_single_forge_files_manifest(long_version, artifact)
         except:
             continue
-        build = int(match.group("build"))
-        version = match.group("ver")
-        branch = match.group("branch")
 
         # TODO: what *is* recommended?
         is_recommended = False
 
         entry = NeoForgeEntry(
+            artifact=artifact,
             long_version=long_version,
             mc_version=mc_version,
             version=version,
