@@ -100,7 +100,6 @@ def get_single_forge_files_manifest(longversion, artifact: str):
         if file_name.startswith("."):
             continue
 
-        print(f"AAAA {file_name}")
         classifier, ext = os.path.splitext(file_name)
 
         if ext in [".md5", ".sha1", ".sha256", ".sha512"]:
