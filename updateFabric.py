@@ -3,6 +3,8 @@ import os
 import zipfile
 from datetime import datetime
 
+import requests
+
 from meta.common import (
     upstream_path,
     ensure_upstream_dir,
