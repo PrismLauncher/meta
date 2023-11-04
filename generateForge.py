@@ -173,10 +173,7 @@ def version_from_modernized_installer(
     v.libraries = []
 
     mc_filter = load_mc_version_filter(mc_version)
-    for upstream_lib in installer.libraries:
-        forge_lib = Library.parse_obj(
-            upstream_lib.dict()
-        )  # "cast" MojangLibrary to Library
+    for forge_lib in installer.libraries:
         if (
             forge_lib.name.is_lwjgl()
             or forge_lib.name.is_log4j()
@@ -270,8 +267,7 @@ def version_from_build_system_installer(
     )
     v.maven_files.append(installer_lib)
 
-    for upstream_lib in profile.libraries:
-        forge_lib = Library.parse_obj(upstream_lib.dict())
+    for forge_lib in profile.libraries:
         if forge_lib.name.is_log4j():
             continue
 
@@ -289,8 +285,7 @@ def version_from_build_system_installer(
 
     v.libraries.append(FORGEWRAPPER_LIBRARY)
 
-    for upstream_lib in installer.libraries:
-        forge_lib = Library.parse_obj(upstream_lib.dict())
+    for forge_lib in installer.libraries:
         if forge_lib.name.is_log4j():
             continue
 

@@ -7,7 +7,6 @@ from . import (
     MetaBase,
     MojangArtifactBase,
     MojangAssets,
-    MojangLibrary,
     MojangArtifact,
     MojangLibraryDownloads,
     Library,
@@ -216,7 +215,7 @@ class MojangVersion(MetaBase):
     asset_index: Optional[MojangAssets] = Field(alias="assetIndex")
     assets: Optional[str]
     downloads: Optional[Dict[str, MojangArtifactBase]]  # TODO improve this?
-    libraries: Optional[List[MojangLibrary]]  # TODO: optional?
+    libraries: Optional[List[Library]]  # TODO: optional?
     main_class: Optional[str] = Field(alias="mainClass")
     applet_class: Optional[str] = Field(alias="appletClass")
     processArguments: Optional[str]
