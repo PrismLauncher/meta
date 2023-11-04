@@ -1,11 +1,13 @@
 import copy
 from datetime import datetime
+from pathlib import Path
 from typing import Optional, List, Dict, Any, Iterator
 
 import pydantic
 from pydantic import Field, validator  # type: ignore
 
 from ..common import (
+    LAUNCHER_MAVEN,
     serialize_datetime,
     replace_old_launchermeta_url,
     get_all_bases,
@@ -149,6 +151,7 @@ class MetaBase(pydantic.BaseModel):
         )
 
     def write(self, file_path: str):
+        Path(file_path).parent.mkdir(parents=True, exist_ok=True)
         with open(file_path, "w") as f:
             f.write(self.json())
 
@@ -331,3 +334,10 @@ class MetaPackage(Versioned):
     authors: Optional[List[str]]
     description: Optional[str]
     project_url: Optional[str] = Field(alias="projectUrl")
+
+
+def make_launcher_library(
+    name: GradleSpecifier, hash: str, size: int, maven=LAUNCHER_MAVEN
+):
+    artifact = MojangArtifact(url=maven % name.path(), sha1=hash, size=size)
+    return Library(name=name, downloads=MojangLibraryDownloads(artifact=artifact))
