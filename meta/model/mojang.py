@@ -136,8 +136,6 @@ class LegacyOverrideEntry(MetaBase):
         if legacy:
             # remove all libraries - they are not needed for legacy
             meta_version.libraries = None
-            # remove minecraft arguments - we use our own hardcoded ones
-            meta_version.minecraft_arguments = None
 
 
 class LegacyOverrideIndex(MetaBase):
