@@ -290,13 +290,16 @@ def version_from_build_system_installer(
             continue
 
         if forge_lib.name.group == "net.minecraftforge":
-            if forge_lib.name.artifact == "forge":
+            if forge_lib.name.artifact == "forge" and not forge_lib.name.classifier:
                 forge_lib.name.classifier = "launcher"
                 forge_lib.downloads.artifact.path = forge_lib.name.path()
                 forge_lib.downloads.artifact.url = (
                     "https://maven.minecraftforge.net/%s" % forge_lib.name.path()
                 )
                 forge_lib.name = forge_lib.name
+            # net.minecraftforge.forge:client doesn't exist??? (49.0.x)
+            if not len(forge_lib.downloads.artifact.url):
+                continue
         v.libraries.append(forge_lib)
 
     v.release_time = installer.release_time
@@ -308,6 +311,12 @@ def version_from_build_system_installer(
     )
     for arg in installer.arguments.game:
         mc_args += f" {arg}"
+    if "--fml.forgeGroup" not in installer.arguments.game:
+        mc_args += f" --fml.forgeGroup net.minecraftforge"
+    if "--fml.forgeVersion" not in installer.arguments.game:
+        mc_args += f" --fml.forgeVersion {version.rawVersion}"
+    if "--fml.mcVersion" not in installer.arguments.game:
+        mc_args += f" --fml.mcVersion {version.mc_version}"
     v.minecraft_arguments = mc_args
     return v
 
