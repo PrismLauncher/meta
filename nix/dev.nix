@@ -1,43 +1,33 @@
 {
-  inputs,
-  self,
-  ...
-}: {
   perSystem = {
-    system,
+    config,
     pkgs,
+    self',
     ...
   }: {
-    checks = {
-      pre-commit-check = inputs.pre-commit-hooks.lib.${system}.run {
-        src = self;
-        hooks = {
-          markdownlint.enable = true;
+    pre-commit.settings = {
+      excludes = ["flake.lock"];
+      hooks = {
+        markdownlint.enable = true;
 
-          alejandra.enable = true;
-          deadnix.enable = true;
-          nil.enable = true;
+        alejandra.enable = true;
+        deadnix.enable = true;
+        nil.enable = true;
 
-          black.enable = true;
-        };
+        black.enable = true;
       };
     };
 
     devShells.default = pkgs.mkShell {
-      inherit (self.checks.${system}.pre-commit-check) shellHook;
+      shellHook = ''
+        ${config.pre-commit.installationScript}
+      '';
 
-      packages = [
-        (pkgs.python3.withPackages (ps:
-          with ps; [
-            cachecontrol
-            filelock
-            requests
-            packaging
-            pydantic
-
-            coverage
-          ]))
+      buildInputs = with pkgs; [
+        poetry
       ];
+
+      inputsFrom = [self'.packages.default];
     };
 
     formatter = pkgs.alejandra;
