@@ -72,7 +72,7 @@ python generateNeoForge.py || fail_out
 python generateFabric.py || fail_out
 python generateQuilt.py || fail_out
 python generateLiteloader.py || fail_out
-python generageJava.py || fail_out
+python generateJava.py || fail_out
 python index.py || fail_out
 
 if [ "${DEPLOY_TO_GIT}" = true ] ; then

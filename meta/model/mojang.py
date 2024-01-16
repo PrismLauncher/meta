@@ -198,6 +198,7 @@ class MojangJavaComponent(StrEnum):
     Alpha = "java-runtime-alpha"
     Beta = "java-runtime-beta"
     Gamma = "java-runtime-gamma"
+    GammaSnapshot = "java-runtime-gamma-snapshot"
     Exe = "minecraft-java-exe"
 
 
