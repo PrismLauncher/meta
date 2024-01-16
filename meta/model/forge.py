@@ -3,7 +3,7 @@ from typing import Optional, List, Dict
 
 from pydantic import Field
 
-from . import MetaBase, GradleSpecifier, MojangLibrary
+from . import MetaBase, GradleSpecifier, Library
 from .mojang import MojangVersion
 
 
@@ -46,7 +46,7 @@ class DerivedForgeIndex(MetaBase):
 
 class FMLLib(
     MetaBase
-):  # old ugly stuff. Maybe merge this with Library or MojangLibrary later
+):  # old ugly stuff. Maybe merge this with Library or Library later
     filename: str
     checksum: str
     ours: bool
@@ -91,7 +91,7 @@ class ForgeInstallerProfileInstallSection(MetaBase):
     mod_list: Optional[str] = Field(alias="modList")
 
 
-class ForgeLibrary(MojangLibrary):
+class ForgeLibrary(Library):
     url: Optional[str]
     server_req: Optional[bool] = Field(alias="serverreq")
     client_req: Optional[bool] = Field(alias="clientreq")
@@ -176,7 +176,7 @@ class ForgeInstallerProfileV2(MetaBase):
     welcome: Optional[str]
     data: Optional[Dict[str, DataSpec]]
     processors: Optional[List[ProcessorSpec]]
-    libraries: Optional[List[MojangLibrary]]
+    libraries: Optional[List[Library]]
     mirror_list: Optional[str] = Field(alias="mirrorList")
     server_jar_path: Optional[str] = Field(alias="serverJarPath")
 

@@ -284,15 +284,12 @@ class MojangRules(MetaBase):
         return self.__root__[item]
 
 
-class MojangLibrary(MetaBase):
+class Library(MetaBase):
     extract: Optional[MojangLibraryExtractRules]
     name: Optional[GradleSpecifier]
     downloads: Optional[MojangLibraryDownloads]
     natives: Optional[Dict[str, str]]
     rules: Optional[MojangRules]
-
-
-class Library(MojangLibrary):
     url: Optional[str]
     mmcHint: Optional[str] = Field(None, alias="MMC-hint")
 
