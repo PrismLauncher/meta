@@ -90,7 +90,7 @@ LOG4J_HASHES = {
 # We want versions that contain natives for all platforms. If there are multiple, pick the latest one
 # LWJGL versions we want
 PASS_VARIANTS = [
-    "79bde9e46e9ad9accebda11e8293ed08d80dbdc3",  # 3.3.2 (2023-08-30 11:24:35+00:00)
+    "765b4ab443051d286bdbb1c19cd7dc86b0792dce",  # 3.3.2 (2024-01-17 13:19:20+00:00)
     "54c4fb1d6a96ac3007c947bf310c8bcf94a862be",  # 3.3.1 (2023-04-20 11:55:19+00:00) split natives, with WoA natives
     "ea4973ebc9eadf059f30f0958c89f330898bff51",  # 3.2.2 (2019-07-04 14:41:05+00:00) will be patched, missing tinyfd
     "235fc413bc4c76b269c207f7bca6464f1e1f1d80",  # 3.2.1 (2019-02-13 16:12:08+00:00)
@@ -105,6 +105,7 @@ PASS_VARIANTS = [
 
 # LWJGL versions we def. don't want!
 BAD_VARIANTS = [
+    "79bde9e46e9ad9accebda11e8293ed08d80dbdc3",  # 3.3.2 (2023-08-30 11:24:35+00:00) does not have lwjgl-freetype
     "8836c419f90f69a278b97d945a34af165c24ff60",  # 3.3.1 (2022-05-18 13:51:54+00:00) split natives, with workaround, replaced by 23w26a
     "3c624b94c06dbc4abae08fe6156d74abe4a2cca5",  # 3.3.1 (2022-05-04 14:41:35+00:00) we already have a nice 3.3.1
     "e1106ca765798218323b7a6d7528050260ea9d88",  # 3.3.1 (2022-05-04 14:41:35+00:00) doesn't use split natives
@@ -494,7 +495,7 @@ def main():
         if v.version in legacy_services:
             if v.additional_traits == None:
                 v.additional_traits = []
-            v.additional_traits.append("legacyServices");
+            v.additional_traits.append("legacyServices")
         v.write(out_filename)
 
     for lwjglVersionVariant in lwjglVersionVariants:
