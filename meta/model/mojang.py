@@ -18,6 +18,9 @@ from . import (
 SUPPORTED_LAUNCHER_VERSION = 21
 SUPPORTED_COMPLIANCE_LEVEL = 1
 DEFAULT_JAVA_MAJOR = 8  # By default, we should recommend Java 8 if we don't know better
+DEFAULT_JAVA_NAME = (
+    "jre-legacy"  # By default, we should recommend Java 8 if we don't know better
+)
 COMPATIBLE_JAVA_MAPPINGS = {16: [17]}
 
 """
@@ -318,10 +321,12 @@ class MojangVersion(MetaBase):
             raise Exception(f"Unsupported compliance level {self.compliance_level}")
 
         major = DEFAULT_JAVA_MAJOR
+        javaName = DEFAULT_JAVA_NAME
         if (
             self.javaVersion is not None
         ):  # some versions don't have this. TODO: maybe maintain manual overrides
             major = self.javaVersion.major_version
+            javaName = self.javaVersion.component
 
         compatible_java_majors = [major]
         if (
@@ -343,6 +348,7 @@ class MojangVersion(MetaBase):
             release_time=self.release_time,
             type=new_type,
             compatible_java_majors=compatible_java_majors,
+            compatible_java_name=javaName,
             additional_traits=addn_traits,
             main_jar=main_jar,
         )

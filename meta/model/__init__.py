@@ -93,10 +93,10 @@ class GradleSpecifier:
         else:
             return False
 
-    def __lt__(self, other: 'GradleSpecifier'):
+    def __lt__(self, other: "GradleSpecifier"):
         return str(self) < str(other)
 
-    def __gt__(self, other: 'GradleSpecifier'):
+    def __gt__(self, other: "GradleSpecifier"):
         return str(self) > str(other)
 
     def __hash__(self):
@@ -125,7 +125,7 @@ class GradleSpecifier:
         return cls(group, artifact, version, classifier, extension)
 
     @classmethod
-    def validate(cls, v: 'str | GradleSpecifier'):
+    def validate(cls, v: "str | GradleSpecifier"):
         if isinstance(v, cls):
             return v
         if isinstance(v, str):
@@ -155,7 +155,7 @@ class MetaBase(pydantic.BaseModel):
         with open(file_path, "w") as f:
             f.write(self.json())
 
-    def merge(self, other: 'MetaBase'):
+    def merge(self, other: "MetaBase"):
         """
         Merge other object with self.
         - Concatenates lists
@@ -179,14 +179,14 @@ class MetaBase(pydantic.BaseModel):
             elif isinstance(ours, set):
                 ours |= theirs
             elif isinstance(ours, dict):
-                result = merge_dict(ours, copy.deepcopy(theirs)) # type: ignore
+                result = merge_dict(ours, copy.deepcopy(theirs))  # type: ignore
                 setattr(self, key, result)
             elif MetaBase in get_all_bases(field.type_):
                 ours.merge(theirs)
             else:
                 setattr(self, key, theirs)
 
-    def __hash__(self): #type: ignore
+    def __hash__(self):  # type: ignore
         return hash(self.json())
 
     class Config:
@@ -277,7 +277,7 @@ class MojangRule(MetaBase):
 class MojangRules(MetaBase):
     __root__: List[MojangRule]
 
-    def __iter__(self) -> Iterator[MojangRule]:  #type: ignore
+    def __iter__(self) -> Iterator[MojangRule]:  # type: ignore
         return iter(self.__root__)
 
     def __getitem__(self, item: int) -> MojangRule:
@@ -319,6 +319,7 @@ class MetaVersion(Versioned):
     minecraft_arguments: Optional[str] = Field(alias="minecraftArguments")
     release_time: Optional[datetime] = Field(alias="releaseTime")
     compatible_java_majors: Optional[List[int]] = Field(alias="compatibleJavaMajors")
+    compatible_java_name: Optional[str] = Field(alias="compatibleJavaName")
     additional_traits: Optional[List[str]] = Field(alias="+traits")
     additional_tweakers: Optional[List[str]] = Field(alias="+tweakers")
     additional_jvm_args: Optional[List[str]] = Field(alias="+jvmArgs")
