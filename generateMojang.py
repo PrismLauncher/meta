@@ -198,6 +198,21 @@ def adapt_new_style_arguments(arguments):
             pprint(arg)
     return " ".join(foo)
 
+def adapt_new_style_arguments_to_traits(arguments):
+    foo = []
+    # we ignore the jvm arguments entirely.
+    # grab the object, log the errors
+    for arg in arguments.game:
+        if not isinstance(arg, str):
+            try:
+                for rule in arg["rules"]:
+                    for k,v in rule["features"].items():
+                        if rule["action"] == "allow" and v:
+                            foo.append(f"feature:{k}")
+            except:
+                print("something did not go as planed")
+                pprint(arg)
+    return foo
 
 def is_macos_only(rules: Optional[MojangRules]):
     allows_osx = False
@@ -486,6 +501,9 @@ def main():
         # process 1.13 arguments into previous version
         if not mojang_version.minecraft_arguments and mojang_version.arguments:
             v.minecraft_arguments = adapt_new_style_arguments(mojang_version.arguments)
+            if not v.additional_traits:
+                v.additional_traits = []
+            v.additional_traits.extend(adapt_new_style_arguments_to_traits(mojang_version.arguments))
         out_filename = os.path.join(
             LAUNCHER_DIR, MINECRAFT_COMPONENT, f"{v.version}.json"
         )
