@@ -7,7 +7,9 @@ from functools import reduce
 from meta.common import ensure_component_dir, launcher_path, upstream_path, static_path
 
 from meta.common.java import (
-    JAVA_COMPONENT,
+    JAVA_MINECRAFT_COMPONENT,
+    JAVA_ADOPTIUM_COMPONENT,
+    JAVA_AZUL_COMPONENT,
     ADOPTIUM_DIR,
     ADOPTIUM_VERSIONS_DIR,
     AZUL_DIR,
@@ -16,7 +18,6 @@ from meta.common.java import (
 from meta.model import MetaPackage
 from meta.model.java import (
     JavaRuntimeOS,
-    JavaRuntimeMap,
     JavaRuntimeVersion,
     JavaRuntimeMeta,
     JavaVersionMeta,
@@ -48,7 +49,6 @@ LAUNCHER_DIR = launcher_path()
 UPSTREAM_DIR = upstream_path()
 STATIC_DIR = static_path()
 
-ensure_component_dir(JAVA_COMPONENT)
 
 MOJANG_OS_ARCHITECTURES = [
     "x64",
@@ -125,6 +125,7 @@ def mojang_os_to_java_os(mojang_os: MojangJavaOsName) -> JavaRuntimeOS:
 def mojang_runtime_to_java_runtime(
     mojang_runtime: MojangJavaRuntime,
     mojang_component: MojangJavaComponent,
+    runtime_os: JavaRuntimeOS,
 ) -> JavaRuntimeMeta:
     major, _, security = mojang_runtime.version.name.partition("u")
     if major and security:
@@ -154,15 +155,17 @@ def mojang_runtime_to_java_runtime(
         checksum=JavaChecksumMeta(
             type=JavaChecksumType.Sha1, hash=mojang_runtime.manifest.sha1
         ),
-        recommended=True,
         downloadType=JavaRuntimeDownloadType.Manifest,
         packageType=JavaPackageType.Jre,
         version=version,
+        runtime_os=runtime_os,
     )
 
 
 def adoptium_release_binary_to_java_runtime(
-    rls: AdoptiumRelease, binary: AdoptiumBinary
+    rls: AdoptiumRelease,
+    binary: AdoptiumBinary,
+    runtime_os: JavaRuntimeOS,
 ) -> JavaRuntimeMeta:
     assert binary.package is not None
 
@@ -189,14 +192,16 @@ def adoptium_release_binary_to_java_runtime(
         url=binary.package.link,
         releaseTime=rls.timestamp,
         checksum=checksum,
-        recommended=False,
         downloadType=JavaRuntimeDownloadType.Archive,
         packageType=pkg_type,
         version=version,
+        runtime_os=runtime_os,
     )
 
 
-def azul_package_to_java_runtime(pkg: ZuluPackageDetail) -> JavaRuntimeMeta:
+def azul_package_to_java_runtime(
+    pkg: ZuluPackageDetail, runtime_os: JavaRuntimeOS
+) -> JavaRuntimeMeta:
     version_parts = copy.copy(pkg.java_version)
 
     build = None
@@ -227,10 +232,10 @@ def azul_package_to_java_runtime(pkg: ZuluPackageDetail) -> JavaRuntimeMeta:
         url=pkg.download_url,
         releaseTime=pkg.build_date,
         checksum=checksum,
-        recommended=False,
         downloadType=JavaRuntimeDownloadType.Archive,
         packageType=pkg_type,
         version=version,
+        runtime_os=runtime_os,
     )
 
 
@@ -262,63 +267,41 @@ def pkg_type_priority(pkg_type: JavaPackageType) -> int:
     return -1
 
 
-def ensure_one_recommended(
-    runtimes: list[JavaRuntimeMeta],
-) -> Optional[JavaRuntimeMeta]:
-    if len(runtimes) < 1:
-        return None  # can't do anything
+def writeJavas(javas: dict[int, list[JavaRuntimeMeta]], uid: str):
+    ensure_component_dir(uid)
+    for major, runtimes in javas.items():
 
-    recommended: Optional[JavaRuntimeMeta] = None
-    found_first = False
-    need_resort = False
-    for runtime in runtimes:
-        if runtime.recommended:
-            if not found_first:
-                recommended = runtime
-            else:
-                runtime.recommended = False
-                need_resort = True
+        def newest_timestamp(a: datetime.datetime | None, b: datetime.datetime):
+            if a is None or a < b:
+                return b
+            return a
 
-    if recommended and not need_resort:
-        return recommended  # we have one recommended already
+        version_file = os.path.join(LAUNCHER_DIR, uid, f"java{major}.json")
+        java_version = JavaRuntimeVersion(
+            name=f"Java {major}",
+            uid=uid,
+            version=f"java{major}",
+            releaseTime=reduce(
+                newest_timestamp,
+                (runtime.release_time for runtime in runtimes),
+                None,
+            ),
+            runtimes=runtimes,
+        )
+        java_version.write(version_file)
 
-    if recommended is None:
-        recommended = runtimes[0]
-
-    def better_java_runtime(runtime: JavaRuntimeMeta):
-        assert recommended is not None
-        if vendor_priority(runtime.vendor) < vendor_priority(recommended.vendor):
-            return False
-        if pkg_type_priority(runtime.package_type) < pkg_type_priority(
-            recommended.package_type
-        ):
-            return False
-        if runtime.version < recommended.version:
-            return False
-        if runtime.release_time < recommended.release_time:
-            return False
-        return True
-
-    for runtime in runtimes:
-        if better_java_runtime(runtime):
-            recommended.recommended = False
-            recommended = runtime
-            recommended.recommended = True
-
-    return recommended
+    package = MetaPackage(uid=uid, name="Java Runtimes", recommended=[])
+    package.write(os.path.join(LAUNCHER_DIR, uid, "package.json"))
 
 
 def main():
-    javas: dict[int, JavaRuntimeMap] = {}
+    javas: dict[int, list[JavaRuntimeMeta]] = {}
 
-    def ensure_javamap(major: int):
+    def add_java_runtime(runtime: JavaRuntimeMeta, major: int):
         if major not in javas:
-            javas[major] = JavaRuntimeMap()
-
-    def add_java_runtime(runtime: JavaRuntimeMeta, major: int, java_os: JavaRuntimeOS):
-        ensure_javamap(major)
-        print(f"Regestering runtime: {runtime.name} for Java {major} {java_os}")
-        javas[major][java_os].append(runtime)
+            javas[major] = list[JavaRuntimeMeta]()
+        print(f"Regestering runtime: {runtime.name} for Java {major}")
+        javas[major].append(runtime)
 
     print("Processing Mojang Javas")
     mojang_java_manifest = JavaIndex.parse_file(
@@ -337,8 +320,11 @@ def main():
                     major = 8
                 else:
                     major = int(mojang_runtime.version.name.partition(".")[0])
-                runtime = mojang_runtime_to_java_runtime(mojang_runtime, comp)
-                add_java_runtime(runtime, major, java_os)
+                runtime = mojang_runtime_to_java_runtime(mojang_runtime, comp, java_os)
+                add_java_runtime(runtime, major)
+
+    writeJavas(javas=javas, uid=JAVA_MINECRAFT_COMPONENT)
+    javas = {}
 
     print("Processing Adoptium Releases")
     adoptium_path = os.path.join(UPSTREAM_DIR, ADOPTIUM_DIR, "available_releases.json")
@@ -361,9 +347,13 @@ def main():
                         continue
 
                     java_os = JavaRuntimeOS(f"{binary_os}-{binary_arch}")
-                    runtime = adoptium_release_binary_to_java_runtime(rls, binary)
-                    add_java_runtime(runtime, major, java_os)
+                    runtime = adoptium_release_binary_to_java_runtime(
+                        rls, binary, java_os
+                    )
+                    add_java_runtime(runtime, major)
 
+    writeJavas(javas=javas, uid=JAVA_ADOPTIUM_COMPONENT)
+    javas = {}
     print("Processing Azul Packages")
     azul_path = os.path.join(UPSTREAM_DIR, AZUL_DIR, "packages.json")
     if os.path.exists(azul_path):
@@ -392,43 +382,10 @@ def main():
                 continue
 
             java_os = JavaRuntimeOS(f"{pkg_os}-{pkg_arch}")
-            runtime = azul_package_to_java_runtime(pkg_detail)
-            add_java_runtime(runtime, major, java_os)
-
-    for major, runtimes in javas.items():
-        for java_os, runtime_list in runtimes:
-            print(f"Total runtimes for Java {major} {java_os}:", len(runtime_list))
-            rec = ensure_one_recommended(runtime_list)
-            if rec is not None:
-                print(f"Recomending {rec.name} for Java {major} {java_os}")
-
-        def newest_timestamp(a: datetime.datetime | None, b: datetime.datetime):
-            if a is None or a < b:
-                return b
-            return a
-
-        version_file = os.path.join(LAUNCHER_DIR, JAVA_COMPONENT, f"java{major}.json")
-        java_version = JavaRuntimeVersion(
-            name=f"Java {major}",
-            uid=JAVA_COMPONENT,
-            version=f"java{major}",
-            releaseTime=reduce(
-                newest_timestamp,
-                (
-                    runtime.release_time
-                    for _, runtime_list in runtimes
-                    for runtime in runtime_list
-                ),
-                None,
-            ),
-            runtimes=runtimes,
-        )
-        java_version.write(version_file)
-
-    package = MetaPackage(
-        uid=JAVA_COMPONENT, name="Java Runtimes", recommended=["java8", "java17"]
-    )
-    package.write(os.path.join(LAUNCHER_DIR, JAVA_COMPONENT, "package.json"))
+            runtime = azul_package_to_java_runtime(pkg_detail, java_os)
+            add_java_runtime(runtime, major)
+    writeJavas(javas=javas, uid=JAVA_AZUL_COMPONENT)
+    javas = {}
 
 
 if __name__ == "__main__":

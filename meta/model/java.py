@@ -10,6 +10,7 @@ from .enum import StrEnum
 from typing import Optional, Any, NamedTuple, Generator
 from urllib.parse import urlencode, urlparse, urlunparse
 from functools import total_ordering
+
 # namedtuple to match the internal signature of urlunparse
 
 
@@ -55,10 +56,10 @@ class JavaVersionMeta(MetaBase):
         return (self.major, self.minor, self.security, build)
 
     def __eq__(self, other: Any):
-        return (self.to_tuple() == other.to_tuple())
+        return self.to_tuple() == other.to_tuple()
 
-    def __lt__(self, other: 'JavaVersionMeta'):
-        return (self.to_tuple() < other.to_tuple())
+    def __lt__(self, other: "JavaVersionMeta"):
+        return self.to_tuple() < other.to_tuple()
 
 
 class JavaChecksumType(StrEnum):
@@ -82,28 +83,15 @@ class JavaRuntimeMeta(MetaBase):
     url: str
     release_time: datetime = Field(alias="releaseTime")
     checksum: Optional[JavaChecksumMeta]
-    recommended: bool
     download_type: JavaRuntimeDownloadType = Field(alias="downloadType")
     package_type: JavaPackageType = Field(alias="packageType")
     version: JavaVersionMeta
+    runtime_os: JavaRuntimeOS = Field(alias="runtimeOS")
 
-
-class JavaRuntimeMap(MetaBase):
-    __root__: dict[JavaRuntimeOS, list[JavaRuntimeMeta]] = {
-        os: [] for os in JavaRuntimeOS if os != JavaRuntimeOS.Unknown
-    }
-
-    def __iter__(self) -> Generator[tuple[str, list[JavaRuntimeMeta]], None, None]:
-        yield from ((str(os), runtime) for os, runtime in self.__root__.items())
-
-    def __getitem__(self, item: JavaRuntimeOS) -> list[JavaRuntimeMeta]:
-        return self.__root__[item]
-
-    def __len__(self):
-        return len(self.__root__)
 
 class JavaRuntimeVersion(MetaVersion):
-    runtimes: JavaRuntimeMap
+    runtimes: list[JavaRuntimeMeta]
+
 
 class URLComponents(NamedTuple):
     scheme: str
@@ -122,7 +110,7 @@ class APIQuery(MetaBase):
                 if isinstance(value, Enum):
                     set_parts[key] = value.value
                 elif isinstance(value, list):
-                    if len(value) > 0:  #type: ignore
+                    if len(value) > 0:  # type: ignore
                         set_parts[key] = value
                 elif isinstance(value, datetime):
                     set_parts[key] = value.isoformat()

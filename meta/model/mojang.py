@@ -203,6 +203,7 @@ class MojangJavaComponent(StrEnum):
     Gamma = "java-runtime-gamma"
     GammaSnapshot = "java-runtime-gamma-snapshot"
     Exe = "minecraft-java-exe"
+    Delta = "java-runtime-delta"
 
 
 class JavaVersion(MetaBase):
