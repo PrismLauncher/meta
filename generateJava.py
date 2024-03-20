@@ -28,9 +28,11 @@ from meta.model.java import (
     AdoptiumAvailableReleases,
     AdoptiumReleases,
     AdoptiumRelease,
+    AdoptiumImageType,
     AdoptiumBinary,
     ZuluPackageList,
     ZuluPackageDetail,
+    AzulJavaPackageType,
     AzulArch,
 )
 
@@ -338,7 +340,10 @@ def main():
             )
             for _, rls in adoptium_releases:
                 for binary in rls.binaries:
-                    if binary.package is None:
+                    if (
+                        binary.package is None
+                        or binary.image_type is not AdoptiumImageType.Jre
+                    ):
                         continue
                     binary_arch = translate_arch(str(binary.architecture))
                     binary_os = translate_os(str(binary.os))
@@ -365,7 +370,7 @@ def main():
                 )
             )
             major = pkg_detail.java_version[0]
-            if major < 8:
+            if major < 8 or pkg_detail.java_package_type is not AzulJavaPackageType.Jre:
                 continue  # we will never need java versions less than 8
 
             pkg_os = translate_os(str(pkg_detail.os))
