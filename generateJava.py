@@ -270,24 +270,35 @@ def pkg_type_priority(pkg_type: JavaPackageType) -> int:
 
 
 def writeJavas(javas: dict[int, list[JavaRuntimeMeta]], uid: str):
+    def oldest_timestamp(a: datetime.datetime | None, b: datetime.datetime):
+        if a is None or a > b:
+            return b
+        return a
+
     ensure_component_dir(uid)
+
+    # small hack to sort the versions after major
+    javas = dict(sorted(javas.items(), key=lambda item: item[0]))
+    timestamps: dict[int, datetime.datetime | None] = {}
+    prevDate: datetime.datetime | None = None
     for major, runtimes in javas.items():
+        releaseTime = reduce(
+            oldest_timestamp,
+            (runtime.release_time for runtime in runtimes),
+            None,
+        )
+        if prevDate is not None and releaseTime < prevDate:
+            releaseTime = prevDate + datetime.timedelta(seconds=1)
+        prevDate = releaseTime
+        timestamps[major] = releaseTime
 
-        def newest_timestamp(a: datetime.datetime | None, b: datetime.datetime):
-            if a is None or a < b:
-                return b
-            return a
-
+    for major, runtimes in javas.items():
         version_file = os.path.join(LAUNCHER_DIR, uid, f"java{major}.json")
         java_version = JavaRuntimeVersion(
             name=f"Java {major}",
             uid=uid,
             version=f"java{major}",
-            releaseTime=reduce(
-                newest_timestamp,
-                (runtime.release_time for runtime in runtimes),
-                None,
-            ),
+            releaseTime=timestamps.get(major),
             runtimes=runtimes,
         )
         java_version.write(version_file)
