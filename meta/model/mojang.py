@@ -18,6 +18,7 @@ SUPPORTED_LAUNCHER_VERSION = 21
 SUPPORTED_COMPLIANCE_LEVEL = 1
 DEFAULT_JAVA_MAJOR = 8  # By default, we should recommend Java 8 if we don't know better
 COMPATIBLE_JAVA_MAPPINGS = {16: [17]}
+QUICK_PLAY_START = datetime.fromisoformat("2023-04-05T12:05:17+00:00")
 
 """
 Mojang index files look like this:
@@ -253,6 +254,11 @@ class MojangVersion(MetaBase):
             addn_traits.append("XR:Initial")
         else:
             raise Exception(f"Unsupported compliance level {self.compliance_level}")
+
+        if self.release_time >= QUICK_PLAY_START:
+            if not addn_traits:
+                addn_traits = []
+            addn_traits.append("quickPlay")
 
         major = DEFAULT_JAVA_MAJOR
         if (
