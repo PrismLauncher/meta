@@ -2,6 +2,7 @@
   {
     "_comment": "Only allow osx-arm64 for existing LWJGL 3.3.2",
     "match": [
+      "org.lwjgl:lwjgl-freetype-natives-macos-arm64:3.3.2",
       "org.lwjgl:lwjgl-glfw-natives-macos-arm64:3.3.2",
       "org.lwjgl:lwjgl-jemalloc-natives-macos-arm64:3.3.2",
       "org.lwjgl:lwjgl-openal-natives-macos-arm64:3.3.2",
@@ -24,6 +25,7 @@
   {
     "_comment": "Only allow windows-arm64 for existing LWJGL 3.3.2",
     "match": [
+      "org.lwjgl:lwjgl-freetype-natives-windows-arm64:3.3.2",
       "org.lwjgl:lwjgl-glfw-natives-windows-arm64:3.3.2",
       "org.lwjgl:lwjgl-jemalloc-natives-windows-arm64:3.3.2",
       "org.lwjgl:lwjgl-openal-natives-windows-arm64:3.3.2",
