@@ -2255,7 +2255,7 @@
           {
             "action": "allow",
             "os": {
-              "name": "linux-arm64"
+              "name": "linux-arm32"
             }
           }
         ]
@@ -2671,7 +2671,7 @@
           {
             "action": "allow",
             "os": {
-              "name": "linux-arm64"
+              "name": "linux-arm32"
             }
           }
         ]
