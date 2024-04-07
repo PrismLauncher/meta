@@ -86,28 +86,6 @@ class ExperimentIndexWrap:
             (x.id, x) for x in index.experiments
         )
 
-
-class OldSnapshotEntry(MetaBase):
-    id: str
-    url: str
-    wiki: Optional[str]
-    jar: str
-    sha1: str
-    size: int
-
-
-class OldSnapshotIndex(MetaBase):
-    old_snapshots: List[OldSnapshotEntry]
-
-
-class OldSnapshotIndexWrap:
-    def __init__(self, index: OldSnapshotIndex):
-        self.index: OldSnapshotIndex = index
-        self.versions: Dict[str, OldSnapshotEntry] = dict(
-            (x.id, x) for x in index.old_snapshots
-        )
-
-
 class LegacyOverrideEntry(MetaBase):
     main_class: Optional[str] = Field(alias="mainClass")
     applet_class: Optional[str] = Field(alias="appletClass")
