@@ -10,15 +10,12 @@ from meta.common.mojang import (
     VERSIONS_DIR,
     ASSETS_DIR,
     STATIC_EXPERIMENTS_FILE,
-    STATIC_OLD_SNAPSHOTS_FILE,
 )
 from meta.model.mojang import (
     MojangIndexWrap,
     MojangIndex,
     ExperimentIndex,
     ExperimentIndexWrap,
-    OldSnapshotIndexWrap,
-    OldSnapshotIndex,
 )
 
 UPSTREAM_DIR = upstream_path()
@@ -62,7 +59,7 @@ def fetch_modified_version(path, version):
     }
 
     version_json["downloads"] = downloads
-    version_json["type"] = "old_snapshot"
+    version_json["type"] = "snapshot"
 
     with open(path, "w", encoding="utf-8") as f:
         json.dump(version_json, f, sort_keys=True, indent=4)
@@ -138,25 +135,6 @@ def main():
                 fetch_zipped_version(experiment_path, version.url)
             else:
                 print("Already have experiment " + version.id)
-
-    static_old_snapshots_path = os.path.join(STATIC_DIR, STATIC_OLD_SNAPSHOTS_FILE)
-
-    # deal with old snapshots
-    if os.path.exists(static_old_snapshots_path):
-        old_snapshots = OldSnapshotIndexWrap(
-            OldSnapshotIndex.parse_file(static_old_snapshots_path)
-        )
-        old_snapshots_ids = set(old_snapshots.versions.keys())
-
-        for x in old_snapshots_ids:
-            version = old_snapshots.versions[x]
-            old_snapshots_path = os.path.join(UPSTREAM_DIR, VERSIONS_DIR, f"{x}.json")
-
-            print("Updating old snapshot " + version.id)
-            if not os.path.isfile(old_snapshots_path):
-                fetch_modified_version(old_snapshots_path, version)
-            else:
-                print("Already have old snapshot " + version.id)
 
     remote_versions.index.write(version_manifest_path)
 
