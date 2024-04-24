@@ -1,0 +1,5 @@
+builds:
+  include:
+    - "checks.x86_64-linux.*"
+    - "devShells.*.*"
+    - "packages.*.*"
