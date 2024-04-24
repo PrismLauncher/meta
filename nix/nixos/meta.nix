@@ -4,7 +4,7 @@
   pkgs,
   ...
 }: let
-  inherit (lib) getExe mkEnableOption mkIf mkOption mkPackageOption types;
+  inherit (lib) getExe getExe' mkEnableOption mkIf mkOption mkPackageOption types;
 
   settingsFormat = pkgs.formats.keyValue {};
 
@@ -50,6 +50,7 @@ in {
         wants = ["network-online.target"];
         serviceConfig = {
           EnvironmentFile = [(settingsFormat.generate "blockgame-meta.env" cfg.settings)];
+          ExecStartPre = getExe' cfg.package "init";
           ExecStart = getExe cfg.package;
           StateDirectory = "blockgame-meta";
           CacheDirectory = "blockgame-meta";

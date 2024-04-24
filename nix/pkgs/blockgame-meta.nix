@@ -23,6 +23,7 @@ buildPythonApplication {
       root = ../../.;
       fileset = unions (map (fileName: ../../${fileName}) [
         "meta"
+        "init.sh"
         "pyproject.toml"
         "poetry.lock"
         "README.md"
@@ -48,10 +49,14 @@ buildPythonApplication {
 
   postInstall = ''
     install -Dm755 $src/update.sh $out/bin/update
+    install -Dm755 $src/init.sh $out/bin/init
 
     wrapProgram $out/bin/update \
       --prefix PYTHONPATH : "$PYTHONPATH" \
-      --prefix PATH : "${lib.makeBinPath [git python rsync]}"
+      --prefix PATH : ${lib.makeBinPath [git python rsync]}
+
+    wrapProgram $out/bin/init \
+      --prefix PATH : ${lib.makeBinPath [git]}
   '';
 
   meta = with lib; {
