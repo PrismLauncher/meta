@@ -7,7 +7,7 @@ from pprint import pprint
 from packaging import version as pversion
 from typing import Optional, List
 
-from meta.common import ensure_component_dir, launcher_path, upstream_path, static_path
+from meta.common import ensure_component_dir, launcher_path, upstream_path
 from meta.common.mojang import (
     STATIC_LEGACY_SERVICES_FILE,
     VERSION_MANIFEST_FILE,
@@ -42,7 +42,6 @@ APPLY_SPLIT_NATIVES_WORKAROUND = True
 
 LAUNCHER_DIR = launcher_path()
 UPSTREAM_DIR = upstream_path()
-STATIC_DIR = static_path()
 
 ensure_component_dir(MINECRAFT_COMPONENT)
 ensure_component_dir(LWJGL_COMPONENT)
@@ -327,15 +326,9 @@ def version_has_split_natives(v: MojangVersion) -> bool:
 
 def main():
     # get the local version list
-    override_index = LegacyOverrideIndex.parse_file(
-        os.path.join(STATIC_DIR, STATIC_OVERRIDES_FILE)
-    )
-    legacy_services = LegacyServices.parse_file(
-        os.path.join(STATIC_DIR, STATIC_LEGACY_SERVICES_FILE)
-    )
-    library_patches = LibraryPatches.parse_file(
-        os.path.join(STATIC_DIR, LIBRARY_PATCHES_FILE)
-    )
+    override_index = LegacyOverrideIndex.parse_file(STATIC_OVERRIDES_FILE)
+    legacy_services = LegacyServices.parse_file(STATIC_LEGACY_SERVICES_FILE)
+    library_patches = LibraryPatches.parse_file(LIBRARY_PATCHES_FILE)
 
     found_any_lwjgl3 = False
 

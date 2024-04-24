@@ -1,6 +1,7 @@
 """
  Get the source files necessary for generating Forge versions
 """
+
 import copy
 import hashlib
 import json
@@ -15,7 +16,7 @@ from pprint import pprint
 
 from pydantic import ValidationError
 
-from meta.common import upstream_path, ensure_upstream_dir, static_path, default_session
+from meta.common import upstream_path, ensure_upstream_dir, default_session
 from meta.common.forge import (
     JARS_DIR,
     INSTALLER_INFO_DIR,
@@ -23,7 +24,7 @@ from meta.common.forge import (
     VERSION_MANIFEST_DIR,
     FILE_MANIFEST_DIR,
     BAD_VERSIONS,
-    STATIC_LEGACYINFO_FILE,
+    LEGACYINFO_FILE,
 )
 from meta.model.forge import (
     ForgeFile,
@@ -40,7 +41,6 @@ from meta.model.forge import (
 from meta.model.mojang import MojangVersion
 
 UPSTREAM_DIR = upstream_path()
-STATIC_DIR = static_path()
 
 ensure_upstream_dir(JARS_DIR)
 ensure_upstream_dir(INSTALLER_INFO_DIR)
@@ -48,7 +48,7 @@ ensure_upstream_dir(INSTALLER_MANIFEST_DIR)
 ensure_upstream_dir(VERSION_MANIFEST_DIR)
 ensure_upstream_dir(FILE_MANIFEST_DIR)
 
-LEGACYINFO_PATH = os.path.join(STATIC_DIR, STATIC_LEGACYINFO_FILE)
+LEGACYINFO_PATH = os.path.join(UPSTREAM_DIR, LEGACYINFO_FILE)
 
 sess = default_session()
 

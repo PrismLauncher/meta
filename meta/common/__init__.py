@@ -1,4 +1,5 @@
 import os
+import os.path
 import datetime
 from urllib.parse import urlparse
 
@@ -16,22 +17,22 @@ def serialize_datetime(dt: datetime.datetime):
     return dt.isoformat()
 
 
+def cache_path():
+    if "META_CACHE_DIR" in os.environ:
+        return os.environ["META_CACHE_DIR"]
+    return "cache"
+
+
 def launcher_path():
-    if "LAUNCHER_DIR" in os.environ:
-        return os.environ["LAUNCHER_DIR"]
+    if "META_LAUNCHER_DIR" in os.environ:
+        return os.environ["META_LAUNCHER_DIR"]
     return "launcher"
 
 
 def upstream_path():
-    if "UPSTREAM_DIR" in os.environ:
-        return os.environ["UPSTREAM_DIR"]
+    if "META_UPSTREAM_DIR" in os.environ:
+        return os.environ["META_UPSTREAM_DIR"]
     return "upstream"
-
-
-def static_path():
-    if "STATIC_DIR" in os.environ:
-        return os.environ["STATIC_DIR"]
-    return "static"
 
 
 def ensure_upstream_dir(path):
@@ -78,7 +79,7 @@ def merge_dict(base: dict, overlay: dict):
 
 
 def default_session():
-    forever_cache = FileCache("caches/http_cache", forever=True)
+    forever_cache = FileCache(os.path.join(cache_path(), "http_cache"), forever=True)
     sess = CacheControl(requests.Session(), forever_cache)
 
     sess.headers.update({"User-Agent": "PrismLauncherMeta/1.0"})

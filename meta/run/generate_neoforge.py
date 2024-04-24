@@ -5,7 +5,7 @@ import sys
 from operator import attrgetter
 from typing import Collection
 
-from meta.common import ensure_component_dir, launcher_path, upstream_path, static_path
+from meta.common import ensure_component_dir, launcher_path, upstream_path
 from meta.common.neoforge import (
     NEOFORGE_COMPONENT,
     INSTALLER_MANIFEST_DIR,
@@ -34,7 +34,6 @@ from meta.model.mojang import MojangVersion
 
 LAUNCHER_DIR = launcher_path()
 UPSTREAM_DIR = upstream_path()
-STATIC_DIR = static_path()
 
 ensure_component_dir(NEOFORGE_COMPONENT)
 
