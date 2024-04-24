@@ -7,6 +7,7 @@
   requests,
   filelock,
   git,
+  openssh,
   packaging,
   pydantic_1,
   python,
@@ -53,10 +54,10 @@ buildPythonApplication {
 
     wrapProgram $out/bin/update \
       --prefix PYTHONPATH : "$PYTHONPATH" \
-      --prefix PATH : ${lib.makeBinPath [git python rsync]}
+      --prefix PATH : ${lib.makeBinPath [git openssh python rsync]}
 
     wrapProgram $out/bin/init \
-      --prefix PATH : ${lib.makeBinPath [git]}
+      --prefix PATH : ${lib.makeBinPath [git openssh]}
   '';
 
   meta = with lib; {
