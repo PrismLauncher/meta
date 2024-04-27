@@ -1,6 +1,6 @@
 import os
 
-from meta.common import upstream_path, ensure_upstream_dir, static_path, default_session
+from meta.common import upstream_path, ensure_upstream_dir, default_session
 from meta.common.java import (
     BASE_DIR,
     ADOPTIUM_DIR,
@@ -29,7 +29,6 @@ from meta.model.java import (
 )
 
 UPSTREAM_DIR = upstream_path()
-STATIC_DIR = static_path()
 
 ensure_upstream_dir(BASE_DIR)
 ensure_upstream_dir(ADOPTIUM_DIR)
@@ -49,7 +48,8 @@ def main():
     available = AdoptiumAvailableReleases(**r.json())
 
     available_releases_file = os.path.join(
-        UPSTREAM_DIR, ADOPTIUM_DIR, "available_releases.json")
+        UPSTREAM_DIR, ADOPTIUM_DIR, "available_releases.json"
+    )
     available.write(available_releases_file)
 
     for feature in available.available_releases:
@@ -61,7 +61,8 @@ def main():
         page = 0
         while True:
             query = AdoptiumAPIFeatureReleasesQuery(
-                image_type=AdoptiumImageType.Jre, page_size=page_size, page=page)
+                image_type=AdoptiumImageType.Jre, page_size=page_size, page=page
+            )
             api_call = adoptiumAPIFeatureReleasesUrl(feature, query=query)
             print("Fetching JRE Page:", page, api_call)
             r_rls = sess.get(api_call)
@@ -80,7 +81,8 @@ def main():
         page = 0
         while True:
             query = AdoptiumAPIFeatureReleasesQuery(
-                image_type=AdoptiumImageType.Jdk, page_size=page_size, page=page)
+                image_type=AdoptiumImageType.Jdk, page_size=page_size, page=page
+            )
             api_call = adoptiumAPIFeatureReleasesUrl(feature, query=query)
             print("Fetching JDK Page:", page, api_call)
             r_rls = sess.get(api_call)
@@ -99,7 +101,8 @@ def main():
         print("Total Adoptium releases for feature:", len(releases_for_feature))
         releases = AdoptiumReleases(__root__=releases_for_feature)
         feature_file = os.path.join(
-            UPSTREAM_DIR, ADOPTIUM_VERSIONS_DIR, f"java{feature}.json")
+            UPSTREAM_DIR, ADOPTIUM_VERSIONS_DIR, f"java{feature}.json"
+        )
         releases.write(feature_file)
 
     print("Getting Azul Release Manifests")
@@ -114,7 +117,8 @@ def main():
             availability_types=[AzulAvailabilityType.CA],
             javafx_bundled=False,
             page=page,
-            page_size=page_size)
+            page_size=page_size,
+        )
         api_call = azulApiPackagesUrl(query=query)
 
         print("Processing Page:", page, api_call)
@@ -142,11 +146,11 @@ def main():
 
         major_version = pkg.java_version[0]
         if major_version not in azul_major_versions:
-            azul_major_versions[major_version] = ZuluPackagesDetail(
-                __root__=[])
+            azul_major_versions[major_version] = ZuluPackagesDetail(__root__=[])
 
         pkg_file = os.path.join(
-            UPSTREAM_DIR, AZUL_VERSIONS_DIR, f"{pkg.package_uuid}.json")
+            UPSTREAM_DIR, AZUL_VERSIONS_DIR, f"{pkg.package_uuid}.json"
+        )
         if os.path.exists(pkg_file) and os.path.isfile(pkg_file):
             pkg_detail = ZuluPackageDetail.parse_file(pkg_file)
             azul_major_versions[major_version].append(pkg_detail)
@@ -162,11 +166,10 @@ def main():
             azul_major_versions[major_version].append(pkg_detail)
 
     for major in azul_major_versions:
-        major_file = os.path.join(
-            UPSTREAM_DIR, AZUL_VERSIONS_DIR, f"java{major}.json")
+        major_file = os.path.join(UPSTREAM_DIR, AZUL_VERSIONS_DIR, f"java{major}.json")
         azul_major_versions[major].write(major_file)
 
 
 if __name__ == "__main__":
     main()
- #
+#

@@ -22,6 +22,7 @@ DEFAULT_JAVA_NAME = (
     "jre-legacy"  # By default, we should recommend Java 8 if we don't know better
 )
 COMPATIBLE_JAVA_MAPPINGS = {16: [17]}
+SUPPORTED_FEATURES = ["is_quick_play_multiplayer"]
 
 """
 Mojang index files look like this:

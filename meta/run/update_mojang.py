@@ -2,7 +2,7 @@ import json
 import os
 import zipfile
 
-from meta.common import upstream_path, ensure_upstream_dir, static_path, default_session
+from meta.common import upstream_path, ensure_upstream_dir, default_session
 from meta.common.http import download_binary_file
 from meta.common.mojang import (
     BASE_DIR,
@@ -24,7 +24,6 @@ from meta.model.mojang import (
 )
 
 UPSTREAM_DIR = upstream_path()
-STATIC_DIR = static_path()
 
 ensure_upstream_dir(BASE_DIR)
 ensure_upstream_dir(VERSIONS_DIR)
@@ -85,12 +84,13 @@ def fetch_version(path, url):
 
 MOJANG_JAVA_URL = "https://piston-meta.mojang.com/v1/products/java-runtime/2ec0cc96c44e5a76b9c8b7c39df7210883d12871/all.json"
 
+
 def update_javas():
     r = sess.get(MOJANG_JAVA_URL)
     r.raise_for_status()
 
     remote_javas = JavaIndex(__root__=r.json())
-    
+
     java_manifest_path = os.path.join(UPSTREAM_DIR, JAVA_MANIFEST_FILE)
 
     remote_javas.write(java_manifest_path)
@@ -137,10 +137,9 @@ def main():
         )
 
     # deal with experimental snapshots separately
-    static_experiments_path = os.path.join(STATIC_DIR, STATIC_EXPERIMENTS_FILE)
-    if os.path.exists(static_experiments_path):
+    if os.path.exists(STATIC_EXPERIMENTS_FILE):
         experiments = ExperimentIndexWrap(
-            ExperimentIndex.parse_file(static_experiments_path)
+            ExperimentIndex.parse_file(STATIC_EXPERIMENTS_FILE)
         )
         experiment_ids = set(experiments.versions.keys())
 
@@ -154,12 +153,10 @@ def main():
             else:
                 print("Already have experiment " + version.id)
 
-    static_old_snapshots_path = os.path.join(STATIC_DIR, STATIC_OLD_SNAPSHOTS_FILE)
-
     # deal with old snapshots
-    if os.path.exists(static_old_snapshots_path):
+    if os.path.exists(STATIC_OLD_SNAPSHOTS_FILE):
         old_snapshots = OldSnapshotIndexWrap(
-            OldSnapshotIndex.parse_file(static_old_snapshots_path)
+            OldSnapshotIndex.parse_file(STATIC_OLD_SNAPSHOTS_FILE)
         )
         old_snapshots_ids = set(old_snapshots.versions.keys())
 
@@ -177,6 +174,7 @@ def main():
 
     print("Getting Mojang Java runtime manfest")
     update_javas()
+
 
 if __name__ == "__main__":
     main()

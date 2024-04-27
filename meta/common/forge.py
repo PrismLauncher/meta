@@ -1,4 +1,4 @@
-from os.path import join
+from os.path import join, dirname
 
 from ..model import GradleSpecifier, make_launcher_library
 
@@ -10,8 +10,7 @@ INSTALLER_MANIFEST_DIR = join(BASE_DIR, "installer_manifests")
 VERSION_MANIFEST_DIR = join(BASE_DIR, "version_manifests")
 FILE_MANIFEST_DIR = join(BASE_DIR, "files_manifests")
 DERIVED_INDEX_FILE = join(BASE_DIR, "derived_index.json")
-
-STATIC_LEGACYINFO_FILE = join(BASE_DIR, "forge-legacyinfo.json")
+LEGACYINFO_FILE = join(BASE_DIR, "legacyinfo.json")
 
 FORGE_COMPONENT = "net.minecraftforge"
 

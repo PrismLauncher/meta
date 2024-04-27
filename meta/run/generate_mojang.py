@@ -7,7 +7,7 @@ from pprint import pprint
 from packaging import version as pversion
 from typing import Optional, List
 
-from meta.common import ensure_component_dir, launcher_path, upstream_path, static_path
+from meta.common import ensure_component_dir, launcher_path, upstream_path
 from meta.common.mojang import (
     STATIC_LEGACY_SERVICES_FILE,
     VERSION_MANIFEST_FILE,
@@ -35,13 +35,13 @@ from meta.model.mojang import (
     MojangVersion,
     LegacyOverrideIndex,
     LibraryPatches,
+    SUPPORTED_FEATURES,
 )
 
 APPLY_SPLIT_NATIVES_WORKAROUND = True
 
 LAUNCHER_DIR = launcher_path()
 UPSTREAM_DIR = upstream_path()
-STATIC_DIR = static_path()
 
 ensure_component_dir(MINECRAFT_COMPONENT)
 ensure_component_dir(LWJGL_COMPONENT)
@@ -90,6 +90,8 @@ LOG4J_HASHES = {
 # We want versions that contain natives for all platforms. If there are multiple, pick the latest one
 # LWJGL versions we want
 PASS_VARIANTS = [
+    # TODO: needs arm64 for Linux?
+    "8a9b08f11271eb4de3b50e5d069949500b2c7bc1",  # 3.3.3 (2024-04-03 11:49:39+00:00)
     "765b4ab443051d286bdbb1c19cd7dc86b0792dce",  # 3.3.2 (2024-01-17 13:19:20+00:00)
     "54c4fb1d6a96ac3007c947bf310c8bcf94a862be",  # 3.3.1 (2023-04-20 11:55:19+00:00) split natives, with WoA natives
     "ea4973ebc9eadf059f30f0958c89f330898bff51",  # 3.2.2 (2019-07-04 14:41:05+00:00) will be patched, missing tinyfd
@@ -197,6 +199,19 @@ def adapt_new_style_arguments(arguments):
             print("!!! Unrecognized structure in Minecraft game arguments:")
             pprint(arg)
     return " ".join(foo)
+
+
+def adapt_new_style_arguments_to_traits(arguments):
+    foo = []
+    # we ignore the jvm arguments entirely.
+    # grab the object, log the errors
+    for arg in arguments.game:
+        if isinstance(arg, dict):
+            for rule in arg["rules"]:
+                for k, v in rule["features"].items():
+                    if rule["action"] == "allow" and v and k in SUPPORTED_FEATURES:
+                        foo.append(f"feature:{k}")
+    return foo
 
 
 def is_macos_only(rules: Optional[MojangRules]):
@@ -311,15 +326,9 @@ def version_has_split_natives(v: MojangVersion) -> bool:
 
 def main():
     # get the local version list
-    override_index = LegacyOverrideIndex.parse_file(
-        os.path.join(STATIC_DIR, STATIC_OVERRIDES_FILE)
-    )
-    legacy_services = LegacyServices.parse_file(
-        os.path.join(STATIC_DIR, STATIC_LEGACY_SERVICES_FILE)
-    )
-    library_patches = LibraryPatches.parse_file(
-        os.path.join(STATIC_DIR, LIBRARY_PATCHES_FILE)
-    )
+    override_index = LegacyOverrideIndex.parse_file(STATIC_OVERRIDES_FILE)
+    legacy_services = LegacyServices.parse_file(STATIC_LEGACY_SERVICES_FILE)
+    library_patches = LibraryPatches.parse_file(LIBRARY_PATCHES_FILE)
 
     found_any_lwjgl3 = False
 
@@ -486,6 +495,11 @@ def main():
         # process 1.13 arguments into previous version
         if not mojang_version.minecraft_arguments and mojang_version.arguments:
             v.minecraft_arguments = adapt_new_style_arguments(mojang_version.arguments)
+            if not v.additional_traits:
+                v.additional_traits = []
+            v.additional_traits.extend(
+                adapt_new_style_arguments_to_traits(mojang_version.arguments)
+            )
         out_filename = os.path.join(
             LAUNCHER_DIR, MINECRAFT_COMPONENT, f"{v.version}.json"
         )

@@ -1,6 +1,7 @@
 """
  Get the source files necessary for generating Forge versions
 """
+
 import copy
 import hashlib
 import json
@@ -16,7 +17,7 @@ import urllib.parse
 
 from pydantic import ValidationError
 
-from meta.common import upstream_path, ensure_upstream_dir, static_path, default_session
+from meta.common import upstream_path, ensure_upstream_dir, default_session
 from meta.common.neoforge import (
     JARS_DIR,
     INSTALLER_INFO_DIR,
@@ -36,7 +37,6 @@ from meta.model.neoforge import (
 from meta.model.mojang import MojangVersion
 
 UPSTREAM_DIR = upstream_path()
-STATIC_DIR = static_path()
 
 ensure_upstream_dir(JARS_DIR)
 ensure_upstream_dir(INSTALLER_INFO_DIR)

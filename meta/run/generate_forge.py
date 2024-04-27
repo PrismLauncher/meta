@@ -5,13 +5,13 @@ from packaging import version as pversion
 from operator import attrgetter
 from typing import Collection
 
-from meta.common import ensure_component_dir, launcher_path, upstream_path, static_path
+from meta.common import ensure_component_dir, launcher_path, upstream_path
 from meta.common.forge import (
     FORGE_COMPONENT,
     INSTALLER_MANIFEST_DIR,
     VERSION_MANIFEST_DIR,
     DERIVED_INDEX_FILE,
-    STATIC_LEGACYINFO_FILE,
+    LEGACYINFO_FILE,
     INSTALLER_INFO_DIR,
     BAD_VERSIONS,
     FORGEWRAPPER_LIBRARY,
@@ -40,7 +40,6 @@ from meta.model.mojang import MojangVersion
 
 LAUNCHER_DIR = launcher_path()
 UPSTREAM_DIR = upstream_path()
-STATIC_DIR = static_path()
 
 ensure_component_dir(FORGE_COMPONENT)
 
@@ -329,7 +328,7 @@ def main():
     recommended_versions = []
 
     legacy_info_list = ForgeLegacyInfoList.parse_file(
-        os.path.join(STATIC_DIR, STATIC_LEGACYINFO_FILE)
+        os.path.join(UPSTREAM_DIR, LEGACYINFO_FILE)
     )
     legacy_versions = [
         "1.1",

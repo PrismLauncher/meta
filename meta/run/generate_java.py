@@ -4,7 +4,7 @@ import os
 from typing import Optional
 from functools import reduce
 
-from meta.common import ensure_component_dir, launcher_path, upstream_path, static_path
+from meta.common import ensure_component_dir, launcher_path, upstream_path
 
 from meta.common.java import (
     JAVA_MINECRAFT_COMPONENT,
@@ -49,7 +49,6 @@ from meta.model.mojang import (
 
 LAUNCHER_DIR = launcher_path()
 UPSTREAM_DIR = upstream_path()
-STATIC_DIR = static_path()
 
 
 MOJANG_OS_ARCHITECTURES = [
@@ -182,9 +181,9 @@ def adoptium_release_binary_to_java_runtime(
     version = JavaVersionMeta(
         major=rls.version_data.major if rls.version_data.major is not None else 0,
         minor=rls.version_data.minor if rls.version_data.minor is not None else 0,
-        security=rls.version_data.security
-        if rls.version_data.security is not None
-        else 0,
+        security=(
+            rls.version_data.security if rls.version_data.security is not None else 0
+        ),
         build=rls.version_data.build,
     )
     rls_name = f"{rls.vendor}_temurin_{binary.image_type}{version}"
