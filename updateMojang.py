@@ -136,8 +136,26 @@ def main():
             else:
                 print("Already have experiment " + version.id)
 
-    remote_versions.index.write(version_manifest_path)
+    static_old_snapshots_path = os.path.join(STATIC_DIR, STATIC_OLD_SNAPSHOTS_FILE)
 
+    # deal with old snapshots
+    if os.path.exists(static_old_snapshots_path):
+        old_snapshots = OldSnapshotIndexWrap(
+            OldSnapshotIndex.parse_file(static_old_snapshots_path)
+        )
+        old_snapshots_ids = set(old_snapshots.versions.keys())
+
+        for x in old_snapshots_ids:
+            version = old_snapshots.versions[x]
+            old_snapshots_path = os.path.join(UPSTREAM_DIR, VERSIONS_DIR, f"{x}.json")
+
+            print("Updating old snapshot " + version.id)
+            if not os.path.isfile(old_snapshots_path):
+                fetch_modified_version(old_snapshots_path, version)
+            else:
+                print("Already have old snapshot " + version.id)
+
+    remote_versions.index.write(version_manifest_path)
 
 if __name__ == "__main__":
     main()
