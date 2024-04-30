@@ -41,7 +41,6 @@ def fetch_zipped_version(path, url):
                 break
 
     assert version_json
-    version_json["type"] = version_json["type"].removeprefix("old_")
 
     with open(path, "w", encoding="utf-8") as f:
         json.dump(version_json, f, sort_keys=True, indent=4)
@@ -62,7 +61,7 @@ def fetch_modified_version(path, version):
     }
 
     version_json["downloads"] = downloads
-    version_json["type"] = version_json["type"].removeprefix("old_")
+    version_json["type"] = "old_snapshot"
 
     with open(path, "w", encoding="utf-8") as f:
         json.dump(version_json, f, sort_keys=True, indent=4)
@@ -75,7 +74,6 @@ def fetch_version(path, url):
     r.raise_for_status()
     version_json = r.json()
 
-    version_json["type"] = version_json["type"].removeprefix("old_")
     with open(path, "w", encoding="utf-8") as f:
         json.dump(version_json, f, sort_keys=True, indent=4)
 
