@@ -327,6 +327,15 @@ def main():
             if comp == MojangJavaComponent.Exe:
                 continue  # doesn't appear to be used and not marked with a full verison so I don't trust it
             mojang_runtimes = mojang_java_manifest[mojang_os_name][comp]
+            if (
+                len(mojang_runtimes) == 0
+                and mojang_os_name
+                in [MojangJavaOsName.WindowsArm64, MojangJavaOsName.MacOSArm64]
+                and comp in [MojangJavaComponent.Alpha, MojangJavaComponent.Beta]
+            ):
+                mojang_runtimes = mojang_java_manifest[mojang_os_name][
+                    MojangJavaComponent.Gamma
+                ]
             for mojang_runtime in mojang_runtimes:
                 if comp == MojangJavaComponent.JreLegacy:
                     major = 8
