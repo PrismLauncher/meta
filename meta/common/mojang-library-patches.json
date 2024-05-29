@@ -2875,5 +2875,20 @@
       },
       "name": "org.lwjgl:lwjgl-glfw-natives-linux:3.3.2-lwjgl.1"
     }
+  },
+  {
+    "match": [
+      "org.lwjgl:lwjgl-freetype-natives-macos-patch:3.3.3"
+    ],
+    "override": {
+      "rules": [
+        {
+          "action": "allow",
+          "os": {
+            "name": "osx"
+          }
+        }
+      ]
+    }
   }
 ]
