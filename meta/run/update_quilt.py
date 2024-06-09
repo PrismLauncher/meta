@@ -105,6 +105,7 @@ def get_json_file_concurrent(it):
         maven_url,
     )
 
+
 def main():
     # get the version list for each component we are interested in
     components = ["loader"]
