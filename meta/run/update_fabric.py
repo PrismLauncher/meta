@@ -96,9 +96,7 @@ def compute_jar_file(path, url):
 
 def compute_jar_file_concurrent(component, it):
     print(f"Processing {component} {it['version']} ")
-    jar_maven_url = get_maven_url(
-        it["maven"], "https://maven.fabricmc.net/", ".jar"
-    )
+    jar_maven_url = get_maven_url(it["maven"], "https://maven.fabricmc.net/", ".jar")
     compute_jar_file(
         os.path.join(UPSTREAM_DIR, JARS_DIR, transform_maven_key(it["maven"])),
         jar_maven_url,
@@ -108,9 +106,7 @@ def compute_jar_file_concurrent(component, it):
 
 def get_json_file_concurrent(it):
     print(f"Downloading JAR info for loader {it['version']} ")
-    maven_url = get_maven_url(
-        it["maven"], "https://maven.fabricmc.net/", ".json"
-    )
+    maven_url = get_maven_url(it["maven"], "https://maven.fabricmc.net/", ".json")
     get_json_file(
         os.path.join(UPSTREAM_DIR, INSTALLER_INFO_DIR, f"{it['version']}.json"),
         maven_url,
