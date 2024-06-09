@@ -83,7 +83,12 @@ def fetch_version(path, url):
 
 def fetch_version_concurrent(remote_versions, x):
     version = remote_versions.versions[x]
-    print("Updating " + version.id + " to timestamp " + version.release_time.strftime("%s"))
+    print(
+        "Updating "
+        + version.id
+        + " to timestamp "
+        + version.release_time.strftime("%s")
+    )
     fetch_version(os.path.join(UPSTREAM_DIR, VERSIONS_DIR, f"{x}.json"), version.url)
 
 
