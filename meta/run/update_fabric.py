@@ -1,3 +1,4 @@
+import concurrent.futures
 import json
 import os
 import zipfile
@@ -93,6 +94,26 @@ def compute_jar_file(path, url):
     data.write(path + ".json")
 
 
+def compute_jar_file_concurrent(component, it):
+    print(f"Processing {component} {it['version']} ")
+    jar_maven_url = get_maven_url(it["maven"], "https://maven.fabricmc.net/", ".jar")
+    compute_jar_file(
+        os.path.join(UPSTREAM_DIR, JARS_DIR, transform_maven_key(it["maven"])),
+        jar_maven_url,
+    )
+    print(f"Processing {component} {it['version']} Done")
+
+
+def get_json_file_concurrent(it):
+    print(f"Downloading JAR info for loader {it['version']} ")
+    maven_url = get_maven_url(it["maven"], "https://maven.fabricmc.net/", ".json")
+    get_json_file(
+        os.path.join(UPSTREAM_DIR, INSTALLER_INFO_DIR, f"{it['version']}.json"),
+        maven_url,
+    )
+    print(f"Downloading JAR info for loader {it['version']} Done")
+
+
 def main():
     # get the version list for each component we are interested in
     for component in ["intermediary", "loader"]:
@@ -100,30 +121,37 @@ def main():
             os.path.join(UPSTREAM_DIR, META_DIR, f"{component}.json"),
             "https://meta.fabricmc.net/v2/versions/" + component,
         )
-        for it in index:
-            print(f"Processing {component} {it['version']} ")
-            jar_maven_url = get_maven_url(
-                it["maven"], "https://maven.fabricmc.net/", ".jar"
-            )
-            compute_jar_file(
-                os.path.join(UPSTREAM_DIR, JARS_DIR, transform_maven_key(it["maven"])),
-                jar_maven_url,
-            )
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            for it in index:
+                executor.submit(compute_jar_file_concurrent, component, it)
+
+        # for it in index:
+        #     print(f"Processing {component} {it['version']} ")
+        #     jar_maven_url = get_maven_url(
+        #         it["maven"], "https://maven.fabricmc.net/", ".jar"
+        #     )
+        #     compute_jar_file(
+        #         os.path.join(UPSTREAM_DIR, JARS_DIR, transform_maven_key(it["maven"])),
+        #         jar_maven_url,
+        #     )
 
     # for each loader, download installer JSON file from maven
     with open(
         os.path.join(UPSTREAM_DIR, META_DIR, "loader.json"), "r", encoding="utf-8"
     ) as loaderVersionIndexFile:
         loader_version_index = json.load(loaderVersionIndexFile)
-        for it in loader_version_index:
-            print(f"Downloading JAR info for loader {it['version']} ")
-            maven_url = get_maven_url(
-                it["maven"], "https://maven.fabricmc.net/", ".json"
-            )
-            get_json_file(
-                os.path.join(UPSTREAM_DIR, INSTALLER_INFO_DIR, f"{it['version']}.json"),
-                maven_url,
-            )
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            for it in loader_version_index:
+                executor.submit(get_json_file_concurrent, it)
+        # for it in loader_version_index:
+        #     print(f"Downloading JAR info for loader {it['version']} ")
+        #     maven_url = get_maven_url(
+        #         it["maven"], "https://maven.fabricmc.net/", ".json"
+        #     )
+        #     get_json_file(
+        #         os.path.join(UPSTREAM_DIR, INSTALLER_INFO_DIR, f"{it['version']}.json"),
+        #         maven_url,
+        #     )
 
 
 if __name__ == "__main__":
