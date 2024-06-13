@@ -125,16 +125,6 @@ def main():
             for it in index:
                 executor.submit(compute_jar_file_concurrent, component, it)
 
-        # for it in index:
-        #     print(f"Processing {component} {it['version']} ")
-        #     jar_maven_url = get_maven_url(
-        #         it["maven"], "https://maven.fabricmc.net/", ".jar"
-        #     )
-        #     compute_jar_file(
-        #         os.path.join(UPSTREAM_DIR, JARS_DIR, transform_maven_key(it["maven"])),
-        #         jar_maven_url,
-        #     )
-
     # for each loader, download installer JSON file from maven
     with open(
         os.path.join(UPSTREAM_DIR, META_DIR, "loader.json"), "r", encoding="utf-8"
@@ -143,15 +133,6 @@ def main():
         with concurrent.futures.ThreadPoolExecutor() as executor:
             for it in loader_version_index:
                 executor.submit(get_json_file_concurrent, it)
-        # for it in loader_version_index:
-        #     print(f"Downloading JAR info for loader {it['version']} ")
-        #     maven_url = get_maven_url(
-        #         it["maven"], "https://maven.fabricmc.net/", ".json"
-        #     )
-        #     get_json_file(
-        #         os.path.join(UPSTREAM_DIR, INSTALLER_INFO_DIR, f"{it['version']}.json"),
-        #         maven_url,
-        #     )
 
 
 if __name__ == "__main__":

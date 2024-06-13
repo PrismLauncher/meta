@@ -135,18 +135,6 @@ def main():
         for x in pending_ids:
             executor.submit(fetch_version_concurrent, remote_versions, x)
 
-    # for x in pending_ids:
-    #     version = remote_versions.versions[x]
-    #     print(
-    #         "Updating "
-    #         + version.id
-    #         + " to timestamp "
-    #         + version.release_time.strftime("%s")
-    #     )
-    #     fetch_version(
-    #         os.path.join(UPSTREAM_DIR, VERSIONS_DIR, f"{x}.json"), version.url
-    #     )
-
     # deal with experimental snapshots separately
     if os.path.exists(STATIC_EXPERIMENTS_FILE):
         experiments = ExperimentIndexWrap(
@@ -174,16 +162,6 @@ def main():
         with concurrent.futures.ThreadPoolExecutor() as executor:
             for x in old_snapshots_ids:
                 executor.submit(fetch_modified_version_concurrent, old_snapshots, x)
-
-        # for x in old_snapshots_ids:
-        #     version = old_snapshots.versions[x]
-        #     old_snapshots_path = os.path.join(UPSTREAM_DIR, VERSIONS_DIR, f"{x}.json")
-        #
-        #     print("Updating old snapshot " + version.id)
-        #     if not os.path.isfile(old_snapshots_path):
-        #         fetch_modified_version(old_snapshots_path, version)
-        #     else:
-        #         print("Already have old snapshot " + version.id)
 
     remote_versions.index.write(version_manifest_path)
 

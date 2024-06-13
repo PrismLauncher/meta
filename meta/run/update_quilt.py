@@ -4,8 +4,6 @@ import os
 import zipfile
 from datetime import datetime
 
-import requests
-
 from meta.common import (
     upstream_path,
     ensure_upstream_dir,
@@ -13,7 +11,6 @@ from meta.common import (
     default_session,
 )
 from meta.common.quilt import JARS_DIR, INSTALLER_INFO_DIR, META_DIR, USE_QUILT_MAPPINGS
-from meta.common.fabric import DATETIME_FORMAT_HTTP
 from meta.model.fabric import FabricJarInfo
 
 UPSTREAM_DIR = upstream_path()
@@ -120,16 +117,6 @@ def main():
             for it in index:
                 executor.submit(compute_jar_file_concurrent, component, it)
 
-        # for it in index:
-        #     print(f"Processing {component} {it['version']} ")
-        #     jar_maven_url = get_maven_url(
-        #         it["maven"], "https://maven.quiltmc.org/repository/release/", ".jar"
-        #     )
-        #     compute_jar_file(
-        #         os.path.join(UPSTREAM_DIR, JARS_DIR, transform_maven_key(it["maven"])),
-        #         jar_maven_url,
-        #     )
-
     # for each loader, download installer JSON file from maven
     with open(
         os.path.join(UPSTREAM_DIR, META_DIR, "loader.json"), "r", encoding="utf-8"
@@ -138,15 +125,6 @@ def main():
         with concurrent.futures.ThreadPoolExecutor() as executor:
             for it in loader_version_index:
                 executor.submit(get_json_file_concurrent, it)
-        # for it in loader_version_index:
-        #     print(f"Downloading JAR info for loader {it['version']} ")
-        #     maven_url = get_maven_url(
-        #         it["maven"], "https://maven.quiltmc.org/repository/release/", ".json"
-        #     )
-        #     get_json_file(
-        #         os.path.join(UPSTREAM_DIR, INSTALLER_INFO_DIR, f"{it['version']}.json"),
-        #         maven_url,
-        #     )
 
 
 if __name__ == "__main__":
