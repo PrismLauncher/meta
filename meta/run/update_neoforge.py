@@ -162,7 +162,9 @@ def main():
 
         match_nf = neoforge_version_re.match(long_version)
         if match_nf:
-            mc_version = f"1.{match_nf.group('mcminor')}.{match_nf.group('mcpatch')}"
+            mc_version = f"1.{match_nf.group('mcminor')}"
+            if match_nf.group("mcpatch") != "0":
+                mc_version += f".{match_nf.group('mcpatch')}"
             build = int(match_nf.group("number"))
             version = match_nf.group("number")
             branch = match_nf.group("tag")
