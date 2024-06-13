@@ -23,6 +23,7 @@ from meta.model.java import (
     AzulArchiveType,
     AzulReleaseStatus,
     AzulAvailabilityType,
+    AzulJavaPackageType,
     azulApiPackageDetailUrl,
     ZuluPackageDetail,
     ZuluPackagesDetail,
@@ -78,26 +79,6 @@ def main():
                 break
             page += 1
 
-        page = 0
-        while True:
-            query = AdoptiumAPIFeatureReleasesQuery(
-                image_type=AdoptiumImageType.Jdk, page_size=page_size, page=page
-            )
-            api_call = adoptiumAPIFeatureReleasesUrl(feature, query=query)
-            print("Fetching JDK Page:", page, api_call)
-            r_rls = sess.get(api_call)
-            if r_rls.status_code == 404:
-                break
-            else:
-                r_rls.raise_for_status()
-
-            releases = list(AdoptiumRelease(**rls) for rls in r_rls.json())
-            releases_for_feature.extend(releases)
-
-            if len(r_rls.json()) < page_size:
-                break
-            page += 1
-
         print("Total Adoptium releases for feature:", len(releases_for_feature))
         releases = AdoptiumReleases(__root__=releases_for_feature)
         feature_file = os.path.join(
@@ -115,6 +96,7 @@ def main():
             archive_type=AzulArchiveType.Zip,
             release_status=AzulReleaseStatus.Ga,
             availability_types=[AzulAvailabilityType.CA],
+            java_package_type=AzulJavaPackageType.Jre,
             javafx_bundled=False,
             page=page,
             page_size=page_size,
