@@ -98,6 +98,7 @@ def main():
             availability_types=[AzulAvailabilityType.CA],
             java_package_type=AzulJavaPackageType.Jre,
             javafx_bundled=False,
+            latest=True,
             page=page,
             page_size=page_size,
         )
