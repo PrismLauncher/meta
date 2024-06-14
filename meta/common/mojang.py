@@ -19,3 +19,5 @@ LIBRARY_PATCHES_FILE = join(dirname(__file__), "mojang-library-patches.json")
 MINECRAFT_COMPONENT = "net.minecraft"
 LWJGL_COMPONENT = "org.lwjgl"
 LWJGL3_COMPONENT = "org.lwjgl3"
+
+JAVA_MANIFEST_FILE = join(BASE_DIR, "java_all.json")
