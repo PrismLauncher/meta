@@ -344,12 +344,10 @@ def main():
                 and major in [8, 17, 21, 25]
             )
             or (
-                runtime.runtime_os 
-                in [
-                    JavaRuntimeOS.LinuxX86,
-                    JavaRuntimeOS.LinuxRiscv64
-                ]  
-                and major in [17, 21, 25])
+                runtime.runtime_os
+                in [JavaRuntimeOS.LinuxX86, JavaRuntimeOS.LinuxRiscv64]
+                and major in [17, 21, 25]
+            )
         ):
             if major not in extra_mojang_javas:
                 extra_mojang_javas[major] = list[JavaRuntimeMeta]()
@@ -358,9 +356,7 @@ def main():
     print("Processing Adoptium Releases")
     adoptium_path = os.path.join(UPSTREAM_DIR, ADOPTIUM_DIR, "available_releases.json")
     if os.path.exists(adoptium_path):
-        adoptium_available_releases = AdoptxAvailableReleases.parse_file(
-            adoptium_path
-        )
+        adoptium_available_releases = AdoptxAvailableReleases.parse_file(adoptium_path)
         for major in adoptium_available_releases.available_releases:
             adoptium_releases = AdoptxReleases.parse_file(
                 os.path.join(UPSTREAM_DIR, ADOPTIUM_VERSIONS_DIR, f"java{major}.json")
@@ -389,9 +385,7 @@ def main():
     print("Processing OpenJ9 Releases")
     openj9_path = os.path.join(UPSTREAM_DIR, OPENJ9_DIR, "available_releases.json")
     if os.path.exists(openj9_path):
-        openj9_available_releases = AdoptxAvailableReleases.parse_file(
-            openj9_path
-        )
+        openj9_available_releases = AdoptxAvailableReleases.parse_file(openj9_path)
         for major in openj9_available_releases.available_releases:
             openj9_releases = AdoptxReleases.parse_file(
                 os.path.join(UPSTREAM_DIR, OPENJ9_VERSIONS_DIR, f"java{major}.json")
