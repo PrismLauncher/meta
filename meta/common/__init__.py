@@ -86,3 +86,12 @@ def default_session():
     sess.headers.update({"User-Agent": "PrismLauncherMeta/1.0"})
 
     return sess
+
+
+def remove_files(file_paths):
+    for file_path in file_paths:
+        try:
+            if os.path.isfile(file_path):
+                os.remove(file_path)
+        except Exception as e:
+            print(e)
