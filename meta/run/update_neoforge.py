@@ -2,6 +2,7 @@
  Get the source files necessary for generating Forge versions
 """
 
+import concurrent.futures
 import copy
 import hashlib
 import json
@@ -22,6 +23,7 @@ from meta.common import (
     ensure_upstream_dir,
     default_session,
     remove_files,
+    filehash,
 )
 from meta.common.neoforge import (
     JARS_DIR,
@@ -54,14 +56,6 @@ sess = default_session()
 
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
-
-
-def filehash(filename, hashtype, blocksize=65536):
-    hashtype = hashtype()
-    with open(filename, "rb") as f:
-        for block in iter(lambda: f.read(blocksize), b""):
-            hashtype.update(block)
-    return hashtype.hexdigest()
 
 
 def find_nth(haystack, needle, n):
@@ -122,6 +116,117 @@ def get_single_forge_files_manifest(longversion, artifact: str):
             json.dump(files_json, f, sort_keys=True, indent=4)
 
     return ret_dict
+
+
+def process_neoforge_version(key, entry):
+    eprint("Updating NeoForge %s" % key)
+    if entry.mc_version is None:
+        eprint("Skipping %d with invalid MC version" % entry.build)
+        return
+
+    version = NeoForgeVersion(entry)
+    if version.url() is None:
+        eprint("Skipping %d with no valid files" % version.build)
+        return
+    if not version.uses_installer():
+        eprint(f"version {version.long_version} does not use installer")
+        return
+
+    jar_path = os.path.join(UPSTREAM_DIR, JARS_DIR, version.filename())
+
+    installer_info_path = (
+        UPSTREAM_DIR + "/neoforge/installer_info/%s.json" % version.long_version
+    )
+    profile_path = (
+        UPSTREAM_DIR + "/neoforge/installer_manifests/%s.json" % version.long_version
+    )
+    version_file_path = (
+        UPSTREAM_DIR + "/neoforge/version_manifests/%s.json" % version.long_version
+    )
+
+    if not os.path.isfile(jar_path):
+        remove_files([profile_path, installer_info_path])
+    else:
+        fileSha1 = filehash(jar_path, hashlib.sha1)
+        try:
+            rfile = sess.get(version.url() + ".sha1")
+            rfile.raise_for_status()
+            if fileSha1 != rfile.text.strip():
+                remove_files([jar_path, profile_path, installer_info_path])
+        except Exception as e:
+            eprint("Failed to check sha1 %s" % version.url())
+            eprint("Error is %s" % e)
+
+    installer_refresh_required = not os.path.isfile(profile_path) or not os.path.isfile(
+        installer_info_path
+    )
+
+    if installer_refresh_required:
+        # grab the installer if it's not there
+        if not os.path.isfile(jar_path):
+            eprint("Downloading %s" % version.url())
+            try:
+                rfile = sess.get(version.url(), stream=True)
+                rfile.raise_for_status()
+                Path(jar_path).parent.mkdir(parents=True, exist_ok=True)
+                with open(jar_path, "wb") as f:
+                    for chunk in rfile.iter_content(chunk_size=128):
+                        f.write(chunk)
+            except Exception as e:
+                eprint("Failed to download %s" % version.url())
+                eprint("Error is %s" % e)
+                return
+
+    eprint("Processing %s" % version.url())
+    # harvestables from the installer
+    if not os.path.isfile(profile_path):
+        print(jar_path)
+        with zipfile.ZipFile(jar_path) as jar:
+            with suppress(KeyError):
+                with jar.open("version.json") as profile_zip_entry:
+                    version_data = profile_zip_entry.read()
+
+                    # Process: does it parse?
+                    MojangVersion.parse_raw(version_data)
+
+                    Path(version_file_path).parent.mkdir(parents=True, exist_ok=True)
+                    with open(version_file_path, "wb") as versionJsonFile:
+                        versionJsonFile.write(version_data)
+                        versionJsonFile.close()
+
+            with jar.open("install_profile.json") as profile_zip_entry:
+                install_profile_data = profile_zip_entry.read()
+
+                # Process: does it parse?
+                is_parsable = False
+                exception = None
+                try:
+                    NeoForgeInstallerProfileV2.parse_raw(install_profile_data)
+                    is_parsable = True
+                except ValidationError as err:
+                    exception = err
+
+                if not is_parsable:
+                    if version.is_supported():
+                        raise exception
+                    else:
+                        eprint(
+                            "Version %s is not supported and won't be generated later."
+                            % version.long_version
+                        )
+
+                Path(profile_path).parent.mkdir(parents=True, exist_ok=True)
+                with open(profile_path, "wb") as profileFile:
+                    profileFile.write(install_profile_data)
+                    profileFile.close()
+
+    # installer info v1
+    if not os.path.isfile(installer_info_path):
+        installer_info = InstallerInfo()
+        installer_info.sha1hash = filehash(jar_path, hashlib.sha1)
+        installer_info.sha256hash = filehash(jar_path, hashlib.sha256)
+        installer_info.size = os.path.getsize(jar_path)
+        installer_info.write(installer_info_path)
 
 
 def main():
@@ -221,118 +326,9 @@ def main():
 
     print("Grabbing installers and dumping installer profiles...")
     # get the installer jars - if needed - and get the installer profiles out of them
-    for key, entry in new_index.versions.items():
-        eprint("Updating NeoForge %s" % key)
-        if entry.mc_version is None:
-            eprint("Skipping %d with invalid MC version" % entry.build)
-            continue
-
-        version = NeoForgeVersion(entry)
-        if version.url() is None:
-            eprint("Skipping %d with no valid files" % version.build)
-            continue
-        if not version.uses_installer():
-            eprint(f"version {version.long_version} does not use installer")
-            continue
-
-        jar_path = os.path.join(UPSTREAM_DIR, JARS_DIR, version.filename())
-
-        installer_info_path = (
-            UPSTREAM_DIR + "/neoforge/installer_info/%s.json" % version.long_version
-        )
-        profile_path = (
-            UPSTREAM_DIR
-            + "/neoforge/installer_manifests/%s.json" % version.long_version
-        )
-        version_file_path = (
-            UPSTREAM_DIR + "/neoforge/version_manifests/%s.json" % version.long_version
-        )
-
-        if not os.path.isfile(jar_path):
-            remove_files([profile_path, installer_info_path])
-        else:
-            fileSha1 = filehash(jar_path, hashlib.sha1)
-            try:
-                rfile = sess.get(version.url() + ".sha1")
-                rfile.raise_for_status()
-                if fileSha1 != rfile.text.strip():
-                    remove_files([jar_path, profile_path, installer_info_path])
-            except Exception as e:
-                eprint("Failed to check sha1 %s" % version.url())
-                eprint("Error is %s" % e)
-
-        installer_refresh_required = not os.path.isfile(
-            profile_path
-        ) or not os.path.isfile(installer_info_path)
-
-        if installer_refresh_required:
-            # grab the installer if it's not there
-            if not os.path.isfile(jar_path):
-                eprint("Downloading %s" % version.url())
-                try:
-                    rfile = sess.get(version.url(), stream=True)
-                    rfile.raise_for_status()
-                    Path(jar_path).parent.mkdir(parents=True, exist_ok=True)
-                    with open(jar_path, "wb") as f:
-                        for chunk in rfile.iter_content(chunk_size=128):
-                            f.write(chunk)
-                except Exception as e:
-                    eprint("Failed to download %s" % version.url())
-                    eprint("Error is %s" % e)
-                    continue
-
-        eprint("Processing %s" % version.url())
-        # harvestables from the installer
-        if not os.path.isfile(profile_path):
-            print(jar_path)
-            with zipfile.ZipFile(jar_path) as jar:
-                with suppress(KeyError):
-                    with jar.open("version.json") as profile_zip_entry:
-                        version_data = profile_zip_entry.read()
-
-                        # Process: does it parse?
-                        MojangVersion.parse_raw(version_data)
-
-                        Path(version_file_path).parent.mkdir(
-                            parents=True, exist_ok=True
-                        )
-                        with open(version_file_path, "wb") as versionJsonFile:
-                            versionJsonFile.write(version_data)
-                            versionJsonFile.close()
-
-                with jar.open("install_profile.json") as profile_zip_entry:
-                    install_profile_data = profile_zip_entry.read()
-
-                    # Process: does it parse?
-                    is_parsable = False
-                    exception = None
-                    try:
-                        NeoForgeInstallerProfileV2.parse_raw(install_profile_data)
-                        is_parsable = True
-                    except ValidationError as err:
-                        exception = err
-
-                    if not is_parsable:
-                        if version.is_supported():
-                            raise exception
-                        else:
-                            eprint(
-                                "Version %s is not supported and won't be generated later."
-                                % version.long_version
-                            )
-
-                    Path(profile_path).parent.mkdir(parents=True, exist_ok=True)
-                    with open(profile_path, "wb") as profileFile:
-                        profileFile.write(install_profile_data)
-                        profileFile.close()
-
-        # installer info v1
-        if not os.path.isfile(installer_info_path):
-            installer_info = InstallerInfo()
-            installer_info.sha1hash = filehash(jar_path, hashlib.sha1)
-            installer_info.sha256hash = filehash(jar_path, hashlib.sha256)
-            installer_info.size = os.path.getsize(jar_path)
-            installer_info.write(installer_info_path)
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        for key, entry in new_index.versions.items():
+            executor.submit(process_neoforge_version, key, entry)
 
 
 if __name__ == "__main__":
