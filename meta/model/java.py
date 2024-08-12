@@ -247,8 +247,8 @@ class AdoptiumPackage(AdoptiumFile):
     checksum: Optional[str]
     checksum_link: Optional[str]
     signature_link: Optional[str]
-    download_count: Optional[int]
     metadata_link: Optional[str]
+    # we intentionally omit download_count
 
 
 class AdoptiumBinary(MetaBase):
@@ -260,10 +260,10 @@ class AdoptiumBinary(MetaBase):
     package: Optional[AdoptiumPackage]
     installer: Optional[AdoptiumPackage]
     heap_size: AdoptiumHeapSize
-    download_count: Optional[int]
     updated_at: datetime
     scm_ref: Optional[str]
     project: AdoptiumProject
+    # we intentionally omit download_count
 
 
 class AdoptiumVersion(MetaBase):
@@ -286,12 +286,12 @@ class AdoptiumRelease(MetaBase):
     timestamp: datetime
     updated_at: datetime
     binaries: list[AdoptiumBinary]
-    download_count: Optional[int]
     release_type: str
     vendor: AdoptiumVendor
     version_data: AdoptiumVersion
     source: Optional[AdoptiumFile]
     release_notes: Optional[AdoptiumFile]
+    # we intentionally omit download_count
 
 
 class AdoptiumReleases(MetaBase):
