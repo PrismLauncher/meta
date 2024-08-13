@@ -257,6 +257,7 @@ class OSRule(MetaBase):
             "osx-arm64",
             "linux-arm64",
             "linux-arm32",
+            "linux-riscv64",
         ]
         return v
 

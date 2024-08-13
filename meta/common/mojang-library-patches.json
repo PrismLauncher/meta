@@ -62,6 +62,29 @@
     }
   },
   {
+    "_comment": "Only allow linux-riscv64 for existing LWJGL 3.3.3",
+    "match": [
+      "org.lwjgl:lwjgl-freetype-natives-linux-riscv64:3.3.3",
+      "org.lwjgl:lwjgl-glfw-natives-linux-riscv64:3.3.3",
+      "org.lwjgl:lwjgl-jemalloc-natives-linux-riscv64:3.3.3",
+      "org.lwjgl:lwjgl-openal-natives-linux-riscv64:3.3.3",
+      "org.lwjgl:lwjgl-opengl-natives-linux-riscv64:3.3.3",
+      "org.lwjgl:lwjgl-stb-natives-linux-riscv64:3.3.3",
+      "org.lwjgl:lwjgl-tinyfd-natives-linux-riscv64:3.3.3",
+      "org.lwjgl:lwjgl-natives-linux-riscv64:3.3.3"
+    ],
+    "override": {
+      "rules": [
+        {
+          "action": "allow",
+          "os": {
+            "name": "linux-riscv64"
+          }
+        }
+      ]
+    }
+  },
+  {
     "_comment": "Add missing tinyfd to the broken LWJGL 3.2.2 variant",
     "match": [
       "org.lwjgl:lwjgl:3.2.2"
@@ -2875,5 +2898,525 @@
       },
       "name": "org.lwjgl:lwjgl-glfw-natives-linux:3.3.2-lwjgl.1"
     }
+  },
+  {
+    "_comment": "Add linux-riscv64 support for LWJGL 3.3.3",
+    "match": [
+      "org.lwjgl:lwjgl-freetype:3.3.3"
+    ],
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "3e3ed399be71d33bffd532039da0b7d598ba5218",
+            "size": 1194588,
+            "url": "https://github.com/Vixea/lwjgl-tmp-build/raw/main/lwjgl-freetype-natives-linux-riscv64.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-freetype-natives-linux-riscv64:3.3.3-lwjgl.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-riscv64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Add linux-riscv64 support for LWJGL 3.3.3",
+    "match": [
+      "org.lwjgl:lwjgl-glfw:3.3.3"
+    ],
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "570be03f912e4b5aa4d4d9a837027272f9f0c15b",
+            "size": 117087,
+            "url": "https://github.com/Vixea/lwjgl-tmp-build/raw/main/lwjgl-glfw-natives-linux-riscv64.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-glfw-natives-linux-riscv64:3.3.3-lwjgl.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-riscv64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Add linux-riscv64 support for LWJGL 3.3.3",
+    "match": [
+      "org.lwjgl:lwjgl-jemalloc:3.3.3"
+    ],
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "09af0ce1ba9efe37bd1819723df34fca11d06fc9",
+            "size": 197215,
+            "url": "https://github.com/Vixea/lwjgl-tmp-build/raw/main/lwjgl-jemalloc-natives-linux-riscv64.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-jemalloc-natives-linux-riscv64:3.3.3-lwjgl.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-riscv64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Add linux-riscv64 support for LWJGL 3.3.3",
+    "match": [
+      "org.lwjgl:lwjgl-openal:3.3.3"
+    ],
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "1a4c34e3466a43a8834e91f993182ebb9ba9c960",
+            "size": 516659,
+            "url": "https://github.com/Vixea/lwjgl-tmp-build/raw/main/lwjgl-openal-natives-linux-riscv64.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-openal-natives-linux-riscv64:3.3.3-lwjgl.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-riscv64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Add linux-riscv64 support for LWJGL 3.3.3",
+    "match": [
+      "org.lwjgl:lwjgl-opengl:3.3.3"
+    ],
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "6519be2ad3d5e2cfdbe24443ab46fc345156611b",
+            "size": 57864,
+            "url": "https://github.com/Vixea/lwjgl-tmp-build/raw/main/lwjgl-opengl-natives-linux-riscv64.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-opengl-natives-linux-riscv64:3.3.3-lwjgl.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-riscv64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Add linux-riscv64 support for LWJGL 3.3.3",
+    "match": [
+      "org.lwjgl:lwjgl-stb:3.3.3"
+    ],
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "92b0195df058bfce9fb2ba068996ededeecc3a3e",
+            "size": 215886,
+            "url": "https://github.com/Vixea/lwjgl-tmp-build/raw/main/lwjgl-stb-natives-linux-riscv64.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-stb-natives-linux-riscv64:3.3.3-lwjgl.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-riscv64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Add linux-riscv64 support for LWJGL 3.3.3",
+    "match": [
+      "org.lwjgl:lwjgl-tinyfd:3.3.3"
+    ],
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "b0ebb8068226e7f64bab414d097268b801ccbfb7",
+            "size": 46550,
+            "url": "https://github.com/Vixea/lwjgl-tmp-build/raw/main/lwjgl-tinyfd-natives-linux-riscv64.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-tinyfd-natives-linux-riscv64:3.3.3-lwjgl.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-riscv64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Add linux-riscv64 support for LWJGL 3.3.3",
+    "match": [
+      "org.lwjgl:lwjgl:3.3.3"
+    ],
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "b8f0b99e3a266917d2054a6afad7666b7e92434b",
+            "size": 80167,
+            "url": "https://github.com/Vixea/lwjgl-tmp-build/raw/main/lwjgl-natives-linux-riscv64.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-natives-linux-riscv64:3.3.3-lwjgl.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-riscv64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Patch linux-riscv64 support for LWJGL 3.3.3",
+    "match": [
+      "org.lwjgl:lwjgl-freetype:3.3.3"
+    ],
+    "override": {
+      "rules": [
+        {
+          "action": "allow"
+        },
+        {
+          "action": "disallow",
+          "os": {
+            "name": "linux-riscv64"
+          }
+        }
+      ]
+    },
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "9d5286c4b6400e24c69fe0b1353e3b14ca7feee8",
+            "size": 459377,
+            "url": "https://github.com/Vixea/lwjgl-tmp-build/raw/main/lwjgl-freetype.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-freetype:3.3.3-lwjgl.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-riscv64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Patch linux-riscv64 support for LWJGL 3.3.3",
+    "match": [
+      "org.lwjgl:lwjgl-glfw:3.3.3"
+    ],
+    "override": {
+      "rules": [
+        {
+          "action": "allow"
+        },
+        {
+          "action": "disallow",
+          "os": {
+            "name": "linux-riscv64"
+          }
+        }
+      ]
+    },
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "7c2ce03fd87ca4bde4eeb0198dcc5fabb0c6e9c6",
+            "size": 137762,
+            "url": "https://github.com/Vixea/lwjgl-tmp-build/raw/main/lwjgl-glfw.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-glfw:3.3.3-lwjgl.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-riscv64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Patch linux-riscv64 support for LWJGL 3.3.3",
+    "match": [
+      "org.lwjgl:lwjgl-jemalloc:3.3.3"
+    ],
+    "override": {
+      "rules": [
+        {
+          "action": "allow"
+        },
+        {
+          "action": "disallow",
+          "os": {
+            "name": "linux-riscv64"
+          }
+        }
+      ]
+    },
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "0ea9001a76ccd040f69ad80f8efaf18fe8bb223e",
+            "size": 45125,
+            "url": "https://github.com/Vixea/lwjgl-tmp-build/raw/main/lwjgl-jemalloc.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-jemalloc:3.3.3-lwjgl.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-riscv64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Patch linux-riscv64 support for LWJGL 3.3.3",
+    "match": [
+      "org.lwjgl:lwjgl-openal:3.3.3"
+    ],
+    "override": {
+      "rules": [
+        {
+          "action": "allow"
+        },
+        {
+          "action": "disallow",
+          "os": {
+            "name": "linux-riscv64"
+          }
+        }
+      ]
+    },
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "412dea924c629fc114d4e1b20ef9b4200e813484",
+            "size": 112086,
+            "url": "https://github.com/Vixea/lwjgl-tmp-build/raw/main/lwjgl-openal.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-openal:3.3.3-lwjgl.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-riscv64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Patch linux-riscv64 support for LWJGL 3.3.3",
+    "match": [
+      "org.lwjgl:lwjgl-opengl:3.3.3"
+    ],
+    "override": {
+      "rules": [
+        {
+          "action": "allow"
+        },
+        {
+          "action": "disallow",
+          "os": {
+            "name": "linux-riscv64"
+          }
+        }
+      ]
+    },
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "0e68fe4e2f7886656f98415c1e5d337061b3678b",
+            "size": 937725,
+            "url": "https://github.com/Vixea/lwjgl-tmp-build/raw/main/lwjgl-opengl.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-opengl:3.3.3-lwjgl.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-riscv64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Patch linux-riscv64 support for LWJGL 3.3.3",
+    "match": [
+      "org.lwjgl:lwjgl-stb:3.3.3"
+    ],
+    "override": {
+      "rules": [
+        {
+          "action": "allow"
+        },
+        {
+          "action": "disallow",
+          "os": {
+            "name": "linux-riscv64"
+          }
+        }
+      ]
+    },
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "cbb7c75083599ab41064295459d4e7653b22d25b",
+            "size": 122333,
+            "url": "https://github.com/Vixea/lwjgl-tmp-build/raw/main/lwjgl-stb.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-stb:3.3.3-lwjgl.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-riscv64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Patch linux-riscv64 support for LWJGL 3.3.3",
+    "match": [
+      "org.lwjgl:lwjgl-tinyfd:3.3.3"
+    ],
+    "override": {
+      "rules": [
+        {
+          "action": "allow"
+        },
+        {
+          "action": "disallow",
+          "os": {
+            "name": "linux-riscv64"
+          }
+        }
+      ]
+    },
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "1e20d257afa05f65f4057192b5c5c4ebbc89f411",
+            "size": 14232,
+            "url": "https://github.com/Vixea/lwjgl-tmp-build/raw/main/lwjgl-tinyfd.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-tinyfd:3.3.3-lwjgl.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-riscv64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Patch linux-riscv64 support for LWJGL 3.3.3",
+    "match": [
+      "org.lwjgl:lwjgl:3.3.3"
+    ],
+    "override": {
+      "rules": [
+        {
+          "action": "allow"
+        },
+        {
+          "action": "disallow",
+          "os": {
+            "name": "linux-riscv64"
+          }
+        }
+      ]
+    },
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "8e623f8f0f6e87776fbf2f1af2d5cfe366135ea4",
+            "size": 795463,
+            "url": "https://github.com/Vixea/lwjgl-tmp-build/raw/main/lwjgl.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl:3.3.3-lwjgl.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-riscv64"
+            }
+          }
+        ]
+      }
+    ]
   }
 ]
