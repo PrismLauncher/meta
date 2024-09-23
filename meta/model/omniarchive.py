@@ -171,6 +171,8 @@ class OmniarchiveJavaComponent(StrEnum):
 class JavaVersion(MetaBase):
     component: OmniarchiveJavaComponent = OmniarchiveJavaComponent.JreLegacy
     major_version: int = Field(8, alias="majorVersion")
+    minimum_version: int = Field(alias="minVersion")
+    advised_maximum_version: int = Field(alias="advisedMaxVersion")
 
 
 class OmniarchiveJavaIndexAvailability(MetaBase):
