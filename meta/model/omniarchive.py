@@ -158,7 +158,7 @@ class OmniarchiveLogging(MetaBase):
     type: str
 
 
-class OmniarchiveJavaComponent(StrEnum):
+class MojangJavaComponent(StrEnum):
     JreLegacy = "jre-legacy"
     Alpha = "java-runtime-alpha"
     Beta = "java-runtime-beta"
@@ -175,39 +175,39 @@ class JavaVersion(MetaBase):
     advised_maximum_version: int = Field(alias="advisedMaxVersion")
 
 
-class OmniarchiveJavaIndexAvailability(MetaBase):
+class MojangJavaIndexAvailability(MetaBase):
     group: int
     progress: int
 
 
-class OmniarchiveJavaIndexManifest(MetaBase):
+class MojangJavaIndexManifest(MetaBase):
     sha1: str
     size: int
     url: str
 
 
-class OmniarchiveJavaIndexVersion(MetaBase):
+class MojangJavaIndexVersion(MetaBase):
     name: str
     released: datetime
 
 
-class OmniarchiveJavaRuntime(MetaBase):
-    availability: OmniarchiveJavaIndexAvailability
-    manifest: OmniarchiveJavaIndexManifest
-    version: OmniarchiveJavaIndexVersion
+class MojangJavaRuntime(MetaBase):
+    availability: MojangJavaIndexAvailability
+    manifest: MojangJavaIndexManifest
+    version: MojangJavaIndexVersion
 
 
-class OmniarchiveJavaIndexEntry(MetaBase):
-    __root__: dict[OmniarchiveJavaComponent, list[OmniarchiveJavaRuntime]]
+class MojangJavaIndexEntry(MetaBase):
+    __root__: dict[MojangJavaComponent, list[MojangJavaRuntime]]
 
-    def __iter__(self) -> Iterator[OmniarchiveJavaComponent]:
+    def __iter__(self) -> Iterator[MojangJavaComponent]:
         return iter(self.__root__)
 
-    def __getitem__(self, item) -> list[OmniarchiveJavaRuntime]:
+    def __getitem__(self, item) -> list[MojangJavaRuntime]:
         return self.__root__[item]
 
 
-class OmniarchiveJavaOsName(StrEnum):
+class MojangJavaOsName(StrEnum):
     Gamecore = "gamecore"
     Linux = "linux"
     Linuxi386 = "linux-i386"
@@ -219,12 +219,12 @@ class OmniarchiveJavaOsName(StrEnum):
 
 
 class OmniarchiveIndex(MetaBase):
-    __root__: dict[OmniarchiveJavaOsName, OmniarchiveJavaIndexEntry]
+    __root__: dict[MojangJavaOsName, MojangJavaIndexEntry]
 
-    def __iter__(self) -> Iterator[OmniarchiveJavaOsName]:
+    def __iter__(self) -> Iterator[MojangJavaOsName]:
         return iter(self.__root__)
 
-    def __getitem__(self, item) -> OmniarchiveJavaIndexEntry:
+    def __getitem__(self, item) -> MojangJavaIndexEntry:
         return self.__root__[item]
 
 
