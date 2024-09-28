@@ -169,7 +169,7 @@ class MojangJavaComponent(StrEnum):
 
 
 class JavaVersion(MetaBase):
-    component: OmniarchiveJavaComponent = OmniarchiveJavaComponent.JreLegacy
+    component: MojangJavaComponent = MojangJavaComponent.JreLegacy
     major_version: int = Field(8, alias="majorVersion")
     minimum_version: int = Field(alias="minVersion")
     advised_maximum_version: int = Field(alias="advisedMaxVersion")
