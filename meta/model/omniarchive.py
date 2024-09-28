@@ -157,7 +157,7 @@ class OmniarchiveLogging(MetaBase):
     argument: str
     type: str
 
-
+# TODO: do we need the JRE stuff here or can we just grab it from the output of the Mojang scripts?
 class MojangJavaComponent(StrEnum):
     JreLegacy = "jre-legacy"
     Alpha = "java-runtime-alpha"
