@@ -18,7 +18,7 @@ function init_repo {
 
     # fail if no repo url is specified
     if [ -z "$2" ]; then
-        echo "Can't initialize missing $1 directory. Please specify $4" >&2
+        echo "Can't initialize missing $1 directory. Please specify $3" >&2
         return 1
     fi
 
