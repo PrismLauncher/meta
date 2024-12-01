@@ -33,6 +33,7 @@ function launcher_git() {
 currentDate=$(date -I)
 
 upstream_git reset --hard HEAD || exit 1
+upstream_git pull
 
 python -m meta.run.update_mojang || fail_in
 python -m meta.run.update_forge || fail_in
@@ -57,6 +58,7 @@ if [ "${DEPLOY_TO_GIT}" = true ]; then
 fi
 
 launcher_git reset --hard HEAD || exit 1
+launcher_git pull
 
 python -m meta.run.generate_mojang || fail_out
 python -m meta.run.generate_forge || fail_out
