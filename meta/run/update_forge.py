@@ -7,7 +7,6 @@ import hashlib
 import json
 import os
 import re
-import sys
 import zipfile
 from contextlib import suppress
 from datetime import datetime
@@ -21,6 +20,9 @@ from meta.common import (
     ensure_upstream_dir,
     default_session,
     remove_files,
+    eprint,
+    filehash,
+    get_file_sha1_from_file,
 )
 from meta.common.forge import (
     JARS_DIR,
@@ -43,6 +45,7 @@ from meta.model.forge import (
     InstallerInfo,
     ForgeLegacyInfo,
 )
+from meta.common.http import download_binary_file
 from meta.model.mojang import MojangVersion
 
 UPSTREAM_DIR = upstream_path()
@@ -56,18 +59,6 @@ ensure_upstream_dir(FILE_MANIFEST_DIR)
 LEGACYINFO_PATH = os.path.join(UPSTREAM_DIR, LEGACYINFO_FILE)
 
 sess = default_session()
-
-
-def eprint(*args, **kwargs):
-    print(*args, file=sys.stderr, **kwargs)
-
-
-def filehash(filename, hashtype, blocksize=65536):
-    hashtype = hashtype()
-    with open(filename, "rb") as f:
-        for block in iter(lambda: f.read(blocksize), b""):
-            hashtype.update(block)
-    return hashtype.hexdigest()
 
 
 def get_single_forge_files_manifest(longversion):
@@ -297,15 +288,20 @@ def main():
                 UPSTREAM_DIR + "/forge/version_manifests/%s.json" % version.long_version
             )
 
+            new_sha1 = None
+            sha1_file = jar_path + ".sha1"
             if not os.path.isfile(jar_path):
                 remove_files([profile_path, installer_info_path])
             else:
-                fileSha1 = filehash(jar_path, hashlib.sha1)
+                fileSha1 = get_file_sha1_from_file(jar_path, sha1_file)
                 try:
                     rfile = sess.get(version.url() + ".sha1")
                     rfile.raise_for_status()
-                    if fileSha1 != rfile.text.strip():
-                        remove_files([jar_path, profile_path, installer_info_path])
+                    new_sha1 = rfile.text.strip()
+                    if fileSha1 != new_sha1:
+                        remove_files(
+                            [jar_path, profile_path, installer_info_path, sha1_file]
+                        )
                 except Exception as e:
                     eprint("Failed to check sha1 %s" % version.url())
                     eprint("Error is %s" % e)
@@ -318,11 +314,18 @@ def main():
                 # grab the installer if it's not there
                 if not os.path.isfile(jar_path):
                     eprint("Downloading %s" % version.url())
-                    rfile = sess.get(version.url(), stream=True)
-                    rfile.raise_for_status()
-                    with open(jar_path, "wb") as f:
-                        for chunk in rfile.iter_content(chunk_size=128):
-                            f.write(chunk)
+                    download_binary_file(sess, jar_path, version.url())
+                    if new_sha1 is None:
+                        try:
+                            rfile = sess.get(version.url() + ".sha1")
+                            rfile.raise_for_status()
+                            new_sha1 = rfile.text.strip()
+                        except Exception as e:
+                            eprint("Failed to download new sha1 %s" % version.url())
+                            eprint("Error is %s" % e)
+                    if new_sha1 is not None:  # this is in case the fetch failed
+                        with open(sha1_file, "w") as file:
+                            file.write(new_sha1)
 
             eprint("Processing %s" % version.url())
             # harvestables from the installer
@@ -387,11 +390,7 @@ def main():
             if not os.path.isfile(LEGACYINFO_PATH):
                 # grab the jar/zip if it's not there
                 if not os.path.isfile(jar_path):
-                    rfile = sess.get(version.url(), stream=True)
-                    rfile.raise_for_status()
-                    with open(jar_path, "wb") as f:
-                        for chunk in rfile.iter_content(chunk_size=128):
-                            f.write(chunk)
+                    download_binary_file(sess, jar_path, version.url())
                 # find the latest timestamp in the zip file
                 tstamp = datetime.fromtimestamp(0)
                 with zipfile.ZipFile(jar_path) as jar:
