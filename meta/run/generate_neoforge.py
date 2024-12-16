@@ -1,11 +1,10 @@
 from copy import deepcopy
 import os
 import re
-import sys
 from operator import attrgetter
 from typing import Collection
 
-from meta.common import ensure_component_dir, launcher_path, upstream_path
+from meta.common import ensure_component_dir, launcher_path, upstream_path, eprint
 from meta.common.neoforge import (
     NEOFORGE_COMPONENT,
     INSTALLER_MANIFEST_DIR,
@@ -36,10 +35,6 @@ LAUNCHER_DIR = launcher_path()
 UPSTREAM_DIR = upstream_path()
 
 ensure_component_dir(NEOFORGE_COMPONENT)
-
-
-def eprint(*args, **kwargs):
-    print(*args, file=sys.stderr, **kwargs)
 
 
 def version_from_build_system_installer(
