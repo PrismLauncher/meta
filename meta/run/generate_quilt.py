@@ -1,5 +1,6 @@
 import json
 import os
+import sys
 
 from meta.common import (
     ensure_component_dir,
@@ -25,6 +26,10 @@ UPSTREAM_DIR = upstream_path()
 
 ensure_component_dir(LOADER_COMPONENT)
 ensure_component_dir(INTERMEDIARY_COMPONENT)
+
+
+def eprint(*args, **kwargs):
+    print(*args, file=sys.stderr, **kwargs)
 
 
 def load_jar_info(artifact_key) -> FabricJarInfo:
@@ -106,15 +111,21 @@ def main():
         for entry in loader_version_index:
             version = entry["version"]
             print(f"Processing loader {version}")
+            try:
+                v, should_recommend = process_loader_version(entry)
 
-            v, should_recommend = process_loader_version(entry)
+                if (
+                    not recommended_loader_versions and should_recommend
+                ):  # newest stable loader is recommended
+                    recommended_loader_versions.append(version)
 
-            if (
-                not recommended_loader_versions and should_recommend
-            ):  # newest stable loader is recommended
-                recommended_loader_versions.append(version)
-
-            v.write(os.path.join(LAUNCHER_DIR, LOADER_COMPONENT, f"{v.version}.json"))
+                v.write(
+                    os.path.join(LAUNCHER_DIR, LOADER_COMPONENT, f"{v.version}.json")
+                )
+            except Exception as e:
+                eprint("Failed to download %s" % version)
+                eprint("Error is %s" % e)
+                continue
 
     if USE_QUILT_MAPPINGS:
         with open(
@@ -125,18 +136,22 @@ def main():
                 version = entry["version"]
                 print(f"Processing intermediary {version}")
 
-                v = process_intermediary_version(entry)
+                try:
+                    v = process_intermediary_version(entry)
 
-                recommended_intermediary_versions.append(
-                    version
-                )  # all intermediaries are recommended
+                    recommended_intermediary_versions.append(
+                        version
+                    )  # all intermediaries are recommended
 
-                v.write(
-                    os.path.join(
-                        LAUNCHER_DIR, INTERMEDIARY_COMPONENT, f"{v.version}.json"
+                    v.write(
+                        os.path.join(
+                            LAUNCHER_DIR, INTERMEDIARY_COMPONENT, f"{v.version}.json"
+                        )
                     )
-                )
-
+                except Exception as e:
+                    eprint("Failed to download %s" % version)
+                    eprint("Error is %s" % e)
+                    continue
     package = MetaPackage(uid=LOADER_COMPONENT, name="Quilt Loader")
     package.recommended = recommended_loader_versions
     package.description = "The Quilt project is an open, community-driven modding toolchain designed primarily for Minecraft."
