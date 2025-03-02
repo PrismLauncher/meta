@@ -12,6 +12,7 @@
   pydantic_1,
   python,
   rsync,
+  curl,
 }:
 buildPythonApplication {
   pname = "blockgame-meta";
@@ -54,7 +55,7 @@ buildPythonApplication {
 
     wrapProgram $out/bin/update \
       --prefix PYTHONPATH : "$PYTHONPATH" \
-      --prefix PATH : ${lib.makeBinPath [git openssh python rsync]}
+      --prefix PATH : ${lib.makeBinPath [git openssh python rsync curl]}
 
     wrapProgram $out/bin/init \
       --prefix PATH : ${lib.makeBinPath [git openssh]}
