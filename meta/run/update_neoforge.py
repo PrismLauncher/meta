@@ -144,7 +144,7 @@ def main():
         r"^(?P<mc>[0-9a-zA-Z_\.]+)-(?P<ver>[0-9\.]+\.(?P<build>[0-9]+))(-(?P<branch>[a-zA-Z0-9\.]+))?$"
     )
     neoforge_version_re = re.compile(
-        r"^(?P<mcminor>\d+).(?P<mcpatch>\d+).(?P<number>\d+)(?:-(?P<tag>\w+))?$"
+        r"^(?P<mcminor>\d+).(?:(?P<mcpatch>\d+)|(?P<snapshot>[0-9a-z]+)).(?P<number>\d+)(?:-(?P<tag>\w+))?$"
     )
 
     print("")
@@ -162,9 +162,11 @@ def main():
 
         match_nf = neoforge_version_re.match(long_version)
         if match_nf:
-            mc_version = f"1.{match_nf.group('mcminor')}"
-            if match_nf.group("mcpatch") != "0":
-                mc_version += f".{match_nf.group('mcpatch')}"
+            mc_version = match_nf.group("snapshot")
+            if not mc_version:
+                mc_version = f"1.{match_nf.group('mcminor')}"
+                if match_nf.group("mcpatch") != "0":
+                    mc_version += f".{match_nf.group('mcpatch')}"
             build = int(match_nf.group("number"))
             version = match_nf.group("number")
             branch = match_nf.group("tag")
