@@ -22,7 +22,7 @@ from meta.common import (
     default_session,
     remove_files,
     eprint,
-    filehash,
+    file_hash,
     get_file_sha1_from_file,
 )
 from meta.common.http import download_binary_file
@@ -332,8 +332,8 @@ def main():
         # installer info v1
         if not os.path.isfile(installer_info_path):
             installer_info = InstallerInfo()
-            installer_info.sha1hash = filehash(jar_path, hashlib.sha1)
-            installer_info.sha256hash = filehash(jar_path, hashlib.sha256)
+            installer_info.sha1hash = file_hash(jar_path, hashlib.sha1)
+            installer_info.sha256hash = file_hash(jar_path, hashlib.sha256)
             installer_info.size = os.path.getsize(jar_path)
             installer_info.write(installer_info_path)
 
