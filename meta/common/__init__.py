@@ -4,7 +4,7 @@ import datetime
 import hashlib
 import sys
 from urllib.parse import urlparse
-from typing import Any, Optional
+from typing import Any, Optional, Callable
 
 import requests
 from cachecontrol import CacheControl  # type: ignore
@@ -90,7 +90,7 @@ def default_session():
     return sess
 
 
-def remove_files(file_paths):
+def remove_files(file_paths: list[str]) -> None:
     for file_path in file_paths:
         try:
             if os.path.isfile(file_path):
@@ -103,7 +103,9 @@ def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
 
 
-def filehash(filename, hashtype, blocksize=65536):
+def file_hash(
+    filename: str, hashtype: Callable[[], "hashlib._Hash"], blocksize: int = 65536
+) -> str:
     hashtype = hashtype()
     with open(filename, "rb") as f:
         for block in iter(lambda: f.read(blocksize), b""):
@@ -111,12 +113,12 @@ def filehash(filename, hashtype, blocksize=65536):
     return hashtype.hexdigest()
 
 
-def get_file_sha1_from_file(file_name, sha1_file):
+def get_file_sha1_from_file(file_name: str, sha1_file: str) -> Optional[str]:
     if os.path.isfile(sha1_file):
         with open(sha1_file, "r") as file:
             return file.read()
 
-    new_sha1 = filehash(file_name, hashlib.sha1)
+    new_sha1 = file_hash(file_name, hashlib.sha1)
     with open(sha1_file, "w") as file:
         file.write(new_sha1)
-    return
+    return None
