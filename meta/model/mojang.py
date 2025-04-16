@@ -10,6 +10,7 @@ from . import (
     MojangAssets,
     MojangArtifact,
     MojangLibraryDownloads,
+    MojangLogging,
     Library,
     MetaVersion,
     GradleSpecifier,
@@ -182,21 +183,6 @@ class MojangArguments(MetaBase):
     jvm: Optional[List[Any]]
 
 
-class MojangLoggingArtifact(MojangArtifactBase):
-    id: str
-
-
-class MojangLogging(MetaBase):
-    @validator("type")
-    def validate_type(cls, v):
-        assert v in ["log4j2-xml"]
-        return v
-
-    file: MojangLoggingArtifact
-    argument: str
-    type: str
-
-
 class MojangJavaComponent(StrEnum):
     JreLegacy = "jre-legacy"
     Alpha = "java-runtime-alpha"
@@ -353,4 +339,5 @@ class MojangVersion(MetaBase):
             compatible_java_name=javaName,
             additional_traits=addn_traits,
             main_jar=main_jar,
+            logging=(self.logging or {}).get("client")
         )
