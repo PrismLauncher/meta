@@ -363,9 +363,9 @@
       "downloads": {
         "classifiers": {
           "natives-osx-arm64": {
-            "sha1": "eff546c0b319d6ffc7a835652124c18089c67f36",
-            "size": 488316,
-            "url": "https://github.com/MinecraftMachina/lwjgl/releases/download/2.9.4-20150209-mmachina.2/lwjgl-platform-2.9.4-nightly-20150209-natives-osx.jar"
+            "sha1": "a785c8196d3ef960cf420967de2835bef9e2bbb0",
+            "size": 500663,
+            "url": "https://github.com/Dungeons-Guide/lwjgl/releases/download/2.9.4-20150209-mmachina.2-syeyoung.1/lwjgl-platform-2.9.4-nightly-20150209-natives-osx-arm64.jar"
           },
           "natives-linux-arm64": {
             "sha1": "63ac7da0f4a4785c7eadc0f8edc1e9dcc4dd08cb",
