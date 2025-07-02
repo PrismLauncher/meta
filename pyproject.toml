@@ -31,7 +31,7 @@ python = "^3.8"
 cachecontrol = "^0.14.0"
 requests = "^2.31.0"
 filelock = "^3.13.1"
-packaging = "^24.0"
+packaging = "^25.0"
 pydantic = "^1.10.13"
 
 [build-system]
