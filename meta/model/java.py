@@ -41,19 +41,22 @@ class JavaVersionMeta(MetaBase):
     minor: int
     security: int
     build: Optional[int] = None
+    buildstr: Optional[str] = None
     name: Optional[str] = None
 
     def __str__(self):
         ver = f"{self.major}.{self.minor}.{self.security}"
         if self.build is not None:
             ver = f"{ver}+{self.build}"
+        if self.buildstr is not None:
+            ver = f"{ver}-{self.buildstr}"
         return ver
 
     def to_tuple(self):
         build = 0
         if self.build is not None:
             build = self.build
-        return (self.major, self.minor, self.security, build)
+        return (self.major, self.minor, self.security, build, self.buildstr)
 
     def __eq__(self, other: Any):
         return self.to_tuple() == other.to_tuple()
