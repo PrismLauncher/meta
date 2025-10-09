@@ -148,7 +148,12 @@ def mojang_runtime_to_java_runtime(
     mojang_component: MojangJavaComponent,
     runtime_os: JavaRuntimeOS,
 ) -> JavaRuntimeMeta:
-    major, _, security = mojang_runtime.version.name.partition("u")
+    major, _, trail = mojang_runtime.version.name.partition("u")
+    security, _, buildstr = trail.partition("-")
+
+    if buildstr == "":
+        buildstr = None
+
     if major and security:
         version_parts = [int(major), 0, int(security)]
     else:
@@ -166,6 +171,7 @@ def mojang_runtime_to_java_runtime(
         minor=version_parts[1],
         security=version_parts[2],
         build=build,
+        buildstr=buildstr,
         name=mojang_runtime.version.name,
     )
     return JavaRuntimeMeta(
