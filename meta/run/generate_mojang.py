@@ -90,6 +90,7 @@ LOG4J_HASHES = {
 # We want versions that contain natives for all platforms. If there are multiple, pick the latest one
 # LWJGL versions we want
 PASS_VARIANTS = [
+    "2b00f31688148fc95dbc8c8ef37308942cf0dce0",  # 3.3.6 (2025-10-21 11:38:51+00:00)
     "73974b3af2afeb5b272ffbadcd7963014387c84f",  # 3.3.3 (2024-05-22 16:25:41+00:00)
     "765b4ab443051d286bdbb1c19cd7dc86b0792dce",  # 3.3.2 (2024-01-17 13:19:20+00:00)
     "54c4fb1d6a96ac3007c947bf310c8bcf94a862be",  # 3.3.1 (2023-04-20 11:55:19+00:00) split natives, with WoA natives
