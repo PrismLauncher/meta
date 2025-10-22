@@ -2877,6 +2877,396 @@
     ]
   },
   {
+    "_comment": "Add linux-arm64 support for LWJGL 3.3.6",
+    "match": [
+      "org.lwjgl:lwjgl-glfw:3.3.6"
+    ],
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "b54023af492b4c2c72451f3a7aa0f385e9969474",
+            "size": 141056,
+            "url": "https://build.lwjgl.org/release/3.3.6/bin/lwjgl-glfw/lwjgl-glfw-natives-linux-arm64.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-glfw-natives-linux-arm64:3.3.6-lwjgl.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-arm64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Add linux-arm64 support for LWJGL 3.3.6",
+    "match": [
+      "org.lwjgl:lwjgl-jemalloc:3.3.6"
+    ],
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "1bc2e16e70df7f418d668c2984ac8066f1f6f5b1",
+            "size": 222196,
+            "url": "https://build.lwjgl.org/release/3.3.6/bin/lwjgl-jemalloc/lwjgl-jemalloc-natives-linux-arm64.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-jemalloc-natives-linux-arm64:3.3.6-lwjgl.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-arm64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Add linux-arm64 support for LWJGL 3.3.6",
+    "match": [
+      "org.lwjgl:lwjgl-openal:3.3.6"
+    ],
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "fd2c17603c63e8d543cb57d1db77ebd4574f3b7a",
+            "size": 656568,
+            "url": "https://build.lwjgl.org/release/3.3.6/bin/lwjgl-openal/lwjgl-openal-natives-linux-arm64.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-openal-natives-linux-arm64:3.3.6-lwjgl.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-arm64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Add linux-arm64 support for LWJGL 3.3.6",
+    "match": [
+      "org.lwjgl:lwjgl-opengl:3.3.6"
+    ],
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "44de180f79e0b45c9e5bee10ca7540dcb5ddd373",
+            "size": 79414,
+            "url": "https://build.lwjgl.org/release/3.3.6/bin/lwjgl-opengl/lwjgl-opengl-natives-linux-arm64.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-opengl-natives-linux-arm64:3.3.6-lwjgl.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-arm64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Add linux-arm64 support for LWJGL 3.3.6",
+    "match": [
+      "org.lwjgl:lwjgl-stb:3.3.6"
+    ],
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "397f588f867e9c4faf1a34231344c9209dabc052",
+            "size": 256144,
+            "url": "https://build.lwjgl.org/release/3.3.6/bin/lwjgl-stb/lwjgl-stb-natives-linux-arm64.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-stb-natives-linux-arm64:3.3.6-lwjgl.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-arm64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Add linux-arm64 support for LWJGL 3.3.6",
+    "match": [
+      "org.lwjgl:lwjgl-tinyfd:3.3.6"
+    ],
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "7806e57c3d9ea6b6a552c72f5e2597343c4d4138",
+            "size": 44504,
+            "url": "https://build.lwjgl.org/release/3.3.6/bin/lwjgl-tinyfd/lwjgl-tinyfd-natives-linux-arm64.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-tinyfd-natives-linux-arm64:3.3.6-lwjgl.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-arm64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Add linux-arm64 support for LWJGL 3.3.6",
+    "match": [
+      "org.lwjgl:lwjgl:3.3.6"
+    ],
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "9eeb8887b5e3aa672efd2e1b0973ffa5891a3151",
+            "size": 117172,
+            "url": "https://build.lwjgl.org/release/3.3.6/bin/lwjgl/lwjgl-natives-linux-arm64.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-natives-linux-arm64:3.3.6-lwjgl.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-arm64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Add linux-arm32 support for LWJGL 3.3.6",
+    "match": [
+      "org.lwjgl:lwjgl-freetype:3.3.6"
+    ],
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "3f6a1030be5efdcde35cb363c69810245eb59c5a",
+            "size": 1035183,
+            "url": "https://build.lwjgl.org/release/3.3.6/bin/lwjgl-freetype/lwjgl-freetype-natives-linux-arm32.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-freetype-natives-linux-arm32:3.3.6-lwjgl.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-arm32"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Add linux-arm32 support for LWJGL 3.3.6",
+    "match": [
+      "org.lwjgl:lwjgl-glfw:3.3.6"
+    ],
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "671adf04a6bc4f792af13892e37f804be30b7070",
+            "size": 118670,
+            "url": "https://build.lwjgl.org/release/3.3.6/bin/lwjgl-glfw/lwjgl-glfw-natives-linux-arm32.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-glfw-natives-linux-arm32:3.3.6-lwjgl.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-arm32"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Add linux-arm32 support for LWJGL 3.3.6",
+    "match": [
+      "org.lwjgl:lwjgl-jemalloc:3.3.6"
+    ],
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "c484cae39a718010dbc7931fe5e12664600a13c2",
+            "size": 176503,
+            "url": "https://build.lwjgl.org/release/3.3.6/bin/lwjgl-jemalloc/lwjgl-jemalloc-natives-linux-arm32.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-jemalloc-natives-linux-arm32:3.3.6-lwjgl.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-arm32"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Add linux-arm32 support for LWJGL 3.3.6",
+    "match": [
+      "org.lwjgl:lwjgl-openal:3.3.6"
+    ],
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "7830af894fa110e65bf5075deb9183efbdbc50f5",
+            "size": 604338,
+            "url": "https://build.lwjgl.org/release/3.3.6/bin/lwjgl-openal/lwjgl-openal-natives-linux-arm32.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-openal-natives-linux-arm32:3.3.6-lwjgl.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-arm32"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Add linux-arm32 support for LWJGL 3.3.6",
+    "match": [
+      "org.lwjgl:lwjgl-opengl:3.3.6"
+    ],
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "ee815fbf454b916f13c10fff62e513eb09042ef0",
+            "size": 58633,
+            "url": "https://build.lwjgl.org/release/3.3.6/bin/lwjgl-opengl/lwjgl-opengl-natives-linux-arm32.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-opengl-natives-linux-arm32:3.3.6-lwjgl.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-arm32"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Add linux-arm32 support for LWJGL 3.3.6",
+    "match": [
+      "org.lwjgl:lwjgl-stb:3.3.6"
+    ],
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "f47bac442afcb7fd014af7d90892024fe3c0d920",
+            "size": 191834,
+            "url": "https://build.lwjgl.org/release/3.3.6/bin/lwjgl-stb/lwjgl-stb-natives-linux-arm32.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-stb-natives-linux-arm32:3.3.6-lwjgl.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-arm32"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Add linux-arm32 support for LWJGL 3.3.6",
+    "match": [
+      "org.lwjgl:lwjgl-tinyfd:3.3.6"
+    ],
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "800ad2c9492a7ccadb23886c9e231f60c12a9037",
+            "size": 50599,
+            "url": "https://build.lwjgl.org/release/3.3.6/bin/lwjgl-tinyfd/lwjgl-tinyfd-natives-linux-arm32.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-tinyfd-natives-linux-arm32:3.3.6-lwjgl.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-arm32"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Add linux-arm32 support for LWJGL 3.3.6",
+    "match": [
+      "org.lwjgl:lwjgl:3.3.6"
+    ],
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "2c9d698e76c3d0fe307d94cc6f428038492f25df",
+            "size": 88490,
+            "url": "https://build.lwjgl.org/release/3.3.6/bin/lwjgl/lwjgl-natives-linux-arm32.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-natives-linux-arm32:3.3.6-lwjgl.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-arm32"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
     "_comment": "Replace glfw from 3.3.1 with version from 3.3.2 to prevent stack smashing",
     "match": [
       "org.lwjgl:lwjgl-glfw-natives-linux:3.3.1"
