@@ -45,6 +45,8 @@ def fetch_zipped_version(path, url):
 
     assert version_json
 
+    version_json["type"] = "experiment"
+
     with open(path, "w", encoding="utf-8") as f:
         json.dump(version_json, f, sort_keys=True, indent=4)
 
