@@ -2,7 +2,9 @@ import hashlib
 import os
 from operator import attrgetter
 
-from meta.common import launcher_path
+from meta.common import launcher_path, file_hash
+
+
 from meta.model import MetaVersion, MetaPackage
 from meta.model.index import (
     MetaPackageIndex,
@@ -12,15 +14,6 @@ from meta.model.index import (
 )
 
 LAUNCHER_DIR = launcher_path()
-
-
-# take the hash type (like hashlib.md5) and filename, return hex string of hash
-def hash_file(hash_fn, file_name):
-    hash_instance = hash_fn()
-    with open(file_name, "rb") as f:
-        for chunk in iter(lambda: f.read(4096), b""):
-            hash_instance.update(chunk)
-    return hash_instance.hexdigest()
 
 
 # ignore these files when indexing versions
@@ -50,7 +43,7 @@ for package in sorted(os.listdir(LAUNCHER_DIR)):
             continue
         # parse and hash the version file
         filepath = LAUNCHER_DIR + "/%s/%s" % (package, filename)
-        filehash = hash_file(hashlib.sha256, filepath)
+        filehash = file_hash(filepath, hashlib.sha256)
         versionFile = MetaVersion.parse_file(filepath)
         is_recommended = versionFile.version in recommendedVersions
 
