@@ -1,4 +1,5 @@
-import concurrent.futures
+from collections import deque
+from multiprocessing import Pool
 import json
 import os
 import zipfile
@@ -62,9 +63,9 @@ def head_file(url):
 
 
 def get_binary_file(path, url):
+    r = sess.get(url)
+    r.raise_for_status()
     with open(path, "wb") as f:
-        r = sess.get(url)
-        r.raise_for_status()
         for chunk in r.iter_content(chunk_size=128):
             f.write(chunk)
 
@@ -94,14 +95,14 @@ def compute_jar_file(path, url):
     data.write(path + ".json")
 
 
-def compute_jar_file_concurrent(component, it):
-    print(f"Processing {component} {it['version']} ")
+def compute_jar_file_concurrent(it):
+    print(f"Processing {it['version']} ")
     jar_maven_url = get_maven_url(it["maven"], "https://maven.fabricmc.net/", ".jar")
     compute_jar_file(
         os.path.join(UPSTREAM_DIR, JARS_DIR, transform_maven_key(it["maven"])),
         jar_maven_url,
     )
-    print(f"Processing {component} {it['version']} Done")
+    print(f"Processing {it['version']} Done")
 
 
 def get_json_file_concurrent(it):
@@ -121,18 +122,19 @@ def main():
             os.path.join(UPSTREAM_DIR, META_DIR, f"{component}.json"),
             "https://meta.fabricmc.net/v2/versions/" + component,
         )
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            for it in index:
-                executor.submit(compute_jar_file_concurrent, component, it)
+        with Pool(None) as pool:
+            deque(pool.imap_unordered(compute_jar_file_concurrent, index, 32), 0)
 
     # for each loader, download installer JSON file from maven
     with open(
         os.path.join(UPSTREAM_DIR, META_DIR, "loader.json"), "r", encoding="utf-8"
     ) as loaderVersionIndexFile:
         loader_version_index = json.load(loaderVersionIndexFile)
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            for it in loader_version_index:
-                executor.submit(get_json_file_concurrent, it)
+        with Pool(None) as pool:
+            deque(
+                pool.imap_unordered(get_json_file_concurrent, loader_version_index, 32),
+                0,
+            )
 
 
 if __name__ == "__main__":
