@@ -8,11 +8,13 @@ from meta.common import (
     transform_maven_key,
 )
 from meta.common.fabric import (
+    EARLY_UNOBFUSCATED_SUFFIX,
     JARS_DIR,
     INSTALLER_INFO_DIR,
     META_DIR,
     INTERMEDIARY_COMPONENT,
     LOADER_COMPONENT,
+    NOOP_INTERMEDIARY_VERSION,
 )
 from meta.model import MetaVersion, Dependency, Library, MetaPackage, GradleSpecifier
 from meta.model.fabric import FabricJarInfo, FabricInstallerDataV1, FabricMainClasses
@@ -76,8 +78,13 @@ def process_intermediary_version(entry) -> MetaVersion:
     v.type = "release"
     v.libraries = []
     v.volatile = True
+
+    maven = entry["maven"]
+    if EARLY_UNOBFUSCATED_SUFFIX in entry["version"]:
+        maven = NOOP_INTERMEDIARY_VERSION
+
     intermediary_lib = Library(
-        name=GradleSpecifier.from_string(entry["maven"]),
+        name=GradleSpecifier.from_string(maven),
         url="https://maven.fabricmc.net",
     )
     v.libraries.append(intermediary_lib)

@@ -6,6 +6,10 @@ from pydantic import Field
 from . import Library, MetaBase
 
 
+EARLY_UNOBFUSCATED_SUFFIX = "_unobfuscated"
+NOOP_INTERMEDIARY_VERSION = "net.fabricmc:intermediary:0.0.0"
+
+
 class FabricInstallerArguments(MetaBase):
     client: Optional[List[str]]
     common: Optional[List[str]]
