@@ -1,6 +1,11 @@
 {
   "experiments": [
     {
+      "id": "1_21_11-pre1_unobfuscated",
+      "wiki": "https://minecraft.wiki/w/Java_Edition_1.21.11_Pre-Release_1",
+      "url": "https://piston-data.mojang.com/v1/objects/f98a0c053a8246cce12f8f29f2ba4ce00872fd53/1_21_11-pre1_unobfuscated.zip"
+    },
+    {
       "id": "25w46a_unobfuscated",
       "wiki": "https://minecraft.wiki/w/Java_Edition_25w46a",
       "url": "https://piston-data.mojang.com/v1/objects/f9c5e4f9c1469296299635b498438e94d312f0c6/25w46a_unobfuscated.zip"
