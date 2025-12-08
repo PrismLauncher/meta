@@ -17,6 +17,6 @@ FORGE_COMPONENT = "net.minecraftforge"
 FORGEWRAPPER_LIBRARY = make_launcher_library(
     GradleSpecifier("io.github.zekerzhayard", "ForgeWrapper", "prism-2025-12-07"),
     "4c4653d80409e7e968d3e3209196ffae778b7b4e",
-    10278,
+    29731,
 )
 BAD_VERSIONS = ["1.12.2-14.23.5.2851"]
