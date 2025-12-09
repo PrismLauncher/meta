@@ -14,7 +14,6 @@ from meta.common import (
     default_session,
 )
 from meta.common.fabric import (
-    BROKEN_INTERMEDIARIES,
     JARS_DIR,
     INSTALLER_INFO_DIR,
     META_DIR,
@@ -71,7 +70,7 @@ def get_binary_file(path, url):
             f.write(chunk)
 
 
-def fetch_release_time(path, url):
+def compute_jar_file(path, url):
     # These two approaches should result in the same metadata, except for the timestamp which might be a few minutes
     # off for the fallback method
     try:
@@ -92,25 +91,18 @@ def fetch_release_time(path, url):
                 if tstamp_new > tstamp:
                     tstamp = tstamp_new
 
-    return tstamp
+    data = FabricJarInfo(release_time=tstamp)
+    data.write(path + ".json")
 
 
 def compute_jar_file_concurrent(it):
-    print(f"Processing {it['maven']} ")
-    path = os.path.join(UPSTREAM_DIR, JARS_DIR, transform_maven_key(it["maven"]))
-    tstamp = BROKEN_INTERMEDIARIES.get(it["version"])
-    if not tstamp:
-        jar_maven_url = get_maven_url(
-            it["maven"], "https://maven.fabricmc.net/", ".jar"
-        )
-        tstamp = fetch_release_time(
-            path,
-            jar_maven_url,
-        )
-
-    data = FabricJarInfo(release_time=tstamp)
-    data.write(f"{path}.json")
-    print(f"Processing {it['maven']} Done")
+    print(f"Processing {it['version']} ")
+    jar_maven_url = get_maven_url(it["maven"], "https://maven.fabricmc.net/", ".jar")
+    compute_jar_file(
+        os.path.join(UPSTREAM_DIR, JARS_DIR, transform_maven_key(it["maven"])),
+        jar_maven_url,
+    )
+    print(f"Processing {it['version']} Done")
 
 
 def get_json_file_concurrent(it):
