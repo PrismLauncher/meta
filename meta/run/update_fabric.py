@@ -30,14 +30,6 @@ ensure_upstream_dir(META_DIR)
 sess = default_session()
 
 
-def filehash(filename, hashtype, blocksize=65536):
-    h = hashtype()
-    with open(filename, "rb") as f:
-        for block in iter(lambda: f.read(blocksize), b""):
-            h.update(block)
-    return h.hexdigest()
-
-
 def get_maven_url(maven_key, server, ext):
     parts = maven_key.split(":", 3)
     maven_ver_url = (

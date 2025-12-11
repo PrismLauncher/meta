@@ -86,3 +86,20 @@ def default_session():
     sess.headers.update({"User-Agent": "PrismLauncherMeta/1.0"})
 
     return sess
+
+
+def remove_files(file_paths):
+    for file_path in file_paths:
+        try:
+            if os.path.isfile(file_path):
+                os.remove(file_path)
+        except Exception as e:
+            print(e)
+
+
+def filehash(filename, hashtype, blocksize=65536):
+    hashtype = hashtype()
+    with open(filename, "rb") as f:
+        for block in iter(lambda: f.read(blocksize), b""):
+            hashtype.update(block)
+    return hashtype.hexdigest()
