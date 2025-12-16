@@ -191,6 +191,7 @@ class MojangJavaComponent(StrEnum):
     GammaSnapshot = "java-runtime-gamma-snapshot"
     Exe = "minecraft-java-exe"
     Delta = "java-runtime-delta"
+    Epsilon = "java-runtime-epsilon"
 
 
 class JavaVersion(MetaBase):
@@ -339,5 +340,5 @@ class MojangVersion(MetaBase):
             compatible_java_name=javaName,
             additional_traits=addn_traits,
             main_jar=main_jar,
-            logging=(self.logging or {}).get("client")
+            logging=(self.logging or {}).get("client"),
         )
