@@ -139,6 +139,8 @@ def mojang_component_to_major(mojang_component: MojangJavaComponent) -> int:
             return 0
         case MojangJavaComponent.Delta:
             return 21
+        case MojangJavaComponent.Epsilon:
+            return 25
         case _:
             return 0
 
@@ -474,6 +476,7 @@ def main():
             MojangJavaComponent.Gamma,
             MojangJavaComponent.GammaSnapshot,
             MojangJavaComponent.Delta,
+            MojangJavaComponent.Epsilon,
         ]:
             runtime = get_mojang_extra_java(comp, java_os)
             if runtime != None:
