@@ -330,9 +330,9 @@ def main():
                     JavaRuntimeOS.LinuxArm32,
                     JavaRuntimeOS.LinuxArm64,
                 ]
-                and major in [8, 17, 21]
+                and major in [8, 17, 21, 25]
             )
-            or (runtime.runtime_os == JavaRuntimeOS.LinuxX86 and major in [17, 21])
+            or (runtime.runtime_os == JavaRuntimeOS.LinuxX86 and major in [17, 21, 25])
         ):
             if major not in extra_mojang_javas:
                 extra_mojang_javas[major] = list[JavaRuntimeMeta]()
