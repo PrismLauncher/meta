@@ -120,7 +120,7 @@ def get_single_forge_files_manifest(longversion, artifact: str):
 
 
 def main():
-    # get the remote version list fragments
+    # get the 1.20.1 remote version list fragments
     r = sess.get(
         "https://maven.neoforged.net/api/maven/versions/releases/net%2Fneoforged%2Fforge"
     )
@@ -173,7 +173,10 @@ def main():
             match = match_nf
             artifact = "neoforge"
 
-        assert match, f"{long_version} doesn't match version regex"
+        if not match and not match_nf:
+            print(f"Skipping {long_version} as it does not match regex")
+            continue
+
         try:
             files = get_single_forge_files_manifest(long_version, artifact)
         except:

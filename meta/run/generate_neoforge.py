@@ -117,7 +117,7 @@ def main():
         if version.url() is None:
             eprint("Skipping %s with no valid files" % key)
             continue
-        eprint("Processing Forge %s" % version.rawVersion)
+        eprint("Processing NeoForge %s" % version.rawVersion)
         version_elements = version.rawVersion.split(".")
         if len(version_elements) < 1:
             eprint("Skipping version %s with not enough version elements" % key)
