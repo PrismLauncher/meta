@@ -1,5 +1,5 @@
 """
- Get the source files necessary for generating Forge versions
+Get the source files necessary for generating Forge versions
 """
 
 import copy
@@ -152,6 +152,11 @@ def main():
     for long_version in main_json:
         assert type(long_version) == str
 
+        mc_version = ""
+        build = 0
+        version = ""
+        branch = ""
+        artifact = "neoforge"
         match = version_expression.match(long_version)
         if match:
             mc_version = match.group("mc")
@@ -170,12 +175,7 @@ def main():
             build = int(match_nf.group("number"))
             version = match_nf.group("number")
             branch = match_nf.group("tag")
-            match = match_nf
             artifact = "neoforge"
-
-        if not match and not match_nf:
-            print(f"Skipping {long_version} as it does not match regex")
-            continue
 
         try:
             files = get_single_forge_files_manifest(long_version, artifact)

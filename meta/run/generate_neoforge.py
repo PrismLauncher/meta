@@ -108,10 +108,6 @@ def main():
     recommended_versions = []
 
     for key, entry in remote_versions.versions.items():
-        if entry.mc_version is None:
-            eprint("Skipping %s with invalid MC version" % key)
-            continue
-
         version = NeoForgeVersion(entry)
 
         if version.url() is None:
@@ -134,18 +130,6 @@ def main():
         if entry.recommended:
             recommended_versions.append(version.rawVersion)
 
-        # If we do not have the corresponding Minecraft version, we ignore it
-        if not os.path.isfile(
-            os.path.join(
-                LAUNCHER_DIR, MINECRAFT_COMPONENT, f"{version.mc_version_sane}.json"
-            )
-        ):
-            eprint(
-                "Skipping %s with no corresponding Minecraft version %s"
-                % (key, version.mc_version_sane)
-            )
-            continue
-
         # Path for new-style build system based installers
         installer_version_filepath = os.path.join(
             UPSTREAM_DIR, VERSION_MANIFEST_DIR, f"{version.long_version}.json"
@@ -160,6 +144,25 @@ def main():
         ), f"version {installer_version_filepath} does not have installer version manifest"
         installer = MojangVersion.parse_file(installer_version_filepath)
         profile = NeoForgeInstallerProfileV2.parse_file(profile_filepath)
+        if entry.mc_version is None or entry.mc_version is "":
+            entry.mc_version = profile.minecraft
+            if entry.mc_version is None:
+                eprint("Skipping %s with invalid MC version" % key)
+                continue
+            version = NeoForgeVersion(entry)
+
+        # If we do not have the corresponding Minecraft version, we ignore it
+        if not os.path.isfile(
+            os.path.join(
+                LAUNCHER_DIR, MINECRAFT_COMPONENT, f"{version.mc_version_sane}.json"
+            )
+        ):
+            eprint(
+                "Skipping %s with no corresponding Minecraft version %s"
+                % (key, version.mc_version_sane)
+            )
+            continue
+
         v = version_from_build_system_installer(installer, profile, version)
 
         v.write(os.path.join(LAUNCHER_DIR, NEOFORGE_COMPONENT, f"{v.version}.json"))
