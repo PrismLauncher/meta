@@ -48,7 +48,6 @@ def version_from_build_system_installer(
     version: NeoForgeVersion,
 ) -> MetaVersion:
     v = MetaVersion(name="NeoForge", version=version.rawVersion, uid=NEOFORGE_COMPONENT)
-    v.requires = [Dependency(uid=MINECRAFT_COMPONENT, equals=version.mc_version_sane)]
     v.main_class = "io.github.zekerzhayard.forgewrapper.installer.Main"
 
     # FIXME: Add the size and hash here
@@ -108,10 +107,6 @@ def main():
     recommended_versions = []
 
     for key, entry in remote_versions.versions.items():
-        if entry.mc_version is None:
-            eprint("Skipping %s with invalid MC version" % key)
-            continue
-
         version = NeoForgeVersion(entry)
 
         if version.url() is None:
@@ -134,18 +129,6 @@ def main():
         if entry.recommended:
             recommended_versions.append(version.rawVersion)
 
-        # If we do not have the corresponding Minecraft version, we ignore it
-        if not os.path.isfile(
-            os.path.join(
-                LAUNCHER_DIR, MINECRAFT_COMPONENT, f"{version.mc_version_sane}.json"
-            )
-        ):
-            eprint(
-                "Skipping %s with no corresponding Minecraft version %s"
-                % (key, version.mc_version_sane)
-            )
-            continue
-
         # Path for new-style build system based installers
         installer_version_filepath = os.path.join(
             UPSTREAM_DIR, VERSION_MANIFEST_DIR, f"{version.long_version}.json"
@@ -161,7 +144,20 @@ def main():
         installer = MojangVersion.parse_file(installer_version_filepath)
         profile = NeoForgeInstallerProfileV2.parse_file(profile_filepath)
         v = version_from_build_system_installer(installer, profile, version)
-
+        
+        #we can get the minecraft version from the profile json info, so let's just do that instead of hacky regex
+        v.requires = [Dependency(uid=MINECRAFT_COMPONENT, equals=profile.minecraft)] 
+        # If we do not have the corresponding Minecraft version, we ignore it
+        if not os.path.isfile(
+            os.path.join(
+                LAUNCHER_DIR, MINECRAFT_COMPONENT, f"{profile.minecraft}.json"
+            )
+        ):
+            eprint(
+                "Skipping %s with no corresponding Minecraft version %s"
+                % (key, profile.minecraft)
+            )
+            continue     
         v.write(os.path.join(LAUNCHER_DIR, NEOFORGE_COMPONENT, f"{v.version}.json"))
 
         recommended_versions.sort()
