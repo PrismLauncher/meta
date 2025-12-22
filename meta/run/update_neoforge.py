@@ -140,11 +140,9 @@ def main():
 
     new_index = DerivedNeoForgeIndex()
 
+    #let's keep the regex here to remove the 1.20.1-
     version_expression = re.compile(
         r"^(?P<mc>[0-9a-zA-Z_\.]+)-(?P<ver>[0-9\.]+\.(?P<build>[0-9]+))(-(?P<branch>[a-zA-Z0-9\.]+))?$"
-    )
-    neoforge_version_re = re.compile(
-        r"^(?P<mcminor>\d+).(?:(?P<mcpatch>\d+)|(?P<snapshot>[0-9a-z]+)).(?P<number>\d+)(?:-(?P<tag>\w+))?$"
     )
 
     print("")
@@ -152,30 +150,13 @@ def main():
     for long_version in main_json:
         assert type(long_version) == str
 
-        match = version_expression.match(long_version)
-        if match:
-            mc_version = match.group("mc")
-            build = int(match.group("build"))
-            version = match.group("ver")
-            branch = match.group("branch")
+        legacyMatch = version_expression.match(long_version)
+        if legacyMatch:
+            version = legacyMatch.group("ver")
             artifact = "forge"
-
-        match_nf = neoforge_version_re.match(long_version)
-        if match_nf:
-            mc_version = match_nf.group("snapshot")
-            if not mc_version:
-                mc_version = f"1.{match_nf.group('mcminor')}"
-                if match_nf.group("mcpatch") != "0":
-                    mc_version += f".{match_nf.group('mcpatch')}"
-            build = int(match_nf.group("number"))
-            version = match_nf.group("number")
-            branch = match_nf.group("tag")
-            match = match_nf
+        else:
+            version = long_version
             artifact = "neoforge"
-
-        if not match and not match_nf:
-            print(f"Skipping {long_version} as it does not match regex")
-            continue
 
         try:
             files = get_single_forge_files_manifest(long_version, artifact)
@@ -188,26 +169,16 @@ def main():
         entry = NeoForgeEntry(
             artifact=artifact,
             long_version=long_version,
-            mc_version=mc_version,
             version=version,
-            build=build,
-            branch=branch,
             # NOTE: we add this later after the fact. The forge promotions file lies about these.
             latest=False,
             recommended=is_recommended,
             files=files,
         )
         new_index.versions[long_version] = entry
-        if not new_index.by_mc_version:
-            new_index.by_mc_version = dict()
-        if mc_version not in new_index.by_mc_version:
-            new_index.by_mc_version.setdefault(mc_version, NeoForgeMCVersionInfo())
-        new_index.by_mc_version[mc_version].versions.append(long_version)
-        # NOTE: we add this later after the fact. The forge promotions file lies about these.
-        # if entry.latest:
-        # new_index.by_mc_version[mc_version].latest = long_version
+        
         if entry.recommended:
-            new_index.by_mc_version[mc_version].recommended = long_version
+            new_index.recommended = long_version
 
     print("")
     print("Dumping index files...")
@@ -223,9 +194,6 @@ def main():
     # get the installer jars - if needed - and get the installer profiles out of them
     for key, entry in new_index.versions.items():
         eprint("Updating NeoForge %s" % key)
-        if entry.mc_version is None:
-            eprint("Skipping %d with invalid MC version" % entry.build)
-            continue
 
         version = NeoForgeVersion(entry)
         if version.url() is None:
