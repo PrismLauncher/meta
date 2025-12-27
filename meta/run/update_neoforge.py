@@ -7,7 +7,6 @@ import hashlib
 import json
 import os
 import re
-import sys
 import zipfile
 from contextlib import suppress
 from datetime import datetime
@@ -17,7 +16,16 @@ import urllib.parse
 
 from pydantic import ValidationError
 
-from meta.common import upstream_path, ensure_upstream_dir, default_session
+from meta.common import (
+    upstream_path,
+    ensure_upstream_dir,
+    default_session,
+    remove_files,
+    eprint,
+    file_hash,
+    get_file_sha1_from_file,
+)
+from meta.common.http import download_binary_file
 from meta.common.neoforge import (
     JARS_DIR,
     INSTALLER_INFO_DIR,
@@ -45,18 +53,6 @@ ensure_upstream_dir(VERSION_MANIFEST_DIR)
 ensure_upstream_dir(FILE_MANIFEST_DIR)
 
 sess = default_session()
-
-
-def eprint(*args, **kwargs):
-    print(*args, file=sys.stderr, **kwargs)
-
-
-def filehash(filename, hashtype, blocksize=65536):
-    hashtype = hashtype()
-    with open(filename, "rb") as f:
-        for block in iter(lambda: f.read(blocksize), b""):
-            hashtype.update(block)
-    return hashtype.hexdigest()
 
 
 def find_nth(haystack, needle, n):
@@ -216,6 +212,24 @@ def main():
             UPSTREAM_DIR + "/neoforge/version_manifests/%s.json" % version.long_version
         )
 
+        new_sha1 = None
+        sha1_file = jar_path + ".sha1"
+        if not os.path.isfile(jar_path):
+            remove_files([profile_path, installer_info_path])
+        else:
+            fileSha1 = get_file_sha1_from_file(jar_path, sha1_file)
+            try:
+                rfile = sess.get(version.url() + ".sha1")
+                rfile.raise_for_status()
+                new_sha1 = rfile.text.strip()
+                if fileSha1 != new_sha1:
+                    remove_files(
+                        [jar_path, profile_path, installer_info_path, sha1_file]
+                    )
+            except Exception as e:
+                eprint("Failed to check sha1 %s" % version.url())
+                eprint("Error is %s" % e)
+
         installer_refresh_required = not os.path.isfile(
             profile_path
         ) or not os.path.isfile(installer_info_path)
@@ -225,16 +239,23 @@ def main():
             if not os.path.isfile(jar_path):
                 eprint("Downloading %s" % version.url())
                 try:
-                    rfile = sess.get(version.url(), stream=True)
-                    rfile.raise_for_status()
                     Path(jar_path).parent.mkdir(parents=True, exist_ok=True)
-                    with open(jar_path, "wb") as f:
-                        for chunk in rfile.iter_content(chunk_size=128):
-                            f.write(chunk)
+                    download_binary_file(sess, jar_path, version.url())
                 except Exception as e:
                     eprint("Failed to download %s" % version.url())
                     eprint("Error is %s" % e)
                     continue
+                if new_sha1 is None:
+                    try:
+                        rfile = sess.get(version.url() + ".sha1")
+                        rfile.raise_for_status()
+                        new_sha1 = rfile.text.strip()
+                    except Exception as e:
+                        eprint("Failed to download new sha1 %s" % version.url())
+                        eprint("Error is %s" % e)
+                if new_sha1 is not None:  # this is in case the fetch failed
+                    with open(sha1_file, "w") as file:
+                        file.write(new_sha1)
 
         eprint("Processing %s" % version.url())
         # harvestables from the installer
@@ -284,8 +305,8 @@ def main():
         # installer info v1
         if not os.path.isfile(installer_info_path):
             installer_info = InstallerInfo()
-            installer_info.sha1hash = filehash(jar_path, hashlib.sha1)
-            installer_info.sha256hash = filehash(jar_path, hashlib.sha256)
+            installer_info.sha1hash = file_hash(jar_path, hashlib.sha1)
+            installer_info.sha256hash = file_hash(jar_path, hashlib.sha256)
             installer_info.size = os.path.getsize(jar_path)
             installer_info.write(installer_info_path)
 
