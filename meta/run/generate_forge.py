@@ -1,11 +1,10 @@
 import os
 import re
-import sys
 from packaging import version as pversion
 from operator import attrgetter
 from typing import Collection
 
-from meta.common import ensure_component_dir, launcher_path, upstream_path
+from meta.common import ensure_component_dir, launcher_path, upstream_path, eprint
 from meta.common.forge import (
     FORGE_COMPONENT,
     INSTALLER_MANIFEST_DIR,
@@ -42,10 +41,6 @@ LAUNCHER_DIR = launcher_path()
 UPSTREAM_DIR = upstream_path()
 
 ensure_component_dir(FORGE_COMPONENT)
-
-
-def eprint(*args, **kwargs):
-    print(*args, file=sys.stderr, **kwargs)
 
 
 # Construct a set of libraries out of a Minecraft version file, for filtering.
