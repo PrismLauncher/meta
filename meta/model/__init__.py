@@ -309,6 +309,10 @@ class Library(MetaBase):
     mmcHint: Optional[str] = Field(None, alias="MMC-hint")
 
 
+class JavaAgent(Library):
+    argument: Optional[str]
+
+
 class Dependency(MetaBase):
     uid: str
     equals: Optional[str]
@@ -335,6 +339,7 @@ class MetaVersion(Versioned):
     release_time: Optional[datetime] = Field(alias="releaseTime")
     compatible_java_majors: Optional[List[int]] = Field(alias="compatibleJavaMajors")
     compatible_java_name: Optional[str] = Field(alias="compatibleJavaName")
+    java_agents: Optional[List[JavaAgent]] = Field(alias="+agents")
     additional_traits: Optional[List[str]] = Field(alias="+traits")
     additional_tweakers: Optional[List[str]] = Field(alias="+tweakers")
     additional_jvm_args: Optional[List[str]] = Field(alias="+jvmArgs")
