@@ -90,6 +90,7 @@ LOG4J_HASHES = {
 # We want versions that contain natives for all platforms. If there are multiple, pick the latest one
 # LWJGL versions we want
 PASS_VARIANTS = [
+    "1fd0e4d1f0f7c97e8765a69d38225e1f27ee14ef",  # 3.4.1 (2026-02-17 12:42:24+00:00)
     "2b00f31688148fc95dbc8c8ef37308942cf0dce0",  # 3.3.6 (2025-10-21 11:38:51+00:00)
     "73974b3af2afeb5b272ffbadcd7963014387c84f",  # 3.3.3 (2024-05-22 16:25:41+00:00)
     "765b4ab443051d286bdbb1c19cd7dc86b0792dce",  # 3.3.2 (2024-01-17 13:19:20+00:00)
