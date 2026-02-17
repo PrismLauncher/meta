@@ -325,6 +325,8 @@ class MojangVersion(MetaBase):
 
         if new_type == "pending":  # experiments from upstream are type=pending
             new_type = "experiment"
+        else:
+            new_type = new_type.removeprefix("old_")
 
         return MetaVersion(
             name=name,

@@ -66,7 +66,6 @@ def fetch_modified_version(path, version):
     }
 
     version_json["downloads"] = downloads
-    version_json["type"] = "old_snapshot"
 
     with open(path, "w", encoding="utf-8") as f:
         json.dump(version_json, f, sort_keys=True, indent=4)
