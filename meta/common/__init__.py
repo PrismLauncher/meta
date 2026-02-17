@@ -1,8 +1,10 @@
 import os
 import os.path
 import datetime
+import hashlib
+import sys
 from urllib.parse import urlparse
-from typing import Any, Optional
+from typing import Any, Optional, Callable
 
 import requests
 from cachecontrol import CacheControl  # type: ignore
@@ -86,3 +88,37 @@ def default_session():
     sess.headers.update({"User-Agent": "PrismLauncherMeta/1.0"})
 
     return sess
+
+
+def remove_files(file_paths: list[str]) -> None:
+    for file_path in file_paths:
+        try:
+            if os.path.isfile(file_path):
+                os.remove(file_path)
+        except Exception as e:
+            print(e)
+
+
+def eprint(*args, **kwargs):
+    print(*args, file=sys.stderr, **kwargs)
+
+
+def file_hash(
+    filename: str, hashtype: Callable[[], "hashlib._Hash"], blocksize: int = 65536
+) -> str:
+    hashtype = hashtype()
+    with open(filename, "rb") as f:
+        for block in iter(lambda: f.read(blocksize), b""):
+            hashtype.update(block)
+    return hashtype.hexdigest()
+
+
+def get_file_sha1_from_file(file_name: str, sha1_file: str) -> Optional[str]:
+    if os.path.isfile(sha1_file):
+        with open(sha1_file, "r") as file:
+            return file.read()
+
+    new_sha1 = file_hash(file_name, hashlib.sha1)
+    with open(sha1_file, "w") as file:
+        file.write(new_sha1)
+    return None
