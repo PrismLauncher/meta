@@ -23,6 +23,7 @@ class JavaRuntimeOS(StrEnum):
     LinuxX86 = "linux-x86"
     LinuxArm64 = "linux-arm64"
     LinuxArm32 = "linux-arm32"
+    LinuxRiscv64 = "linux-riscv64"
     WindowsX64 = "windows-x64"
     WindowsX86 = "windows-x86"
     WindowsArm64 = "windows-arm64"
