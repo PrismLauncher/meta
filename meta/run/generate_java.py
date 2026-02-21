@@ -56,6 +56,7 @@ MOJANG_OS_ARCHITECTURES = [
     "x86",
     "arm64",
     "arm32",
+    "riscv64",
 ]
 
 MOJANG_OS_ARCHITECTURE_TRANSLATIONS = {
@@ -66,6 +67,7 @@ MOJANG_OS_ARCHITECTURE_TRANSLATIONS = {
     "aarch64": "arm64",
     "x86_64": "x64",
     "arm": "arm32",
+    "riscv64": "riscv64",
 }
 
 
@@ -332,7 +334,13 @@ def main():
                 ]
                 and major in [8, 17, 21, 25]
             )
-            or (runtime.runtime_os == JavaRuntimeOS.LinuxX86 and major in [17, 21, 25])
+            or (
+                runtime.runtime_os 
+                in [
+                    JavaRuntimeOS.LinuxX86,
+                    JavaRuntimeOS.LinuxRiscv64
+                ]  
+                and major in [17, 21, 25])
         ):
             if major not in extra_mojang_javas:
                 extra_mojang_javas[major] = list[JavaRuntimeMeta]()
@@ -468,6 +476,7 @@ def main():
         JavaRuntimeOS.WindowsArm32,
         JavaRuntimeOS.LinuxArm32,
         JavaRuntimeOS.LinuxArm64,
+        JavaRuntimeOS.LinuxRiscv64,
     ]:
         for comp in [
             MojangJavaComponent.JreLegacy,
