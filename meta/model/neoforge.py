@@ -21,7 +21,7 @@ class NeoForgeFile(MetaBase):
         )
 
     def url(self, long_version):
-        return "https://maven.neoforged.net/net/neoforged/%s/%s/%s" % (
+        return "https://maven.neoforged.net/releases/net/neoforged/%s/%s/%s" % (
             self.artifact,
             long_version,
             self.filename(long_version),

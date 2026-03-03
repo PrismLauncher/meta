@@ -64,7 +64,7 @@ def version_from_build_system_installer(
     )
     installer_lib.downloads = MojangLibraryDownloads()
     installer_lib.downloads.artifact = MojangArtifact(
-        url="https://maven.neoforged.net/%s" % (installer_lib.name.path()),
+        url="https://maven.neoforged.net/releases/%s" % (installer_lib.name.path()),
         sha1=info.sha1hash,
         size=info.size,
     )
