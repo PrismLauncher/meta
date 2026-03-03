@@ -17,7 +17,12 @@ import urllib.parse
 
 from pydantic import ValidationError
 
-from meta.common import upstream_path, ensure_upstream_dir, default_session
+from meta.common import (
+    upstream_path,
+    ensure_upstream_dir,
+    default_session,
+    remove_files,
+)
 from meta.common.neoforge import (
     JARS_DIR,
     INSTALLER_INFO_DIR,
@@ -215,6 +220,19 @@ def main():
         version_file_path = (
             UPSTREAM_DIR + "/neoforge/version_manifests/%s.json" % version.long_version
         )
+
+        if not os.path.isfile(jar_path):
+            remove_files([profile_path, installer_info_path])
+        else:
+            fileSha1 = filehash(jar_path, hashlib.sha1)
+            try:
+                rfile = sess.get(version.url() + ".sha1")
+                rfile.raise_for_status()
+                if fileSha1 != rfile.text.strip():
+                    remove_files([jar_path, profile_path, installer_info_path])
+            except Exception as e:
+                eprint("Failed to check sha1 %s" % version.url())
+                eprint("Error is %s" % e)
 
         installer_refresh_required = not os.path.isfile(
             profile_path
