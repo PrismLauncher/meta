@@ -34,13 +34,14 @@ currentDate=$(date -I)
 
 upstream_git reset --hard HEAD || exit 1
 
-python -m meta.run.update_mojang || fail_in
-python -m meta.run.update_forge || fail_in
-python -m meta.run.update_neoforge || fail_in
-python -m meta.run.update_fabric || fail_in
-python -m meta.run.update_quilt || fail_in
-python -m meta.run.update_liteloader || fail_in
-python -m meta.run.update_java || fail_in
+python -m meta.run.update_mojang || fail_in &
+python -m meta.run.update_forge || fail_in &
+python -m meta.run.update_neoforge || fail_in &
+python -m meta.run.update_fabric || fail_in &
+python -m meta.run.update_quilt || fail_in &
+python -m meta.run.update_liteloader || fail_in &
+python -m meta.run.update_java || fail_in &
+wait
 
 if [ "${DEPLOY_TO_GIT}" = true ]; then
     upstream_git add mojang/version_manifest_v2.json mojang/java_all.json mojang/versions/* || fail_in
@@ -58,13 +59,14 @@ fi
 
 launcher_git reset --hard HEAD || exit 1
 
-python -m meta.run.generate_mojang || fail_out
-python -m meta.run.generate_forge || fail_out
-python -m meta.run.generate_neoforge || fail_out
-python -m meta.run.generate_fabric || fail_out
-python -m meta.run.generate_quilt || fail_out
-python -m meta.run.generate_liteloader || fail_out
-python -m meta.run.generate_java || fail_out
+python -m meta.run.generate_mojang || fail_out &
+python -m meta.run.generate_forge || fail_out &
+python -m meta.run.generate_neoforge || fail_out &
+python -m meta.run.generate_fabric || fail_out &
+python -m meta.run.generate_quilt || fail_out &
+python -m meta.run.generate_liteloader || fail_out &
+python -m meta.run.generate_java || fail_out &
+wait
 python -m meta.run.index || fail_out
 
 if [ "${DEPLOY_TO_GIT}" = true ]; then
