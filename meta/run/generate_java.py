@@ -9,9 +9,12 @@ from meta.common import ensure_component_dir, launcher_path, upstream_path
 from meta.common.java import (
     JAVA_MINECRAFT_COMPONENT,
     JAVA_ADOPTIUM_COMPONENT,
+    JAVA_OPENJ9_COMPONENT,
     JAVA_AZUL_COMPONENT,
     ADOPTIUM_DIR,
     ADOPTIUM_VERSIONS_DIR,
+    OPENJ9_DIR,
+    OPENJ9_VERSIONS_DIR,
     AZUL_DIR,
     AZUL_VERSIONS_DIR,
 )
@@ -25,11 +28,11 @@ from meta.model.java import (
     JavaChecksumMeta,
     JavaChecksumType,
     JavaRuntimeDownloadType,
-    AdoptiumAvailableReleases,
-    AdoptiumReleases,
-    AdoptiumRelease,
-    AdoptiumImageType,
-    AdoptiumBinary,
+    AdoptxAvailableReleases,
+    AdoptxReleases,
+    AdoptxRelease,
+    AdoptxImageType,
+    AdoptxBinary,
     ZuluPackageList,
     ZuluPackageDetail,
     AzulJavaPackageType,
@@ -193,9 +196,9 @@ def mojang_runtime_to_java_runtime(
     )
 
 
-def adoptium_release_binary_to_java_runtime(
-    rls: AdoptiumRelease,
-    binary: AdoptiumBinary,
+def adoptx_release_binary_to_java_runtime(
+    rls: AdoptxRelease,
+    binary: AdoptxBinary,
     runtime_os: JavaRuntimeOS,
 ) -> JavaRuntimeMeta:
     assert binary.package is not None
@@ -216,7 +219,13 @@ def adoptium_release_binary_to_java_runtime(
         ),
         build=rls.version_data.build,
     )
-    rls_name = f"{rls.vendor}_temurin_{binary.image_type}{version}"
+
+    if rls.vendor == "eclipse":
+        rls_distribution = "temurin"
+    elif rls.vendor == "ibm":
+        rls_distribution = "semeru-open"
+
+    rls_name = f"{rls.vendor}_{rls_distribution}_{binary.image_type}{version}"
     return JavaRuntimeMeta(
         name=rls_name,
         vendor=rls.vendor,
@@ -315,7 +324,7 @@ def main():
     def add_java_runtime(runtime: JavaRuntimeMeta, major: int):
         if major not in javas:
             javas[major] = list[JavaRuntimeMeta]()
-        print(f"Regestering runtime: {runtime.name} for Java {major}")
+        print(f"Registering runtime: {runtime.name} for Java {major}")
         javas[major].append(runtime)
 
         # only add specific versions to the list
@@ -349,18 +358,18 @@ def main():
     print("Processing Adoptium Releases")
     adoptium_path = os.path.join(UPSTREAM_DIR, ADOPTIUM_DIR, "available_releases.json")
     if os.path.exists(adoptium_path):
-        adoptium_available_releases = AdoptiumAvailableReleases.parse_file(
+        adoptium_available_releases = AdoptxAvailableReleases.parse_file(
             adoptium_path
         )
         for major in adoptium_available_releases.available_releases:
-            adoptium_releases = AdoptiumReleases.parse_file(
+            adoptium_releases = AdoptxReleases.parse_file(
                 os.path.join(UPSTREAM_DIR, ADOPTIUM_VERSIONS_DIR, f"java{major}.json")
             )
             for _, rls in adoptium_releases:
                 for binary in rls.binaries:
                     if (
                         binary.package is None
-                        or binary.image_type is not AdoptiumImageType.Jre
+                        or binary.image_type is not AdoptxImageType.Jre
                     ):
                         continue
                     binary_arch = translate_arch(str(binary.architecture))
@@ -370,13 +379,44 @@ def main():
                         continue
 
                     java_os = JavaRuntimeOS(f"{binary_os}-{binary_arch}")
-                    runtime = adoptium_release_binary_to_java_runtime(
+                    runtime = adoptx_release_binary_to_java_runtime(
                         rls, binary, java_os
                     )
                     add_java_runtime(runtime, major)
-
     writeJavas(javas=javas, uid=JAVA_ADOPTIUM_COMPONENT)
     javas = {}
+
+    print("Processing OpenJ9 Releases")
+    openj9_path = os.path.join(UPSTREAM_DIR, OPENJ9_DIR, "available_releases.json")
+    if os.path.exists(openj9_path):
+        openj9_available_releases = AdoptxAvailableReleases.parse_file(
+            openj9_path
+        )
+        for major in openj9_available_releases.available_releases:
+            openj9_releases = AdoptxReleases.parse_file(
+                os.path.join(UPSTREAM_DIR, OPENJ9_VERSIONS_DIR, f"java{major}.json")
+            )
+            for _, rls in openj9_releases:
+                for binary in rls.binaries:
+                    if (
+                        binary.package is None
+                        or binary.image_type is not AdoptxImageType.Jre
+                    ):
+                        continue
+                    binary_arch = translate_arch(str(binary.architecture))
+                    binary_os = translate_os(str(binary.os))
+                    if binary_arch is None or binary_os is None:
+                        print(f"Ignoring release for {binary.os} {binary.architecture}")
+                        continue
+
+                    java_os = JavaRuntimeOS(f"{binary_os}-{binary_arch}")
+                    runtime = adoptx_release_binary_to_java_runtime(
+                        rls, binary, java_os
+                    )
+                    add_java_runtime(runtime, major)
+    writeJavas(javas=javas, uid=JAVA_OPENJ9_COMPONENT)
+    javas = {}
+
     print("Processing Azul Packages")
     azul_path = os.path.join(UPSTREAM_DIR, AZUL_DIR, "packages.json")
     if os.path.exists(azul_path):
@@ -410,7 +450,7 @@ def main():
     writeJavas(javas=javas, uid=JAVA_AZUL_COMPONENT)
     javas = {}
 
-    # constructs the missing mojang javas based on adoptium or azul
+    # constructs the missing mojang javas based on adoptium or azul (do not consider openj9 since it is for more niche cases)
     def get_mojang_extra_java(
         mojang_component: MojangJavaComponent, java_os: JavaRuntimeOS
     ) -> JavaRuntimeMeta | None:
@@ -434,6 +474,7 @@ def main():
     mojang_java_manifest = JavaIndex.parse_file(
         os.path.join(UPSTREAM_DIR, JAVA_MANIFEST_FILE)
     )
+    # print(mojang_java_manifest)
     for mojang_os_name in mojang_java_manifest:
         if mojang_os_name == MojangJavaOsName.Gamecore:
             continue  # empty
@@ -471,7 +512,7 @@ def main():
                     major = int(mojang_runtime.version.name.partition(".")[0])
                 runtime = mojang_runtime_to_java_runtime(mojang_runtime, comp, java_os)
                 add_java_runtime(runtime, major)
-    # mojang doesn't provide any versions for the following systems so borrow info from adoptium/azul
+    # mojang doesn't provide any versions for the following systems so borrow info from adoptium/azul (do not consider openj9 since it is for more niche cases)
     for java_os in [
         JavaRuntimeOS.WindowsArm32,
         JavaRuntimeOS.LinuxArm32,
