@@ -4,18 +4,26 @@ from meta.common import upstream_path, ensure_upstream_dir, default_session
 from meta.common.java import (
     BASE_DIR,
     ADOPTIUM_DIR,
+    OPENJ9_DIR,
     AZUL_DIR,
     ADOPTIUM_VERSIONS_DIR,
+    OPENJ9_VERSIONS_DIR,
     AZUL_VERSIONS_DIR,
 )
 from meta.model.java import (
-    ADOPTIUM_API_AVAILABLE_RELEASES,
+	ADOPTIUM_API_BASE,
+	OPENJ9_API_BASE,
+    ADOPTX_API_AVAILABLE_RELEASES,
+    adoptxAPIFeatureReleasesUrl,
     adoptiumAPIFeatureReleasesUrl,
-    AdoptiumImageType,
-    AdoptiumAPIFeatureReleasesQuery,
-    AdoptiumAvailableReleases,
-    AdoptiumRelease,
-    AdoptiumReleases,
+    openj9APIFeatureReleasesUrl,
+    AdoptxJvmImpl,
+    AdoptxVendor,
+    AdoptxImageType,
+    AdoptxAPIFeatureReleasesQuery,
+    AdoptxAvailableReleases,
+    AdoptxRelease,
+    AdoptxReleases,
     azulApiPackagesUrl,
     AzulApiPackagesQuery,
     ZuluPackage,
@@ -33,8 +41,10 @@ UPSTREAM_DIR = upstream_path()
 
 ensure_upstream_dir(BASE_DIR)
 ensure_upstream_dir(ADOPTIUM_DIR)
+ensure_upstream_dir(OPENJ9_DIR)
 ensure_upstream_dir(AZUL_DIR)
 ensure_upstream_dir(ADOPTIUM_VERSIONS_DIR)
+ensure_upstream_dir(OPENJ9_VERSIONS_DIR)
 ensure_upstream_dir(AZUL_VERSIONS_DIR)
 
 
@@ -43,10 +53,10 @@ sess = default_session()
 
 def main():
     print("Getting Adoptium Release Manifests ")
-    r = sess.get(ADOPTIUM_API_AVAILABLE_RELEASES)
+    r = sess.get(ADOPTX_API_AVAILABLE_RELEASES.format(base_url=ADOPTIUM_API_BASE))
     r.raise_for_status()
 
-    available = AdoptiumAvailableReleases(**r.json())
+    available = AdoptxAvailableReleases(**r.json())
 
     available_releases_file = os.path.join(
         UPSTREAM_DIR, ADOPTIUM_DIR, "available_releases.json"
@@ -58,11 +68,11 @@ def main():
 
         page_size = 10
 
-        releases_for_feature: list[AdoptiumRelease] = []
+        releases_for_feature: list[AdoptxRelease] = []
         page = 0
         while True:
-            query = AdoptiumAPIFeatureReleasesQuery(
-                image_type=AdoptiumImageType.Jre, page_size=page_size, page=page
+            query = AdoptxAPIFeatureReleasesQuery(
+                image_type=AdoptxImageType.Jre, page_size=page_size, page=page, jvm_impl=AdoptxJvmImpl.Hotspot, vendor=AdoptxVendor.Eclipse
             )
             api_call = adoptiumAPIFeatureReleasesUrl(feature, query=query)
             print("Fetching JRE Page:", page, api_call)
@@ -72,7 +82,7 @@ def main():
             else:
                 r_rls.raise_for_status()
 
-            releases = list(AdoptiumRelease(**rls) for rls in r_rls.json())
+            releases = list(AdoptxRelease(**rls) for rls in r_rls.json())
             releases_for_feature.extend(releases)
 
             if len(r_rls.json()) < page_size:
@@ -80,9 +90,55 @@ def main():
             page += 1
 
         print("Total Adoptium releases for feature:", len(releases_for_feature))
-        releases = AdoptiumReleases(__root__=releases_for_feature)
+        releases = AdoptxReleases(__root__=releases_for_feature)
         feature_file = os.path.join(
             UPSTREAM_DIR, ADOPTIUM_VERSIONS_DIR, f"java{feature}.json"
+        )
+        releases.write(feature_file)
+
+    print("Getting OpenJ9 Release Manifests ")
+    r = sess.get(ADOPTX_API_AVAILABLE_RELEASES.format(base_url=OPENJ9_API_BASE))
+    r.raise_for_status()
+
+    available = AdoptxAvailableReleases(**r.json())
+
+    available_releases_file = os.path.join(
+        UPSTREAM_DIR, OPENJ9_DIR, "available_releases.json"
+    )
+    available.write(available_releases_file)
+
+    for feature in available.available_releases:
+        print("Getting Manifests for OpenJ9 feature release:", feature)
+
+        page_size = 10
+
+        releases_for_feature: list[AdoptxRelease] = []
+        page = 0
+        while True:
+            query = AdoptxAPIFeatureReleasesQuery(
+                image_type=AdoptxImageType.Jre, page_size=page_size, page=page, jvm_impl=AdoptxJvmImpl.OpenJ9, vendor=AdoptxVendor.Ibm
+            )
+            api_call = openj9APIFeatureReleasesUrl(feature, query=query)
+            print("Fetching JRE Page:", page, api_call)
+            r_rls = sess.get(api_call)
+            if r_rls.status_code == 404:
+                break
+            else:
+                r_rls.raise_for_status()
+
+            releases = list(AdoptxRelease(**rls) for rls in r_rls.json())
+            releases_for_feature.extend(releases)
+
+            if len(r_rls.json()) < page_size:
+                break
+            page += 1
+
+        print("Total OpenJ9 releases for feature:", len(releases_for_feature))
+        releases = AdoptxReleases(__root__=releases_for_feature)
+        if len(releases_for_feature) == 0:
+            continue
+        feature_file = os.path.join(
+            UPSTREAM_DIR, OPENJ9_VERSIONS_DIR, f"java{feature}.json"
         )
         releases.write(feature_file)
 
