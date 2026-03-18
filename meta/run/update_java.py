@@ -11,8 +11,8 @@ from meta.common.java import (
     AZUL_VERSIONS_DIR,
 )
 from meta.model.java import (
-	ADOPTIUM_API_BASE,
-	OPENJ9_API_BASE,
+    ADOPTIUM_API_BASE,
+    OPENJ9_API_BASE,
     ADOPTX_API_AVAILABLE_RELEASES,
     adoptxAPIFeatureReleasesUrl,
     adoptiumAPIFeatureReleasesUrl,
@@ -72,7 +72,11 @@ def main():
         page = 0
         while True:
             query = AdoptxAPIFeatureReleasesQuery(
-                image_type=AdoptxImageType.Jre, page_size=page_size, page=page, jvm_impl=AdoptxJvmImpl.Hotspot, vendor=AdoptxVendor.Eclipse
+                image_type=AdoptxImageType.Jre,
+                page_size=page_size,
+                page=page,
+                jvm_impl=AdoptxJvmImpl.Hotspot,
+                vendor=AdoptxVendor.Eclipse,
             )
             api_call = adoptiumAPIFeatureReleasesUrl(feature, query=query)
             print("Fetching JRE Page:", page, api_call)
@@ -116,7 +120,11 @@ def main():
         page = 0
         while True:
             query = AdoptxAPIFeatureReleasesQuery(
-                image_type=AdoptxImageType.Jre, page_size=page_size, page=page, jvm_impl=AdoptxJvmImpl.OpenJ9, vendor=AdoptxVendor.Ibm
+                image_type=AdoptxImageType.Jre,
+                page_size=page_size,
+                page=page,
+                jvm_impl=AdoptxJvmImpl.OpenJ9,
+                vendor=AdoptxVendor.Ibm,
             )
             api_call = openj9APIFeatureReleasesUrl(feature, query=query)
             print("Fetching JRE Page:", page, api_call)

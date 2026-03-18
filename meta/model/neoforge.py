@@ -46,6 +46,7 @@ class NeoForgeMCVersionInfo(MetaBase):
 class DerivedNeoForgeIndex(MetaBase):
     versions: Dict[str, NeoForgeEntry] = Field({})
 
+
 class FMLLib(
     MetaBase
 ):  # old ugly stuff. Maybe merge this with Library or Library later
