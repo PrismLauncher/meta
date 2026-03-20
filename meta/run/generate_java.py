@@ -387,9 +387,12 @@ def main():
     if os.path.exists(openj9_path):
         openj9_available_releases = AdoptxAvailableReleases.parse_file(openj9_path)
         for major in openj9_available_releases.available_releases:
-            openj9_releases = AdoptxReleases.parse_file(
-                os.path.join(UPSTREAM_DIR, OPENJ9_VERSIONS_DIR, f"java{major}.json")
-            )
+            path = os.path.join(UPSTREAM_DIR, OPENJ9_VERSIONS_DIR, f"java{major}.json")
+
+            if not os.path.exists(path):
+                continue
+
+            openj9_releases = AdoptxReleases.parse_file(path)
             for _, rls in openj9_releases:
                 for binary in rls.binaries:
                     if (
