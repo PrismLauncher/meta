@@ -44,8 +44,8 @@ python -m meta.run.update_java || fail_in
 
 if [ "${DEPLOY_TO_GIT}" = true ]; then
     upstream_git add mojang/version_manifest_v2.json mojang/java_all.json mojang/versions/* || fail_in
-    upstream_git add forge/*.json forge/version_manifests/*.json forge/installer_manifests/*.json forge/files_manifests/*.json forge/installer_info/*.json forge/jars/*.sha1|| fail_in
-    upstream_git add neoforge/*.json neoforge/version_manifests/*.json neoforge/installer_manifests/*.json neoforge/files_manifests/*.json neoforge/installer_info/*.json neoforge/jars/*.sha1|| fail_in
+    upstream_git add forge/*.json forge/version_manifests/*.json forge/installer_manifests/*.json forge/files_manifests/*.json forge/installer_info/*.json forge/jars/*.sha1 || fail_in
+    upstream_git add neoforge/*.json neoforge/version_manifests/*.json neoforge/installer_manifests/*.json neoforge/files_manifests/*.json neoforge/installer_info/*.json neoforge/jars/*.sha1 || fail_in
     upstream_git add fabric/loader-installer-json/*.json fabric/meta-v2/*.json fabric/jars/*.json || fail_in
     upstream_git add quilt/loader-installer-json/*.json quilt/meta-v3/*.json quilt/jars/*.json || fail_in
     upstream_git add liteloader/*.json || fail_in
