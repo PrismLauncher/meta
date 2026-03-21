@@ -117,7 +117,8 @@ def get_file_sha1_from_file(file_name: str, sha1_file: str) -> Optional[str]:
     if os.path.isfile(sha1_file):
         with open(sha1_file, "r") as file:
             return file.read()
-
+    if not os.path.isfile(jar_path):
+        return None
     new_sha1 = file_hash(file_name, hashlib.sha1)
     with open(sha1_file, "w") as file:
         file.write(new_sha1)
