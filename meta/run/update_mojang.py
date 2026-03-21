@@ -150,8 +150,12 @@ def main():
         pending_ids = remote_ids
 
     with concurrent.futures.ThreadPoolExecutor() as executor:
-        for x in pending_ids:
+        futures = [
             executor.submit(fetch_version_concurrent, remote_versions, x)
+            for x in pending_ids
+        ]
+        for f in futures:
+            f.result()
 
     # deal with experimental snapshots separately
     if os.path.exists(STATIC_EXPERIMENTS_FILE):
@@ -178,8 +182,12 @@ def main():
         old_snapshots_ids = set(old_snapshots.versions.keys())
 
         with concurrent.futures.ThreadPoolExecutor() as executor:
-            for x in old_snapshots_ids:
+            futures = [
                 executor.submit(fetch_modified_version_concurrent, old_snapshots, x)
+                for x in old_snapshots_ids
+            ]
+            for f in futures:
+                f.result()
 
     remote_versions.index.write(version_manifest_path)
 

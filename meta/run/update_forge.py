@@ -365,6 +365,7 @@ def main():
     print("Grabbing installers and dumping installer profiles...")
     # get the installer jars - if needed - and get the installer profiles out of them
     with concurrent.futures.ThreadPoolExecutor() as executor:
+        futures = []
         for key, entry in new_index.versions.items():
             eprint("Updating Forge %s" % key)
             if entry.mc_version is None:
@@ -382,7 +383,9 @@ def main():
             jar_path = os.path.join(UPSTREAM_DIR, JARS_DIR, version.filename())
 
             if version.uses_installer():
-                executor.submit(process_forge_version, version, jar_path)
+                futures.append(
+                    executor.submit(process_forge_version, version, jar_path)
+                )
             else:
                 # ignore the two versions without install manifests and jar mod class files
                 # TODO: fix those versions?
@@ -407,6 +410,8 @@ def main():
                     legacy_info.sha256 = file_hash(jar_path, hashlib.sha256)
                     legacy_info.size = os.path.getsize(jar_path)
                     legacy_info_list.number[key] = legacy_info
+        for f in futures:
+            f.result()
 
     # only write legacy info if it's missing
     if not os.path.isfile(LEGACYINFO_PATH):

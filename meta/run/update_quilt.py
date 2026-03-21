@@ -106,8 +106,12 @@ def main():
             "https://meta.quiltmc.org/v3/versions/" + component,
         )
         with concurrent.futures.ThreadPoolExecutor() as executor:
-            for it in index:
+            futures = [
                 executor.submit(compute_jar_file_concurrent, component, it)
+                for it in index
+            ]
+            for f in futures:
+                f.result()
 
     # for each loader, download installer JSON file from maven
     with open(
@@ -115,8 +119,12 @@ def main():
     ) as loaderVersionIndexFile:
         loader_version_index = json.load(loaderVersionIndexFile)
         with concurrent.futures.ThreadPoolExecutor() as executor:
-            for it in loader_version_index:
+            futures = [
                 executor.submit(get_json_file_concurrent, it)
+                for it in loader_version_index
+            ]
+            for f in futures:
+                f.result()
 
 
 if __name__ == "__main__":
