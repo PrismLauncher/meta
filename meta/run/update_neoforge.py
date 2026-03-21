@@ -118,9 +118,6 @@ def get_single_forge_files_manifest(longversion, artifact: str):
 
 def process_neoforge_version(key, entry):
     eprint("Updating NeoForge %s" % key)
-    if entry.mc_version is None:
-        eprint("Skipping %d with invalid MC version" % entry.build)
-        return
 
     version = NeoForgeVersion(entry)
     if version.url() is None:
@@ -311,8 +308,12 @@ def main():
     print("Grabbing installers and dumping installer profiles...")
     # get the installer jars - if needed - and get the installer profiles out of them
     with concurrent.futures.ThreadPoolExecutor() as executor:
-        for key, entry in new_index.versions.items():
+        futures = [
             executor.submit(process_neoforge_version, key, entry)
+            for key, entry in new_index.versions.items()
+        ]
+        for f in futures:
+            f.result()
 
 
 if __name__ == "__main__":
