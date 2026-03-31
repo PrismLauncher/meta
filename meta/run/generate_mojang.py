@@ -1,5 +1,6 @@
 import copy
 import hashlib
+import re
 import os
 from collections import defaultdict, namedtuple
 from operator import attrgetter
@@ -513,6 +514,15 @@ def main():
             if v.additional_traits == None:
                 v.additional_traits = []
             v.additional_traits.append("legacyServices")
+
+        # 13w16a-13w23a require legacyLaunch and those + 13w23b require texturepacks
+        if re.match(r"13w[1,2]\d[a-c]", v.version) and 16 <= int(v.version[3:-1]) <= 23:
+            if v.additional_traits == None:
+                v.additional_traits = []
+            if v.version != "13w23b":
+                v.additional_traits.append("legacyLaunch")
+            v.additional_traits.append("texturepacks")
+
         v.write(out_filename)
 
     for lwjglVersionVariant in lwjglVersionVariants:
