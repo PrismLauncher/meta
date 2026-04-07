@@ -33,7 +33,8 @@
       "org.lwjgl:lwjgl-opengl-natives-macos-arm64:3.4.1",
       "org.lwjgl:lwjgl-stb-natives-macos-arm64:3.4.1",
       "org.lwjgl:lwjgl-tinyfd-natives-macos-arm64:3.4.1",
-      "org.lwjgl:lwjgl-natives-macos-arm64:3.4.1"
+      "org.lwjgl:lwjgl-natives-macos-arm64:3.4.1",
+      "org.lwjgl:lwjgl-vulkan-natives-macos-arm64:3.4.1"
     ],
     "override": {
       "rules": [
