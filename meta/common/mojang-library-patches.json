@@ -34,7 +34,10 @@
       "org.lwjgl:lwjgl-stb-natives-macos-arm64:3.4.1",
       "org.lwjgl:lwjgl-tinyfd-natives-macos-arm64:3.4.1",
       "org.lwjgl:lwjgl-natives-macos-arm64:3.4.1",
-      "org.lwjgl:lwjgl-vulkan-natives-macos-arm64:3.4.1"
+      "org.lwjgl:lwjgl-vulkan-natives-macos-arm64:3.4.1",
+      "org.lwjgl:lwjgl-shaderc-natives-macos-arm64:3.4.1",
+      "org.lwjgl:lwjgl-spvc-natives-macos-arm64:3.4.1",
+      "org.lwjgl:lwjgl-vma-natives-macos-arm64:3.4.1"
     ],
     "override": {
       "rules": [
@@ -81,7 +84,10 @@
       "org.lwjgl:lwjgl-opengl-natives-windows-arm64:3.4.1",
       "org.lwjgl:lwjgl-stb-natives-windows-arm64:3.4.1",
       "org.lwjgl:lwjgl-tinyfd-natives-windows-arm64:3.4.1",
-      "org.lwjgl:lwjgl-natives-windows-arm64:3.4.1"
+      "org.lwjgl:lwjgl-natives-windows-arm64:3.4.1",
+      "org.lwjgl:lwjgl-shaderc-natives-windows-arm64:3.4.1",
+      "org.lwjgl:lwjgl-spvc-natives-windows-arm64:3.4.1",
+      "org.lwjgl:lwjgl-vma-natives-windows-arm64:3.4.1"
     ],
     "override": {
       "rules": [
