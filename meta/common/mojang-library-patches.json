@@ -4098,6 +4098,84 @@
   {
     "_comment": "Add linux-riscv64 support for LWJGL 3.4.1",
     "match": [
+      "org.lwjgl:lwjgl-shaderc:3.4.1"
+    ],
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "5598b0b86d4b3ca0ae78817719d5814efb9c7a77",
+            "size": 3147886,
+            "url": "https://build.lwjgl.org/release/3.4.1/bin/lwjgl-shaderc/lwjgl-shaderc-natives-linux-riscv64.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-shaderc-natives-linux-riscv64:3.4.1-lwjgl.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-riscv64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Add linux-riscv64 support for LWJGL 3.4.1",
+    "match": [
+      "org.lwjgl:lwjgl-spvc:3.4.1"
+    ],
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "ea09f614c961b14962e4cc55a05c6767f9440f3f",
+            "size": 1215586,
+            "url": "https://build.lwjgl.org/release/3.4.1/bin/lwjgl-spvc/lwjgl-spvc-natives-linux-riscv64.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-spvc-natives-linux-riscv64:3.4.1-lwjgl.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-riscv64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Add linux-riscv64 support for LWJGL 3.4.1",
+    "match": [
+      "org.lwjgl:lwjgl-vma:3.4.1"
+    ],
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "9616440ee3cb2cfeacd99a61eefded856b5d7efe",
+            "size": 57091,
+            "url": "https://build.lwjgl.org/release/3.4.1/bin/lwjgl-vma/lwjgl-vma-natives-linux-riscv64.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-vma-natives-linux-riscv64:3.4.1-lwjgl.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-riscv64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Add linux-riscv64 support for LWJGL 3.4.1",
+    "match": [
       "org.lwjgl:lwjgl-tinyfd:3.4.1"
     ],
     "additionalLibraries": [
