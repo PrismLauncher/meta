@@ -329,6 +329,7 @@ class MetaVersion(Versioned):
     volatile: Optional[bool]
     requires: Optional[List[Dependency]]
     conflicts: Optional[List[Dependency]]
+    satisfies: Optional[List[Dependency]]
     libraries: Optional[List[Library]]
     asset_index: Optional[MojangAssets] = Field(alias="assetIndex")
     maven_files: Optional[List[Library]] = Field(alias="mavenFiles")
