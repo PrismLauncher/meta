@@ -3786,7 +3786,8 @@
   {
     "_comment": "Add linux-arm64 support for LWJGL 3.4.1",
     "match": [
-      "org.lwjgl:lwjgl:3.4.1"
+      "org.lwjgl:lwjgl:3.4.1",
+      "org.lwjgl:lwjgl:3.4.1:unsafe"
     ],
     "additionalLibraries": [
       {
@@ -3994,7 +3995,8 @@
   {
     "_comment": "Add linux-arm32 support for LWJGL 3.4.1",
     "match": [
-      "org.lwjgl:lwjgl:3.4.1"
+      "org.lwjgl:lwjgl:3.4.1",
+      "org.lwjgl:lwjgl:3.4.1:unsafe"
     ],
     "additionalLibraries": [
       {
@@ -4358,7 +4360,8 @@
   {
     "_comment": "Add linux-riscv64 support for LWJGL 3.4.1",
     "match": [
-      "org.lwjgl:lwjgl:3.4.1"
+      "org.lwjgl:lwjgl:3.4.1",
+      "org.lwjgl:lwjgl:3.4.1:unsafe"
     ],
     "additionalLibraries": [
       {
