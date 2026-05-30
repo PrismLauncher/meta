@@ -24,6 +24,7 @@ DEFAULT_JAVA_NAME = (
 )
 COMPATIBLE_JAVA_MAPPINGS = {16: [17]}
 SUPPORTED_FEATURES = ["is_quick_play_multiplayer", "is_quick_play_singleplayer"]
+BROKEN_TZ_SUFFIX = "+0:00"
 
 """
 Mojang index files look like this:
@@ -261,6 +262,12 @@ class MojangVersion(MetaBase):
     @validator("compliance_level")
     def validate_compliance_level(cls, v):
         assert v <= SUPPORTED_COMPLIANCE_LEVEL
+        return v
+
+    @validator("release_time", "time", pre=True)
+    def validate_datetime(cls, v: str):
+        if v.endswith(BROKEN_TZ_SUFFIX):
+            return v.replace(BROKEN_TZ_SUFFIX, "+00:00")
         return v
 
     id: str  # TODO: optional?

@@ -191,8 +191,12 @@ def process_forge_version(version, jar_path):
                 with jar.open("version.json") as profile_zip_entry:
                     version_data = profile_zip_entry.read()
 
-                    # Process: does it parse?
-                    MojangVersion.parse_raw(version_data)
+                    try:
+                        # Process: does it parse?
+                        MojangVersion.parse_raw(version_data)
+                    except Exception as e:
+                        e.add_note(f"version_data: {version_data}")
+                        raise e
 
                     with open(version_file_path, "wb") as versionJsonFile:
                         versionJsonFile.write(version_data)
