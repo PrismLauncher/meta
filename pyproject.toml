@@ -10,6 +10,7 @@ documentation = "https://github.com/PrismLauncher/meta"
 keywords = ["metadata", "prism", "launcher"]
 
 [tool.poetry.scripts]
+generateBabric = "meta.run.generate_babric:main"
 generateFabric = "meta.run.generate_fabric:main"
 generateForge = "meta.run.generate_forge:main"
 generateLiteloader = "meta.run.generate_liteloader:main"
@@ -17,6 +18,7 @@ generateMojang = "meta.run.generate_mojang:main"
 generateNeoForge = "meta.run.generate_neoforge:main"
 generateQuilt = "meta.run.generate_quilt:main"
 generateJava = "meta.run.generate_java:main"
+updateBabric = "meta.run.update_babric:main"
 updateFabric = "meta.run.update_fabric:main"
 updateForge = "meta.run.update_forge:main"
 updateLiteloader = "meta.run.update_liteloader:main"
