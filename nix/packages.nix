@@ -7,7 +7,7 @@
     ...
   }: {
     packages = {
-      blockgame-meta = final.python3.pkgs.callPackage ./pkgs/blockgame-meta.nix {};
+      blockgame-meta = final.python313.pkgs.callPackage ./pkgs/blockgame-meta.nix {};
       default = config.packages.blockgame-meta;
     };
 
