@@ -27,15 +27,15 @@ class ForgeEntry(MetaBase):
     mc_version: str = Field(alias="mcversion")
     version: str
     build: int
-    branch: Optional[str]
-    latest: Optional[bool]
-    recommended: Optional[bool]
-    files: Optional[Dict[str, ForgeFile]]
+    branch: Optional[str] = None
+    latest: Optional[bool] = None
+    recommended: Optional[bool] = None
+    files: Optional[Dict[str, ForgeFile]] = None
 
 
 class ForgeMCVersionInfo(MetaBase):
-    latest: Optional[str]
-    recommended: Optional[str]
+    latest: Optional[str] = None
+    recommended: Optional[str] = None
     versions: List[str] = Field([])
 
 
@@ -88,21 +88,21 @@ class ForgeInstallerProfileInstallSection(MetaBase):
     minecraft: str
     logo: str
     mirror_list: str = Field(alias="mirrorList")
-    mod_list: Optional[str] = Field(alias="modList")
+    mod_list: Optional[str] = Field(None, alias="modList")
 
 
 class ForgeLibrary(Library):
-    url: Optional[str]
-    server_req: Optional[bool] = Field(alias="serverreq")
-    client_req: Optional[bool] = Field(alias="clientreq")
-    checksums: Optional[List[str]]
-    comment: Optional[str]
+    url: Optional[str] = None
+    server_req: Optional[bool] = Field(None, alias="serverreq")
+    client_req: Optional[bool] = Field(None, alias="clientreq")
+    checksums: Optional[List[str]] = None
+    comment: Optional[str] = None
 
 
 class ForgeVersionFile(MojangVersion):
-    libraries: Optional[List[ForgeLibrary]]  # overrides Mojang libraries
+    libraries: Optional[List[ForgeLibrary]] = None  # overrides Mojang libraries
     inherits_from: Optional[str] = Field("inheritsFrom")
-    jar: Optional[str]
+    jar: Optional[str] = None
 
 
 class ForgeOptional(MetaBase):
@@ -122,28 +122,28 @@ class ForgeOptional(MetaBase):
     ]
     """
 
-    name: Optional[str]
-    client: Optional[bool]
-    server: Optional[bool]
-    default: Optional[bool]
-    inject: Optional[bool]
-    desc: Optional[str]
-    url: Optional[str]
-    artifact: Optional[GradleSpecifier]
-    maven: Optional[str]
+    name: Optional[str] = None
+    client: Optional[bool] = None
+    server: Optional[bool] = None
+    default: Optional[bool] = None
+    inject: Optional[bool] = None
+    desc: Optional[str] = None
+    url: Optional[str] = None
+    artifact: Optional[GradleSpecifier] = None
+    maven: Optional[str] = None
 
 
 class ForgeInstallerProfile(MetaBase):
     install: ForgeInstallerProfileInstallSection
     version_info: ForgeVersionFile = Field(alias="versionInfo")
-    optionals: Optional[List[ForgeOptional]]
+    optionals: Optional[List[ForgeOptional]] = None
 
 
 class ForgeLegacyInfo(MetaBase):
-    release_time: Optional[datetime] = Field(alias="releaseTime")
-    size: Optional[int]
-    sha256: Optional[str]
-    sha1: Optional[str]
+    release_time: Optional[datetime] = Field(None, alias="releaseTime")
+    size: Optional[int] = None
+    sha256: Optional[str] = None
+    sha1: Optional[str] = None
 
 
 class ForgeLegacyInfoList(MetaBase):
@@ -151,40 +151,40 @@ class ForgeLegacyInfoList(MetaBase):
 
 
 class DataSpec(MetaBase):
-    client: Optional[str]
-    server: Optional[str]
+    client: Optional[str] = None
+    server: Optional[str] = None
 
 
 class ProcessorSpec(MetaBase):
-    jar: Optional[str]
-    classpath: Optional[List[str]]
-    args: Optional[List[str]]
-    outputs: Optional[Dict[str, str]]
-    sides: Optional[List[str]]
+    jar: Optional[str] = None
+    classpath: Optional[List[str]] = None
+    args: Optional[List[str]] = None
+    outputs: Optional[Dict[str, str]] = None
+    sides: Optional[List[str]] = None
 
 
 class ForgeInstallerProfileV2(MetaBase):
-    _comment: Optional[List[str]]
-    spec: Optional[int]
-    profile: Optional[str]
-    version: Optional[str]
-    icon: Optional[str]
-    json_data: Optional[str] = Field(alias="json")
-    path: Optional[GradleSpecifier]
-    logo: Optional[str]
-    minecraft: Optional[str]
-    welcome: Optional[str]
-    data: Optional[Dict[str, DataSpec]]
-    processors: Optional[List[ProcessorSpec]]
-    libraries: Optional[List[Library]]
-    mirror_list: Optional[str] = Field(alias="mirrorList")
-    server_jar_path: Optional[str] = Field(alias="serverJarPath")
+    _comment: Optional[List[str]] = None
+    spec: Optional[int] = None
+    profile: Optional[str] = None
+    version: Optional[str] = None
+    icon: Optional[str] = None
+    json_data: Optional[str] = Field(None, alias="json")
+    path: Optional[GradleSpecifier] = None
+    logo: Optional[str] = None
+    minecraft: Optional[str] = None
+    welcome: Optional[str] = None
+    data: Optional[Dict[str, DataSpec]] = None
+    processors: Optional[List[ProcessorSpec]] = None
+    libraries: Optional[List[Library]] = None
+    mirror_list: Optional[str] = Field(None, alias="mirrorList")
+    server_jar_path: Optional[str] = Field(None, alias="serverJarPath")
 
 
 class InstallerInfo(MetaBase):
-    sha1hash: Optional[str]
-    sha256hash: Optional[str]
-    size: Optional[int]
+    sha1hash: Optional[str] = None
+    sha256hash: Optional[str] = None
+    size: Optional[int] = None
 
 
 # A post-processed entry constructed from the reconstructed Forge version index
