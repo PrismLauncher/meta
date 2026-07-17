@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Optional, List, Dict, Any, Iterator
 from .enum import StrEnum
 
-from pydantic import validator, Field
+from pydantic import field_validator, Field
 
 from . import (
     MetaBase,
@@ -54,13 +54,13 @@ class MojangLatestVersion(MetaBase):
 
 
 class MojangIndexEntry(MetaBase):
-    id: Optional[str]
-    release_time: Optional[datetime] = Field(alias="releaseTime")
-    time: Optional[datetime]
-    type: Optional[str]
-    url: Optional[str]
-    sha1: Optional[str]
-    compliance_level: Optional[int] = Field(alias="complianceLevel")
+    id: Optional[str] = None
+    release_time: Optional[datetime] = Field(None, alias="releaseTime")
+    time: Optional[datetime] = None
+    type: Optional[str] = None
+    url: Optional[str] = None
+    sha1: Optional[str] = None
+    compliance_level: Optional[int] = Field(None, alias="complianceLevel")
 
 
 class MojangIndex(MetaBase):
@@ -78,7 +78,7 @@ class MojangIndexWrap:
 class ExperimentEntry(MetaBase):
     id: str
     url: str
-    wiki: Optional[str]
+    wiki: Optional[str] = None
 
 
 class ExperimentIndex(MetaBase):
@@ -96,7 +96,7 @@ class ExperimentIndexWrap:
 class OldSnapshotEntry(MetaBase):
     id: str
     url: str
-    wiki: Optional[str]
+    wiki: Optional[str] = None
     jar: str
     sha1: str
     size: int
@@ -115,11 +115,11 @@ class OldSnapshotIndexWrap:
 
 
 class LegacyOverrideEntry(MetaBase):
-    main_class: Optional[str] = Field(alias="mainClass")
-    applet_class: Optional[str] = Field(alias="appletClass")
-    release_time: Optional[datetime] = Field(alias="releaseTime")
-    additional_traits: Optional[List[str]] = Field(alias="+traits")
-    additional_jvm_args: Optional[List[str]] = Field(alias="+jvmArgs")
+    main_class: Optional[str] = Field(None, alias="mainClass")
+    applet_class: Optional[str] = Field(None, alias="appletClass")
+    release_time: Optional[datetime] = Field(None, alias="releaseTime")
+    additional_traits: Optional[List[str]] = Field(None, alias="+traits")
+    additional_jvm_args: Optional[List[str]] = Field(None, alias="+jvmArgs")
 
     def apply_onto_meta_version(self, meta_version: MetaVersion, legacy: bool = True):
         # simply hard override classes
@@ -151,8 +151,8 @@ class LegacyOverrideIndex(MetaBase):
 
 class LibraryPatch(MetaBase):
     match: List[GradleSpecifier]
-    override: Optional[Library]
-    additionalLibraries: Optional[List[Library]]
+    override: Optional[Library] = None
+    additionalLibraries: Optional[List[Library]] = None
     patchAdditionalLibraries: bool = Field(False)
 
     def applies(self, target: Library) -> bool:
@@ -180,8 +180,8 @@ class LegacyServices(MetaBase):
 
 
 class MojangArguments(MetaBase):
-    game: Optional[List[Any]]  # mixture of strings and objects
-    jvm: Optional[List[Any]]
+    game: Optional[List[Any]] = None  # mixture of strings and objects
+    jvm: Optional[List[Any]] = None
 
 
 class MojangJavaComponent(StrEnum):
@@ -254,40 +254,45 @@ class JavaIndex(MetaBase):
 
 
 class MojangVersion(MetaBase):
-    @validator("minimum_launcher_version")
+    @field_validator("minimum_launcher_version")
+    @classmethod
     def validate_minimum_launcher_version(cls, v):
         assert v <= SUPPORTED_LAUNCHER_VERSION
         return v
 
-    @validator("compliance_level")
+    @field_validator("compliance_level")
+    @classmethod
     def validate_compliance_level(cls, v):
         assert v <= SUPPORTED_COMPLIANCE_LEVEL
         return v
 
-    @validator("release_time", "time", pre=True)
+    @field_validator("release_time", "time", mode="before")
+    @classmethod
     def validate_datetime(cls, v: str):
         if v.endswith(BROKEN_TZ_SUFFIX):
             return v.replace(BROKEN_TZ_SUFFIX, "+00:00")
         return v
 
     id: str  # TODO: optional?
-    arguments: Optional[MojangArguments]
-    asset_index: Optional[MojangAssets] = Field(alias="assetIndex")
-    assets: Optional[str]
-    downloads: Optional[Dict[str, MojangArtifactBase]]  # TODO improve this?
-    libraries: Optional[List[Library]]  # TODO: optional?
-    main_class: Optional[str] = Field(alias="mainClass")
-    applet_class: Optional[str] = Field(alias="appletClass")
-    processArguments: Optional[str]
-    minecraft_arguments: Optional[str] = Field(alias="minecraftArguments")
-    minimum_launcher_version: Optional[int] = Field(alias="minimumLauncherVersion")
-    release_time: Optional[datetime] = Field(alias="releaseTime")
-    time: Optional[datetime]
-    type: Optional[str]
+    arguments: Optional[MojangArguments] = None
+    asset_index: Optional[MojangAssets] = Field(None, alias="assetIndex")
+    assets: Optional[str] = None
+    downloads: Optional[Dict[str, MojangArtifactBase]] = None  # TODO improve this?
+    libraries: Optional[List[Library]] = None  # TODO: optional?
+    main_class: Optional[str] = Field(None, alias="mainClass")
+    applet_class: Optional[str] = Field(None, alias="appletClass")
+    processArguments: Optional[str] = None
+    minecraft_arguments: Optional[str] = Field(None, alias="minecraftArguments")
+    minimum_launcher_version: Optional[int] = Field(
+        None, alias="minimumLauncherVersion"
+    )
+    release_time: Optional[datetime] = Field(None, alias="releaseTime")
+    time: Optional[datetime] = None
+    type: Optional[str] = None
     inherits_from: Optional[str] = Field("inheritsFrom")
-    logging: Optional[Dict[str, MojangLogging]]  # TODO improve this?
-    compliance_level: Optional[int] = Field(alias="complianceLevel")
-    javaVersion: Optional[JavaVersion]
+    logging: Optional[Dict[str, MojangLogging]] = None  # TODO improve this?
+    compliance_level: Optional[int] = Field(None, alias="complianceLevel")
+    javaVersion: Optional[JavaVersion] = None
 
     def to_meta_version(self, name: str, uid: str, version: str) -> MetaVersion:
         main_jar = None
