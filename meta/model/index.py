@@ -8,12 +8,12 @@ from meta.model import Dependency, MetaBase, Versioned, MetaVersion
 
 class MetaVersionIndexEntry(MetaBase):
     version: str
-    type: Optional[str]
+    type: Optional[str] = None
     release_time: datetime = Field(alias="releaseTime")
-    requires: Optional[List[Dependency]]
-    conflicts: Optional[List[Dependency]]
-    recommended: Optional[bool]
-    volatile: Optional[bool]
+    requires: Optional[List[Dependency]] = None
+    conflicts: Optional[List[Dependency]] = None
+    recommended: Optional[bool] = None
+    volatile: Optional[bool] = None
     sha256: str
 
     @classmethod
