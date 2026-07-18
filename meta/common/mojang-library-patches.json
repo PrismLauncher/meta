@@ -4674,12 +4674,6 @@
           {
             "action": "allow",
             "os": {
-              "name": "osx"
-            }
-          },
-          {
-            "action": "allow",
-            "os": {
               "name": "osx-arm64"
             }
           }
@@ -4713,12 +4707,6 @@
         },
         "name": "org.lwjgl:lwjgl-glfw-natives-windows-arm64:3.4.1",
         "rules": [
-          {
-            "action": "allow",
-            "os": {
-              "name": "windows"
-            }
-          },
           {
             "action": "allow",
             "os": {
