@@ -189,7 +189,7 @@ def process_neoforge_version(key, entry):
                     version_data = profile_zip_entry.read()
 
                     # Process: does it parse?
-                    MojangVersion.parse_raw(version_data)
+                    MojangVersion.model_validate_json(version_data)
 
                     Path(version_file_path).parent.mkdir(parents=True, exist_ok=True)
                     with open(version_file_path, "wb") as versionJsonFile:
@@ -203,7 +203,7 @@ def process_neoforge_version(key, entry):
                 is_parsable = False
                 exception = None
                 try:
-                    NeoForgeInstallerProfileV2.parse_raw(install_profile_data)
+                    NeoForgeInstallerProfileV2.model_validate_json(install_profile_data)
                     is_parsable = True
                 except ValidationError as err:
                     exception = err

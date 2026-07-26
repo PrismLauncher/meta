@@ -50,8 +50,12 @@ def version_from_build_system_installer(
     v.maven_files = []
 
     # load the locally cached installer file info and use it to add the installer entry in the json
-    info = InstallerInfo.parse_file(
-        os.path.join(UPSTREAM_DIR, INSTALLER_INFO_DIR, f"{version.long_version}.json")
+    info = InstallerInfo.model_validate_json(
+        open(
+            os.path.join(
+                UPSTREAM_DIR, INSTALLER_INFO_DIR, f"{version.long_version}.json"
+            )
+        ).read()
     )
     installer_lib = Library(
         name=GradleSpecifier(
@@ -97,8 +101,8 @@ def version_from_build_system_installer(
 
 def main():
     # load the locally cached version list
-    remote_versions = DerivedNeoForgeIndex.parse_file(
-        os.path.join(UPSTREAM_DIR, DERIVED_INDEX_FILE)
+    remote_versions = DerivedNeoForgeIndex.model_validate_json(
+        open(os.path.join(UPSTREAM_DIR, DERIVED_INDEX_FILE)).read()
     )
     recommended_versions = []
 
@@ -137,8 +141,12 @@ def main():
         if not os.path.isfile(installer_version_filepath):
             eprint(f"Skipped version {installer_version_filepath} as it does not have an installer version manifest")
             continue
-        installer = MojangVersion.parse_file(installer_version_filepath)
-        profile = NeoForgeInstallerProfileV2.parse_file(profile_filepath)
+        installer = MojangVersion.model_validate_json(
+            open(installer_version_filepath).read()
+        )
+        profile = NeoForgeInstallerProfileV2.model_validate_json(
+            open(profile_filepath).read()
+        )
         v = version_from_build_system_installer(installer, profile, version)
 
         # we can get the minecraft version from the profile json info, so let's just do that instead of hacky regex

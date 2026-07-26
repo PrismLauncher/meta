@@ -40,11 +40,11 @@ class NeoForgeEntry(MetaBase):
 class NeoForgeMCVersionInfo(MetaBase):
     latest: Optional[str] = None
     recommended: Optional[str] = None
-    versions: List[str] = Field([])
+    versions: List[str] = Field(default_factory=list)
 
 
 class DerivedNeoForgeIndex(MetaBase):
-    versions: Dict[str, NeoForgeEntry] = Field({})
+    versions: Dict[str, NeoForgeEntry] = Field(default_factory=dict)
 
 
 class FMLLib(

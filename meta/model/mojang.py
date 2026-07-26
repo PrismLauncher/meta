@@ -1,8 +1,10 @@
 from datetime import datetime
+from pathlib import Path
 from typing import Optional, List, Dict, Any, Iterator
 from .enum import StrEnum
 
-from pydantic import field_validator, Field
+import json
+from pydantic import field_validator, Field, RootModel
 
 from . import (
     MetaBase,
@@ -159,24 +161,20 @@ class LibraryPatch(MetaBase):
         return target.name in self.match
 
 
-class LibraryPatches(MetaBase):
-    __root__: List[LibraryPatch]
-
+class LibraryPatches(RootModel[List[LibraryPatch]]):
     def __iter__(self) -> Iterator[LibraryPatch]:
-        return iter(self.__root__)
+        return iter(self.root)
 
     def __getitem__(self, item) -> LibraryPatch:
-        return self.__root__[item]
+        return self.root[item]
 
 
-class LegacyServices(MetaBase):
-    __root__: List[str]
-
+class LegacyServices(RootModel[List[str]]):
     def __iter__(self) -> Iterator[str]:
-        return iter(self.__root__)
+        return iter(self.root)
 
     def __getitem__(self, item) -> str:
-        return self.__root__[item]
+        return self.root[item]
 
 
 class MojangArguments(MetaBase):
@@ -222,14 +220,14 @@ class MojangJavaRuntime(MetaBase):
     version: MojangJavaIndexVersion
 
 
-class MojangJavaIndexEntry(MetaBase):
-    __root__: dict[MojangJavaComponent, list[MojangJavaRuntime]]
-
+class MojangJavaIndexEntry(
+    RootModel[dict[MojangJavaComponent, list[MojangJavaRuntime]]]
+):
     def __iter__(self) -> Iterator[MojangJavaComponent]:
-        return iter(self.__root__)
+        return iter(self.root)
 
     def __getitem__(self, item) -> list[MojangJavaRuntime]:
-        return self.__root__[item]
+        return self.root[item]
 
 
 class MojangJavaOsName(StrEnum):
@@ -243,14 +241,24 @@ class MojangJavaOsName(StrEnum):
     WindowsX86 = "windows-x86"
 
 
-class JavaIndex(MetaBase):
-    __root__: dict[MojangJavaOsName, MojangJavaIndexEntry]
-
+class JavaIndex(RootModel[dict[MojangJavaOsName, MojangJavaIndexEntry]]):
     def __iter__(self) -> Iterator[MojangJavaOsName]:
-        return iter(self.__root__)
+        return iter(self.root)
 
     def __getitem__(self, item) -> MojangJavaIndexEntry:
-        return self.__root__[item]
+        return self.root[item]
+
+    def json(self) -> str:
+        return json.dumps(
+            self.model_dump(mode="json", by_alias=True),
+            sort_keys=True,
+            indent=4,
+        )
+
+    def write(self, file_path: str):
+        Path(file_path).parent.mkdir(parents=True, exist_ok=True)
+        with open(file_path, "w") as f:
+            f.write(self.json())
 
 
 class MojangVersion(MetaBase):

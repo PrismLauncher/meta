@@ -1,14 +1,22 @@
 import copy
-from datetime import datetime
+import json
+from datetime import datetime, timezone
 from pathlib import Path
-from typing import Optional, List, Dict, Any, Iterator
+from typing import Optional, List, Dict, Any
 
 import pydantic
-from pydantic import field_validator, ConfigDict, Field  # type: ignore
+from pydantic import (
+    field_validator,
+    field_serializer,
+    ConfigDict,
+    Field,
+    GetCoreSchemaHandler,
+)
+from pydantic.json_schema import GetJsonSchemaHandler
+from pydantic_core import core_schema
 
 from ..common import (
     LAUNCHER_MAVEN,
-    serialize_datetime,
     replace_old_launchermeta_url,
     get_all_bases,
     merge_dict,
@@ -103,10 +111,15 @@ class GradleSpecifier:
         return hash(str(self))
 
     @classmethod
-    # TODO[pydantic]: We couldn't refactor `__get_validators__`, please create the `__get_pydantic_core_schema__` manually.
-    # Check https://docs.pydantic.dev/latest/migration/#defining-custom-types for more information.
-    def __get_validators__(cls):
-        yield cls.validate
+    def __get_pydantic_core_schema__(
+        cls, source_type: Any, handler: GetCoreSchemaHandler
+    ) -> core_schema.CoreSchema:
+        return core_schema.no_info_plain_validator_function(
+            cls.validate,
+            serialization=core_schema.plain_serializer_function_ser_schema(
+                lambda v: str(v), info_arg=False
+            ),
+        )
 
     @classmethod
     def from_string(cls, v: str):
@@ -136,20 +149,38 @@ class GradleSpecifier:
 
 
 class MetaBase(pydantic.BaseModel):
+    @field_validator("*", mode="after")
+    @classmethod
+    def _ensure_utc(cls, v):
+        if isinstance(v, datetime) and v.tzinfo is None:
+            return v.replace(tzinfo=timezone.utc)
+        return v
+
+    @field_serializer("*", mode="wrap")
+    @classmethod
+    def _serialize_datetime(cls, v, handler, info):
+        if isinstance(v, datetime):
+            if v.tzinfo is None:
+                v = v.replace(tzinfo=timezone.utc)
+            return v.isoformat()
+        return handler(v)
+
     def dict(self, **kwargs: Any) -> Dict[str, Any]:
         for k in ["by_alias"]:
             if k in kwargs:
                 del kwargs[k]
 
-        return super(MetaBase, self).dict(by_alias=True, **kwargs)
+        return self.model_dump(by_alias=True, **kwargs)
 
     def json(self, **kwargs: Any) -> str:
         for k in ["exclude_none", "sort_keys", "indent"]:
             if k in kwargs:
                 del kwargs[k]
 
-        return super(MetaBase, self).json(
-            exclude_none=True, sort_keys=True, by_alias=True, indent=4, **kwargs
+        return json.dumps(
+            self.model_dump(exclude_none=True, by_alias=True, mode="json"),
+            sort_keys=True,
+            indent=4,
         )
 
     def write(self, file_path: str):
@@ -167,7 +198,7 @@ class MetaBase(pydantic.BaseModel):
         - Overwrites for any other field type (int, string, ...)
         """
         assert type(other) is type(self)
-        for key, field in self.__fields__.items():
+        for key, field in type(self).model_fields.items():
             ours = getattr(self, key)
             theirs = getattr(other, key)
             if theirs is None:
@@ -183,7 +214,7 @@ class MetaBase(pydantic.BaseModel):
             elif isinstance(ours, dict):
                 result = merge_dict(ours, copy.deepcopy(theirs))  # type: ignore
                 setattr(self, key, result)
-            elif MetaBase in get_all_bases(field.type_):
+            elif MetaBase in get_all_bases(field.annotation):
                 ours.merge(theirs)
             else:
                 setattr(self, key, theirs)
@@ -191,11 +222,8 @@ class MetaBase(pydantic.BaseModel):
     def __hash__(self):  # type: ignore
         return hash(self.json())
 
-    # TODO[pydantic]: The following keys were removed: `json_encoders`.
-    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
     model_config = ConfigDict(
         populate_by_name=True,
-        json_encoders={datetime: serialize_datetime, GradleSpecifier: str},
     )
 
 
@@ -283,16 +311,6 @@ class MojangRule(MetaBase):
     os: Optional[OSRule] = None
 
 
-class MojangRules(MetaBase):
-    __root__: List[MojangRule]
-
-    def __iter__(self) -> Iterator[MojangRule]:  # type: ignore
-        return iter(self.__root__)
-
-    def __getitem__(self, item: int) -> MojangRule:
-        return self.__root__[item]
-
-
 class MojangLoggingArtifact(MojangArtifactBase):
     id: str
 
@@ -314,7 +332,7 @@ class Library(MetaBase):
     name: Optional[GradleSpecifier] = None
     downloads: Optional[MojangLibraryDownloads] = None
     natives: Optional[Dict[str, str]] = None
-    rules: Optional[MojangRules] = None
+    rules: Optional[List[MojangRule]] = None
     url: Optional[str] = None
     mmcHint: Optional[str] = Field(None, alias="MMC-hint")
 

@@ -3,11 +3,13 @@ from . import (
     MetaVersion,
     Versioned,
 )
-from pydantic import Field
+from pathlib import Path
+from pydantic import Field, RootModel
 from datetime import datetime
 from enum import IntEnum, Enum
 from .enum import StrEnum
 from typing import Optional, Any, NamedTuple, Generator
+import json
 from urllib.parse import urlencode, urlparse, urlunparse
 from functools import total_ordering
 
@@ -109,7 +111,7 @@ class URLComponents(NamedTuple):
 class APIQuery(MetaBase):
     def to_query(self):
         set_parts: dict[str, Any] = {}
-        for key, value in self.dict().items():
+        for key, value in self.model_dump().items():
             if value is not None:
                 if isinstance(value, Enum):
                     set_parts[key] = value.value
@@ -332,17 +334,27 @@ class AdoptxRelease(MetaBase):
     # we intentionally omit download_count
 
 
-class AdoptxReleases(MetaBase):
-    __root__: list[AdoptxRelease]
-
+class AdoptxReleases(RootModel[list[AdoptxRelease]]):
     def __iter__(self) -> Generator[tuple[str, AdoptxRelease], None, None]:
-        yield from ((str(i), val) for i, val in enumerate(self.__root__))
+        yield from ((str(i), val) for i, val in enumerate(self.root))
 
     def __getitem__(self, item: int) -> AdoptxRelease:
-        return self.__root__[item]
+        return self.root[item]
 
     def append(self, rls: AdoptxRelease):
-        self.__root__.append(rls)
+        self.root.append(rls)
+
+    def json(self) -> str:
+        return json.dumps(
+            self.model_dump(mode="json", by_alias=True, exclude_none=True),
+            sort_keys=True,
+            indent=4,
+        )
+
+    def write(self, file_path: str):
+        Path(file_path).parent.mkdir(parents=True, exist_ok=True)
+        with open(file_path, "w") as f:
+            f.write(self.json())
 
 
 class AzulProduct(StrEnum):
@@ -561,30 +573,50 @@ class ZuluPackage(MetaBase):
     availability_type: Optional[AzulAvailabilityType] = None
 
 
-class ZuluPackageList(MetaBase):
-    __root__: list[ZuluPackage]
-
+class ZuluPackageList(RootModel[list[ZuluPackage]]):
     def __iter__(self) -> Generator[tuple[str, ZuluPackage], None, None]:
-        yield from ((str(i), val) for i, val in enumerate(self.__root__))
+        yield from ((str(i), val) for i, val in enumerate(self.root))
 
     def __getitem__(self, item: int) -> ZuluPackage:
-        return self.__root__[item]
+        return self.root[item]
 
     def append(self, pkg: ZuluPackage):
-        self.__root__.append(pkg)
+        self.root.append(pkg)
+
+    def json(self) -> str:
+        return json.dumps(
+            self.model_dump(mode="json", by_alias=True, exclude_none=True),
+            sort_keys=True,
+            indent=4,
+        )
+
+    def write(self, file_path: str):
+        Path(file_path).parent.mkdir(parents=True, exist_ok=True)
+        with open(file_path, "w") as f:
+            f.write(self.json())
 
 
-class ZuluPackagesDetail(MetaBase):
-    __root__: list[ZuluPackageDetail]
-
+class ZuluPackagesDetail(RootModel[list[ZuluPackageDetail]]):
     def __iter__(self) -> Generator[tuple[str, ZuluPackageDetail], None, None]:
-        yield from ((str(i), val) for i, val in enumerate(self.__root__))
+        yield from ((str(i), val) for i, val in enumerate(self.root))
 
     def __getitem__(self, item: int) -> ZuluPackageDetail:
-        return self.__root__[item]
+        return self.root[item]
 
     def append(self, pkg: ZuluPackageDetail):
-        self.__root__.append(pkg)
+        self.root.append(pkg)
+
+    def json(self) -> str:
+        return json.dumps(
+            self.model_dump(mode="json", by_alias=True, exclude_none=True),
+            sort_keys=True,
+            indent=4,
+        )
+
+    def write(self, file_path: str):
+        Path(file_path).parent.mkdir(parents=True, exist_ok=True)
+        with open(file_path, "w") as f:
+            f.write(self.json())
 
 
 MOJANG_OS_NAMES = ["mac-os", "linux", "windows"]
