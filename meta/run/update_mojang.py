@@ -92,7 +92,7 @@ def update_javas():
     r = sess.get(MOJANG_JAVA_URL)
     r.raise_for_status()
 
-    remote_javas = JavaIndex(__root__=r.json())
+    remote_javas = JavaIndex(r.json())
 
     java_manifest_path = os.path.join(UPSTREAM_DIR, JAVA_MANIFEST_FILE)
 
@@ -134,7 +134,7 @@ def main():
     if os.path.exists(version_manifest_path):
         # get the local version list
         current_versions = MojangIndexWrap(
-            MojangIndex.parse_file(version_manifest_path)
+            MojangIndex.model_validate_json(open(version_manifest_path).read())
         )
         local_ids = set(current_versions.versions.keys())
 
@@ -160,7 +160,7 @@ def main():
     # deal with experimental snapshots separately
     if os.path.exists(STATIC_EXPERIMENTS_FILE):
         experiments = ExperimentIndexWrap(
-            ExperimentIndex.parse_file(STATIC_EXPERIMENTS_FILE)
+            ExperimentIndex.model_validate_json(open(STATIC_EXPERIMENTS_FILE).read())
         )
         experiment_ids = set(experiments.versions.keys())
 
@@ -177,7 +177,7 @@ def main():
     # deal with old snapshots
     if os.path.exists(STATIC_OLD_SNAPSHOTS_FILE):
         old_snapshots = OldSnapshotIndexWrap(
-            OldSnapshotIndex.parse_file(STATIC_OLD_SNAPSHOTS_FILE)
+            OldSnapshotIndex.model_validate_json(open(STATIC_OLD_SNAPSHOTS_FILE).read())
         )
         old_snapshots_ids = set(old_snapshots.versions.keys())
 

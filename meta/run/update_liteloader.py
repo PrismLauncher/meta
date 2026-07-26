@@ -21,10 +21,9 @@ def main():
     main_json = r.json()
 
     # make sure we understand the schema
-    remote_versions = LiteloaderIndex.parse_obj(main_json)
-    parsed = remote_versions.json()
-    original = json.dumps(main_json, sort_keys=True, indent=4)
-    assert parsed == original
+    remote_versions = LiteloaderIndex.model_validate(main_json)
+    parsed = remote_versions.model_dump(mode="json", exclude_none=True, by_alias=True)
+    assert parsed == main_json
 
     print("Successfully parsed index")
     print(f"Last updated {remote_versions.meta.updated}")

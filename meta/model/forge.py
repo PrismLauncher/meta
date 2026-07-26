@@ -36,12 +36,14 @@ class ForgeEntry(MetaBase):
 class ForgeMCVersionInfo(MetaBase):
     latest: Optional[str] = None
     recommended: Optional[str] = None
-    versions: List[str] = Field([])
+    versions: List[str] = Field(default_factory=list)
 
 
 class DerivedForgeIndex(MetaBase):
-    versions: Dict[str, ForgeEntry] = Field({})
-    by_mc_version: Dict[str, ForgeMCVersionInfo] = Field({}, alias="by_mcversion")
+    versions: Dict[str, ForgeEntry] = Field(default_factory=dict)
+    by_mc_version: Dict[str, ForgeMCVersionInfo] = Field(
+        default_factory=dict, alias="by_mcversion"
+    )
 
 
 class FMLLib(
@@ -147,7 +149,7 @@ class ForgeLegacyInfo(MetaBase):
 
 
 class ForgeLegacyInfoList(MetaBase):
-    number: Dict[str, ForgeLegacyInfo] = Field({})
+    number: Dict[str, ForgeLegacyInfo] = Field(default_factory=dict)
 
 
 class DataSpec(MetaBase):

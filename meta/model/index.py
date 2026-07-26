@@ -33,7 +33,7 @@ class MetaVersionIndexEntry(MetaBase):
 class MetaVersionIndex(Versioned):
     name: str
     uid: str
-    versions: List[MetaVersionIndexEntry] = Field([])
+    versions: List[MetaVersionIndexEntry] = Field(default_factory=list)
 
 
 class MetaPackageIndexEntry(MetaBase):
@@ -43,4 +43,4 @@ class MetaPackageIndexEntry(MetaBase):
 
 
 class MetaPackageIndex(Versioned):
-    packages: List[MetaPackageIndexEntry] = Field([])
+    packages: List[MetaPackageIndexEntry] = Field(default_factory=list)
