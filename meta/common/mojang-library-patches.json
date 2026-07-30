@@ -4514,6 +4514,84 @@
   {
     "_comment": "Add linux-arm64 support for LWJGL 3.4.2",
     "match": [
+      "org.lwjgl:lwjgl-shaderc:3.4.2"
+    ],
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "23403f5c295d946d1d2f7785c551f48be2b2fe9b",
+            "size": 3463790,
+            "url": "https://build.lwjgl.org/release/3.4.2/bin/lwjgl-shaderc/lwjgl-shaderc-natives-linux-arm64.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-shaderc-natives-linux-arm64:3.4.2-lwjgl.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-arm64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Add linux-arm64 support for LWJGL 3.4.2",
+    "match": [
+      "org.lwjgl:lwjgl-spvc:3.4.2"
+    ],
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "8d7b46d68788d217143eee402126ea286d100683",
+            "size": 1166742,
+            "url": "https://build.lwjgl.org/release/3.4.2/bin/lwjgl-spvc/lwjgl-spvc-natives-linux-arm64.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-spvc-natives-linux-arm64:3.4.2-lwjgl.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-arm64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Add linux-arm64 support for LWJGL 3.4.2",
+    "match": [
+      "org.lwjgl:lwjgl-vma:3.4.2"
+    ],
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "c6fb35dd852aedf2266d462c9b7142c41a860298",
+            "size": 60868,
+            "url": "https://build.lwjgl.org/release/3.4.2/bin/lwjgl-vma/lwjgl-vma-natives-linux-arm64.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-vma-natives-linux-arm64:3.4.2-lwjgl.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-arm64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Add linux-arm64 support for LWJGL 3.4.2",
+    "match": [
       "org.lwjgl:lwjgl-sdl:3.4.2"
     ],
     "additionalLibraries": [
