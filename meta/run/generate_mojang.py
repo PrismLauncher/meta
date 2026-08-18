@@ -110,6 +110,7 @@ PASS_VARIANTS = [
 
 # LWJGL versions we def. don't want!
 BAD_VARIANTS = [
+    "17754e4d1045947c3b99d22b9db7e75bfb6d252a",  # 3.4.2 (2026-08-17 11:46:16+00:00) removed tinyfd
     "0ab5c885c21dfd8133277e8f557839f5fab35311",  # 3.4.1 (2026-05-26 13:48:31+00:00) no SDL
     "472ee33f7a1294822aa2d617cd6ccdfd92f949a0",  # 3.4.1 (2026-04-07 11:52:43+00:00) vulkan, has significant performance regressions
     "1fd0e4d1f0f7c97e8765a69d38225e1f27ee14ef",  # 3.4.1 (2026-02-17 12:42:24+00:00) before vulkan
