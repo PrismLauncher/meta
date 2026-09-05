@@ -86,7 +86,7 @@ class JavaRuntimeMeta(MetaBase):
     vendor: str
     url: str
     release_time: datetime = Field(alias="releaseTime")
-    checksum: Optional[JavaChecksumMeta]
+    checksum: Optional[JavaChecksumMeta] = None
     download_type: JavaRuntimeDownloadType = Field(alias="downloadType")
     package_type: JavaPackageType = Field(alias="packageType")
     version: JavaVersionMeta
@@ -269,23 +269,23 @@ def openj9APIFeatureReleasesUrl(
 class AdoptxAvailableReleases(MetaBase):
     available_releases: list[int]
     available_lts_releases: list[int]
-    most_recent_lts: Optional[int]
-    most_recent_feature_release: Optional[int]
-    most_recent_feature_version: Optional[int]
-    tip_version: Optional[int]
+    most_recent_lts: Optional[int] = None
+    most_recent_feature_release: Optional[int] = None
+    most_recent_feature_version: Optional[int] = None
+    tip_version: Optional[int] = None
 
 
 class AdoptxFile(MetaBase):
     name: str
     link: str
-    size: Optional[int]
+    size: Optional[int] = None
 
 
 class AdoptxPackage(AdoptxFile):
-    checksum: Optional[str]
-    checksum_link: Optional[str]
-    signature_link: Optional[str]
-    metadata_link: Optional[str]
+    checksum: Optional[str] = None
+    checksum_link: Optional[str] = None
+    signature_link: Optional[str] = None
+    metadata_link: Optional[str] = None
     # we intentionally omit download_count
 
 
@@ -293,28 +293,28 @@ class AdoptxBinary(MetaBase):
     os: str
     architecture: AdoptxArchitecture
     image_type: AdoptxImageType
-    c_lib: Optional[AdoptxCLib]
+    c_lib: Optional[AdoptxCLib] = None
     jvm_impl: AdoptxJvmImpl
-    package: Optional[AdoptxPackage]
-    installer: Optional[AdoptxPackage]
+    package: Optional[AdoptxPackage] = None
+    installer: Optional[AdoptxPackage] = None
     heap_size: AdoptxHeapSize
     updated_at: datetime
-    scm_ref: Optional[str]
+    scm_ref: Optional[str] = None
     project: AdoptxProject
     # we intentionally omit download_count
 
 
 class AdoptxVersion(MetaBase):
-    major: Optional[int]
-    minor: Optional[int]
-    security: Optional[int]
-    patch: Optional[int]
-    pre: Optional[str]
-    adopt_build_number: Optional[int]
+    major: Optional[int] = None
+    minor: Optional[int] = None
+    security: Optional[int] = None
+    patch: Optional[int] = None
+    pre: Optional[str] = None
+    adopt_build_number: Optional[int] = None
     semver: str
     openjdk_version: str
-    build: Optional[int]
-    optional: Optional[str]
+    build: Optional[int] = None
+    optional: Optional[str] = None
 
 
 class AdoptxRelease(MetaBase):
@@ -327,8 +327,8 @@ class AdoptxRelease(MetaBase):
     release_type: str
     vendor: AdoptxVendor
     version_data: AdoptxVersion
-    source: Optional[AdoptxFile]
-    release_notes: Optional[AdoptxFile]
+    source: Optional[AdoptxFile] = None
+    release_notes: Optional[AdoptxFile] = None
     # we intentionally omit download_count
 
 
@@ -520,30 +520,30 @@ class ZuluSignatureDetail(MetaBase):
 
 class ZuluPackageDetail(MetaBase):
     package_uuid: str
-    name: Optional[str]
-    md5_hash: Optional[str]
-    sha256_hash: Optional[str]
+    name: Optional[str] = None
+    md5_hash: Optional[str] = None
+    sha256_hash: Optional[str] = None
     build_date: datetime
     last_modified: datetime
     download_url: str
     product: AzulProduct
     availability_type: AzulAvailabilityType
     java_version: list[int]
-    openjdk_build_number: Optional[int]
+    openjdk_build_number: Optional[int] = None
     java_package_type: AzulJavaPackageType
     javafx_bundled: bool
     release_type: AzulReleaseType
     os: AzulOs
-    lib_c_type: Optional[AzulLibCType]
-    cpu_gen: Optional[list[AzulCPUGen]]
+    lib_c_type: Optional[AzulLibCType] = None
+    cpu_gen: Optional[list[AzulCPUGen]] = None
     arch: AzulArch
     hw_bitness: AzulHwBitness
     abi: AzulAbi
     archive_type: AzulArchiveType
     release_status: AzulReleaseStatus
     support_term: AzulSupportTerm
-    certifications: Optional[list[AzulCertifications]]
-    latest: Optional[bool]
+    certifications: Optional[list[AzulCertifications]] = None
+    latest: Optional[bool] = None
     size: int
     distro_version: list[int]
     signatures: list[ZuluSignatureDetail]
@@ -551,14 +551,14 @@ class ZuluPackageDetail(MetaBase):
 
 class ZuluPackage(MetaBase):
     package_uuid: str
-    name: Optional[str]
+    name: Optional[str] = None
     java_version: list[int]
-    openjdk_build_number: Optional[int]
-    latest: Optional[bool]
+    openjdk_build_number: Optional[int] = None
+    latest: Optional[bool] = None
     download_url: str
-    product: Optional[AzulProduct]
+    product: Optional[AzulProduct] = None
     distro_version: list[int]
-    availability_type: Optional[AzulAvailabilityType]
+    availability_type: Optional[AzulAvailabilityType] = None
 
 
 class ZuluPackageList(MetaBase):

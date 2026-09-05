@@ -27,12 +27,12 @@ updateJava = "meta.run.update_java:main"
 index = "meta.run.index:main"
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.10"
 cachecontrol = "^0.14.0"
 requests = "^2.31.0"
 filelock = "^3.13.1"
 packaging = "^26.0"
-pydantic = "^1.10.13"
+pydantic = "^2.13.4"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
