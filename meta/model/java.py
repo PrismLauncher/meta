@@ -3,11 +3,13 @@ from . import (
     MetaVersion,
     Versioned,
 )
-from pydantic import Field
+from pathlib import Path
+from pydantic import Field, RootModel
 from datetime import datetime
 from enum import IntEnum, Enum
 from .enum import StrEnum
 from typing import Optional, Any, NamedTuple, Generator
+import json
 from urllib.parse import urlencode, urlparse, urlunparse
 from functools import total_ordering
 
@@ -86,7 +88,7 @@ class JavaRuntimeMeta(MetaBase):
     vendor: str
     url: str
     release_time: datetime = Field(alias="releaseTime")
-    checksum: Optional[JavaChecksumMeta]
+    checksum: Optional[JavaChecksumMeta] = None
     download_type: JavaRuntimeDownloadType = Field(alias="downloadType")
     package_type: JavaPackageType = Field(alias="packageType")
     version: JavaVersionMeta
@@ -109,7 +111,7 @@ class URLComponents(NamedTuple):
 class APIQuery(MetaBase):
     def to_query(self):
         set_parts: dict[str, Any] = {}
-        for key, value in self.dict().items():
+        for key, value in self.model_dump().items():
             if value is not None:
                 if isinstance(value, Enum):
                     set_parts[key] = value.value
@@ -269,23 +271,23 @@ def openj9APIFeatureReleasesUrl(
 class AdoptxAvailableReleases(MetaBase):
     available_releases: list[int]
     available_lts_releases: list[int]
-    most_recent_lts: Optional[int]
-    most_recent_feature_release: Optional[int]
-    most_recent_feature_version: Optional[int]
-    tip_version: Optional[int]
+    most_recent_lts: Optional[int] = None
+    most_recent_feature_release: Optional[int] = None
+    most_recent_feature_version: Optional[int] = None
+    tip_version: Optional[int] = None
 
 
 class AdoptxFile(MetaBase):
     name: str
     link: str
-    size: Optional[int]
+    size: Optional[int] = None
 
 
 class AdoptxPackage(AdoptxFile):
-    checksum: Optional[str]
-    checksum_link: Optional[str]
-    signature_link: Optional[str]
-    metadata_link: Optional[str]
+    checksum: Optional[str] = None
+    checksum_link: Optional[str] = None
+    signature_link: Optional[str] = None
+    metadata_link: Optional[str] = None
     # we intentionally omit download_count
 
 
@@ -293,28 +295,28 @@ class AdoptxBinary(MetaBase):
     os: str
     architecture: AdoptxArchitecture
     image_type: AdoptxImageType
-    c_lib: Optional[AdoptxCLib]
+    c_lib: Optional[AdoptxCLib] = None
     jvm_impl: AdoptxJvmImpl
-    package: Optional[AdoptxPackage]
-    installer: Optional[AdoptxPackage]
+    package: Optional[AdoptxPackage] = None
+    installer: Optional[AdoptxPackage] = None
     heap_size: AdoptxHeapSize
     updated_at: datetime
-    scm_ref: Optional[str]
+    scm_ref: Optional[str] = None
     project: AdoptxProject
     # we intentionally omit download_count
 
 
 class AdoptxVersion(MetaBase):
-    major: Optional[int]
-    minor: Optional[int]
-    security: Optional[int]
-    patch: Optional[int]
-    pre: Optional[str]
-    adopt_build_number: Optional[int]
+    major: Optional[int] = None
+    minor: Optional[int] = None
+    security: Optional[int] = None
+    patch: Optional[int] = None
+    pre: Optional[str] = None
+    adopt_build_number: Optional[int] = None
     semver: str
     openjdk_version: str
-    build: Optional[int]
-    optional: Optional[str]
+    build: Optional[int] = None
+    optional: Optional[str] = None
 
 
 class AdoptxRelease(MetaBase):
@@ -327,22 +329,32 @@ class AdoptxRelease(MetaBase):
     release_type: str
     vendor: AdoptxVendor
     version_data: AdoptxVersion
-    source: Optional[AdoptxFile]
-    release_notes: Optional[AdoptxFile]
+    source: Optional[AdoptxFile] = None
+    release_notes: Optional[AdoptxFile] = None
     # we intentionally omit download_count
 
 
-class AdoptxReleases(MetaBase):
-    __root__: list[AdoptxRelease]
-
+class AdoptxReleases(RootModel[list[AdoptxRelease]]):
     def __iter__(self) -> Generator[tuple[str, AdoptxRelease], None, None]:
-        yield from ((str(i), val) for i, val in enumerate(self.__root__))
+        yield from ((str(i), val) for i, val in enumerate(self.root))
 
     def __getitem__(self, item: int) -> AdoptxRelease:
-        return self.__root__[item]
+        return self.root[item]
 
     def append(self, rls: AdoptxRelease):
-        self.__root__.append(rls)
+        self.root.append(rls)
+
+    def json(self) -> str:
+        return json.dumps(
+            self.model_dump(mode="json", by_alias=True, exclude_none=True),
+            sort_keys=True,
+            indent=4,
+        )
+
+    def write(self, file_path: str):
+        Path(file_path).parent.mkdir(parents=True, exist_ok=True)
+        with open(file_path, "w") as f:
+            f.write(self.json())
 
 
 class AzulProduct(StrEnum):
@@ -520,30 +532,30 @@ class ZuluSignatureDetail(MetaBase):
 
 class ZuluPackageDetail(MetaBase):
     package_uuid: str
-    name: Optional[str]
-    md5_hash: Optional[str]
-    sha256_hash: Optional[str]
+    name: Optional[str] = None
+    md5_hash: Optional[str] = None
+    sha256_hash: Optional[str] = None
     build_date: datetime
     last_modified: datetime
     download_url: str
     product: AzulProduct
     availability_type: AzulAvailabilityType
     java_version: list[int]
-    openjdk_build_number: Optional[int]
+    openjdk_build_number: Optional[int] = None
     java_package_type: AzulJavaPackageType
     javafx_bundled: bool
     release_type: AzulReleaseType
     os: AzulOs
-    lib_c_type: Optional[AzulLibCType]
-    cpu_gen: Optional[list[AzulCPUGen]]
+    lib_c_type: Optional[AzulLibCType] = None
+    cpu_gen: Optional[list[AzulCPUGen]] = None
     arch: AzulArch
     hw_bitness: AzulHwBitness
     abi: AzulAbi
     archive_type: AzulArchiveType
     release_status: AzulReleaseStatus
     support_term: AzulSupportTerm
-    certifications: Optional[list[AzulCertifications]]
-    latest: Optional[bool]
+    certifications: Optional[list[AzulCertifications]] = None
+    latest: Optional[bool] = None
     size: int
     distro_version: list[int]
     signatures: list[ZuluSignatureDetail]
@@ -551,40 +563,60 @@ class ZuluPackageDetail(MetaBase):
 
 class ZuluPackage(MetaBase):
     package_uuid: str
-    name: Optional[str]
+    name: Optional[str] = None
     java_version: list[int]
-    openjdk_build_number: Optional[int]
-    latest: Optional[bool]
+    openjdk_build_number: Optional[int] = None
+    latest: Optional[bool] = None
     download_url: str
-    product: Optional[AzulProduct]
+    product: Optional[AzulProduct] = None
     distro_version: list[int]
-    availability_type: Optional[AzulAvailabilityType]
+    availability_type: Optional[AzulAvailabilityType] = None
 
 
-class ZuluPackageList(MetaBase):
-    __root__: list[ZuluPackage]
-
+class ZuluPackageList(RootModel[list[ZuluPackage]]):
     def __iter__(self) -> Generator[tuple[str, ZuluPackage], None, None]:
-        yield from ((str(i), val) for i, val in enumerate(self.__root__))
+        yield from ((str(i), val) for i, val in enumerate(self.root))
 
     def __getitem__(self, item: int) -> ZuluPackage:
-        return self.__root__[item]
+        return self.root[item]
 
     def append(self, pkg: ZuluPackage):
-        self.__root__.append(pkg)
+        self.root.append(pkg)
+
+    def json(self) -> str:
+        return json.dumps(
+            self.model_dump(mode="json", by_alias=True, exclude_none=True),
+            sort_keys=True,
+            indent=4,
+        )
+
+    def write(self, file_path: str):
+        Path(file_path).parent.mkdir(parents=True, exist_ok=True)
+        with open(file_path, "w") as f:
+            f.write(self.json())
 
 
-class ZuluPackagesDetail(MetaBase):
-    __root__: list[ZuluPackageDetail]
-
+class ZuluPackagesDetail(RootModel[list[ZuluPackageDetail]]):
     def __iter__(self) -> Generator[tuple[str, ZuluPackageDetail], None, None]:
-        yield from ((str(i), val) for i, val in enumerate(self.__root__))
+        yield from ((str(i), val) for i, val in enumerate(self.root))
 
     def __getitem__(self, item: int) -> ZuluPackageDetail:
-        return self.__root__[item]
+        return self.root[item]
 
     def append(self, pkg: ZuluPackageDetail):
-        self.__root__.append(pkg)
+        self.root.append(pkg)
+
+    def json(self) -> str:
+        return json.dumps(
+            self.model_dump(mode="json", by_alias=True, exclude_none=True),
+            sort_keys=True,
+            indent=4,
+        )
+
+    def write(self, file_path: str):
+        Path(file_path).parent.mkdir(parents=True, exist_ok=True)
+        with open(file_path, "w") as f:
+            f.write(self.json())
 
 
 MOJANG_OS_NAMES = ["mac-os", "linux", "windows"]

@@ -270,7 +270,11 @@ def azul_package_to_java_runtime(
         name=rls_name,
         vendor="azul",
         url=pkg.download_url,
-        releaseTime=pkg.build_date,
+        releaseTime=(
+            pkg.build_date.replace(tzinfo=datetime.timezone.utc)
+            if pkg.build_date.tzinfo is None
+            else pkg.build_date
+        ),
         checksum=checksum,
         downloadType=JavaRuntimeDownloadType.Archive,
         packageType=pkg_type,
@@ -356,10 +360,16 @@ def main():
     print("Processing Adoptium Releases")
     adoptium_path = os.path.join(UPSTREAM_DIR, ADOPTIUM_DIR, "available_releases.json")
     if os.path.exists(adoptium_path):
-        adoptium_available_releases = AdoptxAvailableReleases.parse_file(adoptium_path)
+        adoptium_available_releases = AdoptxAvailableReleases.model_validate_json(
+            open(adoptium_path).read()
+        )
         for major in adoptium_available_releases.available_releases:
-            adoptium_releases = AdoptxReleases.parse_file(
-                os.path.join(UPSTREAM_DIR, ADOPTIUM_VERSIONS_DIR, f"java{major}.json")
+            adoptium_releases = AdoptxReleases.model_validate_json(
+                open(
+                    os.path.join(
+                        UPSTREAM_DIR, ADOPTIUM_VERSIONS_DIR, f"java{major}.json"
+                    )
+                ).read()
             )
             for _, rls in adoptium_releases:
                 for binary in rls.binaries:
@@ -385,14 +395,16 @@ def main():
     print("Processing OpenJ9 Releases")
     openj9_path = os.path.join(UPSTREAM_DIR, OPENJ9_DIR, "available_releases.json")
     if os.path.exists(openj9_path):
-        openj9_available_releases = AdoptxAvailableReleases.parse_file(openj9_path)
+        openj9_available_releases = AdoptxAvailableReleases.model_validate_json(
+            open(openj9_path).read()
+        )
         for major in openj9_available_releases.available_releases:
             path = os.path.join(UPSTREAM_DIR, OPENJ9_VERSIONS_DIR, f"java{major}.json")
 
             if not os.path.exists(path):
                 continue
 
-            openj9_releases = AdoptxReleases.parse_file(path)
+            openj9_releases = AdoptxReleases.model_validate_json(open(path).read())
             for _, rls in openj9_releases:
                 for binary in rls.binaries:
                     if (
@@ -417,12 +429,14 @@ def main():
     print("Processing Azul Packages")
     azul_path = os.path.join(UPSTREAM_DIR, AZUL_DIR, "packages.json")
     if os.path.exists(azul_path):
-        azul_packages = ZuluPackageList.parse_file(azul_path)
+        azul_packages = ZuluPackageList.model_validate_json(open(azul_path).read())
         for _, pkg in azul_packages:
-            pkg_detail = ZuluPackageDetail.parse_file(
-                os.path.join(
-                    UPSTREAM_DIR, AZUL_VERSIONS_DIR, f"{pkg.package_uuid}.json"
-                )
+            pkg_detail = ZuluPackageDetail.model_validate_json(
+                open(
+                    os.path.join(
+                        UPSTREAM_DIR, AZUL_VERSIONS_DIR, f"{pkg.package_uuid}.json"
+                    )
+                ).read()
             )
             major = pkg_detail.java_version[0]
             if major < 8 or pkg_detail.java_package_type is not AzulJavaPackageType.Jre:
@@ -468,8 +482,8 @@ def main():
         return runtime
 
     print("Processing Mojang Javas")
-    mojang_java_manifest = JavaIndex.parse_file(
-        os.path.join(UPSTREAM_DIR, JAVA_MANIFEST_FILE)
+    mojang_java_manifest = JavaIndex.model_validate_json(
+        open(os.path.join(UPSTREAM_DIR, JAVA_MANIFEST_FILE)).read()
     )
     # print(mojang_java_manifest)
     for mojang_os_name in mojang_java_manifest:

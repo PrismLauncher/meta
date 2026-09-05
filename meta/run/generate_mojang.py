@@ -1,5 +1,6 @@
 import copy
 import hashlib
+import json
 import re
 import os
 from collections import defaultdict, namedtuple
@@ -27,7 +28,7 @@ from meta.model import (
     MojangArtifact,
     Dependency,
     MetaPackage,
-    MojangRules,
+    MojangRule,
 )
 from meta.model.mojang import (
     LegacyServices,
@@ -135,10 +136,17 @@ BAD_VARIANTS = [
 ]
 
 
-def add_or_get_bucket(buckets, rules: Optional[MojangRules]) -> MetaVersion:
+def add_or_get_bucket(buckets, rules: Optional[List[MojangRule]]) -> MetaVersion:
     rule_hash = None
     if rules:
-        rule_hash = hash(rules.json())
+        rule_hash = hash(
+            json.dumps(
+                [
+                    r.model_dump(mode="json", by_alias=True, exclude_none=True)
+                    for r in rules
+                ]
+            )
+        )
 
     if rule_hash in buckets:
         bucket = buckets[rule_hash]
@@ -225,7 +233,7 @@ def adapt_new_style_arguments_to_traits(arguments):
     return foo
 
 
-def is_macos_only(rules: Optional[MojangRules]):
+def is_macos_only(rules: Optional[List[MojangRule]]):
     allows_osx = False
     allows_all = False
     # print("Considering", specifier, "rules", rules)
@@ -337,9 +345,15 @@ def version_has_split_natives(v: MojangVersion) -> bool:
 
 def main():
     # get the local version list
-    override_index = LegacyOverrideIndex.parse_file(STATIC_OVERRIDES_FILE)
-    legacy_services = LegacyServices.parse_file(STATIC_LEGACY_SERVICES_FILE)
-    library_patches = LibraryPatches.parse_file(LIBRARY_PATCHES_FILE)
+    override_index = LegacyOverrideIndex.model_validate_json(
+        open(STATIC_OVERRIDES_FILE).read()
+    )
+    legacy_services = LegacyServices.model_validate_json(
+        open(STATIC_LEGACY_SERVICES_FILE).read()
+    )
+    library_patches = LibraryPatches.model_validate_json(
+        open(LIBRARY_PATCHES_FILE).read()
+    )
 
     found_any_lwjgl3 = False
 
@@ -349,7 +363,7 @@ def main():
             # skip non JSON files
             continue
         print("Processing", filename)
-        mojang_version = MojangVersion.parse_file(input_file)
+        mojang_version = MojangVersion.model_validate_json(open(input_file).read())
         v = mojang_version.to_meta_version(
             "Minecraft", MINECRAFT_COMPONENT, mojang_version.id
         )
@@ -566,9 +580,14 @@ def main():
 
         if decided_variant and passed_variants == 1 and unknown_variants == 0:
             process_single_variant(decided_variant.version, library_patches)
+        elif unknown_variants > 0:
+            raise Exception(
+                "Unknown variant(s) for version %s.\nPlease update PASS_VARIANTS and/or BAD_VARIANTS."
+                % lwjglVersionVariant
+            )
         else:
             raise Exception(
-                "No variant decided for version %s out of %d possible ones and %d unknown ones."
+                "No variant decided for version %s out of %d possible ones and %d unknown ones.\nPlease update PASS_VARIANTS and/or BAD_VARIANTS."
                 % (lwjglVersionVariant, passed_variants, unknown_variants)
             )
 
@@ -582,7 +601,9 @@ def main():
         )
 
     mojang_index = MojangIndexWrap(
-        MojangIndex.parse_file(os.path.join(UPSTREAM_DIR, VERSION_MANIFEST_FILE))
+        MojangIndex.model_validate_json(
+            open(os.path.join(UPSTREAM_DIR, VERSION_MANIFEST_FILE)).read()
+        )
     )
 
     minecraft_package = MetaPackage(uid=MINECRAFT_COMPONENT, name="Minecraft")

@@ -27,8 +27,8 @@ for package in sorted(os.listdir(LAUNCHER_DIR)):
     if package in ignore:
         continue
 
-    sharedData = MetaPackage.parse_file(
-        os.path.join(LAUNCHER_DIR, package, "package.json")
+    sharedData = MetaPackage.model_validate_json(
+        open(os.path.join(LAUNCHER_DIR, package, "package.json")).read()
     )
     recommendedVersions = set()
     if sharedData.recommended:
@@ -44,7 +44,7 @@ for package in sorted(os.listdir(LAUNCHER_DIR)):
         # parse and hash the version file
         filepath = LAUNCHER_DIR + "/%s/%s" % (package, filename)
         filehash = file_hash(filepath, hashlib.sha256)
-        versionFile = MetaVersion.parse_file(filepath)
+        versionFile = MetaVersion.model_validate_json(open(filepath).read())
         is_recommended = versionFile.version in recommendedVersions
 
         versionEntry = MetaVersionIndexEntry.from_meta_version(
