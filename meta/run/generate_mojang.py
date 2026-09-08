@@ -111,6 +111,7 @@ PASS_VARIANTS = [
 
 # LWJGL versions we def. don't want!
 BAD_VARIANTS = [
+    "02a9f886ad37d391d2b34a08800e8bd852b92059",  # 3.4.3 (2026-09-08 13:04:44+00:00) no lwjgl-spng
     "b510ab8669cd8b031298f171aa810c7d3e7acb8f",  # 3.4.3 (2026-08-25 12:53:43+00:00) no lwjgl-spng
     "17754e4d1045947c3b99d22b9db7e75bfb6d252a",  # 3.4.2 (2026-08-17 11:46:16+00:00) removed tinyfd
     "0ab5c885c21dfd8133277e8f557839f5fab35311",  # 3.4.1 (2026-05-26 13:48:31+00:00) no SDL
