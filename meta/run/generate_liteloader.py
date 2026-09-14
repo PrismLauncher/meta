@@ -94,7 +94,9 @@ def process_versions(index: LiteloaderIndex) -> Tuple[List[MetaVersion], List[st
 
 
 def main():
-    index = LiteloaderIndex.parse_file(os.path.join(UPSTREAM_DIR, VERSIONS_FILE))
+    index = LiteloaderIndex.model_validate_json(
+        open(os.path.join(UPSTREAM_DIR, VERSIONS_FILE)).read()
+    )
 
     all_versions, recommended = process_versions(index)
 

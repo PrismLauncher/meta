@@ -64,6 +64,8 @@ def replace_old_launchermeta_url(url: str):
 
 def get_all_bases(cls: type, bases: Optional[list[type]] = None):
     bases = bases or []
+    if not hasattr(cls, "__bases__"):
+        return tuple(bases)
     bases.append(cls)
     for c in cls.__bases__:
         get_all_bases(c, bases)

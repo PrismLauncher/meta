@@ -94,7 +94,7 @@ def main():
             page += 1
 
         print("Total Adoptium releases for feature:", len(releases_for_feature))
-        releases = AdoptxReleases(__root__=releases_for_feature)
+        releases = AdoptxReleases(releases_for_feature)
         feature_file = os.path.join(
             UPSTREAM_DIR, ADOPTIUM_VERSIONS_DIR, f"java{feature}.json"
         )
@@ -142,7 +142,7 @@ def main():
             page += 1
 
         print("Total OpenJ9 releases for feature:", len(releases_for_feature))
-        releases = AdoptxReleases(__root__=releases_for_feature)
+        releases = AdoptxReleases(releases_for_feature)
         if len(releases_for_feature) == 0:
             continue
         feature_file = os.path.join(
@@ -183,7 +183,7 @@ def main():
         page += 1
 
     print("Total Azul Packages:", len(zulu_packages))
-    packages = ZuluPackageList(__root__=zulu_packages)
+    packages = ZuluPackageList(zulu_packages)
     azul_manifest_file = os.path.join(UPSTREAM_DIR, AZUL_DIR, "packages.json")
     packages.write(azul_manifest_file)
 
@@ -193,13 +193,13 @@ def main():
 
         major_version = pkg.java_version[0]
         if major_version not in azul_major_versions:
-            azul_major_versions[major_version] = ZuluPackagesDetail(__root__=[])
+            azul_major_versions[major_version] = ZuluPackagesDetail([])
 
         pkg_file = os.path.join(
             UPSTREAM_DIR, AZUL_VERSIONS_DIR, f"{pkg.package_uuid}.json"
         )
         if os.path.exists(pkg_file) and os.path.isfile(pkg_file):
-            pkg_detail = ZuluPackageDetail.parse_file(pkg_file)
+            pkg_detail = ZuluPackageDetail.model_validate_json(open(pkg_file).read())
             azul_major_versions[major_version].append(pkg_detail)
         else:
 

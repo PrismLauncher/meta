@@ -33,14 +33,14 @@ def eprint(*args, **kwargs):
 
 
 def load_jar_info(artifact_key) -> FabricJarInfo:
-    return FabricJarInfo.parse_file(
-        os.path.join(UPSTREAM_DIR, JARS_DIR, f"{artifact_key}.json")
+    return FabricJarInfo.model_validate_json(
+        open(os.path.join(UPSTREAM_DIR, JARS_DIR, f"{artifact_key}.json")).read()
     )
 
 
 def load_installer_info(version) -> FabricInstallerDataV1:
-    return FabricInstallerDataV1.parse_file(
-        os.path.join(UPSTREAM_DIR, INSTALLER_INFO_DIR, f"{version}.json")
+    return FabricInstallerDataV1.model_validate_json(
+        open(os.path.join(UPSTREAM_DIR, INSTALLER_INFO_DIR, f"{version}.json")).read()
     )
 
 

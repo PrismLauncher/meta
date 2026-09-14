@@ -1,14 +1,22 @@
 import copy
-from datetime import datetime
+import json
+from datetime import datetime, timezone
 from pathlib import Path
-from typing import Optional, List, Dict, Any, Iterator
+from typing import Optional, List, Dict, Any
 
 import pydantic
-from pydantic import Field, validator  # type: ignore
+from pydantic import (
+    field_validator,
+    field_serializer,
+    ConfigDict,
+    Field,
+    GetCoreSchemaHandler,
+)
+from pydantic.json_schema import GetJsonSchemaHandler
+from pydantic_core import core_schema
 
 from ..common import (
     LAUNCHER_MAVEN,
-    serialize_datetime,
     replace_old_launchermeta_url,
     get_all_bases,
     merge_dict,
@@ -103,8 +111,15 @@ class GradleSpecifier:
         return hash(str(self))
 
     @classmethod
-    def __get_validators__(cls):
-        yield cls.validate
+    def __get_pydantic_core_schema__(
+        cls, source_type: Any, handler: GetCoreSchemaHandler
+    ) -> core_schema.CoreSchema:
+        return core_schema.no_info_plain_validator_function(
+            cls.validate,
+            serialization=core_schema.plain_serializer_function_ser_schema(
+                lambda v: str(v), info_arg=False
+            ),
+        )
 
     @classmethod
     def from_string(cls, v: str):
@@ -134,20 +149,38 @@ class GradleSpecifier:
 
 
 class MetaBase(pydantic.BaseModel):
+    @field_validator("*", mode="after")
+    @classmethod
+    def _ensure_utc(cls, v):
+        if isinstance(v, datetime) and v.tzinfo is None:
+            return v.replace(tzinfo=timezone.utc)
+        return v
+
+    @field_serializer("*", mode="wrap")
+    @classmethod
+    def _serialize_datetime(cls, v, handler, info):
+        if isinstance(v, datetime):
+            if v.tzinfo is None:
+                v = v.replace(tzinfo=timezone.utc)
+            return v.isoformat()
+        return handler(v)
+
     def dict(self, **kwargs: Any) -> Dict[str, Any]:
         for k in ["by_alias"]:
             if k in kwargs:
                 del kwargs[k]
 
-        return super(MetaBase, self).dict(by_alias=True, **kwargs)
+        return self.model_dump(by_alias=True, **kwargs)
 
     def json(self, **kwargs: Any) -> str:
         for k in ["exclude_none", "sort_keys", "indent"]:
             if k in kwargs:
                 del kwargs[k]
 
-        return super(MetaBase, self).json(
-            exclude_none=True, sort_keys=True, by_alias=True, indent=4, **kwargs
+        return json.dumps(
+            self.model_dump(exclude_none=True, by_alias=True, mode="json"),
+            sort_keys=True,
+            indent=4,
         )
 
     def write(self, file_path: str):
@@ -165,7 +198,7 @@ class MetaBase(pydantic.BaseModel):
         - Overwrites for any other field type (int, string, ...)
         """
         assert type(other) is type(self)
-        for key, field in self.__fields__.items():
+        for key, field in type(self).model_fields.items():
             ours = getattr(self, key)
             theirs = getattr(other, key)
             if theirs is None:
@@ -181,7 +214,7 @@ class MetaBase(pydantic.BaseModel):
             elif isinstance(ours, dict):
                 result = merge_dict(ours, copy.deepcopy(theirs))  # type: ignore
                 setattr(self, key, result)
-            elif MetaBase in get_all_bases(field.type_):
+            elif MetaBase in get_all_bases(field.annotation):
                 ours.merge(theirs)
             else:
                 setattr(self, key, theirs)
@@ -189,14 +222,14 @@ class MetaBase(pydantic.BaseModel):
     def __hash__(self):  # type: ignore
         return hash(self.json())
 
-    class Config:
-        allow_population_by_field_name = True
-
-        json_encoders = {datetime: serialize_datetime, GradleSpecifier: str}
+    model_config = ConfigDict(
+        populate_by_name=True,
+    )
 
 
 class Versioned(MetaBase):
-    @validator("format_version")
+    @field_validator("format_version")
+    @classmethod
     def format_version_must_be_supported(cls, v: int):
         assert v <= META_FORMAT_VERSION
         return v
@@ -205,13 +238,14 @@ class Versioned(MetaBase):
 
 
 class MojangArtifactBase(MetaBase):
-    sha1: Optional[str]
-    size: Optional[int]
+    sha1: Optional[str] = None
+    size: Optional[int] = None
     url: str
 
 
 class MojangAssets(MojangArtifactBase):
-    @validator("url")
+    @field_validator("url")
+    @classmethod
     def validate_url(cls, v: str):
         return replace_old_launchermeta_url(v)
 
@@ -220,7 +254,7 @@ class MojangAssets(MojangArtifactBase):
 
 
 class MojangArtifact(MojangArtifactBase):
-    path: Optional[str]
+    path: Optional[str] = None
 
 
 class MojangLibraryExtractRules(MetaBase):
@@ -242,12 +276,13 @@ class MojangLibraryExtractRules(MetaBase):
 
 
 class MojangLibraryDownloads(MetaBase):
-    artifact: Optional[MojangArtifact]
-    classifiers: Optional[Dict[Any, MojangArtifact]]
+    artifact: Optional[MojangArtifact] = None
+    classifiers: Optional[Dict[Any, MojangArtifact]] = None
 
 
 class OSRule(MetaBase):
-    @validator("name")
+    @field_validator("name")
+    @classmethod
     def name_must_be_os(cls, v: str):
         assert v in [
             "osx",
@@ -262,27 +297,18 @@ class OSRule(MetaBase):
         return v
 
     name: str
-    version: Optional[str]
+    version: Optional[str] = None
 
 
 class MojangRule(MetaBase):
-    @validator("action")
+    @field_validator("action")
+    @classmethod
     def action_must_be_allow_disallow(cls, v: str):
         assert v in ["allow", "disallow"]
         return v
 
     action: str
-    os: Optional[OSRule]
-
-
-class MojangRules(MetaBase):
-    __root__: List[MojangRule]
-
-    def __iter__(self) -> Iterator[MojangRule]:  # type: ignore
-        return iter(self.__root__)
-
-    def __getitem__(self, item: int) -> MojangRule:
-        return self.__root__[item]
+    os: Optional[OSRule] = None
 
 
 class MojangLoggingArtifact(MojangArtifactBase):
@@ -290,7 +316,8 @@ class MojangLoggingArtifact(MojangArtifactBase):
 
 
 class MojangLogging(MetaBase):
-    @validator("type")
+    @field_validator("type")
+    @classmethod
     def validate_type(cls, v):
         assert v in ["log4j2-xml"]
         return v
@@ -301,59 +328,61 @@ class MojangLogging(MetaBase):
 
 
 class Library(MetaBase):
-    extract: Optional[MojangLibraryExtractRules]
-    name: Optional[GradleSpecifier]
-    downloads: Optional[MojangLibraryDownloads]
-    natives: Optional[Dict[str, str]]
-    rules: Optional[MojangRules]
-    url: Optional[str]
+    extract: Optional[MojangLibraryExtractRules] = None
+    name: Optional[GradleSpecifier] = None
+    downloads: Optional[MojangLibraryDownloads] = None
+    natives: Optional[Dict[str, str]] = None
+    rules: Optional[List[MojangRule]] = None
+    url: Optional[str] = None
     mmcHint: Optional[str] = Field(None, alias="MMC-hint")
 
 
 class JavaAgent(Library):
-    argument: Optional[str]
+    argument: Optional[str] = None
 
 
 class Dependency(MetaBase):
     uid: str
-    equals: Optional[str]
-    suggests: Optional[str]
+    equals: Optional[str] = None
+    suggests: Optional[str] = None
 
 
 class MetaVersion(Versioned):
     name: str
     version: str
     uid: str
-    type: Optional[str]
-    order: Optional[int]
-    volatile: Optional[bool]
-    requires: Optional[List[Dependency]]
-    conflicts: Optional[List[Dependency]]
-    libraries: Optional[List[Library]]
-    asset_index: Optional[MojangAssets] = Field(alias="assetIndex")
-    maven_files: Optional[List[Library]] = Field(alias="mavenFiles")
-    main_jar: Optional[Library] = Field(alias="mainJar")
-    jar_mods: Optional[List[Library]] = Field(alias="jarMods")
-    main_class: Optional[str] = Field(alias="mainClass")
-    applet_class: Optional[str] = Field(alias="appletClass")
-    minecraft_arguments: Optional[str] = Field(alias="minecraftArguments")
-    release_time: Optional[datetime] = Field(alias="releaseTime")
-    compatible_java_majors: Optional[List[int]] = Field(alias="compatibleJavaMajors")
-    compatible_java_name: Optional[str] = Field(alias="compatibleJavaName")
-    java_agents: Optional[List[JavaAgent]] = Field(alias="+agents")
-    additional_traits: Optional[List[str]] = Field(alias="+traits")
-    additional_tweakers: Optional[List[str]] = Field(alias="+tweakers")
-    additional_jvm_args: Optional[List[str]] = Field(alias="+jvmArgs")
-    logging: Optional[MojangLogging]
+    type: Optional[str] = None
+    order: Optional[int] = None
+    volatile: Optional[bool] = None
+    requires: Optional[List[Dependency]] = None
+    conflicts: Optional[List[Dependency]] = None
+    libraries: Optional[List[Library]] = None
+    asset_index: Optional[MojangAssets] = Field(None, alias="assetIndex")
+    maven_files: Optional[List[Library]] = Field(None, alias="mavenFiles")
+    main_jar: Optional[Library] = Field(None, alias="mainJar")
+    jar_mods: Optional[List[Library]] = Field(None, alias="jarMods")
+    main_class: Optional[str] = Field(None, alias="mainClass")
+    applet_class: Optional[str] = Field(None, alias="appletClass")
+    minecraft_arguments: Optional[str] = Field(None, alias="minecraftArguments")
+    release_time: Optional[datetime] = Field(None, alias="releaseTime")
+    compatible_java_majors: Optional[List[int]] = Field(
+        None, alias="compatibleJavaMajors"
+    )
+    compatible_java_name: Optional[str] = Field(None, alias="compatibleJavaName")
+    java_agents: Optional[List[JavaAgent]] = Field(None, alias="+agents")
+    additional_traits: Optional[List[str]] = Field(None, alias="+traits")
+    additional_tweakers: Optional[List[str]] = Field(None, alias="+tweakers")
+    additional_jvm_args: Optional[List[str]] = Field(None, alias="+jvmArgs")
+    logging: Optional[MojangLogging] = None
 
 
 class MetaPackage(Versioned):
     name: str
     uid: str
-    recommended: Optional[List[str]]
-    authors: Optional[List[str]]
-    description: Optional[str]
-    project_url: Optional[str] = Field(alias="projectUrl")
+    recommended: Optional[List[str]] = None
+    authors: Optional[List[str]] = None
+    description: Optional[str] = None
+    project_url: Optional[str] = Field(None, alias="projectUrl")
 
 
 def make_launcher_library(

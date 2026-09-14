@@ -193,7 +193,7 @@ def process_forge_version(version, jar_path):
 
                     try:
                         # Process: does it parse?
-                        MojangVersion.parse_raw(version_data)
+                        MojangVersion.model_validate_json(version_data)
                     except Exception as e:
                         e.add_note(f"version_data: {version_data}")
                         raise e
@@ -209,12 +209,12 @@ def process_forge_version(version, jar_path):
                 is_parsable = False
                 exception = None
                 try:
-                    ForgeInstallerProfile.parse_raw(install_profile_data)
+                    ForgeInstallerProfile.model_validate_json(install_profile_data)
                     is_parsable = True
                 except ValidationError as err:
                     exception = err
                 try:
-                    ForgeInstallerProfileV2.parse_raw(install_profile_data)
+                    ForgeInstallerProfileV2.model_validate_json(install_profile_data)
                     is_parsable = True
                 except ValidationError as err:
                     exception = err
