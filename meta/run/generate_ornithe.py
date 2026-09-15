@@ -53,7 +53,6 @@ def process_intermediary_version(entry) -> MetaVersion:
     )
     v.release_time = jar_info.release_time
     v.requires = [Dependency(uid=MINECRAFT_COMPONENT, equals=version)]
-    v.order = 11
     v.type = "release"
     v.volatile = True
     v.libraries = [
@@ -81,7 +80,6 @@ def process_loader_version(loader, entry) -> MetaVersion:
     v = MetaVersion(name=loader["name"], uid=loader["uid"], version=version)
     v.release_time = jar_info.release_time
     v.requires = [Dependency(uid=INTERMEDIARY_COMPONENT)]
-    v.order = 10
     v.type = "release"
     if isinstance(installer_info.main_class, FabricMainClasses):
         v.main_class = installer_info.main_class.client
