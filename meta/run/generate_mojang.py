@@ -226,6 +226,22 @@ def adapt_new_style_arguments_to_traits(arguments):
     return foo
 
 
+def adapt_new_style_jvm_arguments(arguments):
+    PREFIXES = ["-XX:StackShadowPages="]
+
+    result = []
+    for arg in arguments.jvm:
+        if not isinstance(arg, str):
+            continue
+        
+        if not any(arg.startswith(x) for x in PREFIXES):
+            continue
+
+        result.append(arg)
+
+    return result
+
+
 def is_macos_only(rules: Optional[MojangRules]):
     allows_osx = False
     allows_all = False
@@ -512,6 +528,9 @@ def main():
             v.additional_traits.extend(
                 adapt_new_style_arguments_to_traits(mojang_version.arguments)
             )
+            if not v.additional_jvm_args:
+                v.additional_jvm_args = []
+            v.additional_jvm_args.extend(adapt_new_style_jvm_arguments(mojang_version.arguments))
         out_filename = os.path.join(
             LAUNCHER_DIR, MINECRAFT_COMPONENT, f"{v.version}.json"
         )
