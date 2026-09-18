@@ -1,5 +1,6 @@
 import json
 import os
+import re
 import sys
 
 from meta.common import (
@@ -56,7 +57,7 @@ def process_loader_version(entry) -> (MetaVersion, bool):
     v.release_time = jar_info.release_time
     v.requires = [Dependency(uid=INTERMEDIARY_COMPONENT)]
     v.order = 10
-    v.type = "release"
+    v.type = "beta" if re.search(r"-beta(?:\.|$)", entry["version"]) else "release"
     if isinstance(installer_info.main_class, FabricMainClasses):
         v.main_class = installer_info.main_class.client
     else:
