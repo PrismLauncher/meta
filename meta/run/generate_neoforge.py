@@ -43,6 +43,7 @@ def version_from_build_system_installer(
     version: NeoForgeVersion,
 ) -> MetaVersion:
     v = MetaVersion(name="NeoForge", version=version.rawVersion, uid=NEOFORGE_COMPONENT)
+    v.type = "beta" if version.rawVersion.endswith("-beta") else "release"
     v.main_class = "io.github.zekerzhayard.forgewrapper.installer.Main"
 
     # FIXME: Add the size and hash here
