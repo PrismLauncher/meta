@@ -12,10 +12,11 @@ from meta.common.mojang import MINECRAFT_COMPONENT
 from meta.common.ornithe import (
     JARS_DIR,
     LIBRARIES_DIR,
+    LWJGL_DIR,
     META_DIR,
     MAVEN_URL,
     INTERMEDIARY_COMPONENT,
-    JAVA_MAJOR,
+    JAVA_MAJORS,
     JAVA_NAME,
     LOADERS,
 )
@@ -32,6 +33,11 @@ def load_jar_info(jars_dir, maven_key) -> FabricJarInfo:
     )
 
 
+def load_upstream_json(*path):
+    with open(os.path.join(UPSTREAM_DIR, *path), encoding="utf-8") as f:
+        return json.load(f)
+
+
 def has_minecraft_version(version):
     return os.path.isfile(
         os.path.join(LAUNCHER_DIR, MINECRAFT_COMPONENT, f"{version}.json")
@@ -41,10 +47,8 @@ def has_minecraft_version(version):
 def process_intermediary_version(entry) -> MetaVersion:
     version = entry["version"]
     jar_info = load_jar_info(JARS_DIR, entry["maven"])
-    with open(
-        os.path.join(UPSTREAM_DIR, LIBRARIES_DIR, f"{version}.json"), encoding="utf-8"
-    ) as f:
-        library_upgrades = json.load(f)
+    library_upgrades = load_upstream_json(LIBRARIES_DIR, f"{version}.json")
+    lwjgl_upgrades = load_upstream_json(LWJGL_DIR, f"{version}.json")
 
     v = MetaVersion(
         name="Calamus Intermediary Mappings",
@@ -62,10 +66,11 @@ def process_intermediary_version(entry) -> MetaVersion:
         Library(name=GradleSpecifier.from_string(lib["name"]), url=lib["url"])
         for lib in library_upgrades
     )
+    v.libraries.extend(Library.parse_obj(lib) for lib in lwjgl_upgrades)
     v.additional_jvm_args = [
         f"-D{loader['prefix']}.gameVersion={version}" for loader in LOADERS.values()
     ]
-    v.compatible_java_majors = [JAVA_MAJOR]
+    v.compatible_java_majors = JAVA_MAJORS
     v.compatible_java_name = JAVA_NAME
     return v
 
@@ -92,6 +97,7 @@ def process_loader_version(loader, entry) -> MetaVersion:
         Library(name=GradleSpecifier.from_string(entry["maven"]), url=loader["maven"])
     )
     v.additional_jvm_args = [f"-D{loader['prefix']}.fixPackageAccess=true"]
+    v.additional_traits = ["noapplet"]
     return v
 
 
@@ -99,10 +105,7 @@ def generate_intermediary():
     ensure_component_dir(INTERMEDIARY_COMPONENT)
     recommended_versions = []
 
-    with open(
-        os.path.join(UPSTREAM_DIR, META_DIR, "intermediary.json"), encoding="utf-8"
-    ) as f:
-        index = json.load(f)
+    index = load_upstream_json(META_DIR, "intermediary.json")
 
     for entry in index:
         version = entry["version"]
@@ -137,11 +140,7 @@ def generate_loader(loader_type, loader):
     ensure_component_dir(loader["uid"])
     recommended_versions = []
 
-    with open(
-        os.path.join(UPSTREAM_DIR, META_DIR, f"{loader_type}-loader.json"),
-        encoding="utf-8",
-    ) as f:
-        index = json.load(f)
+    index = load_upstream_json(META_DIR, f"{loader_type}-loader.json")
 
     for entry in index:
         version = entry["version"]

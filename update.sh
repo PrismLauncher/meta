@@ -50,7 +50,7 @@ if [ "${DEPLOY_TO_GIT}" = true ]; then
     upstream_git add neoforge/*.json neoforge/version_manifests/*.json neoforge/installer_manifests/*.json neoforge/files_manifests/*.json neoforge/installer_info/*.json neoforge/jars/*.sha1 || fail_in
     upstream_git add fabric/loader-installer-json/*.json fabric/meta-v2/*.json fabric/jars/*.json || fail_in
     upstream_git add quilt/loader-installer-json/*.json quilt/meta-v3/*.json quilt/jars/*.json || fail_in
-    upstream_git add ornithe/meta-v3/*.json ornithe/libraries/*.json ornithe/jars/*.json || fail_in
+    upstream_git add ornithe/meta-v3/*.json ornithe/libraries/*.json ornithe/lwjgl/*.json ornithe/jars/*.json || fail_in
     upstream_git add liteloader/*.json || fail_in
     upstream_git add java_runtime/adoptium/available_releases.json java_runtime/adoptium/versions/*.json java_runtime/azul/packages.json java_runtime/azul/versions/*.json java_runtime/ibm/available_releases.json java_runtime/ibm/versions/*.json || fail_in
     if ! upstream_git diff --cached --exit-code; then

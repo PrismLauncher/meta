@@ -6,16 +6,20 @@ BASE_DIR = "ornithe"
 
 JARS_DIR = join(BASE_DIR, "jars")
 LIBRARIES_DIR = join(BASE_DIR, "libraries")
+LWJGL_DIR = join(BASE_DIR, "lwjgl")
 META_DIR = join(BASE_DIR, "meta-v3")
 
 META_URL = "https://meta.ornithemc.net/v3/versions"
 MAVEN_URL = "https://maven.ornithemc.net/releases"
+MC_VERSIONS_URL = "https://ornithemc.net/mc-versions"
+
+LWJGL_MAVEN_HOST = "maven.legacyfabric.net"
 
 INTERMEDIARY_GENERATION = 2
 
 INTERMEDIARY_COMPONENT = "net.ornithemc.calamus-intermediary"
 
-JAVA_MAJOR = 25
+JAVA_MAJORS = [25, 21, 17, 8]
 JAVA_NAME = "java-runtime-epsilon"
 
 LOADERS = {

@@ -14,9 +14,12 @@ from meta.common.mojang import VERSIONS_DIR as MOJANG_VERSIONS_DIR
 from meta.common.ornithe import (
     JARS_DIR,
     LIBRARIES_DIR,
+    LWJGL_DIR,
     META_DIR,
     META_URL,
     MAVEN_URL,
+    MC_VERSIONS_URL,
+    LWJGL_MAVEN_HOST,
     INTERMEDIARY_GENERATION,
     LOADERS,
 )
@@ -27,6 +30,7 @@ GEN = f"gen{INTERMEDIARY_GENERATION}"
 
 ensure_upstream_dir(JARS_DIR)
 ensure_upstream_dir(LIBRARIES_DIR)
+ensure_upstream_dir(LWJGL_DIR)
 ensure_upstream_dir(META_DIR)
 
 sess = default_session()
@@ -41,11 +45,27 @@ def get_json_file(path, url):
     return version_json
 
 
+def write_json_file(path, data):
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(data, f, sort_keys=True, indent=4)
+
+
 def get_maven_jar_url(maven_key):
     group, artifact, version = maven_key.split(":", 3)
     return (
         f"{MAVEN_URL}/{group.replace('.', '/')}/{artifact}/{version}/"
         f"{artifact}-{version}.jar"
+    )
+
+
+def store_jar_info(maven_key):
+    r = sess.head(get_maven_jar_url(maven_key))
+    r.raise_for_status()
+    tstamp = datetime.strptime(r.headers["Last-Modified"], DATETIME_FORMAT_HTTP)
+
+    data = FabricJarInfo(release_time=tstamp)
+    data.write(
+        os.path.join(UPSTREAM_DIR, JARS_DIR, f"{transform_maven_key(maven_key)}.json")
     )
 
 
@@ -55,25 +75,39 @@ def has_minecraft_version(version):
     )
 
 
+def library_urls(library):
+    downloads = library.get("downloads", {})
+    artifact = downloads.get("artifact")
+    if artifact:
+        yield artifact.get("url", "")
+    for classifier in downloads.get("classifiers", {}).values():
+        yield classifier.get("url", "")
+    yield library.get("url", "")
+
+
+def update_lwjgl_version(version):
+    r = sess.get(f"{MC_VERSIONS_URL}/{GEN}/version/manifest/{version}.json")
+    r.raise_for_status()
+
+    libraries = [
+        library
+        for library in r.json()["libraries"]
+        if any(LWJGL_MAVEN_HOST in url for url in library_urls(library))
+    ]
+    write_json_file(os.path.join(UPSTREAM_DIR, LWJGL_DIR, f"{version}.json"), libraries)
+
+
 def update_intermediary_version(entry):
     version = entry["version"]
     print(f"Processing intermediary {version}")
 
-    r = sess.head(get_maven_jar_url(entry["maven"]))
-    r.raise_for_status()
-    tstamp = datetime.strptime(r.headers["Last-Modified"], DATETIME_FORMAT_HTTP)
-
-    data = FabricJarInfo(release_time=tstamp)
-    data.write(
-        os.path.join(
-            UPSTREAM_DIR, JARS_DIR, f"{transform_maven_key(entry['maven'])}.json"
-        )
-    )
+    store_jar_info(entry["maven"])
 
     get_json_file(
         os.path.join(UPSTREAM_DIR, LIBRARIES_DIR, f"{version}.json"),
         f"{META_URL}/{GEN}/libraries/{version}",
     )
+    update_lwjgl_version(version)
 
     print(f"Processing intermediary {version} Done")
 
