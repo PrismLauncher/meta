@@ -89,9 +89,10 @@ def update_lwjgl_version(version):
     r = sess.get(f"{MC_VERSIONS_URL}/{GEN}/version/manifest/{version}.json")
     r.raise_for_status()
 
+    manifest = r.json()
     libraries = [
         library
-        for library in r.json()["libraries"]
+        for library in manifest["libraries"]
         if any(LWJGL_MAVEN_HOST in url for url in library_urls(library))
     ]
     write_json_file(os.path.join(UPSTREAM_DIR, LWJGL_DIR, f"{version}.json"), libraries)
