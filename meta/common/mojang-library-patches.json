@@ -5367,6 +5367,266 @@
     ]
   },
   {
+    "_comment": "Add linux-riscv64 support for LWJGL 3.4.3",
+    "match": [
+      "org.lwjgl:lwjgl-freetype:3.4.3"
+    ],
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "809c6df123ae9ea36aa3117a368e7d300ed712eb",
+            "size": 1409111,
+            "url": "https://build.lwjgl.org/release/3.4.3/bin/lwjgl-freetype/lwjgl-freetype-natives-linux-riscv64.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-freetype-natives-linux-riscv64:3.4.3-lwjgl.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-riscv64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Add linux-riscv64 support for LWJGL 3.4.3",
+    "match": [
+      "org.lwjgl:lwjgl-sdl:3.4.3"
+    ],
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "30cd5ef9665905be2c0c7325dc848296d4788b49",
+            "size": 1496337,
+            "url": "https://build.lwjgl.org/release/3.4.3/bin/lwjgl-sdl/lwjgl-sdl-natives-linux-riscv64.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-sdl-natives-linux-riscv64:3.4.3-lwjgl.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-riscv64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Add linux-riscv64 support for LWJGL 3.4.3",
+    "match": [
+      "org.lwjgl:lwjgl-jemalloc:3.4.3"
+    ],
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "79b62b3efdcdba28d2f89e6a7d99d88cf3cda48f",
+            "size": 248363,
+            "url": "https://build.lwjgl.org/release/3.4.3/bin/lwjgl-jemalloc/lwjgl-jemalloc-natives-linux-riscv64.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-jemalloc-natives-linux-riscv64:3.4.3-lwjgl.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-riscv64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Add linux-riscv64 support for LWJGL 3.4.3",
+    "match": [
+      "org.lwjgl:lwjgl-openal:3.4.3"
+    ],
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "f4d3d1050f244b3a7fe9ddc02e94fbe0c507fc4d",
+            "size": 938685,
+            "url": "https://build.lwjgl.org/release/3.4.3/bin/lwjgl-openal/lwjgl-openal-natives-linux-riscv64.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-openal-natives-linux-riscv64:3.4.3-lwjgl.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-riscv64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Add linux-riscv64 support for LWJGL 3.4.3",
+    "match": [
+      "org.lwjgl:lwjgl-opengl:3.4.3"
+    ],
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "56ecca3a33c7966f3d678737757f5feb3efd03c2",
+            "size": 79430,
+            "url": "https://build.lwjgl.org/release/3.4.3/bin/lwjgl-opengl/lwjgl-opengl-natives-linux-riscv64.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-opengl-natives-linux-riscv64:3.4.3-lwjgl.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-riscv64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Add linux-riscv64 support for LWJGL 3.4.3",
+    "match": [
+      "org.lwjgl:lwjgl-stb:3.4.3"
+    ],
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "8f0aeb06e1d532fd9411d08dcff6c0c3572d71a6",
+            "size": 268102,
+            "url": "https://build.lwjgl.org/release/3.4.3/bin/lwjgl-stb/lwjgl-stb-natives-linux-riscv64.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-stb-natives-linux-riscv64:3.4.3-lwjgl.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-riscv64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Add linux-riscv64 support for LWJGL 3.4.3",
+    "match": [
+      "org.lwjgl:lwjgl-shaderc:3.4.3"
+    ],
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "1cb0fc92286da27d5782140a8ba72af5458eb1cf",
+            "size": 3702544,
+            "url": "https://build.lwjgl.org/release/3.4.3/bin/lwjgl-shaderc/lwjgl-shaderc-natives-linux-riscv64.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-shaderc-natives-linux-riscv64:3.4.3-lwjgl.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-riscv64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Add linux-riscv64 support for LWJGL 3.4.3",
+    "match": [
+      "org.lwjgl:lwjgl-spvc:3.4.3"
+    ],
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "38610faedc2a7c44f02c0bc7246ef1f8357a2846",
+            "size": 1221331,
+            "url": "https://build.lwjgl.org/release/3.4.3/bin/lwjgl-spvc/lwjgl-spvc-natives-linux-riscv64.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-spvc-natives-linux-riscv64:3.4.3-lwjgl.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-riscv64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Add linux-riscv64 support for LWJGL 3.4.3",
+    "match": [
+      "org.lwjgl:lwjgl-vma:3.4.3"
+    ],
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "e4dc73c846d42eb63c39c2b30d7cb5983a59bdbe",
+            "size": 66532,
+            "url": "https://build.lwjgl.org/release/3.4.3/bin/lwjgl-vma/lwjgl-vma-natives-linux-riscv64.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-vma-natives-linux-riscv64:3.4.3-lwjgl.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-riscv64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_comment": "Add linux-riscv64 support for LWJGL 3.4.3",
+    "match": [
+      "org.lwjgl:lwjgl:3.4.3"
+    ],
+    "additionalLibraries": [
+      {
+        "downloads": {
+          "artifact": {
+            "sha1": "38374c04f498a9b214f7cb28cfd3fcc9737b8065",
+            "size": 127129,
+            "url": "https://build.lwjgl.org/release/3.4.3/bin/lwjgl/lwjgl-natives-linux-riscv64.jar"
+          }
+        },
+        "name": "org.lwjgl:lwjgl-natives-linux-riscv64:3.4.3-lwjgl.1",
+        "rules": [
+          {
+            "action": "allow",
+            "os": {
+              "name": "linux-riscv64"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
     "_comment": "Replace glfw from 3.3.1 with version from 3.3.2 to prevent stack smashing",
     "match": [
       "org.lwjgl:lwjgl-glfw-natives-linux:3.3.1"
