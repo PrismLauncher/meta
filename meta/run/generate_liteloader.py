@@ -106,6 +106,7 @@ def main():
     package = MetaPackage(
         uid=LITELOADER_COMPONENT,
         name="LiteLoader",
+        installable_loader=True,
         description=index.meta.description,
         project_url=index.meta.url,
         authors=[index.meta.authors],
