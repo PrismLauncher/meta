@@ -351,6 +351,7 @@ class MetaVersion(Versioned):
 class MetaPackage(Versioned):
     name: str
     uid: str
+    installable_loader: Optional[bool] = Field(alias="installableLoader")
     recommended: Optional[List[str]]
     authors: Optional[List[str]]
     description: Optional[str]
