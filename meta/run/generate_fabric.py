@@ -122,7 +122,7 @@ def main():
                 os.path.join(LAUNCHER_DIR, INTERMEDIARY_COMPONENT, f"{v.version}.json")
             )
 
-    package = MetaPackage(uid=LOADER_COMPONENT, name="Fabric Loader")
+    package = MetaPackage(uid=LOADER_COMPONENT, name="Fabric")
     package.recommended = recommended_loader_versions
     package.description = (
         "Fabric Loader is a tool to load Fabric-compatible mods in game environments."

@@ -153,7 +153,7 @@ def main():
                     eprint("Failed to download %s" % version)
                     eprint("Error is %s" % e)
                     continue
-    package = MetaPackage(uid=LOADER_COMPONENT, name="Quilt Loader")
+    package = MetaPackage(uid=LOADER_COMPONENT, name="Quilt")
     package.recommended = recommended_loader_versions
     package.description = "The Quilt project is an open, community-driven modding toolchain designed primarily for Minecraft."
     package.project_url = "https://quiltmc.org/"
