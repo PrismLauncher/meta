@@ -44,7 +44,7 @@ def process_loader_version(entry) -> MetaVersion:
         name="Fabric Loader", uid="net.fabricmc.fabric-loader", version=entry["version"]
     )
     v.release_time = jar_info.release_time
-    v.requires = [Dependency(uid="net.fabricmc.intermediary")]
+    v.requires = [Dependency(uid="net.fabricmc.intermediary", match_game_version=True)]
     v.order = 10
     v.type = "release"
     if isinstance(installer_info.main_class, FabricMainClasses):

@@ -318,6 +318,7 @@ class Dependency(MetaBase):
     uid: str
     equals: Optional[str]
     suggests: Optional[str]
+    match_game_version: Optional[bool] = Field(alias="matchGameVersion")
 
 
 class MetaVersion(Versioned):
