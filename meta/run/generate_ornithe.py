@@ -72,6 +72,7 @@ def process_intermediary_version(entry) -> MetaVersion:
     ]
     v.compatible_java_majors = JAVA_MAJORS
     v.compatible_java_name = JAVA_NAME
+    v.additional_traits = ["FirstThreadOnMacOS"]
     return v
 
 
