@@ -7,9 +7,9 @@ from . import Library, MetaBase
 
 
 class FabricInstallerArguments(MetaBase):
-    client: Optional[List[str]]
-    common: Optional[List[str]]
-    server: Optional[List[str]]
+    client: Optional[List[str]] = None
+    common: Optional[List[str]] = None
+    server: Optional[List[str]] = None
 
 
 class FabricInstallerLaunchwrapper(MetaBase):
@@ -17,24 +17,24 @@ class FabricInstallerLaunchwrapper(MetaBase):
 
 
 class FabricInstallerLibraries(MetaBase):
-    client: Optional[List[Library]]
-    common: Optional[List[Library]]
-    server: Optional[List[Library]]
+    client: Optional[List[Library]] = None
+    common: Optional[List[Library]] = None
+    server: Optional[List[Library]] = None
 
 
 class FabricMainClasses(MetaBase):
-    client: Optional[str]
-    common: Optional[str]
-    server: Optional[str]
+    client: Optional[str] = None
+    common: Optional[str] = None
+    server: Optional[str] = None
 
 
 class FabricInstallerDataV1(MetaBase):
     version: int
     libraries: FabricInstallerLibraries
-    main_class: Optional[Union[str, FabricMainClasses]] = Field(alias="mainClass")
-    arguments: Optional[FabricInstallerArguments]
-    launchwrapper: Optional[FabricInstallerLaunchwrapper]
+    main_class: Optional[Union[str, FabricMainClasses]] = Field(None, alias="mainClass")
+    arguments: Optional[FabricInstallerArguments] = None
+    launchwrapper: Optional[FabricInstallerLaunchwrapper] = None
 
 
 class FabricJarInfo(MetaBase):
-    release_time: Optional[datetime] = Field(alias="releaseTime")
+    release_time: Optional[datetime] = Field(None, alias="releaseTime")

@@ -9,7 +9,7 @@
   git,
   openssh,
   packaging,
-  pydantic_1,
+  pydantic,
   python,
   rsync,
 }:
@@ -45,7 +45,7 @@ buildPythonApplication {
     requests
     filelock
     packaging
-    pydantic_1
+    pydantic
   ];
 
   postInstall = ''
