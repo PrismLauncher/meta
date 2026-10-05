@@ -568,7 +568,7 @@
             "+traits": ["no-texturepacks"]
         },
         "rd-20090515": {
-            "mainClass": "com.mojang.rubydung.RubyDung",
+            "mainClass": "com.mojang.minecraft.RubyDung",
             "+traits": ["no-texturepacks"]
         },
         "rd-132328": {
