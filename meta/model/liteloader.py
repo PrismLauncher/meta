@@ -7,9 +7,9 @@ from . import Library, MetaBase
 
 
 class LiteloaderDev(MetaBase):
-    fgVersion: Optional[str]
-    mappings: Optional[str]
-    mcp: Optional[str]
+    fgVersion: Optional[str] = None
+    mappings: Optional[str] = None
+    mcp: Optional[str] = None
 
 
 class LiteloaderRepo(MetaBase):
@@ -56,17 +56,17 @@ class LiteloaderArtefact(MetaBase):
     stream: str
     file: str
     version: str
-    build: Optional[str]
+    build: Optional[str] = None
     md5: str
     timestamp: str
-    srcJar: Optional[str]
-    mcpJar: Optional[str]
-    lastSuccessfulBuild: Optional[int]  # only for snapshots
+    srcJar: Optional[str] = None
+    mcpJar: Optional[str] = None
+    lastSuccessfulBuild: Optional[int] = None  # only for snapshots
 
 
 class LiteloaderArtefacts(MetaBase):
     liteloader: Dict[str, LiteloaderArtefact] = Field(alias="com.mumfrey:liteloader")
-    libraries: Optional[List[Library]]
+    libraries: Optional[List[Library]] = None
 
 
 class LiteloaderEntry(MetaBase):
@@ -83,10 +83,10 @@ class LiteloaderEntry(MetaBase):
         }
     """
 
-    dev: Optional[LiteloaderDev]
+    dev: Optional[LiteloaderDev] = None
     repo: LiteloaderRepo
-    artefacts: Optional[LiteloaderArtefacts]
-    snapshots: Optional[LiteloaderArtefacts]
+    artefacts: Optional[LiteloaderArtefacts] = None
+    snapshots: Optional[LiteloaderArtefacts] = None
 
 
 class LiteloaderMeta(MetaBase):
