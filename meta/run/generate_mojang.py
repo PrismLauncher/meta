@@ -27,7 +27,9 @@ from meta.model import (
     MojangArtifact,
     Dependency,
     MetaPackage,
+    MojangRule,
     MojangRules,
+    OSRule,
 )
 from meta.model.mojang import (
     LegacyServices,
@@ -257,6 +259,81 @@ def is_macos_only(rules: Optional[MojangRules]):
     return False
 
 
+# Mojang gates architecture specific natives *only* behind the generic OS rule (for
+# example the "natives-macos-arm64" classifier is only allowed when the OS is "osx").
+ARCH_NATIVE_OS = {
+    "macos-arm64": "osx-arm64",
+    "macos-aarch64": "osx-arm64",
+    "windows-arm64": "windows-arm64",
+    "windows-aarch64": "windows-arm64",
+    "linux-arm64": "linux-arm64",
+    "linux-aarch64": "linux-arm64",
+    "linux-arm32": "linux-arm32",
+    "linux-aarch32": "linux-arm32",
+    "linux-riscv64": "linux-riscv64",
+}
+
+GENERIC_OS = {
+    "osx-arm64": "osx",
+    "windows-arm64": "windows",
+    "linux-arm64": "linux",
+    "linux-arm32": "linux",
+    "linux-riscv64": "linux",
+}
+
+
+def remove_allow_rule(lib: Library, os_name: str) -> None:
+    if not lib.rules:
+        return
+    lib.rules.__root__ = [
+        rule
+        for rule in lib.rules
+        if not (
+            rule.action == "allow" and rule.os is not None and rule.os.name == os_name
+        )
+    ]
+
+
+def allow_arch_native(lib: Library) -> None:
+    if not lib.name:
+        return
+
+    candidates = [lib.name.artifact]
+    if lib.name.classifier:
+        candidates.append(lib.name.classifier)
+    native_name = "-".join(candidates)
+
+    allowed: List[Optional[str]] = []
+    disallowed: List[str] = []
+    if lib.rules:
+        for rule in lib.rules:
+            if rule.action == "allow" and rule.os is None:
+                return
+            if rule.os is None:
+                continue
+            if rule.action == "allow":
+                allowed.append(rule.os.name)
+            else:
+                disallowed.append(rule.os.name)
+
+    for native, os_name in ARCH_NATIVE_OS.items():
+        if native not in native_name:
+            continue
+        generic = GENERIC_OS[os_name]
+        if os_name in disallowed or generic not in allowed:
+            continue
+
+        # Restrict the native to its architecture to not make people on intel macs download both architectures
+        remove_allow_rule(lib, generic)
+
+        if os_name not in allowed:
+            rule = MojangRule(action="allow", os=OSRule(name=os_name))
+            if lib.rules is None:
+                lib.rules = MojangRules(__root__=[rule])
+            else:
+                lib.rules.__root__.append(rule)
+
+
 def patch_library(lib: Library, patches: LibraryPatches) -> List[Library]:
     to_patch = [lib]
 
@@ -274,6 +351,8 @@ def patch_library(lib: Library, patches: LibraryPatches) -> List[Library]:
                     new_libraries += list(dict.fromkeys(additional_copy))
                     if patch.patchAdditionalLibraries:
                         to_patch += additional_copy
+
+        allow_arch_native(target)
 
     return new_libraries
 
