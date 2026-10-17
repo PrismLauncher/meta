@@ -40,6 +40,7 @@ class MetaPackageIndexEntry(MetaBase):
     name: str
     uid: str
     sha256: str
+    installable_loader: Optional[bool] = Field(alias="installableLoader")
 
 
 class MetaPackageIndex(Versioned):

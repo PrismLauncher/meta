@@ -64,7 +64,7 @@ for package in sorted(os.listdir(LAUNCHER_DIR)):
 
     # insert entry into the package index
     packageEntry = MetaPackageIndexEntry(
-        uid=package, name=sharedData.name, sha256=file_hash(outFilePath, hashlib.sha256)
+        uid=package, name=sharedData.name, installable_loader=sharedData.installable_loader, sha256=file_hash(outFilePath, hashlib.sha256)
     )
     packages.packages.append(packageEntry)
 
