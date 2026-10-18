@@ -161,6 +161,7 @@ def main():
         package = MetaPackage(
             uid=NEOFORGE_COMPONENT,
             name="NeoForge",
+            installable_loader=True,
             project_url="https://neoforged.net",
         )
         package.recommended = recommended_versions

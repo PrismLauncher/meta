@@ -44,7 +44,7 @@ def process_loader_version(entry) -> MetaVersion:
         name="Fabric Loader", uid="net.fabricmc.fabric-loader", version=entry["version"]
     )
     v.release_time = jar_info.release_time
-    v.requires = [Dependency(uid="net.fabricmc.intermediary")]
+    v.requires = [Dependency(uid="net.fabricmc.intermediary", match_game_version=True)]
     v.order = 10
     v.type = "release"
     if isinstance(installer_info.main_class, FabricMainClasses):
@@ -122,7 +122,7 @@ def main():
                 os.path.join(LAUNCHER_DIR, INTERMEDIARY_COMPONENT, f"{v.version}.json")
             )
 
-    package = MetaPackage(uid=LOADER_COMPONENT, name="Fabric Loader")
+    package = MetaPackage(uid=LOADER_COMPONENT, name="Fabric", installable_loader=True)
     package.recommended = recommended_loader_versions
     package.description = (
         "Fabric Loader is a tool to load Fabric-compatible mods in game environments."
