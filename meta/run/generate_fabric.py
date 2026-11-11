@@ -7,6 +7,7 @@ from meta.common import (
     upstream_path,
     transform_maven_key,
 )
+from meta.common.conflicts import loader_conflicts
 from meta.common.fabric import (
     JARS_DIR,
     INSTALLER_INFO_DIR,
@@ -45,6 +46,7 @@ def process_loader_version(entry) -> MetaVersion:
     )
     v.release_time = jar_info.release_time
     v.requires = [Dependency(uid="net.fabricmc.intermediary")]
+    v.conflicts = loader_conflicts([LOADER_COMPONENT])
     v.order = 10
     v.type = "release"
     if isinstance(installer_info.main_class, FabricMainClasses):

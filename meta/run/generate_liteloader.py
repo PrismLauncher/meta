@@ -3,7 +3,9 @@ from datetime import datetime
 from typing import List, Tuple, Dict, Optional
 
 from meta.common import ensure_component_dir, launcher_path, upstream_path
+from meta.common.conflicts import loader_conflicts
 from meta.common.liteloader import LITELOADER_COMPONENT, VERSIONS_FILE
+from meta.common.forge import FORGE_COMPONENT
 from meta.common.mojang import MINECRAFT_COMPONENT
 from meta.model import MetaVersion, GradleSpecifier, Library, MetaPackage, Dependency
 from meta.model.liteloader import LiteloaderIndex, LiteloaderArtefact
@@ -30,6 +32,7 @@ def process_artefacts(
             uid=LITELOADER_COMPONENT,
             version=artefact.version,
             requires=[Dependency(uid=MINECRAFT_COMPONENT, equals=mc_version)],
+            conflicts=loader_conflicts([LITELOADER_COMPONENT, FORGE_COMPONENT]),
             release_time=datetime.utcfromtimestamp(int(artefact.timestamp)),
             additional_tweakers=[artefact.tweakClass],
             main_class="net.minecraft.launchwrapper.Launch",

@@ -9,6 +9,7 @@ from meta.common import (
     upstream_path,
     transform_maven_key,
 )
+from meta.common.conflicts import loader_conflicts
 from meta.common.quilt import (
     JARS_DIR,
     INSTALLER_INFO_DIR,
@@ -56,6 +57,7 @@ def process_loader_version(entry) -> (MetaVersion, bool):
     v = MetaVersion(name="Quilt Loader", uid=LOADER_COMPONENT, version=entry["version"])
     v.release_time = jar_info.release_time
     v.requires = [Dependency(uid=INTERMEDIARY_COMPONENT)]
+    v.conflicts = loader_conflicts([LOADER_COMPONENT])
     v.order = 10
     v.type = "beta" if re.search(r"-beta(?:\.|$)", entry["version"]) else "release"
     if isinstance(installer_info.main_class, FabricMainClasses):
