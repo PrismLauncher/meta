@@ -610,6 +610,11 @@ def main():
             if not v.additional_jvm_args:
                 v.additional_jvm_args = []
             v.additional_jvm_args.extend(adapt_new_style_jvm_arguments(mojang_version.arguments))
+            # NOTE(2026-11-17): Mitigate Java4Shell https://calif.io/java4shell
+            # See FabricMC announcement: https://discord.com/channels/507304429255393322/507304986921664533/1572375335331303548
+            # And Mitigation section here: https://access.redhat.com/security/vulnerabilities/RHSB-2026-018
+            if max(v.compatible_java_majors) >= 17:
+                v.additional_jvm_args.extend(["-XX:+UnlockDiagnosticVMOptions", "-XX:-UseBASE64Intrinsics"])
         out_filename = os.path.join(
             LAUNCHER_DIR, MINECRAFT_COMPONENT, f"{v.version}.json"
         )
