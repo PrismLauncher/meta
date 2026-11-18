@@ -5,6 +5,7 @@ from operator import attrgetter
 from typing import Collection
 
 from meta.common import ensure_component_dir, launcher_path, upstream_path, eprint
+from meta.common.conflicts import loader_conflicts
 from meta.common.neoforge import (
     NEOFORGE_COMPONENT,
     INSTALLER_MANIFEST_DIR,
@@ -143,6 +144,7 @@ def main():
 
         # we can get the minecraft version from the profile json info, so let's just do that instead of hacky regex
         v.requires = [Dependency(uid=MINECRAFT_COMPONENT, equals=profile.minecraft)]
+        v.conflicts = loader_conflicts([NEOFORGE_COMPONENT])
         # If we do not have the corresponding Minecraft version, we ignore it
         if not os.path.isfile(
             os.path.join(LAUNCHER_DIR, MINECRAFT_COMPONENT, f"{profile.minecraft}.json")
