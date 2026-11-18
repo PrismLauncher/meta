@@ -610,6 +610,10 @@ def main():
             if not v.additional_jvm_args:
                 v.additional_jvm_args = []
             v.additional_jvm_args.extend(adapt_new_style_jvm_arguments(mojang_version.arguments))
+            # HACK(@getchoo 2026-11-17): Mitigate Java4Shell https://calif.io/java4shell
+            # REMOVE RELATIVELY QUICKLY AFTER JVM UPDATES ROLL OUT. ADDING `IgnoreUnrecognizedVMOptions` IS DUMB
+            if max(v.compatible_java_majors) >= 17:
+                v.additional_jvm_args.extend(["-XX:+IgnoreUnrecognizedVMOptions", "-XX:UseAVX=2"])
         out_filename = os.path.join(
             LAUNCHER_DIR, MINECRAFT_COMPONENT, f"{v.version}.json"
         )
