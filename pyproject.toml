@@ -28,7 +28,7 @@ index = "meta.run.index:main"
 
 [tool.poetry.dependencies]
 python = "^3.8"
-cachecontrol = "^0.14.0"
+cachecontrol = "^0.15.0"
 requests = "^2.31.0"
 filelock = "^3.13.1"
 packaging = "^26.0"
