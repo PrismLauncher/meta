@@ -41,8 +41,6 @@ from meta.model.mojang import (
     SUPPORTED_FEATURES,
 )
 
-APPLY_SPLIT_NATIVES_WORKAROUND = True
-
 LAUNCHER_DIR = launcher_path()
 UPSTREAM_DIR = upstream_path()
 
@@ -93,13 +91,13 @@ LOG4J_HASHES = {
 # We want versions that contain natives for all platforms. If there are multiple, pick the latest one
 # LWJGL versions we want
 PASS_VARIANTS = [
-    "40ee0dc8739c4539b51df3a92386941bd1d9d911",  # 3.4.3 (2026-09-01 11:29:01+00:00)
-    "fd17e8d3473d57ff4141a36cbfcfabade5fbb7c5",  # 3.4.2 (2026-07-21 11:45:42+00:00)
-    "317adbdf3b02845f7240549bb4aaa5fcd1344c49",  # 3.4.1 (2026-07-16 13:59:30+00:00) SDL
-    "2b00f31688148fc95dbc8c8ef37308942cf0dce0",  # 3.3.6 (2025-10-21 11:38:51+00:00)
-    "73974b3af2afeb5b272ffbadcd7963014387c84f",  # 3.3.3 (2024-05-22 16:25:41+00:00)
-    "765b4ab443051d286bdbb1c19cd7dc86b0792dce",  # 3.3.2 (2024-01-17 13:19:20+00:00)
-    "54c4fb1d6a96ac3007c947bf310c8bcf94a862be",  # 3.3.1 (2023-04-20 11:55:19+00:00) split natives, with WoA natives
+    "2b9c4a727775b35097eaf0447edd1ab2d2114c3a",  # 3.4.3 (2026-09-01 11:29:01+00:00)
+    "b9a4d4b6602b84df13ee4a488b7e54d8f737d393",  # 3.4.2 (2026-07-21 11:45:42+00:00)
+    "3d98d6bf17b8b9e99a08af2a039104e2ebf60b7d",  # 3.4.1 (2026-07-16 13:59:30+00:00) SDL
+    "46f36c14406591946843d15edec1523572235885",  # 3.3.6 (2025-10-21 11:38:51+00:00)
+    "20872a2b6f3ce6a8ba4a584b8e284b9ee94e5123",  # 3.3.3 (2024-05-22 16:25:41+00:00)
+    "4f05e10a16a3d822f7034d6582420331ca3e8f69",  # 3.3.2 (2024-01-17 13:19:20+00:00)
+    "4b9763bf39b9c1d377bb805d4ba16a283bbca213",  # 3.3.1 (2023-04-20 11:55:19+00:00) split natives, with WoA natives
     "ea4973ebc9eadf059f30f0958c89f330898bff51",  # 3.2.2 (2019-07-04 14:41:05+00:00) will be patched, missing tinyfd
     "235fc413bc4c76b269c207f7bca6464f1e1f1d80",  # 3.2.1 (2019-02-13 16:12:08+00:00)
     "deb1a436d806413207350735a00e04b54d113916",  # 3.1.6 (2018-10-18 14:46:12+00:00)
@@ -113,17 +111,17 @@ PASS_VARIANTS = [
 
 # LWJGL versions we def. don't want!
 BAD_VARIANTS = [
-    "02a9f886ad37d391d2b34a08800e8bd852b92059",  # 3.4.3 (2026-09-08 13:04:44+00:00) no lwjgl-spng
-    "b510ab8669cd8b031298f171aa810c7d3e7acb8f",  # 3.4.3 (2026-08-25 12:53:43+00:00) no lwjgl-spng
-    "17754e4d1045947c3b99d22b9db7e75bfb6d252a",  # 3.4.2 (2026-08-17 11:46:16+00:00) removed tinyfd
-    "0ab5c885c21dfd8133277e8f557839f5fab35311",  # 3.4.1 (2026-05-26 13:48:31+00:00) no SDL
-    "472ee33f7a1294822aa2d617cd6ccdfd92f949a0",  # 3.4.1 (2026-04-07 11:52:43+00:00) vulkan, has significant performance regressions
-    "1fd0e4d1f0f7c97e8765a69d38225e1f27ee14ef",  # 3.4.1 (2026-02-17 12:42:24+00:00) before vulkan
-    "6f32ef730d05562ede7db0b845b72ea16dd239d5",  # 3.3.3 (2024-05-29 12:04:43+00:00) missing os rule for freetype natives-macos-patch
-    "8a9b08f11271eb4de3b50e5d069949500b2c7bc1",  # 3.3.3 (2024-04-03 11:49:39+00:00) seems to have a broken libfreetype for macOS x86_64
-    "79bde9e46e9ad9accebda11e8293ed08d80dbdc3",  # 3.3.2 (2023-08-30 11:24:35+00:00) does not have lwjgl-freetype
-    "8836c419f90f69a278b97d945a34af165c24ff60",  # 3.3.1 (2022-05-18 13:51:54+00:00) split natives, with workaround, replaced by 23w26a
-    "3c624b94c06dbc4abae08fe6156d74abe4a2cca5",  # 3.3.1 (2022-05-04 14:41:35+00:00) we already have a nice 3.3.1
+    "afa6e0d7d2286e1d7b61e3617df3349dd855eeeb",  # 3.4.3 (2026-09-08 13:04:44+00:00) no lwjgl-spng
+    "c0c5d7f3e8ea4235d4a451e4771d421ed092d7ae",  # 3.4.3 (2026-08-25 12:53:43+00:00) no lwjgl-spng
+    "feb1779f2fdee85ab892b6a7d598b0b002632dce",  # 3.4.2 (2026-08-17 11:46:16+00:00) removed tinyfd
+    "3527ecd6fc204cdf6c2003fef2b451f57657d99e",  # 3.4.1 (2026-05-26 13:48:31+00:00) no SDL
+    "d6410e9d6270a03d5b231b6932e5878edb4064ee",  # 3.4.1 (2026-04-07 11:52:43+00:00) vulkan, has significant performance regressions
+    "86bc8fbcc89654948d2032f04532f13c8b0dbb6a",  # 3.4.1 (2026-02-17 12:42:24+00:00) before vulkan
+    "3c1d3a0a3b83161131104c7baea888b084971023",  # 3.3.3 (2024-05-29 12:04:43+00:00) missing os rule for freetype natives-macos-patch
+    "4672e3d0b29822865d4771fe38d6b8a44cbd3134",  # 3.3.3 (2024-04-03 11:49:39+00:00) seems to have a broken libfreetype for macOS x86_64
+    "6167b6cf02a3c27a4ee0cb6c2d5435e70c23dec2",  # 3.3.2 (2023-08-30 11:24:35+00:00) does not have lwjgl-freetype
+    "beed62ec1d40ae89d808fe70b83df6bd4b3be81f",  # 3.3.1 (2022-05-18 13:51:54+00:00) split natives, with workaround, replaced by 23w26a
+    "e4438b6968115f314915d87f838d4291836a0ea1",  # 3.3.1 (2022-05-04 14:41:35+00:00) we already have a nice 3.3.1
     "e1106ca765798218323b7a6d7528050260ea9d88",  # 3.3.1 (2022-05-04 14:41:35+00:00) doesn't use split natives
     "90b3d9ca01058286c033b6b7ae7f6dc370a04015",  # 3.2.2 (2022-03-31 14:53:25+00:00) only linux, windows
     "d986df9598fa2bcf4a5baab5edf044548e66d011",  # 3.2.2 (2021-12-10 03:36:38+00:00) only linux, windows
@@ -461,11 +459,6 @@ def main():
 
             # generic fixes
             remove_paths_from_lib(lib)
-
-            if APPLY_SPLIT_NATIVES_WORKAROUND and lib_is_split_native(lib):
-                # merge classifier into artifact name to workaround bug in launcher
-                specifier.artifact += f"-{specifier.classifier}"
-                specifier.classifier = None
 
             if specifier.is_lwjgl():
                 if has_split_natives:  # implies lwjgl3
