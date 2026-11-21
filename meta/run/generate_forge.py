@@ -16,6 +16,8 @@ from meta.common.forge import (
     FORGEWRAPPER_LIBRARY,
 )
 from meta.common.mojang import MINECRAFT_COMPONENT
+from meta.common.flexver import compare
+
 from meta.model import (
     MetaVersion,
     Dependency,
@@ -274,6 +276,15 @@ def version_from_build_system_installer(
                 "https://maven.minecraftforge.net/%s" % forge_lib.name.path()
             )
         v.maven_files.append(forge_lib)
+
+    # set main jar as forgewrapper as the forge doesn't need the main client jar in path to run
+    if compare(version.mc_version_sane, "26.1") >= 0:
+        v.main_jar = FORGEWRAPPER_LIBRARY
+        minecraft_file = os.path.join(
+            LAUNCHER_DIR, MINECRAFT_COMPONENT, f"{version.mc_version_sane}.json"
+        )
+        minecraft_version = MetaVersion.parse_file(minecraft_file)
+        v.maven_files.append(minecraft_version.main_jar)
 
     v.libraries = []
 
