@@ -457,6 +457,7 @@ def main():
         package = MetaPackage(
             uid=FORGE_COMPONENT,
             name="Forge",
+            installable_loader=True,
             project_url="https://www.minecraftforge.net/forum/",
         )
         package.recommended = recommended_versions

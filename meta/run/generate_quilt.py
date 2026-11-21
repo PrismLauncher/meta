@@ -55,7 +55,7 @@ def process_loader_version(entry) -> (MetaVersion, bool):
 
     v = MetaVersion(name="Quilt Loader", uid=LOADER_COMPONENT, version=entry["version"])
     v.release_time = jar_info.release_time
-    v.requires = [Dependency(uid=INTERMEDIARY_COMPONENT)]
+    v.requires = [Dependency(uid=INTERMEDIARY_COMPONENT, match_game_version=True)]
     v.order = 10
     v.type = "beta" if re.search(r"-beta(?:\.|$)", entry["version"]) else "release"
     if isinstance(installer_info.main_class, FabricMainClasses):
@@ -153,7 +153,7 @@ def main():
                     eprint("Failed to download %s" % version)
                     eprint("Error is %s" % e)
                     continue
-    package = MetaPackage(uid=LOADER_COMPONENT, name="Quilt Loader")
+    package = MetaPackage(uid=LOADER_COMPONENT, name="Quilt", installable_loader=True)
     package.recommended = recommended_loader_versions
     package.description = "The Quilt project is an open, community-driven modding toolchain designed primarily for Minecraft."
     package.project_url = "https://quiltmc.org/"
