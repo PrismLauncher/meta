@@ -632,6 +632,7 @@ def main():
                 v.additional_traits = []
             if v.version != "13w23b":
                 v.additional_traits.append("legacyLaunch")
+                v.additional_traits.append("noapplet")
             v.additional_traits.append("texturepacks")
 
         v.write(out_filename)
