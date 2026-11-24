@@ -93,7 +93,7 @@ LOG4J_HASHES = {
 # We want versions that contain natives for all platforms. If there are multiple, pick the latest one
 # LWJGL versions we want
 PASS_VARIANTS = [
-    "40ee0dc8739c4539b51df3a92386941bd1d9d911",  # 3.4.3 (2026-09-01 11:29:01+00:00)
+    "c2405f432a298301d2de6a3c92240acc5a9b9acc",  # 3.4.3 (2026-09-01 11:29:01+00:00)
     "fd17e8d3473d57ff4141a36cbfcfabade5fbb7c5",  # 3.4.2 (2026-07-21 11:45:42+00:00)
     "317adbdf3b02845f7240549bb4aaa5fcd1344c49",  # 3.4.1 (2026-07-16 13:59:30+00:00) SDL
     "2b00f31688148fc95dbc8c8ef37308942cf0dce0",  # 3.3.6 (2025-10-21 11:38:51+00:00)
@@ -113,7 +113,8 @@ PASS_VARIANTS = [
 
 # LWJGL versions we def. don't want!
 BAD_VARIANTS = [
-    "02a9f886ad37d391d2b34a08800e8bd852b92059",  # 3.4.3 (2026-09-08 13:04:44+00:00) no lwjgl-spng
+    "941b1e03fb28e63748fbcc988b051cee73ee586b",  # 3.4.3 (2026-09-08 13:04:44+00:00) no lwjgl-spng
+    "8ba8287872295c37a70f7fab2a4febd6a98710bc",  # 3.4.3 (2026-09-04 11:54:52+00:00) no lwjgl-spng
     "b510ab8669cd8b031298f171aa810c7d3e7acb8f",  # 3.4.3 (2026-08-25 12:53:43+00:00) no lwjgl-spng
     "17754e4d1045947c3b99d22b9db7e75bfb6d252a",  # 3.4.2 (2026-08-17 11:46:16+00:00) removed tinyfd
     "0ab5c885c21dfd8133277e8f557839f5fab35311",  # 3.4.1 (2026-05-26 13:48:31+00:00) no SDL
