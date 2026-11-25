@@ -95,7 +95,7 @@ LOG4J_HASHES = {
 PASS_VARIANTS = [
     "c2405f432a298301d2de6a3c92240acc5a9b9acc",  # 3.4.3 (2026-09-01 11:29:01+00:00)
     "fd17e8d3473d57ff4141a36cbfcfabade5fbb7c5",  # 3.4.2 (2026-07-21 11:45:42+00:00)
-    "317adbdf3b02845f7240549bb4aaa5fcd1344c49",  # 3.4.1 (2026-07-16 13:59:30+00:00) SDL
+    "c676f0ddd64cbf889c144793a4b7cdf39b08dc60",  # 3.4.1 (2026-07-16 13:59:30+00:00) SDL
     "2b00f31688148fc95dbc8c8ef37308942cf0dce0",  # 3.3.6 (2025-10-21 11:38:51+00:00)
     "73974b3af2afeb5b272ffbadcd7963014387c84f",  # 3.3.3 (2024-05-22 16:25:41+00:00)
     "765b4ab443051d286bdbb1c19cd7dc86b0792dce",  # 3.3.2 (2024-01-17 13:19:20+00:00)
@@ -117,9 +117,9 @@ BAD_VARIANTS = [
     "8ba8287872295c37a70f7fab2a4febd6a98710bc",  # 3.4.3 (2026-09-04 11:54:52+00:00) no lwjgl-spng
     "b510ab8669cd8b031298f171aa810c7d3e7acb8f",  # 3.4.3 (2026-08-25 12:53:43+00:00) no lwjgl-spng
     "17754e4d1045947c3b99d22b9db7e75bfb6d252a",  # 3.4.2 (2026-08-17 11:46:16+00:00) removed tinyfd
-    "0ab5c885c21dfd8133277e8f557839f5fab35311",  # 3.4.1 (2026-05-26 13:48:31+00:00) no SDL
-    "472ee33f7a1294822aa2d617cd6ccdfd92f949a0",  # 3.4.1 (2026-04-07 11:52:43+00:00) vulkan, has significant performance regressions
-    "1fd0e4d1f0f7c97e8765a69d38225e1f27ee14ef",  # 3.4.1 (2026-02-17 12:42:24+00:00) before vulkan
+    "99e4af884d970ab4f137b6191727f4cf8b78896c",  # 3.4.1 (2026-02-17 12:42:24+00:00) before vulkan
+    "528834ad9c726ace71df4d152d77b695e9ab7a29",  # 3.4.1 (2026-04-07 11:52:43+00:00) vulkan, has significant performance regressions
+    "528202160cf3e8c1e04d14f80cb0b2917c09165a",  # 3.4.1 (2026-06-30 12:45:43+00:00)
     "6f32ef730d05562ede7db0b845b72ea16dd239d5",  # 3.3.3 (2024-05-29 12:04:43+00:00) missing os rule for freetype natives-macos-patch
     "8a9b08f11271eb4de3b50e5d069949500b2c7bc1",  # 3.3.3 (2024-04-03 11:49:39+00:00) seems to have a broken libfreetype for macOS x86_64
     "79bde9e46e9ad9accebda11e8293ed08d80dbdc3",  # 3.3.2 (2023-08-30 11:24:35+00:00) does not have lwjgl-freetype
@@ -236,7 +236,7 @@ def adapt_new_style_jvm_arguments(arguments):
     for arg in arguments.jvm:
         if not isinstance(arg, str):
             continue
-        
+
         if not any(arg.startswith(x) for x in PREFIXES):
             continue
 
