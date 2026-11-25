@@ -5178,18 +5178,18 @@
   {
     "_comment": "Add linux-riscv64 support for LWJGL 3.4.3",
     "match": [
-      "org.lwjgl:lwjgl-freetype:3.4.3"
+      "org.lwjgl:lwjgl-freetype:3.4.3-mojang-2.15.0"
     ],
     "additionalLibraries": [
       {
         "downloads": {
           "artifact": {
-            "sha1": "809c6df123ae9ea36aa3117a368e7d300ed712eb",
-            "size": 1409111,
-            "url": "https://build.lwjgl.org/release/3.4.3/bin/lwjgl-freetype/lwjgl-freetype-natives-linux-riscv64.jar"
+            "sha1": "ac9b27dac57e6a864ed70ff8a8797f53e0d26135",
+            "size": 1454540,
+            "url": "https://github.com/timoreo22/lwjgl-freetype/releases/download/3.4.3/lwjgl-freetype-3.4.3-mojang-2.15.0-natives-linux-riscv64.jar"
           }
         },
-        "name": "org.lwjgl:lwjgl-freetype-natives-linux-riscv64:3.4.3-lwjgl.1",
+        "name": "org.lwjgl:lwjgl-freetype-natives-linux-riscv64:3.4.3-mojang-2.15.0-lwjgl.1",
         "rules": [
           {
             "action": "allow",
@@ -5692,18 +5692,18 @@
   {
     "_comment": "Add linux-arm64 support for LWJGL 3.4.3",
     "match": [
-      "org.lwjgl:lwjgl-freetype:3.4.3"
+      "org.lwjgl:lwjgl-freetype:3.4.3-mojang-2.15.0"
     ],
     "additionalLibraries": [
       {
         "downloads": {
           "artifact": {
-            "sha1": "6babd5ddf9b4850e91a952d494cfd22b895ce200",
-            "size": 1300898,
-            "url": "https://build.lwjgl.org/release/3.4.3/bin/lwjgl-freetype/lwjgl-freetype-natives-linux-arm64.jar"
+            "sha1": "6ee495c7bc7b3dad72de528b1bedcfa35e9e6ace",
+            "size": 1341977,
+            "url": "https://github.com/timoreo22/lwjgl-freetype/releases/download/3.4.3/lwjgl-freetype-3.4.3-mojang-2.15.0-natives-linux-arm64.jar"
           }
         },
-        "name": "org.lwjgl:lwjgl-freetype-natives-linux-arm64:3.4.3-lwjgl.1",
+        "name": "org.lwjgl:lwjgl-freetype-natives-linux-arm64:3.4.3-mojang-2.15.0-lwjgl.1",
         "rules": [
           {
             "action": "allow",
