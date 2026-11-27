@@ -432,7 +432,7 @@ def filter_downloadable_libraries(libraries: List[Library]) -> List[Library]:
         has_downloads = lib.downloads and (
             lib.downloads.artifact is not None or lib.downloads.classifiers
         )
-        if has_downloads:
+        if has_downloads or lib.url is not None:
             downloadable.append(lib)
         else:
             print("Skipping library without downloads:", lib.name)
