@@ -194,6 +194,8 @@ class ForgeVersion:
         self.rawVersion = entry.version
         self.mc_version = entry.mc_version
         self.mc_version_sane = self.mc_version.replace("_pre", "-pre", 1)
+        if self.mc_version_sane == "1.4.0":
+            self.mc_version_sane = "1.4"
         self.branch = entry.branch
         self.installer_filename = None
         self.installer_url = None
