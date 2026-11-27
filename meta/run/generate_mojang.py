@@ -366,6 +366,7 @@ def process_single_variant(lwjgl_variant: MetaVersion, patches: LibraryPatches):
     for lib in v.libraries:
         new_libraries += patch_library(lib, patches)
     v.libraries += list(dict.fromkeys(new_libraries))
+    v.libraries = filter_downloadable_libraries(v.libraries)
 
     if lwjgl_version[0] == "2":
         filename = os.path.join(LAUNCHER_DIR, LWJGL_COMPONENT, f"{lwjgl_version}.json")
@@ -423,6 +424,19 @@ def lib_is_split_native(lib: Library) -> bool:
     if lib.name.classifier and lib.name.classifier.startswith("natives-"):
         return True
     return False
+
+
+def filter_downloadable_libraries(libraries: List[Library]) -> List[Library]:
+    downloadable = []
+    for lib in libraries:
+        has_downloads = lib.downloads and (
+            lib.downloads.artifact is not None or lib.downloads.classifiers
+        )
+        if has_downloads:
+            downloadable.append(lib)
+        else:
+            print("Skipping library without downloads:", lib.name)
+    return downloadable
 
 
 def version_has_split_natives(v: MojangVersion) -> bool:
@@ -564,7 +578,9 @@ def main():
             # remove the common bucket...
             if None in buckets:
                 del buckets[None]
-        v.libraries = libs_minecraft + list(dict.fromkeys(new_libs_minecraft))
+        v.libraries = filter_downloadable_libraries(
+            libs_minecraft + list(dict.fromkeys(new_libs_minecraft))
+        )
 
         if is_lwjgl_3:
             lwjgl_dependency = Dependency(uid=LWJGL3_COMPONENT)
