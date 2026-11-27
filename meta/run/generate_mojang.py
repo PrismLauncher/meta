@@ -93,7 +93,7 @@ LOG4J_HASHES = {
 # We want versions that contain natives for all platforms. If there are multiple, pick the latest one
 # LWJGL versions we want
 PASS_VARIANTS = [
-    "c2405f432a298301d2de6a3c92240acc5a9b9acc",  # 3.4.3 (2026-09-01 11:29:01+00:00)
+    "afbe4bd9a1700fae0834fdfc834b4c0f19188aa2",  # 3.4.3 (2026-09-01 11:29:01+00:00)
     "fd17e8d3473d57ff4141a36cbfcfabade5fbb7c5",  # 3.4.2 (2026-07-21 11:45:42+00:00)
     "c676f0ddd64cbf889c144793a4b7cdf39b08dc60",  # 3.4.1 (2026-07-16 13:59:30+00:00) SDL
     "2b00f31688148fc95dbc8c8ef37308942cf0dce0",  # 3.3.6 (2025-10-21 11:38:51+00:00)
@@ -113,6 +113,7 @@ PASS_VARIANTS = [
 
 # LWJGL versions we def. don't want!
 BAD_VARIANTS = [
+    "4d34bbfc9b9944fc048c2da6b251b26040ea610e",  # 3.4.3 (2026-08-25 12:53:43+00:00)
     "941b1e03fb28e63748fbcc988b051cee73ee586b",  # 3.4.3 (2026-09-08 13:04:44+00:00) no lwjgl-spng
     "8ba8287872295c37a70f7fab2a4febd6a98710bc",  # 3.4.3 (2026-09-04 11:54:52+00:00) no lwjgl-spng
     "b510ab8669cd8b031298f171aa810c7d3e7acb8f",  # 3.4.3 (2026-08-25 12:53:43+00:00) no lwjgl-spng
@@ -626,12 +627,16 @@ def main():
             )
             if not v.additional_jvm_args:
                 v.additional_jvm_args = []
-            v.additional_jvm_args.extend(adapt_new_style_jvm_arguments(mojang_version.arguments))
+            v.additional_jvm_args.extend(
+                adapt_new_style_jvm_arguments(mojang_version.arguments)
+            )
             # NOTE(2026-11-17): Mitigate Java4Shell https://calif.io/java4shell
             # See FabricMC announcement: https://discord.com/channels/507304429255393322/507304986921664533/1572375335331303548
             # And Mitigation section here: https://access.redhat.com/security/vulnerabilities/RHSB-2026-018
             if max(v.compatible_java_majors) >= 17:
-                v.additional_jvm_args.extend(["-XX:+UnlockDiagnosticVMOptions", "-XX:-UseBASE64Intrinsics"])
+                v.additional_jvm_args.extend(
+                    ["-XX:+UnlockDiagnosticVMOptions", "-XX:-UseBASE64Intrinsics"]
+                )
         out_filename = os.path.join(
             LAUNCHER_DIR, MINECRAFT_COMPONENT, f"{v.version}.json"
         )
