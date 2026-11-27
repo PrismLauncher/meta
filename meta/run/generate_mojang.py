@@ -1,5 +1,6 @@
 import copy
 import hashlib
+import json
 import re
 import os
 from collections import defaultdict, namedtuple
@@ -28,7 +29,6 @@ from meta.model import (
     Dependency,
     MetaPackage,
     MojangRule,
-    MojangRules,
     OSRule,
 )
 from meta.model.mojang import (
@@ -139,10 +139,17 @@ BAD_VARIANTS = [
 ]
 
 
-def add_or_get_bucket(buckets, rules: Optional[MojangRules]) -> MetaVersion:
+def add_or_get_bucket(buckets, rules: Optional[List[MojangRule]]) -> MetaVersion:
     rule_hash = None
     if rules:
-        rule_hash = hash(rules.json())
+        rule_hash = hash(
+            json.dumps(
+                [
+                    r.model_dump(mode="json", by_alias=True, exclude_none=True)
+                    for r in rules
+                ]
+            )
+        )
 
     if rule_hash in buckets:
         bucket = buckets[rule_hash]
@@ -245,7 +252,7 @@ def adapt_new_style_jvm_arguments(arguments):
     return result
 
 
-def is_macos_only(rules: Optional[MojangRules]):
+def is_macos_only(rules: Optional[List[MojangRule]]):
     allows_osx = False
     allows_all = False
     # print("Considering", specifier, "rules", rules)
@@ -286,7 +293,7 @@ GENERIC_OS = {
 def remove_allow_rule(lib: Library, os_name: str) -> None:
     if not lib.rules:
         return
-    lib.rules.__root__ = [
+    lib.rules = [
         rule
         for rule in lib.rules
         if not (
@@ -330,9 +337,9 @@ def allow_arch_native(lib: Library) -> None:
         if os_name not in allowed:
             rule = MojangRule(action="allow", os=OSRule(name=os_name))
             if lib.rules is None:
-                lib.rules = MojangRules(__root__=[rule])
+                lib.rules = [rule]
             else:
-                lib.rules.__root__.append(rule)
+                lib.rules.append(rule)
 
 
 def patch_library(lib: Library, patches: LibraryPatches) -> List[Library]:
@@ -448,9 +455,15 @@ def version_has_split_natives(v: MojangVersion) -> bool:
 
 def main():
     # get the local version list
-    override_index = LegacyOverrideIndex.parse_file(STATIC_OVERRIDES_FILE)
-    legacy_services = LegacyServices.parse_file(STATIC_LEGACY_SERVICES_FILE)
-    library_patches = LibraryPatches.parse_file(LIBRARY_PATCHES_FILE)
+    override_index = LegacyOverrideIndex.model_validate_json(
+        open(STATIC_OVERRIDES_FILE).read()
+    )
+    legacy_services = LegacyServices.model_validate_json(
+        open(STATIC_LEGACY_SERVICES_FILE).read()
+    )
+    library_patches = LibraryPatches.model_validate_json(
+        open(LIBRARY_PATCHES_FILE).read()
+    )
 
     found_any_lwjgl3 = False
 
@@ -460,7 +473,7 @@ def main():
             # skip non JSON files
             continue
         print("Processing", filename)
-        mojang_version = MojangVersion.parse_file(input_file)
+        mojang_version = MojangVersion.model_validate_json(open(input_file).read())
         v = mojang_version.to_meta_version(
             "Minecraft", MINECRAFT_COMPONENT, mojang_version.id
         )
@@ -626,12 +639,16 @@ def main():
             )
             if not v.additional_jvm_args:
                 v.additional_jvm_args = []
-            v.additional_jvm_args.extend(adapt_new_style_jvm_arguments(mojang_version.arguments))
+            v.additional_jvm_args.extend(
+                adapt_new_style_jvm_arguments(mojang_version.arguments)
+            )
             # NOTE(2026-11-17): Mitigate Java4Shell https://calif.io/java4shell
             # See FabricMC announcement: https://discord.com/channels/507304429255393322/507304986921664533/1572375335331303548
             # And Mitigation section here: https://access.redhat.com/security/vulnerabilities/RHSB-2026-018
             if max(v.compatible_java_majors) >= 17:
-                v.additional_jvm_args.extend(["-XX:+UnlockDiagnosticVMOptions", "-XX:-UseBASE64Intrinsics"])
+                v.additional_jvm_args.extend(
+                    ["-XX:+UnlockDiagnosticVMOptions", "-XX:-UseBASE64Intrinsics"]
+                )
         out_filename = os.path.join(
             LAUNCHER_DIR, MINECRAFT_COMPONENT, f"{v.version}.json"
         )
@@ -688,9 +705,14 @@ def main():
 
         if decided_variant and passed_variants == 1 and unknown_variants == 0:
             process_single_variant(decided_variant.version, library_patches)
+        elif unknown_variants > 0:
+            raise Exception(
+                "Unknown variant(s) for version %s.\nPlease update PASS_VARIANTS and/or BAD_VARIANTS."
+                % lwjglVersionVariant
+            )
         else:
             raise Exception(
-                "No variant decided for version %s out of %d possible ones and %d unknown ones."
+                "No variant decided for version %s out of %d possible ones and %d unknown ones.\nPlease update PASS_VARIANTS and/or BAD_VARIANTS."
                 % (lwjglVersionVariant, passed_variants, unknown_variants)
             )
 
@@ -704,7 +726,9 @@ def main():
         )
 
     mojang_index = MojangIndexWrap(
-        MojangIndex.parse_file(os.path.join(UPSTREAM_DIR, VERSION_MANIFEST_FILE))
+        MojangIndex.model_validate_json(
+            open(os.path.join(UPSTREAM_DIR, VERSION_MANIFEST_FILE)).read()
+        )
     )
 
     minecraft_package = MetaPackage(uid=MINECRAFT_COMPONENT, name="Minecraft")

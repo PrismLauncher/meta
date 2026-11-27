@@ -50,8 +50,8 @@ mc_version_cache = {}
 def load_mc_version_filter(version: str):
     if version in mc_version_cache:
         return mc_version_cache[version]
-    v = MetaVersion.parse_file(
-        os.path.join(LAUNCHER_DIR, MINECRAFT_COMPONENT, f"{version}.json")
+    v = MetaVersion.model_validate_json(
+        open(os.path.join(LAUNCHER_DIR, MINECRAFT_COMPONENT, f"{version}.json")).read()
     )
     libs = set(map(attrgetter("name"), v.libraries))
     mc_version_cache[version] = libs
@@ -245,8 +245,12 @@ def version_from_build_system_installer(
     v.maven_files = []
 
     # load the locally cached installer file info and use it to add the installer entry in the json
-    info = InstallerInfo.parse_file(
-        os.path.join(UPSTREAM_DIR, INSTALLER_INFO_DIR, f"{version.long_version}.json")
+    info = InstallerInfo.model_validate_json(
+        open(
+            os.path.join(
+                UPSTREAM_DIR, INSTALLER_INFO_DIR, f"{version.long_version}.json"
+            )
+        ).read()
     )
     installer_lib = Library(
         name=GradleSpecifier(
@@ -317,13 +321,13 @@ def version_from_build_system_installer(
 
 def main():
     # load the locally cached version list
-    remote_versions = DerivedForgeIndex.parse_file(
-        os.path.join(UPSTREAM_DIR, DERIVED_INDEX_FILE)
+    remote_versions = DerivedForgeIndex.model_validate_json(
+        open(os.path.join(UPSTREAM_DIR, DERIVED_INDEX_FILE)).read()
     )
     recommended_versions = []
 
-    legacy_info_list = ForgeLegacyInfoList.parse_file(
-        os.path.join(UPSTREAM_DIR, LEGACYINFO_FILE)
+    legacy_info_list = ForgeLegacyInfoList.model_validate_json(
+        open(os.path.join(UPSTREAM_DIR, LEGACYINFO_FILE)).read()
     )
     legacy_versions = [
         "1.1",
@@ -418,11 +422,15 @@ def main():
 
         eprint(installer_version_filepath)
         if os.path.isfile(installer_version_filepath):
-            installer = MojangVersion.parse_file(installer_version_filepath)
+            installer = MojangVersion.model_validate_json(
+                open(installer_version_filepath).read()
+            )
             if entry.mc_version in legacy_versions:
                 v = version_from_modernized_installer(installer, version)
             else:
-                profile = ForgeInstallerProfileV2.parse_file(profile_filepath)
+                profile = ForgeInstallerProfileV2.model_validate_json(
+                    open(profile_filepath).read()
+                )
                 v = version_from_build_system_installer(installer, profile, version)
         else:
             if version.uses_installer():
@@ -430,7 +438,9 @@ def main():
                 if not os.path.isfile(profile_filepath):
                     eprint("Skipping %s with missing profile json" % key)
                     continue
-                profile = ForgeInstallerProfile.parse_file(profile_filepath)
+                profile = ForgeInstallerProfile.model_validate_json(
+                    open(profile_filepath).read()
+                )
                 v = version_from_profile(profile, version)
             else:
                 # Generate json for legacy here
