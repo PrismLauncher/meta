@@ -331,6 +331,7 @@ def main():
         "1.2.4",
         "1.2.5",
         "1.3.2",
+        "1.4",
         "1.4.1",
         "1.4.2",
         "1.4.3",
@@ -419,7 +420,7 @@ def main():
         eprint(installer_version_filepath)
         if os.path.isfile(installer_version_filepath):
             installer = MojangVersion.parse_file(installer_version_filepath)
-            if entry.mc_version in legacy_versions:
+            if version.mc_version_sane in legacy_versions:
                 v = version_from_modernized_installer(installer, version)
             else:
                 profile = ForgeInstallerProfileV2.parse_file(profile_filepath)
@@ -436,17 +437,16 @@ def main():
                 # Generate json for legacy here
                 if version.mc_version_sane == "1.6.1":
                     continue
-                build = version.build
+                long_version = version.long_version
                 if (
-                    str(build).encode("utf-8").decode("utf8")
-                    not in legacy_info_list.number
+                    long_version not in legacy_info_list.number
                 ):
                     eprint(
-                        "Legacy build %d is missing in legacy info. Ignoring." % build
+                        "Legacy build %s is missing in legacy info. Ignoring." % long_version
                     )
                     continue
 
-                v = version_from_legacy(legacy_info_list.number[str(build)], version)
+                v = version_from_legacy(legacy_info_list.number[long_version], version)
 
         v.write(os.path.join(LAUNCHER_DIR, FORGE_COMPONENT, f"{v.version}.json"))
 
